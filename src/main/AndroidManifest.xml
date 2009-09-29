@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="info.thewordnerd.spiel">
+
+  <application android:label="Spiel">
+
+    <service android:name=".services.Spiel">
+      <intent-filter>
+        <action android:name="android.accessibilityservice.AccessibilityService" />
+      </intent-filter>
+    </service>
+  </application>
+</manifest>
