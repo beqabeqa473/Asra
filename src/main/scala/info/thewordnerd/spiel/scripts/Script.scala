@@ -16,7 +16,13 @@ class Script(val pkg:String) {
 }
 
 class Handler(val pkg:String, val cls:String) {
-  def viewFocused(f:((AccessibilityEvent) => Boolean)) = { ViewFocused.handlers(pkg -> cls) = f
-  android.util.Log.d(this.toString, "Registered focus handler for "+cls+" on "+pkg)
-  }
+
+  def viewFocused(f:((AccessibilityEvent) => Boolean)) = ViewFocused.handlers(pkg -> cls) = f
+
+  def viewSelected(f:((AccessibilityEvent) => Boolean)) = ViewSelected.handlers(pkg -> cls) = f
+
+  def viewTextChanged(f:((AccessibilityEvent) => Boolean)) = ViewTextChanged.handlers(pkg -> cls) = f
+
+  def windowStateChanged(f:((AccessibilityEvent) => Boolean)) = WindowStateChanged.handlers(pkg -> cls) = f
+
 }
