@@ -38,4 +38,6 @@ object TTS extends OnInitListener {
       case _ => Log.e(this.toString, "Invalid text format")
     }
   }
+
+  def stop = tts.stop
 }

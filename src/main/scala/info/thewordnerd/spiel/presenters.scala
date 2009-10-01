@@ -23,6 +23,7 @@ abstract class Presenter {
 object ViewFocused extends Presenter {
   override def apply(e:AccessibilityEvent):Boolean = {
     if(super.apply(e)) return true
+    tts.stop
     tts.speak(e.getText, false)
     if(e.getClassName.toString.contains("Button"))
       tts.speak("Button", false)
@@ -50,6 +51,7 @@ object ViewTextChanged extends Presenter {
   override def apply(e:AccessibilityEvent):Boolean = {
     if(super.apply(e)) return true
     if(e.getAddedCount > 0 || e.getRemovedCount > 0) {
+      tts.stop
       if(e.isPassword)
         tts.speak("*", true)
       else {
