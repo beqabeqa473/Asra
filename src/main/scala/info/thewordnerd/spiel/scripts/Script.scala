@@ -17,6 +17,8 @@ class Script(val pkg:String) {
 
 class Handler(val pkg:String, val cls:String) {
 
+  def viewClicked(f:((AccessibilityEvent) => Boolean)) = ViewClicked.handlers(pkg -> cls) = f
+
   def viewFocused(f:((AccessibilityEvent) => Boolean)) = ViewFocused.handlers(pkg -> cls) = f
 
   def viewSelected(f:((AccessibilityEvent) => Boolean)) = ViewSelected.handlers(pkg -> cls) = f
