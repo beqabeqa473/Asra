@@ -13,17 +13,36 @@ abstract class Presenter {
 
   val handlers = Map[Tuple2[CharSequence, CharSequence], ((AccessibilityEvent) => Boolean)]()
 
-  def apply(e:AccessibilityEvent):Boolean = if(handlers.contains(e.getPackageName -> e.getClassName))
-    handlers(e.getPackageName -> e.getClassName)(e)
-  else
+  def apply(e:AccessibilityEvent):Boolean = if(handlers.contains(e.getPackageName -> e.getClassName)) {
+    val rv = handlers(e.getPackageName -> e.getClassName)(e)
+    if(rv) Presenter.lastProcessed = e
+    rv
+  } else
     false
 
+}
+
+// TODO: Ugly hack.
+object Presenter {
+  var lastProcessed:AccessibilityEvent = null
+}
+
+object ViewClicked extends Presenter {
+  override def apply(e:AccessibilityEvent):Boolean = {
+    if(super.apply(e)) return true
+    if(e.getText.size > 0)
+      tts.speak(e.getText, true)
+    Presenter.lastProcessed = e
+    true
+  }
 }
 
 object ViewFocused extends Presenter {
   override def apply(e:AccessibilityEvent):Boolean = {
     if(super.apply(e)) return true
-    tts.speak(e.getText, false)
+    // TODO: Ugly hack. More than 1 line in prev event = dialog, don't stop.
+    val flush = if(Presenter.lastProcessed != null && Presenter.lastProcessed.getText.size == 1) true else false
+    tts.speak(e.getText, flush)
     if(e.getClassName.toString.contains("Button"))
       tts.speak("Button", false)
     else if(e.getClassName.toString.contains("Search"))
@@ -33,6 +52,7 @@ object ViewFocused extends Presenter {
         tts.speak("Password", false)
       tts.speak("Edit text", false)
     }
+    Presenter.lastProcessed = e
     true
   }
 }
@@ -42,6 +62,7 @@ object ViewSelected extends Presenter {
     if(super.apply(e)) return true
     if(e.getText.size > 0)
       tts.speak(e.getText, true)
+    Presenter.lastProcessed = e
     true
   }
 }
@@ -50,7 +71,6 @@ object ViewTextChanged extends Presenter {
   override def apply(e:AccessibilityEvent):Boolean = {
     if(super.apply(e)) return true
     if(e.getAddedCount > 0 || e.getRemovedCount > 0) {
-      if(e.getAddedCount == 1 || e.getRemovedCount == 1) tts.stop
       if(e.isPassword)
         tts.speak("*", true)
       else {
@@ -64,6 +84,7 @@ object ViewTextChanged extends Presenter {
         }
       } else
         tts.speak(e.getText, false)
+    Presenter.lastProcessed = e
     true
   }
 }
@@ -76,6 +97,7 @@ object WindowStateChanged extends Presenter {
       tts.speak("Menu", false)
     else if(!e.isFullScreen)
       tts.speak(e.getText, false)
+    Presenter.lastProcessed = e
     true
   }
 }
