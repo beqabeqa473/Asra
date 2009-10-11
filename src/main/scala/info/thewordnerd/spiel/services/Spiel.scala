@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 
 import info.thewordnerd.spiel.presenters._
-import info.thewordnerd.spiel.scripts._
+import info.thewordnerd.spiel.utils.Scripter
 import info.thewordnerd.spiel.utils.TTS
 
 class Spiel extends AccessibilityService {
@@ -25,8 +25,7 @@ class Spiel extends AccessibilityService {
     import AccessibilityEvent._
     info.eventTypes = TYPES_ALL_MASK
     setServiceInfo(info)
-    // TODO: There has to be a better way to eval these object bodies.
-    Launcher
+    Scripter()
     Log.d(this.toString, "Spiel is configured.")
   }
 
