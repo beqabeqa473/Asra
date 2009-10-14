@@ -1,15 +1,47 @@
 package info.thewordnerd.spiel.utils
 
-import java.util.ArrayList
+import org.mozilla.javascript.Context
+import org.mozilla.javascript.ContextFactory
+import org.mozilla.javascript.Scriptable
 
-import org.jruby.Ruby
-import org.jruby.RubyRuntimeAdapter
-import org.jruby.javasupport.JavaEmbedUtils
+class MyContextFactory extends ContextFactory {
+  override protected def onContextCreated(cx:Context) {
+    super.onContextCreated(cx)
+    cx.setOptimizationLevel(-1)
+  }
+}
 
 object Scripter {
+
+  val js = """
+  var pkg = null;
+
+  function forPackage(pk) {
+    pkg = pk;
+  }
+
+  function forClass(cls, script) {
+    if(cls[0] == ".")
+      cls = pkg+cls;
+    for(k in script) {
+      if(k == "onViewClicked")
+      else if(k == "onViewFocused")
+      else if(k == "onViewSelected")
+      else if(k == "onViewTextChanged")
+      else if(k == "onWindowStateChanged")
+      else
+        print("Invalid event: ",k);
+    }
+  }
+  """
+
   def apply() = {
-    val interpreter =JavaEmbedUtils.initialize(new ArrayList())
-    val evaler = JavaEmbedUtils.newRuntimeAdapter()
+    ContextFactory.initGlobal(new MyContextFactory)
+    val cx = Context.enter
+    cx.setOptimizationLevel(-1)
+    val scope = cx.initStandardObjects
+    val result = cx.evaluateString(scope, js, "<spiel>", 1, null)
+    Context.exit
     true
   }
 }
