@@ -6,6 +6,8 @@ class SpielProject(info: ProjectInfo) extends AndroidProject(info) {
   override def androidPlatformName = "android-1.6"
   val rhino = "rhino" % "js" % "1.7R2"
   override def proguardOption = """
-    -keep class org.jruby.internal.**
+    -adaptresourcefilenames **.properties
+    -keep class * extends org.mozilla.javascript.VMBridge
+    -keep public class org.mozilla.javascript.Token
   """
 }

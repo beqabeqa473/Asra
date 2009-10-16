@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 
 import info.thewordnerd.spiel.presenters._
-import info.thewordnerd.spiel.utils.Scripter
+import info.thewordnerd.spiel.scripting.Scripter
 import info.thewordnerd.spiel.utils.TTS
 
 class Spiel extends AccessibilityService {

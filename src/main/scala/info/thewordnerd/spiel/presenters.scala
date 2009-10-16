@@ -2,24 +2,27 @@ package info.thewordnerd.spiel.presenters
 
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
-import java.util.{List => JList}
+import java.util.{ArrayList, HashMap}
 import scala.collection.mutable.Map
 
+import scripting.AccessibilityEventHandler
 import utils.TTS
 
 abstract class Presenter {
 
   val tts = TTS
 
-  val handlers = Map[Tuple2[CharSequence, CharSequence], ((AccessibilityEvent) => Boolean)]()
+  val handlers = new HashMap[ArrayList[String], AccessibilityEventHandler]
 
-  def apply(e:AccessibilityEvent):Boolean = if(handlers.contains(e.getPackageName -> e.getClassName)) {
-    val rv = handlers(e.getPackageName -> e.getClassName)(e)
-    if(rv) Presenter.lastProcessed = e
-    rv
-  } else
-    false
-
+  def apply(e:AccessibilityEvent):Boolean = {
+    val k = new ArrayList[String]
+    k.add(e.getClassName.toString)
+    k.add(e.getPackageName.toString)
+    if(handlers.containsKey(k)) 
+      handlers.get(k).run(e)
+    else
+      false
+  }
 }
 
 // TODO: Ugly hack.
