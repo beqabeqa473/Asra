@@ -14,7 +14,7 @@ class SpielProject(info: ProjectInfo) extends AndroidProject(info) {
   """
 
   override def packageTask(signPackage: Boolean) = task {
-    super.packageTask(signPackage)
+    super.packageTask(signPackage).run
     FileUtilities.unzip(classesMinJarPath, outputDirectoryName, GlobFilter("org/mozilla/javascript/resources/*.properties"), log)
     for(p <- (outputDirectoryName/"org"**"*.properties").get) {
       (
