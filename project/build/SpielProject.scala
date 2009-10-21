@@ -13,16 +13,16 @@ class SpielProject(info: ProjectInfo) extends AndroidProject(info) {
     -keep public class org.mozilla.javascript.Token
   """
 
-  override def packageTask(signPackage: Boolean) = task {
-    super.packageTask(signPackage).run
+  override def aaptPackageTask = task {
+    super.aaptPackageTask.run
     FileUtilities.unzip(classesMinJarPath, outputDirectoryName, GlobFilter("org/mozilla/javascript/resources/*.properties"), log)
     for(p <- (outputDirectoryName/"org"**"*.properties").get) {
       (
         (new java.lang.ProcessBuilder(
           aaptPath.absolutePath,
           "add",
-          packageApkPath.absolutePath,
-          p.toString.replace(outputDirectoryName+"/", "")
+          resourcesApkPath.absolutePath,
+          p.toString.replace("./"+outputDirectoryName+"/", "")
         ))
         directory outputDirectoryName.asFile
       ) ! log
