@@ -51,8 +51,7 @@ object Scripter {
     val  scope = cx.initStandardObjects()
     val wrappedTTS = Context.javaToJS(TTS, scope)
     ScriptableObject.putProperty(scope, "tts", wrappedTTS)
-    val result = cx.evaluateString(scope, """print("Hello, world.");""", "<spiel>", 1, null)
-    Log.d(this.toString, Context.toString(result))
+    val result = cx.evaluateString(scope, js, "<spiel>", 1, null)
     Context.exit
     true
   }
