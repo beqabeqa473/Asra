@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
+
+  <!-- Main Spiel activity -->
+  <string name="aboutTab">About</string>
+  <string name="scriptingTab">Scripting</string>
+
+  <!-- View names -->
   <string name="button">button</string>
   <string name="editText">edit text</string>
   <string name="menu">menu</string>
   <string name="password">password</string>
   <string name="search">search</string>
+
 </resources>
