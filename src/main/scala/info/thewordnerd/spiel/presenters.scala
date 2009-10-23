@@ -49,13 +49,13 @@ object ViewFocused extends Presenter {
     if(e.getClassName.toString.contains("Button")) {
       if(e.getText.size > 0)
         tts.speak(e.getText, false)
-      tts.speak("button", false)
+      tts.speak(SpielService().getString(R.string.button), false)
     } else if(e.getClassName.toString.contains("Search"))
-      tts.speak("Search", false)
+      tts.speak(SpielService().getString(R.string.search), false)
     else if(e.getClassName.toString.contains("EditText")) {
       if(e.isPassword)
-        tts.speak("Password", false)
-      tts.speak("Edit text", false)
+        tts.speak(SpielService().getString(R.string.password), false)
+      tts.speak(SpielService().getString(R.string.editText), false)
     } else
       tts.speak(e.getText, false)
     Presenter.lastProcessed = e
@@ -100,7 +100,7 @@ object WindowStateChanged extends Presenter {
     if(super.apply(e)) return true
     val cn = e.getClassName.toString
     if(cn.contains("menu"))
-      tts.speak("Menu", false)
+      tts.speak(SpielService().getString(R.string.menu), false)
     else if(!e.isFullScreen)
       tts.speak(e.getText, false)
     Presenter.lastProcessed = e

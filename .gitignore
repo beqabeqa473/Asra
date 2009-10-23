@@ -8,3 +8,4 @@ project/boot
 project/plugins/project
 .jar
 .class
+src/main/java/info/thewordnerd/spiel/R.java

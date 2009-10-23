@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+  <string name="button">button</string>
+  <string name="editText">edit text</string>
+  <string name="menu">menu</string>
+  <string name="password">password</string>
+  <string name="search">search</string>
+</resources>

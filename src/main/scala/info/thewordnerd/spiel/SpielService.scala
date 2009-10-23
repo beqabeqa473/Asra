@@ -1,21 +1,23 @@
-package info.thewordnerd.spiel.services
+package info.thewordnerd.spiel
 
 import android.accessibilityservice._
 import android.content.Intent
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 
-import info.thewordnerd.spiel.presenters._
-import info.thewordnerd.spiel.scripting.Scripter
-import info.thewordnerd.spiel.utils.TTS
+import presenters._
+import scripting.Scripter
+import utils.TTS
 
-class Spiel extends AccessibilityService {
+class SpielService extends AccessibilityService {
 
   override def onCreate {
+    SpielService.instance = this
     TTS(this)
   }
 
   override def onDestroy {
+    SpielService.instance = null
   }
 
   override protected def onServiceConnected {
@@ -45,4 +47,10 @@ class Spiel extends AccessibilityService {
     }
   }
 
+}
+
+object SpielService {
+  var instance:SpielService = null
+
+  def apply() = instance
 }
