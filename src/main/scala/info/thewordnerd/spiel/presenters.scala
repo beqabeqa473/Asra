@@ -44,17 +44,20 @@ object ViewFocused extends Presenter {
   override def apply(e:AccessibilityEvent):Boolean = {
     if(super.apply(e)) return true
     // TODO: Ugly hack. More than 1 line in prev event = dialog, don't stop.
-    val flush = if(Presenter.lastProcessed != null && Presenter.lastProcessed.getText.size == 1) true else false
-    tts.speak(e.getText, flush)
-    if(e.getClassName.toString.contains("Button"))
-      tts.speak("Button", false)
-    else if(e.getClassName.toString.contains("Search"))
+    if(Presenter.lastProcessed != null && Presenter.lastProcessed.getText.size == 1)
+      tts.stop
+    if(e.getClassName.toString.contains("Button")) {
+      if(e.getText.size > 0)
+        tts.speak(e.getText, false)
+      tts.speak("button", false)
+    } else if(e.getClassName.toString.contains("Search"))
       tts.speak("Search", false)
     else if(e.getClassName.toString.contains("EditText")) {
       if(e.isPassword)
         tts.speak("Password", false)
       tts.speak("Edit text", false)
-    }
+    } else
+      tts.speak(e.getText, false)
     Presenter.lastProcessed = e
     true
   }
