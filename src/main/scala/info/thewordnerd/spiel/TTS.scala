@@ -1,4 +1,4 @@
-package info.thewordnerd.spiel.utils
+package info.thewordnerd.spiel
 
 import android.content.Context
 import android.speech.tts.TextToSpeech

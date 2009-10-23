@@ -6,8 +6,6 @@ import android.view.accessibility.AccessibilityEvent
 import org.mozilla.javascript.Context
 import org.mozilla.javascript.ScriptableObject
 
-import info.thewordnerd.spiel.utils.TTS
-
 trait AccessibilityEventHandler {
   def run(e:AccessibilityEvent):Boolean
 }
