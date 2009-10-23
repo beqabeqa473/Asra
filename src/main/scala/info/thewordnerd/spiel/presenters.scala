@@ -7,7 +7,7 @@ import scala.collection.mutable.Map
 
 import scripting.AccessibilityEventHandler
 
-abstract class Presenter {
+protected abstract class Presenter {
 
   val tts = TTS
 
@@ -25,7 +25,7 @@ abstract class Presenter {
 }
 
 // TODO: Ugly hack.
-object Presenter {
+private object Presenter {
   var lastProcessed:AccessibilityEvent = null
 }
 

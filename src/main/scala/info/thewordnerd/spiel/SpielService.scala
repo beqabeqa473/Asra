@@ -48,7 +48,7 @@ class SpielService extends AccessibilityService {
 
 }
 
-object SpielService {
+private object SpielService {
   var instance:SpielService = null
 
   def apply() = instance

@@ -5,7 +5,7 @@ import android.speech.tts.TextToSpeech
 import android.speech.tts.TextToSpeech._
 import android.util.Log
 
-object TTS extends OnInitListener {
+protected object TTS extends OnInitListener {
 
   private var tts:TextToSpeech = null
 
