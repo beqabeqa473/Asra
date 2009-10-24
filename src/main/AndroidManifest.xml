@@ -4,10 +4,21 @@
 
   <application android:label="Spiel">
 
+    <activity android:name=".activities.Main">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+    </activity>
+
+
     <service android:name=".SpielService">
       <intent-filter>
         <action android:name="android.accessibilityservice.AccessibilityService" />
       </intent-filter>
     </service>
+
+    <provider android:name=".scripts.Provider" android:authorities="info.thewordnerd.spiel.scripts.Provider"/>
+
   </application>
 </manifest>
