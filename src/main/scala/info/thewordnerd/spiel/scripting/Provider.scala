@@ -57,7 +57,7 @@ class Provider extends Content {
 
   })
 
-  on("scripts/#", "vnd.android.item/vnd.spiel.script", {
+  on("scripts/#", "vnd.android.cursor.item/vnd.spiel.script", {
 
     onQuery { (uri:Uri, projection:Array[String], selection:String, selectionArgs:Array[String], sortOrder:String) =>
       val qb = new SQLiteQueryBuilder
