@@ -12,44 +12,26 @@ trait AccessibilityEventHandler {
 
 object Scripter {
 
-  val js = """
-    var pkg = null;
-
-    function forPackage(pk) {
-      pkg = pk;
-    }
-
-    function forClass(cls, script) {
-      if(cls[0] == ".")
-        cls = pkg+cls;
-      key = new java.util.ArrayList();
-      key.add(pkg);
-      key.add(cls);
-      h = new info.thewordnerd.spiel.scripting.AccessibilityEventHandler(script);
-      for(e in script) {
-        if(e == "onViewClicked")
-          info.thewordnerd.spiel.presenters.ViewClicked.handlers.put(k, h);
-        else if(e == "onViewFocused")
-          info.thewordnerd.spiel.presenters.ViewFocused.handlers.put(k, h);
-        else if(e == "onViewSelected")
-          info.thewordnerd.spiel.presenters.ViewSelected.handlers.put(k, h);
-        else if(e == "onViewTextChanged")
-          info.thewordnerd.spiel.presenters.ViewTextChanged.handlers.put(k, h);
-        else if(e == "onWindowStateChanged")
-          info.thewordnerd.spiel.presenters.WindowStateChanged.handlers.put(k, h);
-        else
-          print("Invalid event: ",e);
-      }
-    }
-  """
-
   def apply() = {
     val cx = Context.enter
     cx.setOptimizationLevel(-1)
     val  scope = cx.initStandardObjects()
     val wrappedTTS = Context.javaToJS(TTS, scope)
     ScriptableObject.putProperty(scope, "tts", wrappedTTS)
-    val result = cx.evaluateString(scope, js, "<spiel>", 1, null)
+    def run(code:String, filename:String) = cx.evaluateString(scope, code, filename, 1, null)
+    val assets = SpielService().getAssets
+    def runScriptFile(f:String) = {
+      val is = assets.open("scripts/"+f)
+      val a = is.available
+      val b = new Array[Byte](a)
+      is.read(b)
+      val code = new String(b)
+      run(code, f)
+    }
+    runScriptFile("api.js")
+    for(fn <- assets.list("scripts")) {
+      if(fn != "api.js") runScriptFile(fn)
+    }
     Context.exit
     true
   }

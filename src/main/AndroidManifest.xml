@@ -11,14 +11,13 @@
       </intent-filter>
     </activity>
 
-
     <service android:name=".SpielService">
       <intent-filter>
         <action android:name="android.accessibilityservice.AccessibilityService" />
       </intent-filter>
     </service>
 
-    <provider android:name=".scripts.Provider" android:authorities="info.thewordnerd.spiel.scripts.Provider"/>
+    <!--<provider android:name=".scripts.Provider" android:authorities="info.thewordnerd.spiel.scripts.Provider"/>-->
 
   </application>
 </manifest>

@@ -2,7 +2,7 @@ package info.thewordnerd.spiel.presenters
 
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
-import java.util.{ArrayList, HashMap}
+import java.util.HashMap
 import scala.collection.mutable.Map
 
 import scripting.AccessibilityEventHandler
@@ -11,12 +11,12 @@ protected abstract class Presenter {
 
   val tts = TTS
 
-  val handlers = new HashMap[ArrayList[String], AccessibilityEventHandler]
+  val handlers = new HashMap[Array[String], AccessibilityEventHandler]
 
   def apply(e:AccessibilityEvent):Boolean = {
-    val k = new ArrayList[String]
-    k.add(e.getClassName.toString)
-    k.add(e.getPackageName.toString)
+    val k = new Array[String](2)
+    k(0) = e.getClassName.toString
+    k(1) = e.getPackageName.toString
     if(handlers.containsKey(k)) 
       handlers.get(k).run(e)
     else
