@@ -9,6 +9,7 @@ class SpielProject(info: ProjectInfo) extends AndroidProject(info) {
 
   override def proguardOption = """
     -adaptresourcefilenames **.properties
+    -keep class * extends org.mozilla.javascript.Scriptable
     -keep class * extends org.mozilla.javascript.VMBridge
     -keep public class org.mozilla.javascript.Token
   """
