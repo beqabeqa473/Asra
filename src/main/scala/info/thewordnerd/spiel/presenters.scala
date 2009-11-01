@@ -2,25 +2,35 @@ package info.thewordnerd.spiel.presenters
 
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
-import java.util.HashMap
 import scala.collection.mutable.Map
 
-import scripting.AccessibilityEventHandler
+import org.mozilla.javascript.{Context, Function}
+
+import scripting.Scripter
 
 protected abstract class Presenter {
 
   val tts = TTS
 
-  val handlers = new HashMap[Array[String], AccessibilityEventHandler]
+  val handlers = Map[Tuple2[String, String], Function]()
+
+  def registerHandler(pkg:String, cls:String, f:Function) {
+    Log.d(this.toString, "Registering handler for "+(pkg -> cls))
+    handlers(pkg -> cls) = f
+  }
 
   def apply(e:AccessibilityEvent):Boolean = {
-    val k = new Array[String](2)
-    k(0) = e.getClassName.toString
-    k(1) = e.getPackageName.toString
-    if(handlers.containsKey(k)) 
-      handlers.get(k).run(e)
-    else
-      false
+    val pkg = e.getPackageName.toString
+    val cls = e.getClassName.toString
+    handlers.get(pkg -> cls) match {
+      case Some(fn) =>
+        var args = new Array[Object](1)
+        args(0) = e
+        Context.toBoolean(fn.call(Scripter.context, Scripter.scope, Scripter.scope, args))
+      case None =>
+        Log.d(this.toString, "No match found for event.")
+        false
+    }
   }
 }
 
@@ -60,6 +70,7 @@ object ViewFocused extends Presenter {
     Presenter.lastProcessed = e
     true
   }
+
 }
 
 object ViewSelected extends Presenter {

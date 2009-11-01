@@ -7,23 +7,18 @@ function forPkg(pk) {
 function forCls(cls, scr) {
   if(cls[0] == ".")
     cls = pkg+cls;
-  key = [pkg, cls];
-  var spiel = JavaImporter();
-  /*spiel.importPackage(Packages.info.thewordnerd.spiel.scripting);
-  spiel.importPackage(Packages.info.thewordnerd.spiel.presenters);
   for(e in scr) {
-    h = {run: scr[k]};
     if(e == "onViewClicked")
-      ViewClicked.handlers.put(k, new AccessibilityEventHandler(h));
+      spiel.ViewClicked.handlers.put(k, scr[e]);
     else if(e == "onViewFocused")
-      ViewFocused.handlers.put(k, new AccessibilityEventHandler(h));
+      ViewFocused.registerHandler(pkg, cls, scr[e]);
     else if(e == "onViewSelected")
-      ViewSelected.handlers.put(k, new AccessibilityEventHandler(h));
+      spiel.ViewSelected.handlers.put(k, scr[e]);
     else if(e == "onViewTextChanged")
-      ViewTextChanged.handlers.put(k, new AccessibilityEventHandler(h));
+      spiel.ViewTextChanged.handlers.put(k, scr[e]);
     else if(e == "onWindowStateChanged")
-      WindowStateChanged.handlers.put(k, new AccessibilityEventHandler(h));
+      spiel.WindowStateChanged.handlers.put(k, scr[e]);
     else
       print("Invalid event: ",e);
-  }*/
+  }
 }

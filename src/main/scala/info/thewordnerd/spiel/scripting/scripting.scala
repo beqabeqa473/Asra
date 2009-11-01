@@ -3,22 +3,34 @@ package info.thewordnerd.spiel.scripting
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 
-import org.mozilla.javascript.Context
-import org.mozilla.javascript.ScriptableObject
+import org.mozilla.javascript.{Context, RhinoException, ScriptableObject}
 
-trait AccessibilityEventHandler {
-  def run(e:AccessibilityEvent):Boolean
-}
+import presenters._
 
 object Scripter {
 
+  private var myCx:Context = null
+  private var myScope:ScriptableObject = null
+
+  def context = myCx
+  def scope = myScope
+
   def apply() = {
-    val cx = Context.enter
-    cx.setOptimizationLevel(-1)
-    val  scope = cx.initStandardObjects()
-    val wrappedTTS = Context.javaToJS(TTS, scope)
-    ScriptableObject.putProperty(scope, "tts", wrappedTTS)
-    def run(code:String, filename:String) = cx.evaluateString(scope, code, filename, 1, null)
+    myCx = Context.enter
+    myCx.setOptimizationLevel(-1)
+    myScope = myCx.initStandardObjects()
+    val wrappedTTS = Context.javaToJS(TTS, myScope)
+    ScriptableObject.putProperty(myScope, "TTS", wrappedTTS)
+
+    ScriptableObject.putProperty(myScope, "ViewFocused", Context.javaToJS(ViewFocused, myScope))
+
+    def run(code:String, filename:String) = try {
+      myCx.evaluateString(myScope, code, filename, 1, null)
+    } catch {
+      case e:RhinoException => Log.e(this.toString, e.getMessage)
+      case e => Log.e(this.toString, e.getStackTrace.toString)
+    }
+
     val assets = SpielService().getAssets
     def runScriptFile(f:String) = {
       val is = assets.open("scripts/"+f)

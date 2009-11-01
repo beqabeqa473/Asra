@@ -4,19 +4,26 @@ import java.io.File
 
 class SpielProject(info: ProjectInfo) extends AndroidProject(info) {
   override def androidPlatformName = "android-1.6"
+  override def androidSdkPath = Path.fromFile("/home/nolan/lib/android")
 
   val rhino = "rhino" % "js" % "1.7R2"
 
   override def proguardOption = """
-    -adaptresourcefilenames **.properties
-    -keep class * extends org.mozilla.javascript.Scriptable
-    -keep class * extends org.mozilla.javascript.VMBridge
-    -keep public class org.mozilla.javascript.Token
+    -keep class info.thewordnerd.spiel.presenters.Presenter
+    -keepclassmembers class info.thewordnerd.spiel.presenters.Presenter {
+      public void registerHandler(java.lang.String, java.lang.String, org.mozilla.javascript.Function);
+    }
+    -printseeds keep.txt
   """
+
+  val rhinoPath = Path.fromFile("lib_managed/compile/js-1.7R2.jar")
+  override def proguardExclude = super.proguardExclude+++rhinoPath
+
+  override def dxTask = execTask {<x> {dxPath.absolutePath} --dex --output={classesDexPath.absolutePath} {classesMinJarPath.absolutePath} {rhinoPath.absolutePath}</x> }
 
   override def aaptPackageTask = task {
     super.aaptPackageTask.run
-    FileUtilities.unzip(classesMinJarPath, outputDirectoryName, GlobFilter("org/mozilla/javascript/resources/*.properties"), log)
+    FileUtilities.unzip(rhinoPath, outputDirectoryName, GlobFilter("org/mozilla/javascript/resources/*.properties"), log)
     for(p <- (outputDirectoryName/"org"**"*.properties").get) {
       (
         (new java.lang.ProcessBuilder(
