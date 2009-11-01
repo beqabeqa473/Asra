@@ -35,7 +35,6 @@ class SpielService extends AccessibilityService {
 
   override def onAccessibilityEvent(event:AccessibilityEvent) = {
     import AccessibilityEvent._
-    Log.d(this.toString, "Got AccessibilityEvent: "+event.toString)
     event.getEventType match {
       case TYPE_NOTIFICATION_STATE_CHANGED => NotificationStateChanged(event)
       case TYPE_VIEW_CLICKED => ViewClicked(event)
@@ -43,7 +42,7 @@ class SpielService extends AccessibilityService {
       case TYPE_VIEW_SELECTED => ViewSelected(event)
       case TYPE_VIEW_TEXT_CHANGED => ViewTextChanged(event)
       case TYPE_WINDOW_STATE_CHANGED => WindowStateChanged(event)
-      case _ => Log.d(this.toString, "Unhandled event")
+      case e => Log.d(this.toString, "Unhandled event: "+e.toString)
     }
   }
 

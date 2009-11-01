@@ -20,6 +20,7 @@ protected abstract class Presenter {
   }
 
   def apply(e:AccessibilityEvent):Boolean = {
+    Log.d(this.toString, e.toString)
     val pkg = e.getPackageName.toString
     val cls = e.getClassName.toString
     handlers.get(pkg -> cls) match {
