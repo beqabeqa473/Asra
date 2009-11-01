@@ -37,6 +37,7 @@ class SpielService extends AccessibilityService {
     import AccessibilityEvent._
     Log.d(this.toString, "Got AccessibilityEvent: "+event.toString)
     event.getEventType match {
+      case TYPE_NOTIFICATION_STATE_CHANGED => NotificationStateChanged(event)
       case TYPE_VIEW_CLICKED => ViewClicked(event)
       case TYPE_VIEW_FOCUSED => ViewFocused(event)
       case TYPE_VIEW_SELECTED => ViewSelected(event)

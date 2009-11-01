@@ -8,16 +8,18 @@ function forCls(cls, scr) {
   if(cls[0] == ".")
     cls = pkg+cls;
   for(e in scr) {
-    if(e == "onViewClicked")
-      spiel.ViewClicked.handlers.put(k, scr[e]);
+    if(e == "onNotificationStateChanged")
+      NotificationStateChanged.registerHandler(pkg, cls, scr[e]);
+    else if(e == "onViewClicked")
+      ViewClicked.registerHandler(pkg, cls, scr[e]);
     else if(e == "onViewFocused")
       ViewFocused.registerHandler(pkg, cls, scr[e]);
     else if(e == "onViewSelected")
-      spiel.ViewSelected.handlers.put(k, scr[e]);
+      ViewSelected.registerHandler(pkg, cls, scr[e]);
     else if(e == "onViewTextChanged")
-      spiel.ViewTextChanged.handlers.put(k, scr[e]);
+      ViewTextChanged.registerHandler(pkg, cls, scr[e]);
     else if(e == "onWindowStateChanged")
-      spiel.WindowStateChanged.handlers.put(k, scr[e]);
+      WindowStateChanged.registerHandler(pkg, cls, scr[e]);
     else
       print("Invalid event: ",e);
   }

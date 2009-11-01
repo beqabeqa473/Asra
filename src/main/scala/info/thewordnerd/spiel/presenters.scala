@@ -39,6 +39,16 @@ private object Presenter {
   var lastProcessed:AccessibilityEvent = null
 }
 
+object NotificationStateChanged extends Presenter {
+  override def apply(e:AccessibilityEvent):Boolean = {
+    if(super.apply(e)) return true
+    if(e.getText.size > 0)
+      tts.speak(e.getText, true)
+    Presenter.lastProcessed = e
+    true
+  }
+}
+
 object ViewClicked extends Presenter {
   override def apply(e:AccessibilityEvent):Boolean = {
     if(super.apply(e)) return true

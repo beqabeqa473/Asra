@@ -22,7 +22,12 @@ object Scripter {
     val wrappedTTS = Context.javaToJS(TTS, myScope)
     ScriptableObject.putProperty(myScope, "TTS", wrappedTTS)
 
+    ScriptableObject.putProperty(myScope, "NotificationStateChanged", Context.javaToJS(NotificationStateChanged, myScope))
+    ScriptableObject.putProperty(myScope, "ViewClicked", Context.javaToJS(ViewClicked, myScope))
     ScriptableObject.putProperty(myScope, "ViewFocused", Context.javaToJS(ViewFocused, myScope))
+    ScriptableObject.putProperty(myScope, "ViewSelected", Context.javaToJS(ViewSelected, myScope))
+    ScriptableObject.putProperty(myScope, "ViewTextChanged", Context.javaToJS(ViewTextChanged, myScope))
+    ScriptableObject.putProperty(myScope, "WindowStateChanged", Context.javaToJS(WindowStateChanged, myScope))
 
     def run(code:String, filename:String) = try {
       myCx.evaluateString(myScope, code, filename, 1, null)
