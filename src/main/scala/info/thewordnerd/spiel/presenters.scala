@@ -66,15 +66,22 @@ object ViewFocused extends Presenter {
     // TODO: Ugly hack. More than 1 line in prev event = dialog, don't stop.
     if(Presenter.lastProcessed != null && Presenter.lastProcessed.getText.size == 1)
       tts.stop
-    if(e.getClassName.toString.contains("Button")) {
+    if(e.getClassName.toString.contains("RadioButton")) {
+      if(e.getText.size > 0)
+        tts.speak(e.getText, false)
+      tts.speak(SpielService().getString(R.string.radioButton), false)
+    } else if(e.getClassName.toString.contains("Button")) {
       if(e.getText.size > 0)
         tts.speak(e.getText, false)
       tts.speak(SpielService().getString(R.string.button), false)
-    } else if(e.getClassName.toString.contains("Search"))
+    } else if(e.getClassName.toString.contains("Search")) {
+      tts.speak(e.getText, false)
       tts.speak(SpielService().getString(R.string.search), false)
-    else if(e.getClassName.toString.contains("EditText")) {
+    } else if(e.getClassName.toString.contains("EditText")) {
       if(e.isPassword)
         tts.speak(SpielService().getString(R.string.password), false)
+      else
+        tts.speak(e.getText, false)
       tts.speak(SpielService().getString(R.string.editText), false)
     } else
       tts.speak(e.getText, false)
