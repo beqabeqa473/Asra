@@ -63,8 +63,9 @@ object ViewClicked extends Presenter {
 object ViewFocused extends Presenter {
   override def apply(e:AccessibilityEvent):Boolean = {
     if(super.apply(e)) return true
-    // TODO: Ugly hack. More than 1 line in prev event = dialog, don't stop.
-    if(Presenter.lastProcessed != null && Presenter.lastProcessed.getText.size == 1)
+    if(e.getClassName.toString.contains("TabWidget")) return true
+    // Ugly hack to not interrupt dialog box speech when a control is focused.
+    if(Presenter.lastProcessed != null && Presenter.lastProcessed.getClassName != null && !(Presenter.lastProcessed.getClassName.toString.contains("View") && !e.getClassName.toString.contains("View")))
       tts.stop
     if(e.getClassName.toString.contains("RadioButton")) {
       if(e.getText.size > 0)
@@ -129,7 +130,7 @@ object WindowStateChanged extends Presenter {
     val cn = e.getClassName.toString
     if(cn.contains("menu"))
       tts.speak(SpielService().getString(R.string.menu), false)
-    else if(!e.isFullScreen)
+    else if(!e.getClassName.toString.contains("Dialog"))
       tts.speak(e.getText, false)
     Presenter.lastProcessed = e
     true
