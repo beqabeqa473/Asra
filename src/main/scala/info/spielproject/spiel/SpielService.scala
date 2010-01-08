@@ -1,4 +1,4 @@
-package info.thewordnerd.spiel
+package info.spielproject.spiel
 
 import android.accessibilityservice._
 import android.content.Intent

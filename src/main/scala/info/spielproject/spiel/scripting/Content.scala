@@ -1,4 +1,4 @@
-package info.thewordnerd.spiel.scripting
+package info.spielproject.spiel.scripting
 
 import android.content.{ContentProvider, ContentValues, Context, UriMatcher}
 import android.database.{Cursor, SQLException}
@@ -10,13 +10,12 @@ abstract class Content extends ContentProvider {
   def databaseVersion:Int
 
   def authority = this.getClass.toString
-  def uri:Uri
 
   def createSQL:String
   def onUpgradeDatabase(db:SQLiteDatabase, oldVer:Int, newVer:Int)
 
-  val uriMatcher = new UriMatcher(UriMatcher.NO_MATCH)
-  def addUri(path:String, matchTo:Int) = uriMatcher.addURI(authority, path, matchTo)
+  protected val uriMatcher = new UriMatcher(UriMatcher.NO_MATCH)
+  protected def addUri(path:String, matchTo:Int) = uriMatcher.addURI(authority, path, matchTo)
 
   private var matchWith:Int = -1
 

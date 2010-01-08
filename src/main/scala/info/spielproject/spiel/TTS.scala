@@ -1,4 +1,4 @@
-package info.thewordnerd.spiel
+package info.spielproject.spiel
 
 import android.content.Context
 import android.speech.tts.TextToSpeech
@@ -25,9 +25,7 @@ protected object TTS extends OnInitListener {
         tts.speak("blank", mode, null)
       else
         tts.speak(t, mode, null)
-    case t:java.util.List[String] =>
-      val str = t.toString
-      speak(str.substring(1, str.length-1), flush)
+    case t:java.util.List[CharSequence] => speak(Util.toFlatString(t), flush)
     case _ => Log.e(this.toString, "Invalid text format")
   }
 

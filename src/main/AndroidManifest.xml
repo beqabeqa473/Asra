@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="info.thewordnerd.spiel">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="info.spielproject.spiel">
   <uses-sdk android:minSdkVersion="4"/>
 
   <application android:label="Spiel">
@@ -17,7 +17,7 @@
       </intent-filter>
     </service>
 
-    <!--<provider android:name=".scripts.Provider" android:authorities="info.thewordnerd.spiel.scripts.Provider"/>-->
+    <!--<provider android:name=".scripts.Provider" android:authorities="info.spielproject.spiel.scripts.Provider"/>-->
 
   </application>
 </manifest>

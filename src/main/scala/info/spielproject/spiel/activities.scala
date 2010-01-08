@@ -1,4 +1,4 @@
-package info.thewordnerd.spiel.activities
+package info.spielproject.spiel.activities
 
 import android.app.TabActivity
 import android.content.Intent

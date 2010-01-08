@@ -11,6 +11,7 @@
   <string name="editText">edit text</string>
   <string name="menu">menu</string>
   <string name="password">password</string>
+  <string name="radioButton">radio button</string>
   <string name="search">search</string>
 
 </resources>

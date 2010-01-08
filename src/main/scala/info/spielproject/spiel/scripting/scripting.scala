@@ -1,4 +1,4 @@
-package info.thewordnerd.spiel.scripting
+package info.spielproject.spiel.scripting
 
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent

@@ -1,4 +1,4 @@
-package info.thewordnerd.spiel.presenters
+package info.spielproject.spiel.presenters
 
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
@@ -29,22 +29,35 @@ protected abstract class Presenter {
         args(0) = e
         Context.toBoolean(fn.call(Scripter.context, Scripter.scope, Scripter.scope, args))
       case None =>
-        Log.d(this.toString, "No match found for event.")
+        Log.d(this.toString, "No script found for event.")
         false
     }
+  }
+
+  protected def accessibleTextFor(e:AccessibilityEvent) = {
+    var str = ""
+    if(e.getContentDescription != null) {
+      str += e.getContentDescription
+      if(e.getText.size > 0)
+        str += ": "
+    }
+    if(e.getText.size > 0)
+      str += Util.toFlatString(e.getText)
+    str
   }
 }
 
 // TODO: Ugly hack.
-private object Presenter {
+object Presenter {
   var lastProcessed:AccessibilityEvent = null
 }
 
 object NotificationStateChanged extends Presenter {
   override def apply(e:AccessibilityEvent):Boolean = {
     if(super.apply(e)) return true
-    if(e.getText.size > 0)
-      tts.speak(e.getText, true)
+    val at = accessibleTextFor(e)
+    if(at.length > 0)
+      tts.speak(at, true)
     Presenter.lastProcessed = e
     true
   }
@@ -53,8 +66,9 @@ object NotificationStateChanged extends Presenter {
 object ViewClicked extends Presenter {
   override def apply(e:AccessibilityEvent):Boolean = {
     if(super.apply(e)) return true
-    if(e.getText.size > 0)
-      tts.speak(e.getText, true)
+    val at = accessibleTextFor(e)
+    if(at.length > 0)
+      tts.speak(at, true)
     Presenter.lastProcessed = e
     true
   }
@@ -67,36 +81,37 @@ object ViewFocused extends Presenter {
     // Ugly hack to not interrupt dialog box speech when a control is focused.
     if(Presenter.lastProcessed != null && Presenter.lastProcessed.getClassName != null && !(Presenter.lastProcessed.getClassName.toString.contains("View") && !e.getClassName.toString.contains("View")))
       tts.stop
+    val at = accessibleTextFor(e)
     if(e.getClassName.toString.contains("RadioButton")) {
-      if(e.getText.size > 0)
-        tts.speak(e.getText, false)
+      if(at.length > 0)
+        tts.speak(at, false)
       tts.speak(SpielService().getString(R.string.radioButton), false)
     } else if(e.getClassName.toString.contains("Button")) {
-      if(e.getText.size > 0)
-        tts.speak(e.getText, false)
+      if(at.length > 0)
+        tts.speak(at, false)
       tts.speak(SpielService().getString(R.string.button), false)
     } else if(e.getClassName.toString.contains("Search")) {
-      tts.speak(e.getText, false)
+      tts.speak(at, false)
       tts.speak(SpielService().getString(R.string.search), false)
     } else if(e.getClassName.toString.contains("EditText")) {
       if(e.isPassword)
         tts.speak(SpielService().getString(R.string.password), false)
       else
-        tts.speak(e.getText, false)
+        tts.speak(at, false)
       tts.speak(SpielService().getString(R.string.editText), false)
     } else
-      tts.speak(e.getText, false)
+      tts.speak(at, false)
     Presenter.lastProcessed = e
     true
   }
-
 }
 
 object ViewSelected extends Presenter {
   override def apply(e:AccessibilityEvent):Boolean = {
     if(super.apply(e)) return true
-    if(e.getText.size > 0)
-      tts.speak(e.getText, true)
+    val at = accessibleTextFor(e)
+    if(at.length > 0)
+      tts.speak(at, true)
     Presenter.lastProcessed = e
     true
   }
@@ -130,8 +145,8 @@ object WindowStateChanged extends Presenter {
     val cn = e.getClassName.toString
     if(cn.contains("menu"))
       tts.speak(SpielService().getString(R.string.menu), false)
-    else if(!e.getClassName.toString.contains("Dialog"))
-      tts.speak(e.getText, false)
+    else
+      tts.speak(accessibleTextFor(e), false)
     Presenter.lastProcessed = e
     true
   }

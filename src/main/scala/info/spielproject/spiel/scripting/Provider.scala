@@ -1,13 +1,15 @@
-package info.thewordnerd.spiel.scripting
+package info.spielproject.spiel.scripting
 
 import android.content.{ContentValues, ContentUris}
 import android.database.{Cursor, SQLException}
 import android.database.sqlite.{SQLiteDatabase, SQLiteQueryBuilder}
 import android.net.Uri;
 
-class Provider extends Content {
+object Provider {
+  val URI = Uri.parse("content://"+Provider.getClass.toString+"/scripts")
+}
 
-  override def uri = Uri.parse("content://"+authority+"/scripts")
+class Provider extends Content {
 
   override def databaseName = "scripts.db"
   override def databaseVersion = 1
