@@ -9,11 +9,10 @@ class SpielProject(info: ProjectInfo) extends AndroidProject(info) {
   val rhino = "rhino" % "js" % "1.7R2"
 
   override def proguardOption = """
-    -keep class info.thewordnerd.spiel.presenters.Presenter
-    -keepclassmembers class info.thewordnerd.spiel.presenters.Presenter {
+    -keep class info.spielproject.spiel.presenters.Presenter
+    -keepclassmembers class info.spielproject.spiel.presenters.Presenter {
       public void registerHandler(java.lang.String, java.lang.String, org.mozilla.javascript.Function);
     }
-    -printseeds keep.txt
   """
 
   val rhinoPath = Path.fromFile("lib_managed/compile/js-1.7R2.jar")
