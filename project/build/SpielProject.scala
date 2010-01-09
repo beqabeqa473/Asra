@@ -3,8 +3,8 @@ import Process._
 import java.io.File
 
 class SpielProject(info: ProjectInfo) extends AndroidProject(info) {
-  override def androidPlatformName = "android-1.6"
-  override def androidSdkPath = Path.fromFile("/home/nolan/lib/android")
+
+  override def androidPlatformName = "android-2.0.1"
 
   val rhino = "rhino" % "js" % "1.7R2"
 
