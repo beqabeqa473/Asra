@@ -6,6 +6,6 @@ lib_managed
 src_managed
 project/boot
 project/plugins/project
-.jar
-.class
-src/main/java/info/thewordnerd/spiel/R.java
+*.jar
+*.class
+src/main/java/info/spielproject/spiel/R.java
