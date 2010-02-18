@@ -4,18 +4,15 @@ import java.io.File
 
 class SpielProject(info: ProjectInfo) extends AndroidProject(info) {
 
-  override def androidPlatformName = "android-2.0.1"
+  override def androidPlatformName = "android-2.1"
 
   val rhino = "rhino" % "js" % "1.7R2"
 
   override def proguardOption = """
-    -keep class info.spielproject.spiel.presenters.Presenter
-    -keepclassmembers class info.spielproject.spiel.presenters.Presenter {
-      public void registerHandler(java.lang.String, java.lang.String, org.mozilla.javascript.Function);
-    }
+    -keep class * extends info.spielproject.spiel.handlers.Handler
   """
 
-  val rhinoPath = Path.fromFile("lib_managed/compile/js-1.7R2.jar")
+  val rhinoPath = Path.fromFile("lib_managed/scala_2.7.7/compile/js-1.7R2.jar")
   override def proguardExclude = super.proguardExclude+++rhinoPath
 
   override def dxTask = execTask {<x> {dxPath.absolutePath} --dex --output={classesDexPath.absolutePath} {classesMinJarPath.absolutePath} {rhinoPath.absolutePath}</x> }
