@@ -15,12 +15,13 @@ protected object TTS extends OnInitListener {
 
   def onInit(i:Int) {
     tts.setLanguage(java.util.Locale.getDefault)
+    speak("Welcome to spiel!", true)
   }
 
   def speak(text:Any, flush:Boolean):Unit = text match {
     case t:String =>
       val mode = if(flush) QUEUE_FLUSH else QUEUE_ADD
-      Log.d(this.toString, "Speaking: "+t)
+      Log.d(this.toString, "Speaking: "+t+": "+flush)
       if(t.length == 0)
         tts.speak("blank", mode, null)
       else

@@ -6,10 +6,13 @@ class SpielProject(info: ProjectInfo) extends AndroidProject(info) {
 
   override def androidPlatformName = "android-2.1"
 
-  val rhino = "rhino" % "js" % "1.7R2"
+  val rhino = "rhino" % "js" % "1.7R2" from "http://spielproject.info/attachments/download/3/js.jar"
 
   override def proguardOption = """
-    -keep class * extends info.spielproject.spiel.handlers.Handler
+    -keep class info.spielproject.spiel.scripting.Scripter {
+      public void registerHandlerFor(java.lang.String, java.lang.String, java.lang.Object);
+    }
+    -keep class info.spielproject.spiel.scripting.Scripter
   """
 
   val rhinoPath = Path.fromFile("lib_managed/scala_2.7.7/compile/js-1.7R2.jar")

@@ -1,7 +1,8 @@
-forPkg("com.android.mms");
-forCls("android.app.Notification", {
+forPackage("com.android.mms");
+forClass("android.app.Notification", {
   onNotificationStateChanged: function() {
-    TTS.speak("Incoming SMS", false);
+    speak("Incoming SMS");
+    nextShouldNotInterrupt();
     return false;
   }
 });

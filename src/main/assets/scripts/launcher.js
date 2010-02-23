@@ -1,7 +1,7 @@
-forPkg("com.android.launcher");
-forCls(".HandleView", {
+forPackage("com.android.launcher");
+forClass(".HandleView", {
   onViewFocused: function() {
-    TTS.speak("drawer handle", false);
+    speak("drawer handle");
     return true;
   }
 });

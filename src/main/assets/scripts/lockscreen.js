@@ -1,13 +1,13 @@
-forPkg("android");
-forCls("com.android.internal.policy.impl.LockScreen", {
+forPackage("android");
+forClass("com.android.internal.policy.impl.LockScreen", {
   onViewFocused: function() {
     return true;
   }
 });
 
-forCls("com.android.internal.policy.impl.KeyguardViewManager$KeyguardViewHost", {
+forClass("com.android.internal.policy.impl.KeyguardViewManager$KeyguardViewHost", {
   onWindowStateChanged: function() {
-    TTS.speak("Locked, press menu to unlock.", true);
+    speak("Locked, press menu to unlock.");
     return true;
   }
 });

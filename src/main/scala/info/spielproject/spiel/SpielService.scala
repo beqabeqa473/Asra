@@ -5,7 +5,7 @@ import android.content.Intent
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 
-import presenters._
+import handlers.Handler
 import scripting.Scripter
 
 class SpielService extends AccessibilityService {
@@ -15,9 +15,7 @@ class SpielService extends AccessibilityService {
     TTS(this)
   }
 
-  override def onDestroy {
-    SpielService.instance = null
-  }
+  override def onDestroy = SpielService.instance = null
 
   override protected def onServiceConnected {
     val info = new AccessibilityServiceInfo()
@@ -27,24 +25,13 @@ class SpielService extends AccessibilityService {
     info.eventTypes = TYPES_ALL_MASK
     setServiceInfo(info)
     Scripter()
+    Handler.registered.foreach { h => h.init }
     Log.d(this.toString, "Spiel is configured.")
   }
 
-  override def onInterrupt {
-  }
+  override def onInterrupt = TTS.stop
 
-  override def onAccessibilityEvent(event:AccessibilityEvent) = {
-    import AccessibilityEvent._
-    event.getEventType match {
-      case TYPE_NOTIFICATION_STATE_CHANGED => NotificationStateChanged(event)
-      case TYPE_VIEW_CLICKED => ViewClicked(event)
-      case TYPE_VIEW_FOCUSED => ViewFocused(event)
-      case TYPE_VIEW_SELECTED => ViewSelected(event)
-      case TYPE_VIEW_TEXT_CHANGED => ViewTextChanged(event)
-      case TYPE_WINDOW_STATE_CHANGED => WindowStateChanged(event)
-      case e => Log.d(this.toString, "Unhandled event: "+e.toString)
-    }
-  }
+  override def onAccessibilityEvent(event:AccessibilityEvent) = Handler(event)
 
 }
 
