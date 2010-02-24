@@ -6,6 +6,8 @@ class SpielProject(info: ProjectInfo) extends AndroidProject(info) {
 
   override def androidPlatformName = "android-2.1"
 
+  val tts = "google" % "tts" % "2.1_rc01" from "http://eyes-free.googlecode.com/files/TTS_library_stub_2.1_rc01.jar"
+
   val rhino = "rhino" % "js" % "1.7R2" from "http://spielproject.info/attachments/download/3/js.jar"
 
   override def proguardOption = """

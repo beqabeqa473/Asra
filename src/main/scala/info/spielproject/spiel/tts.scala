@@ -1,16 +1,32 @@
 package info.spielproject.spiel.tts
 
 import android.content.Context
-import android.speech.tts.TextToSpeech
-import TextToSpeech._
+import com.google.tts.TextToSpeechBeta
+import TextToSpeechBeta._
 import android.util.Log
 import scala.actors.Actor._
 
-private class Speaker(context:Context) extends OnInitListener with OnUtteranceCompletedListener {
+private abstract class Speaker(context:Context) {
 
-  private val tts = new TextToSpeech(context, this)
+  def speak(text:String, flush:Boolean)
 
-  def onInit(i:Int) {
+  def speak(list:java.util.List[String], flush:Boolean):Unit = List.fromArray(list.toArray).foreach { i =>
+    speak(i.asInstanceOf[String], flush)
+  }
+
+  def stop
+
+  def speakEvery(seconds:Int, text:String):String
+
+  def stopRepeatedSpeech(key:String):Unit
+
+}
+
+private class GenericSpeaker(context:Context) extends Speaker(context) with OnInitListener with OnUtteranceCompletedListener {
+
+  private val tts = new TextToSpeechBeta(context, this)
+
+  def onInit(status:Int, version:Int) {
     tts.setLanguage(java.util.Locale.getDefault)
     tts.setOnUtteranceCompletedListener(this)
     speak("Welcome to spiel!", true)
@@ -36,10 +52,6 @@ private class Speaker(context:Context) extends OnInitListener with OnUtteranceCo
       tts.setPitch(1)
     } else
       tts.speak(text, mode, null)
-  }
-
-  def speak(list:java.util.List[String], flush:Boolean):Unit = List.fromArray(list.toArray).foreach { i =>
-    speak(i.asInstanceOf[String], flush)
   }
 
   def stop = tts.stop
@@ -75,7 +87,7 @@ object TTS {
   private var speaker:Speaker = null
 
   def apply(context:Context) {
-    speaker = new Speaker(context)
+    speaker = new GenericSpeaker(context)
   }
 
   def speak(text:String, flush:Boolean) = speaker.speak(text, flush)
