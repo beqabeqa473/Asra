@@ -4,6 +4,8 @@ import android.content.Context
 import android.telephony.{PhoneStateListener, TelephonyManager}
 import android.util.Log
 
+import info.spielproject.spiel.tts.TTS
+
 private class Listener extends PhoneStateListener {
 
   Log.d("spiel", "Initializing.")

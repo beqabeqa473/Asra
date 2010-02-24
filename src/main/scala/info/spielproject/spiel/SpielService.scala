@@ -7,6 +7,7 @@ import android.view.accessibility.AccessibilityEvent
 
 import handlers.Handler
 import scripting.Scripter
+import tts.TTS
 
 class SpielService extends AccessibilityService {
 

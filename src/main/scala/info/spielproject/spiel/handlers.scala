@@ -7,6 +7,7 @@ import scala.collection.mutable.Map
 import org.mozilla.javascript.{Context, Function}
 
 import scripting.Scripter
+import tts.TTS
 
 abstract class Callback {
   def apply(e:AccessibilityEvent):Boolean
