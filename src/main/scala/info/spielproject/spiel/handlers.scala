@@ -56,6 +56,7 @@ object Handler {
   }
 
   def handle(e:AccessibilityEvent) {
+    Log.d("spiel", "Event "+e.toString)
     nextShouldNotInterruptCalled = false
     var continue = true 
     var alreadyCalled = List[Handler]()
@@ -65,6 +66,7 @@ object Handler {
         if(alreadyCalled.contains(h))
           true
         else {
+          Log.d("spiel", "Dispatching to "+pkg+":"+cls)
           alreadyCalled ::= h
           !h(e)
         }
@@ -84,8 +86,11 @@ object Handler {
           if(v._1._2 != "" && continue) {
             try {
               val testClass2 = service.getClassLoader.loadClass(v._1._2)
-              //Log.d(this.getClass.toString, testClass2.toString+".isAssignableFrom("+testClass+"): "+testClass2.isAssignableFrom(testClass))
-              if(testClass2.isAssignableFrom(testClass))
+              Log.d(this.getClass.toString, testClass2.toString+".isAssignableFrom("+testClass+"): "+testClass2.isAssignableFrom(testClass))
+              if(
+                testClass2.isAssignableFrom(testClass) && 
+                (v._1._1 == "" || e.getPackageName == v._1._1)
+              )
                 continue = continue && dispatchTo(v._1._1, v._1._2)
             } catch {
               case _ =>
