@@ -39,7 +39,11 @@ protected object TTS extends OnInitListener {
       Log.d(this.toString, "Speaking: "+t+": "+flush)
       if(t.length == 0)
         tts.speak("blank", mode, null)
-      else
+      else if(t.length == 1 && t >= "A" && t <= "Z") {
+        tts.setPitch(1.5f)
+        tts.speak("cap "+t, mode, null)
+        tts.setPitch(1)
+      } else
         tts.speak(t, mode, null)
     case t:java.util.List[CharSequence] => speak(Util.toFlatString(t), flush)
     case _ => Log.e(this.toString, "Invalid text format")
