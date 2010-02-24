@@ -15,7 +15,7 @@ object Scripter {
   def context = myCx
   def scope = myScope
 
-  def apply() = {
+  def apply(service:SpielService)  {
     myCx = Context.enter
     myCx.setOptimizationLevel(-1)
     myScope = myCx.initStandardObjects()
@@ -32,11 +32,10 @@ object Scripter {
       case e:RhinoException => Log.e(this.toString, e.getMessage)
       case e => {
         Log.e(this.toString, e.toString)
-        Log.e(this.toString, e.getStackTrace.toString)
       }
     }
 
-    val assets = SpielService().getAssets
+    val assets = service.getAssets
     def runScriptFile(f:String) = {
       val is = assets.open("scripts/"+f)
       val a = is.available
@@ -55,7 +54,6 @@ object Scripter {
 
   def registerHandlerFor(pkg:String, cls:String, s:Object) {
     val scr = s.asInstanceOf[ScriptableObject]
-    Log.d("spiel", "Registering "+scr+" as handler for "+cls+" in "+pkg)
 
     def getFunctionFor(handler:String):Option[Function] = {
       val h = if(handler == "default")

@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="info.spielproject.spiel">
   <uses-sdk android:minSdkVersion="4"/>
 
+  <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+
   <application android:label="Spiel">
 
     <service android:name=".SpielService">

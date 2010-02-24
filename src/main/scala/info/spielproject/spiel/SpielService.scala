@@ -10,33 +10,38 @@ import scripting.Scripter
 
 class SpielService extends AccessibilityService {
 
+  // TODO: Why is this needed?
+  private var connected = false
+
   override def onCreate {
-    SpielService.instance = this
-    TTS(this)
+    Log.d("spiel", "onCreate")
   }
 
-  override def onDestroy = SpielService.instance = null
+  override def onDestroy {
+    Log.d("spiel", "onDestroy")
+  }
 
   override protected def onServiceConnected {
+    // TODO: Why is this needed?
+    if(connected) return
+    Log.d("spiel", "onServiceConnected")
     val info = new AccessibilityServiceInfo()
     import AccessibilityServiceInfo._
     info.feedbackType = FEEDBACK_SPOKEN
     import AccessibilityEvent._
     info.eventTypes = TYPES_ALL_MASK
     setServiceInfo(info)
-    Scripter()
-    Handler.registered.foreach { h => h.init }
+    TTS(this)
+    Scripter(this)
+    Handler(this)
+    telephony.TelephonyListener(this)
+    // TODO: Why is this needed?
+    connected = true
     Log.d(this.toString, "Spiel is configured.")
   }
 
   override def onInterrupt = TTS.stop
 
-  override def onAccessibilityEvent(event:AccessibilityEvent) = Handler(event)
+  override def onAccessibilityEvent(event:AccessibilityEvent) = Handler.handle(event)
 
-}
-
-private object SpielService {
-  var instance:SpielService = null
-
-  def apply() = instance
 }

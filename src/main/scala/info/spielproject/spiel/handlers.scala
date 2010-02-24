@@ -50,8 +50,12 @@ object Handler {
     myNextShouldNotInterrupt = true
   }
 
-  def apply(e:AccessibilityEvent) {
-    Log.d(this.getClass.toString, e.toString)
+  private var service:SpielService = null
+  def apply(s:SpielService) {
+    service = s
+  }
+
+  def handle(e:AccessibilityEvent) {
     nextShouldNotInterruptCalled = false
     var continue = true 
     var alreadyCalled = List[Handler]()
@@ -61,7 +65,6 @@ object Handler {
         if(alreadyCalled.contains(h))
           true
         else {
-          Log.d("spiel", "Dispatching to "+pkg+":"+cls)
           alreadyCalled ::= h
           !h(e)
         }
@@ -76,12 +79,12 @@ object Handler {
 
     try {
       if(continue) {
-        val testClass = SpielService().getClassLoader.loadClass(e.getClassName.toString)
+        val testClass = service.getClassLoader.loadClass(e.getClassName.toString)
         handlers.foreach { v =>
           if(v._1._2 != "" && continue) {
             try {
-              val testClass2 = SpielService.instance.getClassLoader.loadClass(v._1._2)
-              Log.d(this.getClass.toString, testClass2.toString+".isAssignableFrom("+testClass+"): "+testClass2.isAssignableFrom(testClass))
+              val testClass2 = service.getClassLoader.loadClass(v._1._2)
+              //Log.d(this.getClass.toString, testClass2.toString+".isAssignableFrom("+testClass+"): "+testClass2.isAssignableFrom(testClass))
               if(testClass2.isAssignableFrom(testClass))
                 continue = continue && dispatchTo(v._1._1, v._1._2)
             } catch {
@@ -115,7 +118,6 @@ class Handler(pkg:String, cls:String) {
   handlers(pkg -> cls) = this
 
   def init {
-    Log.d(this.getClass.toString, "Initializing handler.")
   }
 
   def speak(text:String, interrupt:Boolean):Unit = Handler.speak(text, interrupt)
