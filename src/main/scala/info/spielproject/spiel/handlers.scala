@@ -54,34 +54,43 @@ object Handler {
   private var service:SpielService = null
   def apply(s:SpielService) {
     service = s
+    handlers.foreach { v => v._2.init }
   }
 
   def handle(e:AccessibilityEvent) {
-    //Log.d("spiel", "Event "+e.toString)
+    Log.d("spiel", "Event "+e.toString)
     nextShouldNotInterruptCalled = false
     var continue = true 
     var alreadyCalled = List[Handler]()
 
     def dispatchTo(pkg:String, cls:String):Boolean = handlers.get(pkg -> cls) match {
       case Some(h) =>
-        if(alreadyCalled.contains(h))
+        if(alreadyCalled.contains(h)) {
+          Log.d("spiel", "Already called this handler, skipping.")
           true
-        else {
-          //Log.d("spiel", "Dispatching to "+pkg+":"+cls)
+        } else {
+          Log.d("spiel", "Dispatching to "+pkg+":"+cls)
           alreadyCalled ::= h
           !h(e)
         }
-      case None => true
+      case None =>
+        Log.d("spiel", "No exact match for "+pkg+":"+cls+". Continuing.")
+        true
     }
 
-    if(continue)
+    if(continue) {
+      Log.d("spiel", "Performing exact-match dispatch check.")
       continue = dispatchTo(e.getPackageName.toString, e.getClassName.toString)
+    }
 
-    if(continue)
+    if(continue) {
+      Log.d("spiel", "Performing class-only-match dispatch check.")
       continue = dispatchTo("", e.getClassName.toString)
+    }
 
     try {
       if(continue) {
+        Log.d("spiel", "Performing subclass-match dispatch.")
         val testClass = service.getClassLoader.loadClass(e.getClassName.toString)
         handlers.foreach { v =>
           if(v._1._2 != "" && continue) {
@@ -124,6 +133,7 @@ class Handler(pkg:String, cls:String) {
   handlers(pkg -> cls) = this
 
   def init {
+    Log.d("spiel", "Initializing handler for "+pkg+":"+cls)
   }
 
   def speak(text:String, interrupt:Boolean):Unit = Handler.speak(text, interrupt)

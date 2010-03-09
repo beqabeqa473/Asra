@@ -53,6 +53,7 @@ object Scripter {
   }
 
   def registerHandlerFor(pkg:String, cls:String, s:Object) {
+    Log.d("spiel", "Registering handler for "+pkg+":"+cls)
     val scr = s.asInstanceOf[ScriptableObject]
 
     def getFunctionFor(handler:String):Option[Function] = {
@@ -63,44 +64,64 @@ object Scripter {
       val f = scr.get(h, myScope)
       if(f.isInstanceOf[Function])
         Some(f.asInstanceOf[Function])
-      else
+      else {
+        //Log.d("spiel", "Got "+f+") for "+h)
         None
+      }
     }
 
     val h = new Handler(pkg, cls) {
 
+    def logEventRegistration(h:String) {
+      Log.d("spiel", "Registered "+h+" handler for "+pkg+":"+cls)
+    }
+
       getFunctionFor("notificationStateChanged") match {
-        case Some(f) => onNotificationStateChanged(f)
+        case Some(f) =>
+          logEventRegistration("onNotificationStateChanged")
+          onNotificationStateChanged(f)
         case None =>
       }
 
       getFunctionFor("viewClicked") match {
-        case Some(f) => onViewClicked(f)
+        case Some(f) =>
+          logEventRegistration("onViewClicked")
+          onViewClicked(f)
         case None =>
       }
 
       getFunctionFor("viewFocused") match {
-        case Some(f) => onViewFocused(f)
+        case Some(f) =>
+          logEventRegistration("onViewFocused")
+          onViewFocused(f)
         case None =>
       }
 
       getFunctionFor("viewSelected") match {
-        case Some(f) => onViewSelected(f)
+        case Some(f) =>
+          logEventRegistration("onViewSelected")
+          onViewSelected(f)
         case None =>
       }
 
       getFunctionFor("viewTextChanged") match {
-        case Some(f) => onViewTextChanged(f)
+        case Some(f) =>
+          logEventRegistration("onViewTextChanged")
+          onViewTextChanged(f)
         case None =>
       }
 
       getFunctionFor("windowStateChanged") match {
-        case Some(f) => onWindowStateChanged(f)
+        case Some(f) =>
+          logEventRegistration("onWindowStateChanged")
+          onWindowStateChanged(f)
         case None =>
       }
 
       getFunctionFor("default") match {
-        case Some(f) => byDefault(f)
+        case Some(f) =>
+          logEventRegistration("default")
+          byDefault(f)
         case None =>
       }
 
