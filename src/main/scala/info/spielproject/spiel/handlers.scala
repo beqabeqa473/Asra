@@ -19,9 +19,15 @@ class NativeCallback(f:AccessibilityEvent => Boolean) extends Callback{
 
 class RhinoCallback(f:Function) extends Callback {
   def apply(e:AccessibilityEvent):Boolean = {
+    Context.enter
     var args = new Array[Object](1)
     args(0) = e
-    Context.toBoolean(f.call(Scripter.context, Scripter.scope, Scripter.scope, args))
+    try {
+      Context.toBoolean(f.call(Scripter.context, Scripter.scope, Scripter.scope, args))
+    } catch {
+      case e => Log.e("spiel", "Error running script: "+e.getMessage)
+      false
+    }
   }
 
 }
