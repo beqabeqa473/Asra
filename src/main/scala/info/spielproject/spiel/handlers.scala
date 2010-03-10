@@ -44,6 +44,7 @@ object Handler {
     ImageButton,
     Menu,
     RadioButton,
+    SearchBox,
     Tab,
     Default
   )
@@ -307,6 +308,16 @@ object RadioButton extends Handler("android.widget.RadioButton") {
 
   onViewFocused { e:AccessibilityEvent =>
     speak(textFor(e)+": radio button")
+    true
+  }
+
+}
+
+object SearchBox extends Handler("android.app.SearchDialog$SearchAutoComplete") {
+
+  onViewFocused { e:AccessibilityEvent =>
+    speak(textFor(e))
+    speak("search text", false)
     true
   }
 
