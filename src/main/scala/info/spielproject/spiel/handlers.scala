@@ -52,7 +52,7 @@ object Handler {
   private var nextShouldNotInterruptCalled = false
 
   def nextShouldNotInterrupt = {
-    Log.d(this.getClass.toString, "Next accessibility event should not interrupt speech.")
+    Log.d("spiel", "Next accessibility event should not interrupt speech.")
     nextShouldNotInterruptCalled = true
     myNextShouldNotInterrupt = true
   }
@@ -115,7 +115,7 @@ object Handler {
         }
       }
     } catch {
-      case exception => Log.d(this.getClass.toString, exception.toString)
+      case exception => Log.d("spiel", exception.toString)
     }
 
     if(continue) dispatchTo("", "")
@@ -214,7 +214,6 @@ object AlertDialog extends Handler("android.app.AlertDialog") {
 
 trait GenericButtonHandler extends Handler {
   onViewFocused { e:AccessibilityEvent =>
-    Log.d(this.getClass.toString, "Button: "+e)
     speak(textFor(e)+": button")
     true
   }
@@ -249,7 +248,6 @@ object Dialog extends Handler("android.app.Dialog") {
 object EditText extends Handler("android.widget.EditText") {
 
   onViewFocused { e:AccessibilityEvent =>
-    Log.d(this.getClass.toString, "Edit text: "+e)
     if(e.getCurrentItemIndex != -1) {
       if(!e.isPassword) {
         speak(textFor(e), false)
@@ -261,7 +259,6 @@ object EditText extends Handler("android.widget.EditText") {
   }
 
   onViewTextChanged { e:AccessibilityEvent =>
-    Log.d(this.getClass.toString, "change: "+e)
     if(e.getAddedCount > 0 || e.getRemovedCount > 0) {
       if(e.isPassword)
         speak("*", true)
@@ -317,7 +314,6 @@ object RadioButton extends Handler("android.widget.RadioButton") {
 
 object Tab extends Handler("android.widget.RelativeLayout") {
   onViewFocused { e:AccessibilityEvent =>
-    Log.d("tab", e.toString)
     speak(textFor(e)+": tab", true)
     true
   }
@@ -326,17 +322,17 @@ object Tab extends Handler("android.widget.RelativeLayout") {
 object Default extends Handler {
 
   onNotificationStateChanged { e:AccessibilityEvent =>
-    Log.d(this.getClass.toString, "onNotificationStateChanged")
+    Log.d("spiel", "onNotificationStateChanged")
     false
   }
 
   onViewClicked { e:AccessibilityEvent =>
-    Log.d(this.getClass.toString, "onViewClicked")
+    Log.d("spiel", "onViewClicked")
     true
   }
 
   onViewFocused { e:AccessibilityEvent =>
-    Log.d(this.getClass.toString, "onViewFocused")
+    Log.d("spiel", "onViewFocused")
     if(e.isFullScreen || (e.getItemCount == 0 && e.getCurrentItemIndex == -1))
       true
     else
@@ -344,17 +340,17 @@ object Default extends Handler {
   }
 
   onViewSelected { e:AccessibilityEvent =>
-    Log.d(this.getClass.toString, "onViewSelected")
+    Log.d("spiel", "onViewSelected")
     false
   }
 
   onViewTextChanged { e:AccessibilityEvent =>
-    Log.d(this.getClass.toString, "onViewTextChanged")
+    Log.d("spiel", "onViewTextChanged")
     false
   }
 
   onWindowStateChanged { e:AccessibilityEvent =>
-    Log.d(this.getClass.toString, "onWindowStateChanged")
+    Log.d("spiel", "onWindowStateChanged")
     // Needed because menus send their contents as a non-fullscreen 
     // onWindowStateChanged event and we don't want to read an entire menu 
     // when it focuses.
@@ -367,7 +363,7 @@ object Default extends Handler {
   }
 
   byDefault { e:AccessibilityEvent =>
-    Log.d(this.getClass.toString, "Unhandled event: "+e.toString)
+    Log.d("spiel", "Unhandled event: "+e.toString)
     speak(textFor(e))
     true
   }
