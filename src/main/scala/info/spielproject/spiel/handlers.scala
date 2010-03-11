@@ -162,6 +162,9 @@ class Handler(pkg:String, cls:String) {
   private var viewFocused:Callback = null
   protected def onViewFocused(c:Callback) = viewFocused = c
 
+  private var viewLongClicked:Callback = null
+  protected def onViewLongClicked(c:Callback) = viewLongClicked = c
+
   private var viewSelected:Callback = null
   protected def onViewSelected(c:Callback) = viewSelected = c
 
@@ -187,18 +190,22 @@ class Handler(pkg:String, cls:String) {
   }
 
   def apply(e:AccessibilityEvent):Boolean = {
+
     def dispatchTo(callback:Callback):Boolean = {
       if(callback != null) callback(e) else false
     }
+
     val fallback = e.getEventType match {
       case TYPE_NOTIFICATION_STATE_CHANGED => dispatchTo(notificationStateChanged)
       case TYPE_VIEW_CLICKED => dispatchTo(viewClicked)
       case TYPE_VIEW_FOCUSED => dispatchTo(viewFocused)
+      case TYPE_VIEW_LONG_CLICKED => dispatchTo(viewLongClicked)
       case TYPE_VIEW_SELECTED => dispatchTo(viewSelected)
       case TYPE_VIEW_TEXT_CHANGED => dispatchTo(viewTextChanged)
       case TYPE_WINDOW_STATE_CHANGED => dispatchTo(windowStateChanged)
       case _ => false
     }
+
     if(!fallback)
       dispatchTo(default)
     else fallback
@@ -349,6 +356,11 @@ object Default extends Handler {
       true
     else
       false
+  }
+
+  onViewLongClicked { e:AccessibilityEvent =>
+    Log.d("spiel", "onViewLongClicked")
+    true
   }
 
   onViewSelected { e:AccessibilityEvent =>

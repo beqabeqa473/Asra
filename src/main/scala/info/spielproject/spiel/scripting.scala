@@ -98,6 +98,13 @@ object Scripter {
         case None =>
       }
 
+      getFunctionFor("viewLongClicked") match {
+        case Some(f) =>
+          logEventRegistration("onViewLongClicked")
+          onViewLongClicked(f)
+        case None =>
+      }
+
       getFunctionFor("viewSelected") match {
         case Some(f) =>
           logEventRegistration("onViewSelected")
