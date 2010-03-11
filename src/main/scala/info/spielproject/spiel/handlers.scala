@@ -6,6 +6,7 @@ import scala.collection.mutable.Map
 
 import org.mozilla.javascript.{Context, Function}
 
+import info.spielproject.spiel._
 import scripting.Scripter
 import tts.TTS
 

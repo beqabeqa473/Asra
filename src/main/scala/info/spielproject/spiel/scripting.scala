@@ -5,7 +5,8 @@ import android.view.accessibility.AccessibilityEvent
 
 import org.mozilla.javascript.{Context, Function, RhinoException, ScriptableObject}
 
-import info.spielproject.spiel.handlers.Handler
+import info.spielproject.spiel._
+import handlers.Handler
 
 object Scripter {
 
