@@ -1,16 +1,18 @@
 package info.spielproject.spiel.tts
 
+import actors.Actor._
 import android.content.Context
+import android.util.Log
+
 import com.google.tts.TextToSpeechBeta
 import TextToSpeechBeta._
-import android.util.Log
-import scala.actors.Actor._
 
 private abstract class Speaker(context:Context) {
+  import collection.JavaConversions._
 
   def speak(text:String, flush:Boolean)
 
-  def speak(list:java.util.List[String], flush:Boolean):Unit = List.fromArray(list.toArray).foreach { i =>
+  def speak(list:List[String], flush:Boolean):Unit = list.foreach { i =>
     speak(i.asInstanceOf[String], flush)
   }
 
@@ -92,7 +94,7 @@ object TTS {
 
   def speak(text:String, flush:Boolean) = speaker.speak(text, flush)
 
-  def speak(list:java.util.List[String], flush:Boolean) = speaker.speak(list, flush)
+  def speak(list:List[String], flush:Boolean) = speaker.speak(list, flush)
 
   def stop {
     Log.d("spiel", "Stopping speech.")
