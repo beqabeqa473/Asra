@@ -4,6 +4,7 @@ import android.accessibilityservice._
 import android.content.Intent
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
+import com.nullwire.trace.ExceptionHandler
 
 import handlers.Handler
 import scripting.Scripter
@@ -15,7 +16,7 @@ class SpielService extends AccessibilityService {
   private var connected = false
 
   override def onCreate {
-    Log.d("spiel", "onCreate")
+    ExceptionHandler.register(this, "http://stacktrace.spielproject.info/index.php")
   }
 
   override def onDestroy {
