@@ -71,7 +71,6 @@ object Scripter {
   }
 
   def registerHandlerFor(pkg:String, cls:String, s:Object) {
-    Log.d("spiel", "Registering handler for "+pkg+":"+cls)
     val scr = s.asInstanceOf[ScriptableObject]
     val h = new Handler(pkg, cls)
 
@@ -82,12 +81,10 @@ object Scripter {
       chars(0) = chars(0).toLower
       val func = new String(chars)
 
-      if(Handler.dispatchers.values.contains(func)) {
+      if(Handler.dispatchers.valuesIterator.contains(func)) {
         val f = scr.get(id, myScope)
-        if(f.isInstanceOf[Function]) {
-          Log.d("spiel", "Registering dispatch for "+func)
+        if(f.isInstanceOf[Function])
           h.dispatches(func) = new RhinoCallback(f.asInstanceOf[Function])
-        }
       } else
         Log.e("spiel", func+" is not a valid handler. Skipping.")
     }
