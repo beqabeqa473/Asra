@@ -19,20 +19,6 @@ class NativeCallback(f:AccessibilityEvent => Boolean) extends Callback{
 object Handler {
   private var handlers = Map[(String, String), Handler]()
 
-  var registered = List(
-    AlertDialog,
-    Button,
-    CheckBox,
-    Dialog,
-    EditText,
-    ImageButton,
-    Menu,
-    RadioButton,
-    SearchBox,
-    Tab,
-    Default
-  )
-
   private var myNextShouldNotInterrupt = false
   def getNextShouldNotInterrupt = myNextShouldNotInterrupt
 
@@ -47,7 +33,16 @@ object Handler {
   private var service:SpielService = null
   def apply(s:SpielService) {
     service = s
-    handlers.foreach { v => v._2.init }
+    val h = new Handlers
+    h.getClass.getDeclaredClasses.foreach { cls =>
+      try {
+        val cons = cls.getConstructor(classOf[Handlers])
+        if(cons != null)
+          cons.newInstance(h)
+      } catch {
+        case e => Log.e("spiel", e.getMessage+" while initializing handler for "+cls.getName)
+      }
+    }
   }
 
   def handle(e:AccessibilityEvent) {
@@ -132,10 +127,6 @@ class Handler(pkg:String, cls:String) {
 
   handlers(pkg -> cls) = this
 
-  def init {
-    Log.d("spiel", "Initializing handler for "+pkg+":"+cls)
-  }
-
   def speak(text:String, interrupt:Boolean):Unit = TTS.speak(text, interrupt)
   def speak(text:String):Unit = TTS.speak(text, !myNextShouldNotInterrupt)
   def speak(list:java.util.List[CharSequence], interrupt:Boolean):Unit = TTS.speak(list.map(_.toString), interrupt)
@@ -194,14 +185,6 @@ class Handler(pkg:String, cls:String) {
 
 }
 
-object AlertDialog extends Handler("android.app.AlertDialog") {
-  onWindowStateChanged { e:AccessibilityEvent =>
-    speak("Alert!" +: e.getText, true)
-    nextShouldNotInterrupt
-    true
-  }
-}
-
 trait GenericButtonHandler extends Handler {
   onViewFocused { e:AccessibilityEvent =>
     speak(textFor(e)+": button")
@@ -209,169 +192,177 @@ trait GenericButtonHandler extends Handler {
   }
 }
 
-object Button extends Handler("android.widget.Button") with GenericButtonHandler
+class Handlers {
 
-object CheckBox extends Handler("android.widget.CheckBox") {
-  onViewClicked { e:AccessibilityEvent =>
-    if(e.isChecked)
-      speak("checked")
-    else
-      speak("not checked")
-    true
-  }
-
-  onViewFocused { e:AccessibilityEvent =>
-    speak(textFor(e)+" checkbox")
-    true
-  }
-
-}
-
-object Dialog extends Handler("android.app.Dialog") {
-  import collection.JavaConversions._
-  onWindowStateChanged { e:AccessibilityEvent =>
-    speak(e.getText, true)
-    nextShouldNotInterrupt
-    true
-  }
-}
-
-object EditText extends Handler("android.widget.EditText") {
-
-  onViewFocused { e:AccessibilityEvent =>
-    if(e.getCurrentItemIndex != -1) {
-      if(!e.isPassword) {
-        speak(textFor(e), false)
-        speak("edit text", false)
-      } else
-        speak(textFor(e)+": password")
-    }
-    true
-  }
-
-  onViewTextChanged { e:AccessibilityEvent =>
-    if(e.getAddedCount > 0 || e.getRemovedCount > 0) {
-      if(e.isPassword)
-        speak("*", true)
-      else
-        if(e.getAddedCount > 0)
-          speak(("" /: e.getText) (_ + _).substring(e.getFromIndex, e.getFromIndex+e.getAddedCount), true)
-        else if(e.getRemovedCount > 0)
-          speak(e.getBeforeText.toString.substring(e.getFromIndex, e.getFromIndex+e.getRemovedCount), true)
-      else
-        speak(e.getText, false)
-    }
-    true
-  }
-
-}
-
-object ImageButton extends Handler("android.widget.ImageButton") with GenericButtonHandler
-
-object Menu extends Handler("com.android.internal.view.menu.MenuView") {
-
-  onViewSelected { e:AccessibilityEvent =>
-    Log.d("spiel", "onViewSelected for menu")
-    speak(textFor(e))
-    true
-  }
-
-  onWindowStateChanged { e:AccessibilityEvent =>
-    if(e.getCurrentItemIndex == -1) {
-      speak("menu")
+  class AlertDialog extends Handler("android.app.AlertDialog") {
+    onWindowStateChanged { e:AccessibilityEvent =>
+      speak("Alert!" +: e.getText, true)
       nextShouldNotInterrupt
+      true
     }
-    true
   }
 
-}
+  class Button extends Handler("android.widget.Button") with GenericButtonHandler
 
-object RadioButton extends Handler("android.widget.RadioButton") {
-
-  onViewClicked { e:AccessibilityEvent =>
-    if(e.isChecked)
-      speak("checked")
-    else
-      speak("not checked")
-    true
-  }
-
-  onViewFocused { e:AccessibilityEvent =>
-    speak(textFor(e)+": radio button")
-    true
-  }
-
-}
-
-object SearchBox extends Handler("android.app.SearchDialog$SearchAutoComplete") {
-
-  onViewFocused { e:AccessibilityEvent =>
-    speak(textFor(e))
-    speak("search text", false)
-    true
-  }
-
-}
-
-object Tab extends Handler("android.widget.RelativeLayout") {
-  onViewFocused { e:AccessibilityEvent =>
-    speak(textFor(e)+": tab", true)
-    true
-  }
-}
-
-object Default extends Handler {
-
-  onNotificationStateChanged { e:AccessibilityEvent =>
-    Log.d("spiel", "onNotificationStateChanged")
-    false
-  }
-
-  onViewClicked { e:AccessibilityEvent =>
-    Log.d("spiel", "onViewClicked")
-    true
-  }
-
-  onViewFocused { e:AccessibilityEvent =>
-    Log.d("spiel", "onViewFocused")
-    if(e.isFullScreen || (e.getItemCount == 0 && e.getCurrentItemIndex == -1))
+  class CheckBox extends Handler("android.widget.CheckBox") {
+    onViewClicked { e:AccessibilityEvent =>
+      if(e.isChecked)
+        speak("checked")
+      else
+        speak("not checked")
       true
-    else
-      false
-  }
+    }
 
-  onViewLongClicked { e:AccessibilityEvent =>
-    Log.d("spiel", "onViewLongClicked")
-    true
-  }
-
-  onViewSelected { e:AccessibilityEvent =>
-    Log.d("spiel", "onViewSelected")
-    false
-  }
-
-  onViewTextChanged { e:AccessibilityEvent =>
-    Log.d("spiel", "onViewTextChanged")
-    false
-  }
-
-  onWindowStateChanged { e:AccessibilityEvent =>
-    Log.d("spiel", "onWindowStateChanged")
-    // Needed because menus send their contents as a non-fullscreen 
-    // onWindowStateChanged event and we don't want to read an entire menu 
-    // when it focuses.
-    if(!e.isFullScreen)
+    onViewFocused { e:AccessibilityEvent =>
+      speak(textFor(e)+" checkbox")
       true
-    else {
+    }
+
+  }
+
+  class Dialog extends Handler("android.app.Dialog") {
+    import collection.JavaConversions._
+    onWindowStateChanged { e:AccessibilityEvent =>
+      speak(e.getText, true)
       nextShouldNotInterrupt
+      true
+    }
+  }
+
+  class EditText extends Handler("android.widget.EditText") {
+
+    onViewFocused { e:AccessibilityEvent =>
+      if(e.getCurrentItemIndex != -1) {
+        if(!e.isPassword) {
+          speak(textFor(e), false)
+          speak("edit text", false)
+        } else
+          speak(textFor(e)+": password")
+      }
+      true
+    }
+
+    onViewTextChanged { e:AccessibilityEvent =>
+      if(e.getAddedCount > 0 || e.getRemovedCount > 0) {
+        if(e.isPassword)
+          speak("*", true)
+        else
+          if(e.getAddedCount > 0)
+            speak(("" /: e.getText) (_ + _).substring(e.getFromIndex,   e.getFromIndex+e.getAddedCount), true)
+          else if(e.getRemovedCount > 0)
+            speak(e.getBeforeText.toString.substring(e.getFromIndex, e.getFromIndex+e.getRemovedCount), true)
+        else
+          speak(e.getText, false)
+      }
+      true
+    }
+
+  } 
+
+  class ImageButton extends Handler("android.widget.ImageButton") with GenericButtonHandler
+
+  class Menu extends Handler("com.android.internal.view.menu.MenuView") {
+
+    onViewSelected { e:AccessibilityEvent =>
+      speak(textFor(e))
+      true
+    }
+
+    onWindowStateChanged { e:AccessibilityEvent =>
+      if(e.getCurrentItemIndex == -1) {
+        speak("menu")
+        nextShouldNotInterrupt
+      }
+      true
+    }
+
+  }
+
+  class RadioButton extends Handler("android.widget.RadioButton") {
+
+    onViewClicked { e:AccessibilityEvent =>
+      if(e.isChecked)
+        speak("checked")
+      else
+        speak("not checked")
+      true
+    }
+
+    onViewFocused { e:AccessibilityEvent =>
+      speak(textFor(e)+": radio button")
+      true
+    }
+
+  }
+
+  class SearchBox extends Handler("android.app.SearchDialog$SearchAutoComplete") {
+    onViewFocused { e:AccessibilityEvent =>
+      speak(textFor(e))
+      speak("search text", false)
+      true
+    }
+  }
+
+  class Tab extends Handler("android.widget.RelativeLayout") {
+    onViewFocused { e:AccessibilityEvent =>
+      speak(textFor(e)+": tab", true)
+      true
+    }
+  }
+
+  class Default extends Handler {
+
+    onNotificationStateChanged { e:AccessibilityEvent =>
+      Log.d("spiel", "onNotificationStateChanged")
       false
     }
-  }
 
-  byDefault { e:AccessibilityEvent =>
-    Log.d("spiel", "Unhandled event: "+e.toString)
-    speak(textFor(e))
-    true
-  }
+    onViewClicked { e:AccessibilityEvent =>
+      Log.d("spiel", "onViewClicked")
+      true
+    }
 
+    onViewFocused { e:AccessibilityEvent =>
+      Log.d("spiel", "onViewFocused")
+      if(e.isFullScreen || (e.getItemCount == 0 && e.getCurrentItemIndex == -1))
+        true
+      else
+        false
+    }
+
+    onViewLongClicked { e:AccessibilityEvent =>
+      Log.d("spiel", "onViewLongClicked")
+      true
+    }
+
+    onViewSelected { e:AccessibilityEvent =>
+      Log.d("spiel", "onViewSelected")
+      false
+    }
+
+    onViewTextChanged { e:AccessibilityEvent =>
+      Log.d("spiel", "onViewTextChanged")
+      false
+    }
+
+    onWindowStateChanged { e:AccessibilityEvent =>
+      Log.d("spiel", "onWindowStateChanged")
+      // Needed because menus send their contents as a non-fullscreen 
+      // onWindowStateChanged event and we don't want to read an entire menu 
+      // when it focuses.
+      if(!e.isFullScreen)
+        true
+      else {
+        nextShouldNotInterrupt
+        false
+      }
+    }
+
+    byDefault { e:AccessibilityEvent =>
+      Log.d("spiel", "Unhandled event: "+e.toString)
+      speak(textFor(e))
+      true
+    }
+
+  }
 }
