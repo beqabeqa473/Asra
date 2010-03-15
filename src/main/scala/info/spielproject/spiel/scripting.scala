@@ -6,8 +6,23 @@ import android.view.accessibility.AccessibilityEvent
 import org.mozilla.javascript.{Context, Function, RhinoException, ScriptableObject}
 
 import info.spielproject.spiel._
-import handlers.Handler
+import handlers.{Callback, Handler}
 import tts.TTS
+
+class RhinoCallback(f:Function) extends Callback {
+  def apply(e:AccessibilityEvent):Boolean = {
+    Context.enter
+    var args = new Array[Object](1)
+    args(0) = e
+    try {
+      Context.toBoolean(f.call(Scripter.context, Scripter.scope, Scripter.scope, args))
+    } catch {
+      case e => Log.e("spiel", "Error running script: "+e.getMessage)
+      false
+    }
+  }
+}
+
 
 object Scripter {
 
@@ -58,88 +73,26 @@ object Scripter {
   def registerHandlerFor(pkg:String, cls:String, s:Object) {
     Log.d("spiel", "Registering handler for "+pkg+":"+cls)
     val scr = s.asInstanceOf[ScriptableObject]
-    Log.d("spiel", scr.getIds.toString)
+    val h = new Handler(pkg, cls)
 
-    def getFunctionFor(handler:String):Option[Function] = {
-      val h = if(handler == "default")
-        "byDefault"
-      else
-        "on"+handler.capitalize
-      val f = scr.get(h, myScope)
-      if(f.isInstanceOf[Function])
-        Some(f.asInstanceOf[Function])
-      else {
-        //Log.d("spiel", "Got "+f+") for "+h)
-        None
-      }
-    }
+    scr.getIds.foreach { property =>
 
-    val h = new Handler(pkg, cls) {
+      val id = property.asInstanceOf[String]
+      val chars = id.substring(2, id.length).toCharArray
+      chars(0) = chars(0).toLower
+      val func = new String(chars)
 
-      def logEventRegistration(h:String) {
-        Log.d("spiel", "Registered "+h+" handler for "+pkg+":"+cls)
-      }
-
-      getFunctionFor("notificationStateChanged") match {
-        case Some(f) =>
-          logEventRegistration("onNotificationStateChanged")
-          onNotificationStateChanged(f)
-        case None =>
-      }
-
-      getFunctionFor("viewClicked") match {
-        case Some(f) =>
-          logEventRegistration("onViewClicked")
-          onViewClicked(f)
-        case None =>
-      }
-
-      getFunctionFor("viewFocused") match {
-        case Some(f) =>
-          logEventRegistration("onViewFocused")
-          onViewFocused(f)
-        case None =>
-      }
-
-      getFunctionFor("viewLongClicked") match {
-        case Some(f) =>
-          logEventRegistration("onViewLongClicked")
-          onViewLongClicked(f)
-        case None =>
-      }
-
-      getFunctionFor("viewSelected") match {
-        case Some(f) =>
-          logEventRegistration("onViewSelected")
-          onViewSelected(f)
-        case None =>
-      }
-
-      getFunctionFor("viewTextChanged") match {
-        case Some(f) =>
-          logEventRegistration("onViewTextChanged")
-          onViewTextChanged(f)
-        case None =>
-      }
-
-      getFunctionFor("windowStateChanged") match {
-        case Some(f) =>
-          logEventRegistration("onWindowStateChanged")
-          onWindowStateChanged(f)
-        case None =>
-      }
-
-      getFunctionFor("default") match {
-        case Some(f) =>
-          logEventRegistration("default")
-          byDefault(f)
-        case None =>
-      }
-
+      if(Handler.dispatchers.values.contains(func)) {
+        val f = scr.get(id, myScope)
+        if(f.isInstanceOf[Function]) {
+          Log.d("spiel", "Registering dispatch for "+func)
+          h.dispatches(func) = new RhinoCallback(f.asInstanceOf[Function])
+        }
+      } else
+        Log.e("spiel", func+" is not a valid handler. Skipping.")
     }
 
     h
-
   }
 
 }

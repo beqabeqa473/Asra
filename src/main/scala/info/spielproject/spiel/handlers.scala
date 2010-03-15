@@ -5,10 +5,7 @@ import android.view.accessibility.AccessibilityEvent
 import collection.JavaConversions._
 import collection.mutable.Map
 
-import org.mozilla.javascript.{Context, Function}
-
 import info.spielproject.spiel._
-import scripting.Scripter
 import tts.TTS
 
 abstract class Callback {
@@ -17,20 +14,6 @@ abstract class Callback {
 
 class NativeCallback(f:AccessibilityEvent => Boolean) extends Callback{
   def apply(e:AccessibilityEvent) = f(e)
-}
-
-class RhinoCallback(f:Function) extends Callback {
-  def apply(e:AccessibilityEvent):Boolean = {
-    Context.enter
-    var args = new Array[Object](1)
-    args(0) = e
-    try {
-      Context.toBoolean(f.call(Scripter.context, Scripter.scope, Scripter.scope, args))
-    } catch {
-      case e => Log.e("spiel", "Error running script: "+e.getMessage)
-      false
-    }
-  }
 }
 
 object Handler {
@@ -161,8 +144,6 @@ class Handler(pkg:String, cls:String) {
   def nextShouldNotInterrupt = Handler.nextShouldNotInterrupt
 
   implicit def toNativeCallback(f:AccessibilityEvent => Boolean):NativeCallback = new NativeCallback(f)
-
-  implicit def toRhinoCallback(f:Function):RhinoCallback = new RhinoCallback(f)
 
   val dispatches = collection.mutable.Map[String, Callback]()
 
