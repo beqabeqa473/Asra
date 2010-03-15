@@ -31,7 +31,6 @@ class RhinoCallback(f:Function) extends Callback {
       false
     }
   }
-
 }
 
 object Handler {
@@ -52,6 +51,8 @@ object Handler {
   )
 
   private var myNextShouldNotInterrupt = false
+  def getNextShouldNotInterrupt = myNextShouldNotInterrupt
+
   private var nextShouldNotInterruptCalled = false
 
   def nextShouldNotInterrupt = {
@@ -126,11 +127,6 @@ object Handler {
       myNextShouldNotInterrupt = false
   }
 
-  def speak(text:String, interrupt:Boolean):Unit = TTS.speak(text, interrupt)
-  def speak(text:String):Unit = speak(text, !myNextShouldNotInterrupt)
-  def speak(list:java.util.List[CharSequence], interrupt:Boolean):Unit = TTS.speak(list.map(_.toString), interrupt)
-  def speak(list:java.util.List[CharSequence]):Unit = speak(list, !myNextShouldNotInterrupt)
-
   import AccessibilityEvent._
   val dispatchers = Map(
     TYPE_NOTIFICATION_STATE_CHANGED -> "notificationStateChanged",
@@ -157,10 +153,10 @@ class Handler(pkg:String, cls:String) {
     Log.d("spiel", "Initializing handler for "+pkg+":"+cls)
   }
 
-  def speak(text:String, interrupt:Boolean):Unit = Handler.speak(text, interrupt)
-  def speak(text:String):Unit = Handler.speak(text, !myNextShouldNotInterrupt)
-  def speak(list:java.util.List[CharSequence], interrupt:Boolean):Unit = Handler.speak(list, interrupt)
-  def speak(list:java.util.List[CharSequence]):Unit = Handler.speak(list)
+  def speak(text:String, interrupt:Boolean):Unit = TTS.speak(text, interrupt)
+  def speak(text:String):Unit = TTS.speak(text, !myNextShouldNotInterrupt)
+  def speak(list:java.util.List[CharSequence], interrupt:Boolean):Unit = TTS.speak(list.map(_.toString), interrupt)
+  def speak(list:java.util.List[CharSequence]):Unit = TTS.speak(list.map(_.toString), !myNextShouldNotInterrupt)
 
   def nextShouldNotInterrupt = Handler.nextShouldNotInterrupt
 

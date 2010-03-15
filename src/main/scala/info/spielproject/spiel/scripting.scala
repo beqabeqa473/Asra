@@ -7,6 +7,7 @@ import org.mozilla.javascript.{Context, Function, RhinoException, ScriptableObje
 
 import info.spielproject.spiel._
 import handlers.Handler
+import tts.TTS
 
 object Scripter {
 
@@ -26,6 +27,9 @@ object Scripter {
 
     val wrappedScripter = Context.javaToJS(this, myScope)
     ScriptableObject.putProperty(myScope, "Scripter", wrappedScripter)
+
+    val wrappedTTS = Context.javaToJS(TTS, myScope)
+    ScriptableObject.putProperty(myScope, "TTS", wrappedTTS)
 
     def run(code:String, filename:String) = try {
       myCx.evaluateString(myScope, code, filename, 1, null)
@@ -54,6 +58,7 @@ object Scripter {
   def registerHandlerFor(pkg:String, cls:String, s:Object) {
     Log.d("spiel", "Registering handler for "+pkg+":"+cls)
     val scr = s.asInstanceOf[ScriptableObject]
+    Log.d("spiel", scr.getIds.toString)
 
     def getFunctionFor(handler:String):Option[Function] = {
       val h = if(handler == "default")

@@ -6,9 +6,9 @@ function forPackage(pk) {
 
 function speak(str, shouldInterrupt) {
   if(shouldInterrupt != undefined)
-    Handler.speak(str, shouldInterrupt);
+    TTS.speak(str, shouldInterrupt);
   else
-    Handler.speak(str);
+    TTS.speak(str, !Handler.nextShouldNotInterrupt());
 }
 
 function nextShouldNotInterrupt() {
