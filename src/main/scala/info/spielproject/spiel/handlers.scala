@@ -131,6 +131,17 @@ object Handler {
   def speak(list:java.util.List[CharSequence], interrupt:Boolean):Unit = TTS.speak(list.map(_.toString), interrupt)
   def speak(list:java.util.List[CharSequence]):Unit = speak(list, !myNextShouldNotInterrupt)
 
+  import AccessibilityEvent._
+  val dispatchers = Map(
+    TYPE_NOTIFICATION_STATE_CHANGED -> "notificationStateChanged",
+    TYPE_VIEW_CLICKED -> "viewClicked",
+    TYPE_VIEW_FOCUSED -> "viewFocused",
+    TYPE_VIEW_LONG_CLICKED -> "viewLongClicked",
+    TYPE_VIEW_SELECTED -> "viewSelected",
+    TYPE_VIEW_TEXT_CHANGED -> "viewTextChanged",
+    TYPE_WINDOW_STATE_CHANGED -> "windowStateChanged"
+  )
+
 }
 
 class Handler(pkg:String, cls:String) {
@@ -138,7 +149,6 @@ class Handler(pkg:String, cls:String) {
   def this() = this("", "")
   def this(c:String) = this("", c)
 
-  import AccessibilityEvent._
   import Handler._
 
   handlers(pkg -> cls) = this
@@ -158,29 +168,23 @@ class Handler(pkg:String, cls:String) {
 
   implicit def toRhinoCallback(f:Function):RhinoCallback = new RhinoCallback(f)
 
-  private var notificationStateChanged:Callback = null
-  protected def onNotificationStateChanged(c:Callback) = notificationStateChanged = c
+  val dispatches = collection.mutable.Map[String, Callback]()
 
-  private var viewClicked:Callback = null
-  protected def onViewClicked(c:Callback) = viewClicked = c
+  protected def onNotificationStateChanged(c:Callback) = dispatches("notificationStateChanged") = c
 
-  private var viewFocused:Callback = null
-  protected def onViewFocused(c:Callback) = viewFocused = c
+  protected def onViewClicked(c:Callback) = dispatches("viewClicked") = c
 
-  private var viewLongClicked:Callback = null
-  protected def onViewLongClicked(c:Callback) = viewLongClicked = c
+  protected def onViewFocused(c:Callback) = dispatches("viewFocused") = c
 
-  private var viewSelected:Callback = null
-  protected def onViewSelected(c:Callback) = viewSelected = c
+  protected def onViewLongClicked(c:Callback) = dispatches("viewLongClicked") = c
 
-  private var viewTextChanged:Callback = null
-  protected def onViewTextChanged(c:Callback) = viewTextChanged = c
+  protected def onViewSelected(c:Callback) = dispatches("viewSelected") = c
 
-  private var windowStateChanged:Callback = null
-  protected def onWindowStateChanged(c:Callback) = windowStateChanged = c
+  protected def onViewTextChanged(c:Callback) = dispatches("viewTextChanged") = c
 
-  private var default:Callback = null
-  protected def byDefault(c:Callback) = default = c
+  protected def onWindowStateChanged(c:Callback) = dispatches("windowStateChanged") = c
+
+  protected def byDefault(c:Callback) = dispatches("default") = c
 
   protected def textFor(e:AccessibilityEvent) = {
     var str = ""
@@ -196,23 +200,18 @@ class Handler(pkg:String, cls:String) {
 
   def apply(e:AccessibilityEvent):Boolean = {
 
-    def dispatchTo(callback:Callback):Boolean = {
-      if(callback != null) callback(e) else false
+    def dispatchTo(callback:String):Boolean = dispatches.get(callback) match {
+      case Some(h) => h(e)
+      case None => false
     }
 
-    val fallback = e.getEventType match {
-      case TYPE_NOTIFICATION_STATE_CHANGED => dispatchTo(notificationStateChanged)
-      case TYPE_VIEW_CLICKED => dispatchTo(viewClicked)
-      case TYPE_VIEW_FOCUSED => dispatchTo(viewFocused)
-      case TYPE_VIEW_LONG_CLICKED => dispatchTo(viewLongClicked)
-      case TYPE_VIEW_SELECTED => dispatchTo(viewSelected)
-      case TYPE_VIEW_TEXT_CHANGED => dispatchTo(viewTextChanged)
-      case TYPE_WINDOW_STATE_CHANGED => dispatchTo(windowStateChanged)
-      case _ => false
+    val fallback = dispatchers.get(e.getEventType) match {
+      case Some(d) => dispatchTo(d)
+      case None => false
     }
 
     if(!fallback)
-      dispatchTo(default)
+      dispatchTo("default")
     else fallback
   }
 
