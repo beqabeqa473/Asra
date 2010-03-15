@@ -48,6 +48,8 @@ private class GenericSpeaker(context:Context) extends Speaker(context) with OnIn
     Log.d("spiel", "Speaking: "+text+": "+flush)
     if(text.length == 0)
       tts.speak("blank", mode, null)
+    else if(text == " ")
+      tts.speak("space", mode, null)
     else if(text.length == 1 && text >= "A" && text <= "Z") {
       tts.setPitch(1.5f)
       tts.speak("cap "+text, mode, null)
