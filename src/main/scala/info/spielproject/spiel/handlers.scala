@@ -2,7 +2,8 @@ package info.spielproject.spiel.handlers
 
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
-import scala.collection.mutable.Map
+import collection.JavaConversions._
+import collection.mutable.Map
 
 import org.mozilla.javascript.{Context, Function}
 
@@ -127,6 +128,8 @@ object Handler {
 
   def speak(text:String, interrupt:Boolean):Unit = TTS.speak(text, interrupt)
   def speak(text:String):Unit = speak(text, !myNextShouldNotInterrupt)
+  def speak(list:java.util.List[CharSequence], interrupt:Boolean):Unit = TTS.speak(list.map(_.toString), interrupt)
+  def speak(list:java.util.List[CharSequence]):Unit = speak(list, !myNextShouldNotInterrupt)
 
 }
 
@@ -145,7 +148,9 @@ class Handler(pkg:String, cls:String) {
   }
 
   def speak(text:String, interrupt:Boolean):Unit = Handler.speak(text, interrupt)
-  def speak(text:String):Unit = Handler.speak(text)
+  def speak(text:String):Unit = Handler.speak(text, !myNextShouldNotInterrupt)
+  def speak(list:java.util.List[CharSequence], interrupt:Boolean):Unit = Handler.speak(list, interrupt)
+  def speak(list:java.util.List[CharSequence]):Unit = Handler.speak(list)
 
   def nextShouldNotInterrupt = Handler.nextShouldNotInterrupt
 
@@ -185,7 +190,7 @@ class Handler(pkg:String, cls:String) {
         str += ": "
     }
     if(e.getText.size > 0)
-      str += Util.toFlatString(e.getText)
+      str += ("" /: e.getText) (_ + _)
     str
   }
 
@@ -215,7 +220,7 @@ class Handler(pkg:String, cls:String) {
 
 object AlertDialog extends Handler("android.app.AlertDialog") {
   onWindowStateChanged { e:AccessibilityEvent =>
-    speak("Alert! "+Util.toFlatString(e.getText), true)
+    speak("Alert!" +: e.getText, true)
     nextShouldNotInterrupt
     true
   }
@@ -247,8 +252,9 @@ object CheckBox extends Handler("android.widget.CheckBox") {
 }
 
 object Dialog extends Handler("android.app.Dialog") {
+  import collection.JavaConversions._
   onWindowStateChanged { e:AccessibilityEvent =>
-    speak(Util.toFlatString(e.getText), true)
+    speak(e.getText, true)
     nextShouldNotInterrupt
     true
   }
@@ -273,11 +279,11 @@ object EditText extends Handler("android.widget.EditText") {
         speak("*", true)
       else
         if(e.getAddedCount > 0)
-          speak(Util.toFlatString(e.getText).substring(e.getFromIndex, e.getFromIndex+e.getAddedCount), true)
+          speak(("" /: e.getText) (_ + _).substring(e.getFromIndex, e.getFromIndex+e.getAddedCount), true)
         else if(e.getRemovedCount > 0)
           speak(e.getBeforeText.toString.substring(e.getFromIndex, e.getFromIndex+e.getRemovedCount), true)
       else
-        speak(Util.toFlatString(e.getText), false)
+        speak(e.getText, false)
     }
     true
   }
