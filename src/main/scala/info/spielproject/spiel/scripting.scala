@@ -71,9 +71,9 @@ object Scripter {
 
     val h = new Handler(pkg, cls) {
 
-    def logEventRegistration(h:String) {
-      Log.d("spiel", "Registered "+h+" handler for "+pkg+":"+cls)
-    }
+      def logEventRegistration(h:String) {
+        Log.d("spiel", "Registered "+h+" handler for "+pkg+":"+cls)
+      }
 
       getFunctionFor("notificationStateChanged") match {
         case Some(f) =>
@@ -134,7 +134,7 @@ object Scripter {
     }
 
     h
-  
+
   }
 
 }
