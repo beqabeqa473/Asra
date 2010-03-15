@@ -31,9 +31,7 @@ object Scripter {
       myCx.evaluateString(myScope, code, filename, 1, null)
     } catch {
       case e:RhinoException => Log.e(this.toString, e.getMessage)
-      case e => {
-        Log.e(this.toString, e.toString)
-      }
+      case e => Log.e("spiel", e.toString)
     }
 
     val assets = service.getAssets
