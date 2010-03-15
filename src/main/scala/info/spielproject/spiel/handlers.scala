@@ -196,7 +196,7 @@ class Handlers {
 
   class AlertDialog extends Handler("android.app.AlertDialog") {
     onWindowStateChanged { e:AccessibilityEvent =>
-      speak("Alert!" +: e.getText, true)
+      speak("Alert!" +=: e.getText, true)
       nextShouldNotInterrupt
       true
     }
@@ -221,7 +221,6 @@ class Handlers {
   }
 
   class Dialog extends Handler("android.app.Dialog") {
-    import collection.JavaConversions._
     onWindowStateChanged { e:AccessibilityEvent =>
       speak(e.getText, true)
       nextShouldNotInterrupt
