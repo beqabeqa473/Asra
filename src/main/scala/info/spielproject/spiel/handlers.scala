@@ -229,7 +229,6 @@ class Handlers {
   }
 
   class EditText extends Handler("android.widget.EditText") {
-
     onViewFocused { e:AccessibilityEvent =>
       if(e.getCurrentItemIndex != -1) {
         if(!e.isPassword) {
@@ -240,22 +239,6 @@ class Handlers {
       }
       true
     }
-
-    onViewTextChanged { e:AccessibilityEvent =>
-      if(e.getAddedCount > 0 || e.getRemovedCount > 0) {
-        if(e.isPassword)
-          speak("*", true)
-        else
-          if(e.getAddedCount > 0)
-            speak(("" /: e.getText) (_ + _).substring(e.getFromIndex,   e.getFromIndex+e.getAddedCount), true)
-          else if(e.getRemovedCount > 0)
-            speak(e.getBeforeText.toString.substring(e.getFromIndex, e.getFromIndex+e.getRemovedCount), true)
-        else
-          speak(e.getText, false)
-      }
-      true
-    }
-
   } 
 
   class ImageButton extends Handler("android.widget.ImageButton") with GenericButtonHandler
@@ -341,7 +324,18 @@ class Handlers {
 
     onViewTextChanged { e:AccessibilityEvent =>
       Log.d("spiel", "onViewTextChanged")
-      false
+      if(e.getAddedCount > 0 || e.getRemovedCount > 0) {
+        if(e.isPassword)
+          speak("*", true)
+        else
+          if(e.getAddedCount > 0)
+            speak(("" /: e.getText) (_ + _).substring(e.getFromIndex,   e.getFromIndex+e.getAddedCount), true)
+          else if(e.getRemovedCount > 0)
+            speak(e.getBeforeText.toString.substring(e.getFromIndex, e.getFromIndex+e.getRemovedCount), true)
+        else
+          speak(e.getText, false)
+      }
+      true
     }
 
     onWindowStateChanged { e:AccessibilityEvent =>
