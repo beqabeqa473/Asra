@@ -19,6 +19,7 @@ class RhinoCallback(f:Function) extends Callback {
       Context.toBoolean(f.call(Scripter.context, Scripter.scope, Scripter.scope, args))
     } catch {
       case e => Log.e("spiel", "Error running script: "+e.getMessage)
+      TTS.speak("Script error: "+e.getMessage, true)
       false
     }
   }
