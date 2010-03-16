@@ -2,6 +2,7 @@ package info.spielproject.spiel.scripting
 
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
+import java.io.{File, FileInputStream, FileOutputStream, InputStream}
 
 import org.mozilla.javascript.{Context, Function, RhinoException, ScriptableObject}
 
@@ -22,7 +23,6 @@ class RhinoCallback(f:Function) extends Callback {
     }
   }
 }
-
 
 object Scripter {
 
@@ -53,19 +53,35 @@ object Scripter {
       case e => Log.e("spiel", e.toString)
     }
 
+    val scripts = service.getDir("scripts", 0)
     val assets = service.getAssets
-    def runScriptFile(f:String) = {
-      val is = assets.open("scripts/"+f)
+
+    def readAllAvailable(is:InputStream):String = {
       val a = is.available
       val b = new Array[Byte](a)
       is.read(b)
-      val code = new String(b)
-      run(code, f)
+      new String(b)
     }
-    runScriptFile("api.js")
-    for(fn <- assets.list("scripts")) {
-      if(fn != "api.js") runScriptFile(fn)
+
+    for(fn <- assets.list("scripts") if(fn != "api.js")) {
+      if(!scripts.list.contains(fn)) {
+        val script = new FileOutputStream(new File(scripts, "_"+fn))
+        script.write(readAllAvailable(assets.open("scripts/"+fn)).getBytes)
+        script.close
+      }
     }
+
+    def runScriptFile(f:String, asset:Boolean = false) = {
+      val is = if(asset) 
+        assets.open("scripts/"+f)
+      else
+        new FileInputStream(new File(scripts, f))
+      run(readAllAvailable(is), f)
+    }
+
+    runScriptFile("api.js", true)
+    scripts.list.foreach { script => runScriptFile(script) }
+
     Context.exit
     true
   }
