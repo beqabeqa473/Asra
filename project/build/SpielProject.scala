@@ -50,7 +50,7 @@ class SpielProject(info: ProjectInfo) extends AndroidProject(info) with Markdown
   override def updateAction = super.updateAction dependsOn(markdownUpdateAction)
 
   val manualMD = "src" / "doc" / "manual.md"
-  val manualHTML = "target" / "doc" / "manual.html"
+  val manualHTML = "target" / "manual.html"
   lazy val htmlDocs = fileTask(manualMD from manualHTML) {
     markdown(manualMD, manualHTML, log)
     Some("")
