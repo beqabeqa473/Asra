@@ -129,8 +129,8 @@ class Handler(pkg:String, cls:String) {
 
   def speak(text:String, interrupt:Boolean):Unit = TTS.speak(text, interrupt)
   def speak(text:String):Unit = TTS.speak(text, !myNextShouldNotInterrupt)
-  def speak(list:java.util.List[CharSequence], interrupt:Boolean):Unit = TTS.speak(list.map(_.toString), interrupt)
-  def speak(list:java.util.List[CharSequence]):Unit = TTS.speak(list.map(_.toString), !myNextShouldNotInterrupt)
+  def speak(list:java.util.List[CharSequence], interrupt:Boolean):Unit = TTS.speak(list.map(_.toString).toList, interrupt)
+  def speak(list:java.util.List[CharSequence]):Unit = TTS.speak(list.map(_.toString).toList, !myNextShouldNotInterrupt)
 
   def nextShouldNotInterrupt = Handler.nextShouldNotInterrupt
 
