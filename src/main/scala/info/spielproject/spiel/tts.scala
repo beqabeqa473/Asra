@@ -12,10 +12,10 @@ private abstract class Speaker(context:Context) {
 
   def speak(text:String, flush:Boolean)
 
-  def speak(list:java.util.List[String], flush:Boolean):Unit = list.foreach { i =>
-    speak(i.asInstanceOf[String], flush)
+  def speak(list:List[String], flush:Boolean) {
+    speak(list.head, flush)
+    list.tail.foreach { str => speak(str, false) }
   }
-
   def stop
 
   def speakEvery(seconds:Int, text:String):String
@@ -96,7 +96,7 @@ object TTS {
 
   def speak(text:String, flush:Boolean) = speaker.speak(text, flush)
 
-  def speak(list:java.util.List[String], flush:Boolean) = speaker.speak(list, flush)
+  def speak(list:List[String], flush:Boolean) = speaker.speak(list, flush)
 
   def stop {
     Log.d("spiel", "Stopping speech.")
