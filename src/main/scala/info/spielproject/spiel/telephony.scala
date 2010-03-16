@@ -10,7 +10,49 @@ import android.util.Log
 import info.spielproject.spiel._
 import tts.TTS
 
+private abstract class Resolver(service:SpielService) {
+
+  def apply(number:String):String
+
+  def cursorFor(uri:Uri) = service.getContentResolver.query(uri, null, null, null, null)
+
+}
+
+private class ResolverV1(service:SpielService) extends Resolver(service) {
+  def apply(number:String) = {
+    val uri= Uri.withAppendedPath(Contacts.Phones.CONTENT_FILTER_URL, Uri.encode(number))
+    val cursor = cursorFor(uri)
+    var name = number
+    if(cursor.getCount > 0) {
+      while(cursor.moveToNext) {
+        name = cursor.getString(cursor.getColumnIndex(Contacts.PeopleColumns.DISPLAY_NAME))
+      }
+    }
+    name
+  }
+}
+
+private class ResolverV5(service:SpielService) extends Resolver(service) {
+  def apply(number:String) = {
+    val uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number))
+    val cursor = cursorFor(uri)
+    var name = number
+    if(cursor.getCount > 0) {
+      while(cursor.moveToNext) {
+        name = cursor.getString(cursor.getColumnIndex(DisplayNameFix.DISPLAY_NAME))
+      }
+    }
+    name
+  }
+}
+
 private class Listener(service:SpielService) extends PhoneStateListener {
+
+  val resolve = try {
+    new ResolverV5(service)
+  } catch {
+    case _ => new ResolverV1(service)
+  }
 
   import TelephonyManager._
 
@@ -21,23 +63,7 @@ private class Listener(service:SpielService) extends PhoneStateListener {
       TTS.stopRepeatedSpeech(repeaterID)
       repeaterID = ""
     case CALL_STATE_RINGING =>
-      val sdkVersion = Integer.parseInt(Build.VERSION.SDK)
-      val uri = if(sdkVersion >= Build.VERSION_CODES.ECLAIR)
-        Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number))
-      else
-        Uri.withAppendedPath(Contacts.Phones.CONTENT_FILTER_URL, Uri.encode(number))
-      var name = number
-      val cursor = service.getContentResolver.query(uri, null, null, null, null)
-      if(cursor.getCount > 0) {
-        while(cursor.moveToNext) {
-          val column = if(sdkVersion >= Build.VERSION_CODES.ECLAIR)
-            DisplayNameFix.DISPLAY_NAME
-          else
-            Contacts.PeopleColumns.DISPLAY_NAME
-          name = cursor.getString(cursor.getColumnIndex(column))
-        }
-      }
-      repeaterID = TTS.speakEvery(3, name)
+      repeaterID = TTS.speakEvery(3, resolve(number))
     case CALL_STATE_OFFHOOK =>
       TTS.stop
       TTS.stopRepeatedSpeech(repeaterID)
