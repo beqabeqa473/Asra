@@ -1,5 +1,5 @@
 Build Instructions
-------------------
+==================
 
 Building Spiel requires [SBT](http://code.google.com/p/simple-build-tool/). Simply [download the latest release](http://code.google.com/p/simple-build-tool/downloads/list) and set it up as per [these instructions](http://code.google.com/p/simple-build-tool/wiki/Setup).
 
@@ -7,7 +7,7 @@ Once SBT is successfully installed, you can work with the code in a number of wa
 
 $ sbt compile
 
-You can also run SBT without command line arguments and are then dropped into an SBT shell which supports all the commands directly, without needing a prefix. You can also precede any SBT commands with a "~" to rerun the specified action when any changes are made to the source. For instance, Running the following ("> " indicates an SBT shell):
+You can run SBT without command line arguments and are then dropped into an SBT shell which supports all the commands directly, without needing a prefix. You can also precede any SBT commands with a "~" to rerun the specified action when any changes are made to the source. For instance, Running the following ("> " indicates an SBT shell):
 
 > ~compile
 
@@ -24,7 +24,7 @@ This leaves a spiel*.apk file in a subdirectory of target/ based on the Scala ve
 Development Tips
 ----------------
 
-SBT and [Scala](http://scala-lang.org) allows for a streamlined Android app development process. Here is how I rapidly develop Spiel. First, launch SBT to use its shell directly:
+SBT and [Scala](http://scala-lang.org) allow for a streamlined Android app development process. Here is how I rapidly develop Spiel. First, launch SBT to use its shell directly:
 
 $ sbt
 
@@ -34,7 +34,7 @@ Once started, run the following from the SBT shell:
 
 > ~reinstall-emulator
 
-When changes are made in the source directory (src/main/scala or src/main/java) the app will be rebuilt, restarted and will relaunch.
+When changes are made in the source directory (src/main/scala or src/main/java) the app will be rebuilt and restarted.
 
 Contributions
 -------------
