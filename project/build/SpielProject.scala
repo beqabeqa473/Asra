@@ -4,6 +4,8 @@ import java.io.File
 
 class SpielProject(info: ProjectInfo) extends AndroidProject(info) {
 
+  val scanDirectories = mainAssetsPath/"scripts" :: Nil
+
   override def androidPlatformName = "android-2.1"
 
   val tts = "google" % "tts" % "2.1_rc01" from "http://eyes-free.googlecode.com/files/TTS_library_stub_2.1_rc01.jar"
