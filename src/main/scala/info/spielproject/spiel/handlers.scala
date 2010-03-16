@@ -162,7 +162,9 @@ class Handler(pkg:String, cls:String) {
         str += ": "
     }
     if(e.getText.size > 0)
-      str += ("" /: e.getText) (_ + _)
+      str += e.getText.reduceLeft[CharSequence] {
+        (acc, v) => acc+" "+v.toString
+      }
     str
   }
 
