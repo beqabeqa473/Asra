@@ -2,7 +2,7 @@ package info.spielproject.spiel.telephony
 
 import android.content.{ContentResolver, Context}
 import android.net.Uri
-import android.os.Build
+import android.os.Build.VERSION
 import android.provider.{Contacts, ContactsContract}
 import android.telephony.{PhoneStateListener, TelephonyManager}
 import android.util.Log
@@ -48,11 +48,10 @@ private class ResolverV5(service:SpielService) extends Resolver(service) {
 
 private class Listener(service:SpielService) extends PhoneStateListener {
 
-  val resolve = try {
+  val resolve = if(Integer.parseInt(VERSION.SDK) >= 5)
     new ResolverV5(service)
-  } catch {
-    case _ => new ResolverV1(service)
-  }
+  else
+    new ResolverV1(service)
 
   import TelephonyManager._
 
