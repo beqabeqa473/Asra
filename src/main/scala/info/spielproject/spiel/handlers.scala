@@ -298,7 +298,7 @@ class Handlers {
 
     onNotificationStateChanged { e:AccessibilityEvent =>
       Log.d("spiel", "onNotificationStateChanged")
-      false
+      if(e.getText.size == 0) true else false
     }
 
     onViewClicked { e:AccessibilityEvent =>
