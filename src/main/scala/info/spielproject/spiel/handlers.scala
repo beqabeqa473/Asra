@@ -163,7 +163,7 @@ class Handler(pkg:String, cls:String) {
     }
     if(e.getText.size > 0)
       str += e.getText.reduceLeft[CharSequence] {
-        (acc, v) => acc+" "+v.toString
+        (acc, v) => acc+" "+(if (v != null) v.toString)
       }
     str
   }
