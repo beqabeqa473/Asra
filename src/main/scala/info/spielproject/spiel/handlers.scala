@@ -163,7 +163,7 @@ class Handler(pkg:String, cls:String) {
     }
     if(e.getText.size > 0)
       str += e.getText.reduceLeft[CharSequence] {
-        (acc, v) => acc+" "+v.toString
+        (acc, v) => acc+" "+(if (v != null) v.toString)
       }
     str
   }
@@ -298,7 +298,7 @@ class Handlers {
 
     onNotificationStateChanged { e:AccessibilityEvent =>
       Log.d("spiel", "onNotificationStateChanged")
-      false
+      if(e.getText.size == 0) true else false
     }
 
     onViewClicked { e:AccessibilityEvent =>
