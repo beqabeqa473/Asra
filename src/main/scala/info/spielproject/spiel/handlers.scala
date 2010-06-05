@@ -311,7 +311,7 @@ class Handlers {
       if(e.isFullScreen || (e.getItemCount == 0 && e.getCurrentItemIndex == -1))
         true
       else
-        false
+        if(e.getText.size == 0) true else false
     }
 
     onViewLongClicked { e:AccessibilityEvent =>
@@ -321,7 +321,7 @@ class Handlers {
 
     onViewSelected { e:AccessibilityEvent =>
       Log.d("spiel", "onViewSelected")
-      false
+      if(e.getText.size == 0) true else false
     }
 
     onViewTextChanged { e:AccessibilityEvent =>
