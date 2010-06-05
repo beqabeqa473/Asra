@@ -46,6 +46,7 @@ private class GenericSpeaker(context:Context) extends Speaker(context) with OnIn
   def speak(text:String, flush:Boolean) {
     val mode = if(flush) QUEUE_FLUSH else QUEUE_ADD
     Log.d("spiel", "Speaking: "+text+": "+flush)
+    if(flush) stop
     if(text.length == 0)
       tts.speak("blank", mode, null)
     else if(text == " ")
