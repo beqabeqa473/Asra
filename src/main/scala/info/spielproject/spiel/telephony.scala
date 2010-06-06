@@ -55,18 +55,10 @@ private class Listener(service:SpielService) extends PhoneStateListener {
 
   import TelephonyManager._
 
-  private var repeaterID = ""
-
   override def onCallStateChanged(state:Int, number:String) = state match {
-    case CALL_STATE_IDLE =>
-      TTS.stopRepeatedSpeech(repeaterID)
-      repeaterID = ""
-    case CALL_STATE_RINGING =>
-      repeaterID = TTS.speakEvery(3, resolve(number))
-    case CALL_STATE_OFFHOOK =>
-      TTS.stop
-      TTS.stopRepeatedSpeech(repeaterID)
-      repeaterID = ""
+    case CALL_STATE_IDLE => StateReactor.callIdle
+    case CALL_STATE_RINGING => StateReactor.callRinging(resolve(number))
+    case CALL_STATE_OFFHOOK => StateReactor.callAnswered
   }
 
 }
@@ -76,6 +68,21 @@ object TelephonyListener {
   def apply(service:SpielService) {
     val manager = service.getSystemService(Context.TELEPHONY_SERVICE).asInstanceOf[TelephonyManager]
     manager.listen(new Listener(service), PhoneStateListener.LISTEN_CALL_STATE)
+
+      var repeaterID = ""
+
+      StateReactor.onCallRinging { number => repeaterID = TTS.speakEvery(3, number) }
+
+      StateReactor.onCallAnswered { () =>
+        TTS.stop
+        TTS.stopRepeatedSpeech(repeaterID)
+        repeaterID = ""
+      }
+
+      StateReactor.onCallIdle { () =>
+        TTS.stopRepeatedSpeech(repeaterID)
+        repeaterID = ""
+      }
   }
 
 }
