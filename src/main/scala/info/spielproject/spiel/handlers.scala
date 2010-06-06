@@ -321,7 +321,10 @@ class Handlers {
 
     onViewSelected { e:AccessibilityEvent =>
       Log.d("spiel", "onViewSelected")
-      if(e.getText.size == 0) true else false
+      if(e.getText.size == 0) {
+        TTS.stop
+        true
+      } else false
     }
 
     onViewTextChanged { e:AccessibilityEvent =>
