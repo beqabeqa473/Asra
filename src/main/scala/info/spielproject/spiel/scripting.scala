@@ -55,7 +55,11 @@ object Scripter {
       case e => Log.e("spiel", e.toString)
     }
 
-    val scripts = service.getDir("scripts", 0)
+    val spielDir = new File("/sdcard/spiel")
+    if(!spielDir.isDirectory) spielDir.mkdir
+    val scriptsDir = new File("/sdcard/spiel/scripts")
+    if(!scriptsDir.isDirectory) scriptsDir.mkdir
+
     val assets = service.getAssets
 
     def readAllAvailable(is:InputStream):String = {
@@ -66,8 +70,8 @@ object Scripter {
     }
 
     for(fn <- assets.list("scripts") if(fn != "api.js")) {
-      if(!scripts.list.contains(fn)) {
-        val script = new FileOutputStream(new File(scripts, "_"+fn))
+      if(!scriptsDir.list.contains(fn)) {
+        val script = new FileOutputStream(new File(scriptsDir, "_"+fn))
         script.write(readAllAvailable(assets.open("scripts/"+fn)).getBytes)
         script.close
       }
@@ -77,12 +81,12 @@ object Scripter {
       val is = if(asset) 
         assets.open("scripts/"+f)
       else
-        new FileInputStream(new File(scripts, f))
+        new FileInputStream(new File(scriptsDir, f))
       run(readAllAvailable(is), f)
     }
 
     runScriptFile("api.js", true)
-    scripts.list.foreach { script => runScriptFile(script) }
+    scriptsDir.list.foreach { script => runScriptFile(script) }
 
     Context.exit
     true
