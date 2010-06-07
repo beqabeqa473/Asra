@@ -7,7 +7,6 @@ forClass("com.android.internal.policy.impl.LockScreen", {
 
 forClass("com.android.internal.policy.impl.KeyguardViewManager$KeyguardViewHost", {
   onWindowStateChanged: function() {
-    speak("Locked, press menu to unlock.");
     return true;
   }
 });

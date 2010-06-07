@@ -13,4 +13,14 @@ object StateReactor {
   private var callRingingHandlers = List[(String) => Unit]()
   def onCallRinging(h:(String) => Unit) = callRingingHandlers ::= h
   def callRinging(number:String) = callRingingHandlers.foreach { f => f(number) }
+
+  private var screenOffHandlers = List[() => Unit]()
+  def onScreenOff(h:() => Unit) = screenOffHandlers ::= h
+  def screenOff = screenOffHandlers.foreach { f => f() }
+
+  private var screenOnHandlers = List[() => Unit]()
+  def onScreenOn(h:() => Unit) = screenOnHandlers ::= h
+  def screenOn = screenOnHandlers.foreach { f => f() }
+
+
 }
