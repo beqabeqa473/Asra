@@ -1,32 +1,21 @@
 package info.spielproject.spiel.tts
 
 import actors.Actor._
+import collection.JavaConversions._
+
 import android.content.Context
 import android.util.Log
 
 import com.google.tts.TextToSpeechBeta
 import TextToSpeechBeta._
 
-private abstract class Speaker(context:Context) {
-  import collection.JavaConversions._
+object TTS extends OnInitListener with OnUtteranceCompletedListener {
 
-  def speak(text:String, flush:Boolean)
+  private var tts:TextToSpeechBeta = null
 
-  def speak(list:List[String], flush:Boolean) {
-    speak(list.head, flush)
-    list.tail.foreach { str => speak(str, false) }
+  def apply(context:Context) {
+    tts = new TextToSpeechBeta(context, this)
   }
-  def stop
-
-  def speakEvery(seconds:Int, text:String):String
-
-  def stopRepeatedSpeech(key:String):Unit
-
-}
-
-private class GenericSpeaker(context:Context) extends Speaker(context) with OnInitListener with OnUtteranceCompletedListener {
-
-  private val tts = new TextToSpeechBeta(context, this)
 
   def onInit(status:Int, version:Int) {
     tts.setLanguage(java.util.Locale.getDefault)
@@ -40,28 +29,40 @@ private class GenericSpeaker(context:Context) extends Speaker(context) with OnIn
         Thread.sleep(v._1*1000)
         performRepeatedSpeech(id)
       }
-    case None =>
+    case None => if(!queue.isEmpty) processUtterance(queue.dequeue)
   }
+
+  private case class Utterance(text:String, flush:Boolean)
+
+  private val queue = new collection.mutable.Queue[Utterance]
 
   def speak(text:String, flush:Boolean) {
-    val mode = if(flush) QUEUE_FLUSH else QUEUE_ADD
-    Log.d("spiel", "Speaking: "+text+": "+flush)
-    if(flush) stop
-    if(text.length == 0)
-      tts.speak("blank", mode, null)
-    else if(text == " ")
-      tts.speak("space", mode, null)
-    else if(text.length == 1 && text >= "A" && text <= "Z") {
-      tts.setPitch(1.5f)
-      tts.speak("cap "+text, mode, null)
-      tts.setPitch(1)
-    } else
-      tts.speak(text, mode, null)
+    if(text.contains("\n"))
+      speak(text.split("\n").toList, flush)
+    else {
+      val utterance = Utterance(text, flush)
+      if(tts.isSpeaking) {
+        if(utterance.flush) {
+          stopAndClear
+          processUtterance(utterance)
+        } else {
+          Log.d("spiel", "Queuing: "+utterance)
+          queue.enqueue(utterance)
+        }
+      } else processUtterance(utterance)
+    }
   }
 
-  def stop = tts.stop
+  def speak(list:List[String], flush:Boolean):Unit = if(list != Nil) {
+    speak(list.head, flush)
+    list.tail.foreach { str => speak(str, false) }
+  }
 
-  private def speakWithUtteranceID(text:String, uid:String) {
+  def stop = stopAndClear
+
+  private def speakWithUtteranceID(text:String, uid:String, flush:Boolean = false) {
+    if(flush)  stopAndClear
+    Log.d("spiel", "Speaking: "+text+": "+flush)
     val params = new java.util.HashMap[String, String]()
     params.put("utteranceId", uid) // TODO: Why won't Scala see Engine?
     tts.speak(text, QUEUE_ADD, params).toString
@@ -85,27 +86,24 @@ private class GenericSpeaker(context:Context) extends Speaker(context) with OnIn
     case None =>
   }
 
-}
-
-object TTS {
-
-  private var speaker:Speaker = null
-
-  def apply(context:Context) {
-    speaker = new GenericSpeaker(context)
+  private def processUtterance(u:Utterance) {
+    Log.d("spiel", "Processing: "+u)
+    if(u.text.length == 0)
+      speakWithUtteranceID("blank", "queue", u.flush)
+    else if(u.text == " ")
+      speakWithUtteranceID("space", "queue", u.flush)
+    else if(u.text.length == 1 && u.text >= "A" && u.text <= "Z") {
+      tts.setPitch(1.5f)
+      speakWithUtteranceID("cap "+u.text, "queue", u.flush)
+      tts.setPitch(1)
+    } else
+      speakWithUtteranceID(u.text, "queue", u.flush)
   }
 
-  def speak(text:String, flush:Boolean) = speaker.speak(text, flush)
-
-  def speak(list:List[String], flush:Boolean) = speaker.speak(list, flush)
-
-  def stop {
+  private def stopAndClear {
     Log.d("spiel", "Stopping speech.")
-    speaker.stop
+    tts.stop
+    queue.clear
   }
-
-  def speakEvery(seconds:Int, text:String) = speaker.speakEvery(seconds, text)
-
-  def stopRepeatedSpeech(key:String) = speaker.stopRepeatedSpeech(key)
 
 }
