@@ -20,7 +20,7 @@ object Handler {
   private var handlers = Map[(String, String), Handler]()
 
   private var myNextShouldNotInterrupt = false
-  def getNextShouldNotInterrupt = myNextShouldNotInterrupt
+  def shouldNextInterrupt = !myNextShouldNotInterrupt
 
   private var nextShouldNotInterruptCalled = false
 
@@ -298,7 +298,9 @@ class Handlers {
 
     onNotificationStateChanged { e:AccessibilityEvent =>
       Log.d("spiel", "onNotificationStateChanged")
-      if(e.getText.size == 0) true else false
+      if(e.getText.size > 0)
+        speak(textFor(e), false)
+      true
     }
 
     onViewClicked { e:AccessibilityEvent =>
@@ -310,8 +312,12 @@ class Handlers {
       Log.d("spiel", "onViewFocused")
       if(e.isFullScreen || (e.getItemCount == 0 && e.getCurrentItemIndex == -1))
         true
-      else
-        if(e.getText.size == 0) true else false
+      else {
+        if(Handler.shouldNextInterrupt) TTS.stop
+        //if(textFor(e).length > 0)
+          speak(textFor(e))
+        true
+      }
     }
 
     onViewLongClicked { e:AccessibilityEvent =>
@@ -321,10 +327,11 @@ class Handlers {
 
     onViewSelected { e:AccessibilityEvent =>
       Log.d("spiel", "onViewSelected")
-      if(e.getText.size == 0) {
-        TTS.stop
-        true
-      } else false
+      if(textFor(e).length == 0) {
+        if(Handler.shouldNextInterrupt) TTS.stop
+      } else
+        TTS.speak(textFor(e), true)
+      true
     }
 
     onViewTextChanged { e:AccessibilityEvent =>
@@ -352,7 +359,8 @@ class Handlers {
         true
       else {
         nextShouldNotInterrupt
-        false
+        TTS.speak(textFor(e), true)
+        true
       }
     }
 
