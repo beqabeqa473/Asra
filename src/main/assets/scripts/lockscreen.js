@@ -10,3 +10,9 @@ forClass("com.android.internal.policy.impl.KeyguardViewManager$KeyguardViewHost"
     return true;
   }
 });
+
+forClass("com.android.internal.policy.impl.LockPatternKeyguardView", {
+  onViewFocused: function() {
+    return true;
+  }
+});
