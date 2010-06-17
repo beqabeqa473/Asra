@@ -6,7 +6,6 @@ import collection.JavaConversions._
 import collection.mutable.Map
 
 import info.spielproject.spiel._
-import tts.TTS
 
 abstract class Callback {
   def apply(e:AccessibilityEvent):Boolean

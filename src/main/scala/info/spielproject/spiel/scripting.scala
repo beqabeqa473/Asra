@@ -8,7 +8,6 @@ import org.mozilla.javascript.{Context, Function, RhinoException, ScriptableObje
 
 import info.spielproject.spiel._
 import handlers.{Callback, Handler}
-import tts.TTS
 
 class RhinoCallback(f:Function) extends Callback {
   def apply(e:AccessibilityEvent):Boolean = {

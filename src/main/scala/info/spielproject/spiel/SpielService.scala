@@ -8,7 +8,6 @@ import com.nullwire.trace.ExceptionHandler
 
 import handlers.Handler
 import scripting.Scripter
-import tts.TTS
 
 class SpielService extends AccessibilityService {
 
