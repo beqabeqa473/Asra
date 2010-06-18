@@ -1,5 +1,8 @@
 package info.spielproject.spiel.handlers
 
+import actors.Actor
+import Actor._
+
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import collection.JavaConversions._
@@ -15,7 +18,7 @@ class NativeCallback(f:AccessibilityEvent => Boolean) extends Callback{
   def apply(e:AccessibilityEvent) = f(e)
 }
 
-object Handler {
+object Handler extends Actor {
   private var handlers = Map[(String, String), Handler]()
 
   private var myNextShouldNotInterrupt = false
@@ -30,7 +33,9 @@ object Handler {
   }
 
   private var service:SpielService = null
+
   def apply(s:SpielService) {
+    start
     service = s
     val h = new Handlers
     h.getClass.getDeclaredClasses.foreach { cls =>
@@ -44,8 +49,62 @@ object Handler {
     }
   }
 
-  def handle(e:AccessibilityEvent) {
+  def onDestroy {
+    exit
+  }
+
+  private val timeout = 200
+
+  case class QueueItem(event:AccessibilityEvent, time:Long)
+  private val queue = collection.mutable.ListBuffer[QueueItem]()
+
+
+  def handle(event:AccessibilityEvent) = {
+
+    def shouldReplace(original:AccessibilityEvent, replacement:AccessibilityEvent) = {
+      original.getEventType != AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED &&
+      original.getEventType == replacement.getEventType
+    }
+
+    queue.lastOption match {
+      case Some(v) if(shouldReplace(v.event, event)) =>
+        Log.d("spiel queue", "Replacing event of identical type.")
+        queue.remove(queue.size-1)
+      case _ =>
+        Log.d("spiel queue", "Plain queue.")
+    }
+    queue.append(QueueItem(event, System.currentTimeMillis+timeout))
+    this ! Process
+  }
+
+  case object Process
+
+  def act {
+    loop {
+      react {
+        case Process if(!queue.isEmpty) =>
+          val now = System.currentTimeMillis
+          queue.headOption match {
+            case Some(item) if(item.time <= now) => processQueue
+            case Some(item) =>
+              Thread.sleep(item.time-now)
+              this ! Process
+            case None =>
+          }
+      }
+    }
+  }
+
+  private def processQueue {
+
+    queue.headOption.foreach { item =>
+      if(item.time > System.currentTimeMillis)
+        return this ! Process
+    }
+
+    val e = queue.remove(0).event
     Log.d("spiel", "Event "+e.toString)
+
     nextShouldNotInterruptCalled = false
     var continue = true 
     var alreadyCalled = List[Handler]()
@@ -96,12 +155,15 @@ object Handler {
         }
       }
     } catch {
-      case exception => Log.d("spiel", exception.toString)
+      case _ =>
     }
 
     if(continue) dispatchTo("", "")
     if(!nextShouldNotInterruptCalled)
       myNextShouldNotInterrupt = false
+
+    if(!queue.isEmpty) processQueue
+
   }
 
   import AccessibilityEvent._
