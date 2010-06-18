@@ -8,7 +8,6 @@ import android.telephony.{PhoneStateListener, TelephonyManager}
 import android.util.Log
 
 import info.spielproject.spiel._
-import tts.TTS
 
 private abstract class Resolver(service:SpielService) {
 
