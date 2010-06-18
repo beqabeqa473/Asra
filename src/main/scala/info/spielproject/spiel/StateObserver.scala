@@ -22,4 +22,15 @@ object StateObserver {
 
   }
 
+  StateReactor.onScreenOff { () =>
+    Log.d("spiel", "Screen off.")
+    TTS.speak("Locked.", false)
+  }
+
+  StateReactor.onScreenOn { () =>
+    Log.d("spiel", "Screen on.")
+    TTS.speak("Locked.", false)
+  }
+
+
 }

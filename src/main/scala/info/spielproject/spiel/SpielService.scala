@@ -39,8 +39,6 @@ class SpielService extends AccessibilityService {
     StateObserver(this)
     // TODO: Why is this needed?
     connected = true
-    StateReactor.onScreenOff { () => TTS.speak("Locked.", true) }
-    StateReactor.onScreenOn { () => TTS.speak("Locked.", true) }
     Log.d(this.toString, "Spiel is configured.")
   }
 
