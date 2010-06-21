@@ -55,54 +55,36 @@ object Handler extends Actor {
 
   private val timeout = 200
 
-  case class QueueItem(event:AccessibilityEvent, time:Long)
-  private val queue = collection.mutable.ListBuffer[QueueItem]()
-
+  case class Item(event:AccessibilityEvent, presentationTime:Long)
 
   def handle(event:AccessibilityEvent) = {
-
-    def shouldReplace(original:AccessibilityEvent, replacement:AccessibilityEvent) = {
-      original.getEventType != AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED &&
-      original.getEventType == replacement.getEventType
-    }
-
-    queue.lastOption match {
-      case Some(v) if(shouldReplace(v.event, event)) =>
-        Log.d("spiel queue", "Replacing event of identical type.")
-        queue.remove(queue.size-1)
-      case _ =>
-        Log.d("spiel queue", "Plain queue.")
-    }
-    queue.append(QueueItem(event, System.currentTimeMillis+timeout))
-    this ! Process
+    this ! Item(event, System.currentTimeMillis+timeout)
   }
 
-  case object Process
+  def act = react {
+    case i:Item =>
+      val delay = i.presentationTime-System.currentTimeMillis
+      if(delay > 0) Thread.sleep(delay)
+      actWithLookahead(i)
+  }
 
-  def act {
-    loop {
-      react {
-        case Process if(!queue.isEmpty) =>
-          val now = System.currentTimeMillis
-          queue.headOption match {
-            case Some(item) if(item.time <= now) => processQueue
-            case Some(item) =>
-              Thread.sleep(item.time-now)
-              this ! Process
-            case None =>
-          }
+  import AccessibilityEvent._
+
+  private def actWithLookahead(i:Item):Unit = reactWithin(0) {
+    case actors.TIMEOUT =>
+      process(i.event)
+      act
+    case i2:Item =>
+      if(i.event.getEventType != TYPE_NOTIFICATION_STATE_CHANGED && i2.event.getEventType == i.event.getEventType)  {
+        TTS.stop
+        actWithLookahead(i2)
+      } else {
+        process(i.event)
+        actWithLookahead(i2)
       }
-    }
   }
 
-  private def processQueue {
-
-    queue.headOption.foreach { item =>
-      if(item.time > System.currentTimeMillis)
-        return this ! Process
-    }
-
-    val e = queue.remove(0).event
+  private def process(e:AccessibilityEvent) {
     Log.d("spiel", "Event "+e.toString)
 
     nextShouldNotInterruptCalled = false
@@ -162,11 +144,8 @@ object Handler extends Actor {
     if(!nextShouldNotInterruptCalled)
       myNextShouldNotInterrupt = false
 
-    if(!queue.isEmpty) processQueue
-
   }
 
-  import AccessibilityEvent._
   val dispatchers = Map(
     TYPE_NOTIFICATION_STATE_CHANGED -> "notificationStateChanged",
     TYPE_VIEW_CLICKED -> "viewClicked",
