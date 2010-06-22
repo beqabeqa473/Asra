@@ -6,18 +6,18 @@ import collection.JavaConversions._
 import android.content.Context
 import android.util.Log
 
-import com.google.tts.TextToSpeechBeta
-import TextToSpeechBeta._
+import android.speech.tts.TextToSpeech
+import TextToSpeech._
 
 object TTS extends OnInitListener with OnUtteranceCompletedListener {
 
-  private var tts:TextToSpeechBeta = null
+  private var tts:TextToSpeech = null
 
   def apply(context:Context) {
-    tts = new TextToSpeechBeta(context, this)
+    tts = new TextToSpeech(context, this)
   }
 
-  def onInit(status:Int, version:Int) {
+  def onInit(status:Int) {
     tts.setLanguage(java.util.Locale.getDefault)
     tts.setOnUtteranceCompletedListener(this)
     speak("Welcome to spiel!", true)
@@ -32,24 +32,18 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     case None => if(!queue.isEmpty) processUtterance(queue.dequeue)
   }
 
-  private case class Utterance(text:String, flush:Boolean)
-
-  private val queue = new collection.mutable.Queue[Utterance]
+  private val queue = new collection.mutable.Queue[String]
 
   def speak(text:String, flush:Boolean) {
     if(text.contains("\n"))
       speak(text.split("\n").toList, flush)
     else {
-      val utterance = Utterance(text, flush)
+      if(flush)
+        stop
       if(tts.isSpeaking || !queue.isEmpty) {
-        if(utterance.flush) {
-          stopAndClear
-          processUtterance(utterance)
-        } else {
-          Log.d("spiel", "Queuing: "+utterance)
-          queue.enqueue(utterance)
-        }
-      } else processUtterance(utterance)
+        Log.d("spiel", "Queuing: "+text)
+        queue.enqueue(text)
+      } else processUtterance(text)
     }
   }
 
@@ -58,15 +52,17 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     list.tail.foreach { str => speak(str, false) }
   }
 
-  def stop = stopAndClear
+  def stop {
+    Log.d("spiel", "Stopping speech")
+    queue.clear
+    tts.stop
+  }
 
-  private def speakWithUtteranceID(text:String, uid:String, flush:Boolean = false) {
-    //if(flush)  stopAndClear
-    Log.d("spiel", "Speaking: "+text+": "+flush)
+  private def speakWithUtteranceID(text:String, uid:String) {
+    Log.d("spiel", "Speaking: "+text)
     val params = new java.util.HashMap[String, String]()
     params.put("utteranceId", uid) // TODO: Why won't Scala see Engine?
-    val mode = if(flush) QUEUE_FLUSH else QUEUE_ADD
-    tts.speak(text, mode, params).toString
+    tts.speak(text, QUEUE_FLUSH, params).toString
   }
 
   private var repeatedSpeech = collection.mutable.Map[String, Tuple2[Int, String]]()
@@ -87,24 +83,18 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     case None =>
   }
 
-  private def processUtterance(u:Utterance) {
+  private def processUtterance(u:String) {
     Log.d("spiel", "Processing: "+u)
-    if(u.text.length == 0)
-      speakWithUtteranceID("blank", "queue", u.flush)
-    else if(u.text == " ")
-      speakWithUtteranceID("space", "queue", u.flush)
-    else if(u.text.length == 1 && u.text >= "A" && u.text <= "Z") {
+    if(u.length == 0)
+      speakWithUtteranceID("blank", "queue")
+    else if(u == " ")
+      speakWithUtteranceID("space", "queue")
+    else if(u.length == 1 && u >= "A" && u <= "Z") {
       tts.setPitch(1.5f)
-      speakWithUtteranceID("cap "+u.text, "queue", u.flush)
+      speakWithUtteranceID("cap "+u, "queue")
       tts.setPitch(1)
     } else
-      speakWithUtteranceID(u.text, "queue", u.flush)
-  }
-
-  private def stopAndClear {
-    Log.d("spiel", "Stopping speech and clearing queue.")
-    tts.stop
-    queue.clear
+      speakWithUtteranceID(u, "queue")
   }
 
 }

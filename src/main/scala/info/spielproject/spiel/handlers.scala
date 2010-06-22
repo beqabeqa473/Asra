@@ -171,6 +171,8 @@ class Handler(pkg:String, cls:String) {
   def speak(text:String):Unit = TTS.speak(text, !myNextShouldNotInterrupt)
   def speak(list:java.util.List[CharSequence], interrupt:Boolean):Unit = TTS.speak(list.map(_.toString).toList, interrupt)
   def speak(list:java.util.List[CharSequence]):Unit = TTS.speak(list.map(_.toString).toList, !myNextShouldNotInterrupt)
+  def speak(list:List[String], interrupt:Boolean):Unit = TTS.speak(list, interrupt)
+  def speak(list:List[String]):Unit = TTS.speak(list, !myNextShouldNotInterrupt)
 
   def nextShouldNotInterrupt = Handler.nextShouldNotInterrupt
 
@@ -194,18 +196,16 @@ class Handler(pkg:String, cls:String) {
 
   protected def byDefault(c:Callback) = dispatches("default") = c
 
-  protected def textFor(e:AccessibilityEvent) = {
-    var str = ""
-    if(e.getContentDescription != null) {
-      str += e.getContentDescription
-      if(e.getText.size > 0)
-        str += ": "
+  protected def utterancesFor(e:AccessibilityEvent) = {
+    val rv:collection.mutable.ListBuffer[String] = collection.mutable.ListBuffer[String]()
+    if(e.getContentDescription != null)
+      rv += e.getContentDescription.toString
+    if(e.getText.isEmpty)
+      rv += ""
+    e.getText.foreach { text =>
+      if(text != null) rv += text.toString
     }
-    if(e.getText.size > 0)
-      str += e.getText.reduceLeft[CharSequence] {
-        (acc, v) => acc+" "+(if (v != null) v.toString)
-      }
-    str
+    rv.toList
   }
 
   def apply(e:AccessibilityEvent):Boolean = {
@@ -229,7 +229,7 @@ class Handler(pkg:String, cls:String) {
 
 trait GenericButtonHandler extends Handler {
   onViewFocused { e:AccessibilityEvent =>
-    speak(textFor(e)+": button")
+    speak(utterancesFor(e)++("button" :: Nil))
     true
   }
 }
@@ -256,7 +256,7 @@ class Handlers {
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(textFor(e)+" checkbox")
+      speak(utterancesFor(e)++("checkbox" :: Nil))
       true
     }
 
@@ -274,10 +274,10 @@ class Handlers {
     onViewFocused { e:AccessibilityEvent =>
       if(e.getCurrentItemIndex != -1) {
         if(!e.isPassword) {
-          speak(textFor(e), false)
+          speak(utterancesFor(e), false)
           speak("edit text", false)
         } else
-          speak(textFor(e)+": password")
+          speak(utterancesFor(e)++("password" :: Nil))
       }
       true
     }
@@ -288,13 +288,13 @@ class Handlers {
   class Menu extends Handler("com.android.internal.view.menu.MenuView") {
 
     onViewSelected { e:AccessibilityEvent =>
-      speak(textFor(e))
+      speak(utterancesFor(e))
       true
     }
 
     onWindowStateChanged { e:AccessibilityEvent =>
       if(e.getCurrentItemIndex == -1) {
-        speak("menu")
+        speak("menu", true)
         nextShouldNotInterrupt
       }
       true
@@ -313,7 +313,7 @@ class Handlers {
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(textFor(e)+": radio button")
+      speak(utterancesFor(e)++("radio button" :: Nil))
       true
     }
 
@@ -321,7 +321,7 @@ class Handlers {
 
   class SearchBox extends Handler("android.app.SearchDialog$SearchAutoComplete") {
     onViewFocused { e:AccessibilityEvent =>
-      speak(textFor(e))
+      speak(utterancesFor(e))
       speak("search text", false)
       true
     }
@@ -329,7 +329,7 @@ class Handlers {
 
   class Tab extends Handler("android.widget.RelativeLayout") {
     onViewFocused { e:AccessibilityEvent =>
-      speak(textFor(e)+": tab", true)
+      speak(utterancesFor(e)++("tab" :: Nil), true)
       true
     }
   }
@@ -339,7 +339,7 @@ class Handlers {
     onNotificationStateChanged { e:AccessibilityEvent =>
       Log.d("spiel", "onNotificationStateChanged")
       if(e.getText.size > 0)
-        speak(textFor(e), false)
+        speak(utterancesFor(e), false)
       true
     }
 
@@ -354,8 +354,8 @@ class Handlers {
         true
       else {
         if(Handler.shouldNextInterrupt) TTS.stop
-        //if(textFor(e).length > 0)
-          speak(textFor(e))
+        //if(utterancesFor(e).length > 0)
+          speak(utterancesFor(e))
         true
       }
     }
@@ -367,10 +367,8 @@ class Handlers {
 
     onViewSelected { e:AccessibilityEvent =>
       Log.d("spiel", "onViewSelected")
-      if(textFor(e).length == 0) {
-        if(Handler.shouldNextInterrupt) TTS.stop
-      } else
-        TTS.speak(textFor(e), true)
+      if(utterancesFor(e).length > 0)
+        speak(utterancesFor(e))
       true
     }
 
@@ -398,15 +396,15 @@ class Handlers {
       if(!e.isFullScreen)
         true
       else {
+        TTS.speak(utterancesFor(e), true)
         nextShouldNotInterrupt
-        TTS.speak(textFor(e), true)
         true
       }
     }
 
     byDefault { e:AccessibilityEvent =>
       Log.d("spiel", "Unhandled event: "+e.toString)
-      speak(textFor(e))
+      speak(utterancesFor(e))
       true
     }
 
