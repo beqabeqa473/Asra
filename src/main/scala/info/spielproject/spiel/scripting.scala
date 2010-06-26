@@ -1,5 +1,6 @@
 package info.spielproject.spiel.scripting
 
+import android.os.Environment
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import java.io.{File, FileInputStream, FileOutputStream, InputStream}
@@ -54,9 +55,9 @@ object Scripter {
       case e => Log.e("spiel", e.toString)
     }
 
-    val spielDir = new File("/sdcard/spiel")
+    val spielDir = new File(Environment.getExternalStorageDirectory, "spiel")
     if(!spielDir.isDirectory) spielDir.mkdir
-    val scriptsDir = new File("/sdcard/spiel/scripts")
+    val scriptsDir = new File(spielDir, "scripts")
     if(!scriptsDir.isDirectory) scriptsDir.mkdir
 
     val assets = service.getAssets
