@@ -32,7 +32,7 @@ object Handler extends Actor {
     myNextShouldNotInterrupt = true
   }
 
-  private var service:SpielService = null
+  private[spiel] var service:SpielService = null
 
   def apply(s:SpielService) {
     start
@@ -229,7 +229,7 @@ class Handler(pkg:String, cls:String) {
 
 trait GenericButtonHandler extends Handler {
   onViewFocused { e:AccessibilityEvent =>
-    speak(utterancesFor(e)++("button" :: Nil))
+    speak(utterancesFor(e)++(Handler.service.getString(R.string.button) :: Nil))
     true
   }
 }
@@ -238,7 +238,7 @@ class Handlers {
 
   class AlertDialog extends Handler("android.app.AlertDialog") {
     onWindowStateChanged { e:AccessibilityEvent =>
-      speak("Alert!" +=: e.getText, true)
+      speak(Handler.service.getString(R.string.alert) +=: e.getText, true)
       nextShouldNotInterrupt
       true
     }
@@ -249,14 +249,14 @@ class Handlers {
   class CheckBox extends Handler("android.widget.CheckBox") {
     onViewClicked { e:AccessibilityEvent =>
       if(e.isChecked)
-        speak("checked")
+        speak(Handler.service.getString(R.string.checked))
       else
-        speak("not checked")
+        speak(Handler.service.getString(R.string.notChecked))
       true
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(utterancesFor(e)++("checkbox" :: Nil))
+      speak(utterancesFor(e)++(Handler.service.getString(R.string.checkbox) :: Nil))
       true
     }
 
@@ -275,9 +275,9 @@ class Handlers {
       if(e.getCurrentItemIndex != -1) {
         if(!e.isPassword) {
           speak(utterancesFor(e), false)
-          speak("edit text", false)
+          speak(Handler.service.getString(R.string.editText), false)
         } else
-          speak(utterancesFor(e)++("password" :: Nil))
+          speak(utterancesFor(e)++(Handler.service.getString(R.string.password) :: Nil))
       }
       true
     }
@@ -294,7 +294,7 @@ class Handlers {
 
     onWindowStateChanged { e:AccessibilityEvent =>
       if(e.getCurrentItemIndex == -1) {
-        speak("menu", true)
+        speak(Handler.service.getString(R.string.menu), true)
         nextShouldNotInterrupt
       }
       true
@@ -306,14 +306,14 @@ class Handlers {
 
     onViewClicked { e:AccessibilityEvent =>
       if(e.isChecked)
-        speak("checked")
+        speak(Handler.service.getString(R.string.checked))
       else
-        speak("not checked")
+        speak(Handler.service.getString(R.string.notChecked))
       true
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(utterancesFor(e)++("radio button" :: Nil))
+      speak(utterancesFor(e)++(Handler.service.getString(R.string.radioButton) :: Nil))
       true
     }
 
@@ -322,14 +322,14 @@ class Handlers {
   class SearchBox extends Handler("android.app.SearchDialog$SearchAutoComplete") {
     onViewFocused { e:AccessibilityEvent =>
       speak(utterancesFor(e))
-      speak("search text", false)
+      speak(Handler.service.getString(R.string.searchText), false)
       true
     }
   }
 
   class Tab extends Handler("android.widget.RelativeLayout") {
     onViewFocused { e:AccessibilityEvent =>
-      speak(utterancesFor(e)++("tab" :: Nil), true)
+      speak(utterancesFor(e)++(Handler.service.getString(R.string.tab) :: Nil), true)
       true
     }
   }
@@ -396,7 +396,7 @@ class Handlers {
       if(!e.isFullScreen)
         true
       else {
-        TTS.speak(utterancesFor(e), true)
+        speak(utterancesFor(e), true)
         nextShouldNotInterrupt
         true
       }

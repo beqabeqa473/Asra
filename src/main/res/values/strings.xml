@@ -2,16 +2,20 @@
 
 <resources>
 
-  <!-- Main Spiel activity -->
-  <string name="aboutTab">About</string>
-  <string name="scriptingTab">Scripting</string>
+  <!-- Initial welcome message-->
+  <string name="welcomeMsg">Welcome to Spiel!</string>
 
-  <!-- View names -->
+  <!-- View names and actions -->
+  <string name="alert">Alert!</string>
   <string name="button">button</string>
+  <string name="checkbox">checkbox</string>
+  <string name="checked">checked</string>
   <string name="editText">edit text</string>
   <string name="menu">menu</string>
+  <string name="notChecked">not checked</string>
   <string name="password">password</string>
   <string name="radioButton">radio button</string>
-  <string name="search">search</string>
+  <string name="searchText">search text</string>
+  <string name="tab">tab</string>
 
 </resources>

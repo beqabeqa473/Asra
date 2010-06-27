@@ -20,7 +20,7 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
   def onInit(status:Int) {
     tts.setLanguage(java.util.Locale.getDefault)
     tts.setOnUtteranceCompletedListener(this)
-    speak("Welcome to spiel!", true)
+    speak(context.getString(R.string.welcomeMsg), true)
   }
 
   def onUtteranceCompleted(id:String) = repeatedSpeech.get(id) match {
