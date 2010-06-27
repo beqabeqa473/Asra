@@ -203,7 +203,10 @@ class Handler(pkg:String, cls:String) {
     if(e.getText.isEmpty)
       rv += ""
     e.getText.foreach { text =>
-      if(text != null) rv += text.toString
+      rv += (text match {
+        case null => ""
+        case t => t.toString
+      })
     }
     rv.toList
   }
