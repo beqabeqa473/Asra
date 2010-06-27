@@ -13,8 +13,11 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
 
   private var tts:TextToSpeech = null
 
-  def apply(context:Context) {
-    tts = new TextToSpeech(context, this)
+  private var context:Context = null
+
+  def apply(c:Context) {
+    tts = new TextToSpeech(c, this)
+    context = c
   }
 
   def onInit(status:Int) {
