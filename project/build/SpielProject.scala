@@ -8,7 +8,7 @@ class SpielProject(info: ProjectInfo) extends AndroidProject(info) with Markdown
 
   val scanDirectories = mainAssetsPath/"scripts" :: Nil
 
-  override def androidPlatformName = "android-2.1"
+  override def androidPlatformName = "android-8"
 
   val tts = "google" % "tts" % "2.1_rc01" from "http://eyes-free.googlecode.com/files/TTS_library_stub_2.1_rc01.jar"
 
