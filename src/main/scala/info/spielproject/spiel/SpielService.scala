@@ -2,6 +2,7 @@ package info.spielproject.spiel
 
 import android.accessibilityservice._
 import android.content.Intent
+import android.os.Debug
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import com.nullwire.trace.ExceptionHandler
@@ -11,21 +12,27 @@ import scripting.Scripter
 
 class SpielService extends AccessibilityService {
 
-  // TODO: Why is this needed?
-  private var connected = false
-
   override def onCreate {
-    ExceptionHandler.register(this, "http://stacktrace.spielproject.info/index.php")
+    super.onCreate
+    Log.d("spiel", "onCreate")
+    //Debug.startMethodTracing("spiel")
+    //ExceptionHandler.register(this, "http://stacktrace.spielproject.info/index.php")
+    TTS(this)
+    Handler(this)
+    Scripter(this)
+    StateObserver(this)
+    telephony.TelephonyListener(this)
   }
 
   override def onDestroy {
+    super.onDestroy
     Log.d("spiel", "onDestroy")
     Handler.onDestroy
+    TTS.shutdown
+    //Debug.stopMethodTracing
   }
 
   override protected def onServiceConnected {
-    // TODO: Why is this needed?
-    if(connected) return
     Log.d("spiel", "onServiceConnected")
     val info = new AccessibilityServiceInfo()
     import AccessibilityServiceInfo._
@@ -33,14 +40,6 @@ class SpielService extends AccessibilityService {
     import AccessibilityEvent._
     info.eventTypes = TYPES_ALL_MASK
     setServiceInfo(info)
-    TTS(this)
-    Scripter(this)
-    Handler(this)
-    telephony.TelephonyListener(this)
-    StateObserver(this)
-    // TODO: Why is this needed?
-    connected = true
-    Log.d(this.toString, "Spiel is configured.")
   }
 
   override def onInterrupt = TTS.stop

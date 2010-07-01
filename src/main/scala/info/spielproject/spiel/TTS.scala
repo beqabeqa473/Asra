@@ -1,6 +1,7 @@
 package info.spielproject.spiel
 
-import actors.Actor._
+import actors.Actor
+import Actor._
 import collection.JavaConversions._
 
 import android.content.Context
@@ -9,7 +10,7 @@ import android.util.Log
 import android.speech.tts.TextToSpeech
 import TextToSpeech._
 
-object TTS extends OnInitListener with OnUtteranceCompletedListener {
+object TTS extends OnInitListener with OnUtteranceCompletedListener with Actor {
 
   private var tts:TextToSpeech = null
 
@@ -18,6 +19,7 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
   def apply(c:Context) {
     tts = new TextToSpeech(c, this)
     context = c
+    start
   }
 
   def onInit(status:Int) {
@@ -26,28 +28,20 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     speak(context.getString(R.string.welcomeMsg), true)
   }
 
+  def shutdown = tts.shutdown
+
   def onUtteranceCompleted(id:String) = repeatedSpeech.get(id) match {
     case Some(v) =>
       actor {
         Thread.sleep(v._1*1000)
         performRepeatedSpeech(id)
       }
-    case None => if(!queue.isEmpty) processUtterance(queue.dequeue)
+    case None =>
   }
 
-  private val queue = new collection.mutable.Queue[String]
-
   def speak(text:String, flush:Boolean) {
-    if(text.contains("\n"))
-      speak(text.split("\n").toList, flush)
-    else {
-      if(flush)
-        stop
-      if(tts.isSpeaking || !queue.isEmpty) {
-        Log.d("spiel", "Queuing: "+text)
-        queue.enqueue(text)
-      } else processUtterance(text)
-    }
+    val mode = if(flush) QUEUE_FLUSH else QUEUE_ADD
+    this ! (text, mode)
   }
 
   def speak(list:List[String], flush:Boolean):Unit = if(list != Nil) {
@@ -57,8 +51,8 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
 
   def stop {
     Log.d("spiel", "Stopping speech")
-    queue.clear
-    tts.stop
+    if(tts.isSpeaking)
+      tts.stop
   }
 
   private def speakWithUtteranceID(text:String, uid:String) {
@@ -86,18 +80,20 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     case None =>
   }
 
-  private def processUtterance(u:String) {
-    Log.d("spiel", "Processing: "+u)
-    if(u.length == 0)
-      speakWithUtteranceID("blank", "queue")
-    else if(u == " ")
-      speakWithUtteranceID("space", "queue")
-    else if(u.length == 1 && u >= "A" && u <= "Z") {
-      tts.setPitch(1.5f)
-      speakWithUtteranceID("cap "+u, "queue")
-      tts.setPitch(1)
-    } else
-      speakWithUtteranceID(u, "queue")
+  def act() = loop {
+    receive {
+      case (text:String, mode:Int) =>
+        if(text.length == 0)
+          tts.speak("blank", mode, null)
+        else if(text == " ")
+          tts.speak("space", mode, null)
+        else if(text.length == 1 && text >= "A" && text <= "Z") {
+          tts.setPitch(1.5f)
+          tts.speak("cap "+text, mode, null)
+          tts.setPitch(1)
+        } else
+          tts.speak(text, mode, null)
+    }
   }
 
 }

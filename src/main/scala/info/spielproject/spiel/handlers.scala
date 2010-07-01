@@ -43,9 +43,7 @@ object Handler extends Actor {
         val cons = cls.getConstructor(classOf[Handlers])
         if(cons != null)
           cons.newInstance(h)
-      } catch {
-        case e => Log.e("spiel", e.getMessage+" while initializing handler for "+cls.getName)
-      }
+      } catch { case _ => }
     }
   }
 
@@ -53,35 +51,51 @@ object Handler extends Actor {
     exit
   }
 
-  private val timeout = 200
+  private val timeout = 300
 
-  case class Item(event:AccessibilityEvent, presentationTime:Long)
+  private case class Item(event:AccessibilityEvent, presentationTime:Long)
 
   def handle(event:AccessibilityEvent) = {
-    this ! Item(event, System.currentTimeMillis+timeout)
+    this ! Item(event, System.currentTimeMillis+timeout/2)
   }
 
   def act = react {
-    case i:Item =>
-      val delay = i.presentationTime-System.currentTimeMillis
-      if(delay > 0) Thread.sleep(delay)
-      actWithLookahead(i)
+    case i:Item => actWithLookahead(i)
   }
 
   import AccessibilityEvent._
 
-  private def actWithLookahead(i:Item):Unit = reactWithin(0) {
-    case actors.TIMEOUT =>
-      process(i.event)
-      act
-    case i2:Item =>
-      if(i.event.getEventType != TYPE_NOTIFICATION_STATE_CHANGED && i2.event.getEventType == i.event.getEventType)  {
-        TTS.stop
-        actWithLookahead(i2)
-      } else {
+  private def actWithLookahead(i:Item):Unit = {
+
+    val delay = i.presentationTime-System.currentTimeMillis
+    if(delay > 0) Thread.sleep(delay)
+
+    def shouldDiscardOld(newEvent:AccessibilityEvent, oldEvent:AccessibilityEvent) = {
+      (
+        oldEvent.getEventType == TYPE_NOTIFICATION_STATE_CHANGED &&
+        newEvent.getEventType == TYPE_NOTIFICATION_STATE_CHANGED &&
+        oldEvent.getText == newEvent.getText
+      ) || (
+        oldEvent.getEventType != TYPE_NOTIFICATION_STATE_CHANGED &&
+        newEvent.getEventType == oldEvent.getEventType
+      )
+    }
+
+    reactWithin(timeout/2) {
+      case actors.TIMEOUT =>
         process(i.event)
-        actWithLookahead(i2)
-      }
+        act
+      case i2:Item =>
+        val delay2 = i2.presentationTime-System.currentTimeMillis
+        if(delay2 > 0) Thread.sleep(delay2)
+        if(shouldDiscardOld(i2.event, i.event)) {
+          TTS.stop
+          actWithLookahead(i2)
+        } else {
+          process(i.event)
+          actWithLookahead(i2)
+        }
+    }
   }
 
   private def process(e:AccessibilityEvent) {
@@ -99,11 +113,11 @@ object Handler extends Actor {
         } else {
           Log.d("spiel", "Dispatching to "+pkg+":"+cls)
           alreadyCalled ::= h
+          if(pkg == "" || cls == "")
+            handlers(e.getPackageName.toString -> e.getClassName.toString) = h
           !h(e)
         }
-      case None =>
-        Log.d("spiel", "No exact match for "+pkg+":"+cls+". Continuing.")
-        true
+      case None => true
     }
 
     if(continue) {
@@ -124,7 +138,6 @@ object Handler extends Actor {
           if(v._1._2 != "" && continue) {
             try {
               val testClass2 = service.getClassLoader.loadClass(v._1._2)
-              //Log.d(this.getClass.toString, testClass2.toString+".isAssignableFrom("+testClass+"): "+testClass2.isAssignableFrom(testClass))
               if(
                 testClass2.isAssignableFrom(testClass) && 
                 (v._1._1 == "" || e.getPackageName == v._1._1)
@@ -197,17 +210,16 @@ class Handler(pkg:String, cls:String) {
   protected def byDefault(c:Callback) = dispatches("default") = c
 
   protected def utterancesFor(e:AccessibilityEvent) = {
-    val rv:collection.mutable.ListBuffer[String] = collection.mutable.ListBuffer[String]()
+    val rv = collection.mutable.ListBuffer[String]()
     if(e.getContentDescription != null)
       rv += e.getContentDescription.toString
-    if(e.getText.isEmpty)
-      rv += ""
-    e.getText.foreach { text =>
-      rv += (text match {
+    val txt = e.getText.foldLeft("") { (acc, text) =>
+      acc+(text match {
         case null => ""
-        case t => t.toString
+        case t => t.toString+" "
       })
     }
+    rv += txt.trim
     rv.toList
   }
 
@@ -340,23 +352,22 @@ class Handlers {
   class Default extends Handler {
 
     onNotificationStateChanged { e:AccessibilityEvent =>
-      Log.d("spiel", "onNotificationStateChanged")
+      //Log.d("spiel", "onNotificationStateChanged")
       if(e.getText.size > 0)
         speak(utterancesFor(e), false)
       true
     }
 
     onViewClicked { e:AccessibilityEvent =>
-      Log.d("spiel", "onViewClicked")
+      //Log.d("spiel", "onViewClicked")
       true
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      Log.d("spiel", "onViewFocused")
+      //Log.d("spiel", "onViewFocused")
       if(e.isFullScreen || (e.getItemCount == 0 && e.getCurrentItemIndex == -1))
         true
       else {
-        if(Handler.shouldNextInterrupt) TTS.stop
         //if(utterancesFor(e).length > 0)
           speak(utterancesFor(e))
         true
@@ -364,19 +375,19 @@ class Handlers {
     }
 
     onViewLongClicked { e:AccessibilityEvent =>
-      Log.d("spiel", "onViewLongClicked")
+      //Log.d("spiel", "onViewLongClicked")
       true
     }
 
     onViewSelected { e:AccessibilityEvent =>
-      Log.d("spiel", "onViewSelected")
+      //Log.d("spiel", "onViewSelected")
       if(utterancesFor(e).length > 0)
         speak(utterancesFor(e))
       true
     }
 
     onViewTextChanged { e:AccessibilityEvent =>
-      Log.d("spiel", "onViewTextChanged")
+      //Log.d("spiel", "onViewTextChanged")
       if(e.getAddedCount > 0 || e.getRemovedCount > 0) {
         if(e.isPassword)
           speak("*", true)
@@ -392,7 +403,7 @@ class Handlers {
     }
 
     onWindowStateChanged { e:AccessibilityEvent =>
-      Log.d("spiel", "onWindowStateChanged")
+      //Log.d("spiel", "onWindowStateChanged")
       // Needed because menus send their contents as a non-fullscreen 
       // onWindowStateChanged event and we don't want to read an entire menu 
       // when it focuses.
@@ -406,7 +417,7 @@ class Handlers {
     }
 
     byDefault { e:AccessibilityEvent =>
-      Log.d("spiel", "Unhandled event: "+e.toString)
+      //Log.d("spiel", "Unhandled event: "+e.toString)
       speak(utterancesFor(e))
       true
     }
