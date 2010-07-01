@@ -55,14 +55,14 @@ private class Listener(service:SpielService) extends PhoneStateListener {
   import TelephonyManager._
 
   override def onCallStateChanged(state:Int, number:String) = state match {
-    case CALL_STATE_IDLE => StateReactor.callIdle
-    case CALL_STATE_RINGING => StateReactor.callRinging(resolve(number))
-    case CALL_STATE_OFFHOOK => StateReactor.callAnswered
+    case CALL_STATE_IDLE => StateObserver.callIdle
+    case CALL_STATE_RINGING => StateObserver.callRinging(resolve(number))
+    case CALL_STATE_OFFHOOK => StateObserver.callAnswered
   }
 
   override def onMessageWaitingIndicatorChanged(mwi:Boolean) = mwi match {
-    case true => StateReactor.messageWaiting
-    case false => 
+    case true => StateObserver.messageWaiting
+    case false => StateObserver.messageNoLongerWaiting
   }
 
 }
@@ -72,24 +72,6 @@ object TelephonyListener {
   def apply(service:SpielService) {
     val manager = service.getSystemService(Context.TELEPHONY_SERVICE).asInstanceOf[TelephonyManager]
     manager.listen(new Listener(service), PhoneStateListener.LISTEN_CALL_STATE|PhoneStateListener.LISTEN_MESSAGE_WAITING_INDICATOR)
-
-      var repeaterID = ""
-
-      StateReactor.onCallRinging { number =>
-        if(Preferences.talkingCallerID_?)
-          repeaterID = TTS.speakEvery(3, number)
-      }
-
-      StateReactor.onCallAnswered { () =>
-        TTS.stop
-        TTS.stopRepeatedSpeech(repeaterID)
-        repeaterID = ""
-      }
-
-      StateReactor.onCallIdle { () =>
-        TTS.stopRepeatedSpeech(repeaterID)
-        repeaterID = ""
-      }
   }
 
 }
