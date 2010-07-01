@@ -26,5 +26,12 @@ object StateReactor {
   def onScreenOn(h:() => Unit) = screenOnHandlers ::= h
   def screenOn = screenOnHandlers.foreach { f => f() }
 
+  private var messageNoLongerWaitingHandlers = List[() => Unit]()
+  def onMessageNoLongerWaiting(h:() => Unit) = messageNoLongerWaitingHandlers ::= h
+  def messageNoLongerWaiting = messageNoLongerWaitingHandlers.foreach { f => f() }
+
+  private var messageWaitingHandlers = List[() => Unit]()
+  def onMessageWaiting(h:() => Unit) = messageWaitingHandlers ::= h
+  def messageWaiting = messageWaitingHandlers.foreach { f => f() }
 
 }

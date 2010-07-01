@@ -22,15 +22,18 @@ object StateObserver {
 
   }
 
-  StateReactor.onScreenOff { () =>
-    Log.d("spiel", "Screen off.")
-    TTS.speak("Locked.", false)
+  StateReactor.onScreenOff { () => TTS.speak("Locked.", false) }
+  StateReactor.onScreenOn { () => TTS.speak("Locked.", false) }
+
+  private var voicemailIndicator:Option[String] = None
+
+  StateReactor.onMessageWaiting { () =>
+    if(Preferences.voicemailAlerts_?)
+      TTS.speakEvery(180, "New voicemail")
   }
 
-  StateReactor.onScreenOn { () =>
-    Log.d("spiel", "Screen on.")
-    TTS.speak("Locked.", false)
+  StateReactor.onMessageNoLongerWaiting { () =>
+    voicemailIndicator.foreach { i => TTS.stopRepeatedSpeech(i) }
   }
-
 
 }

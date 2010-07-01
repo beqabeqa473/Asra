@@ -60,13 +60,18 @@ private class Listener(service:SpielService) extends PhoneStateListener {
     case CALL_STATE_OFFHOOK => StateReactor.callAnswered
   }
 
+  override def onMessageWaitingIndicatorChanged(mwi:Boolean) = mwi match {
+    case true => StateReactor.messageWaiting
+    case false => 
+  }
+
 }
 
 object TelephonyListener {
 
   def apply(service:SpielService) {
     val manager = service.getSystemService(Context.TELEPHONY_SERVICE).asInstanceOf[TelephonyManager]
-    manager.listen(new Listener(service), PhoneStateListener.LISTEN_CALL_STATE)
+    manager.listen(new Listener(service), PhoneStateListener.LISTEN_CALL_STATE|PhoneStateListener.LISTEN_MESSAGE_WAITING_INDICATOR)
 
       var repeaterID = ""
 
