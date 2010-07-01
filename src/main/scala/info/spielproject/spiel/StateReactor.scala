@@ -7,7 +7,7 @@ object StateReactor {
   var callerIDRepeaterID = ""
 
   onCallRinging { number =>
-    if(Preferences.talkingCallerID_?)
+    if(Preferences.talkingCallerID)
       callerIDRepeaterID = TTS.speakEvery(3, number)
   }
 
@@ -29,7 +29,7 @@ object StateReactor {
   private var voicemailIndicator:Option[String] = None
 
   onMessageWaiting { () =>
-    if(Preferences.voicemailAlerts_?)
+    if(Preferences.voicemailAlerts)
       TTS.speakEvery(180, "New voicemail")
   }
 

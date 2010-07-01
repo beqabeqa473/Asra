@@ -11,8 +11,8 @@ object Preferences {
     prefs = PreferenceManager.getDefaultSharedPreferences(service)
   }
 
-  def talkingCallerID_? = prefs.getBoolean("talkingCallerID", true)
+  def talkingCallerID = prefs.getBoolean("talkingCallerID", true)
 
-  def voicemailAlerts_? = prefs.getBoolean("voicemailAlerts", true)
+  def voicemailAlerts = prefs.getBoolean("voicemailAlerts", true)
 
 }
