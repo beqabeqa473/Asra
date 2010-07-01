@@ -19,6 +19,7 @@
   <string name="tab">tab</string>
 
   <!-- Preferences -->
+  <string name="preferences">Preferences</string>
   <string name="talkingCallerIDTitle">Talking caller ID</string>
   <string name="talkingCallerIDSummary">Repeatedly announce caller ID details for incoming calls</string>
   <string name="repeatedSpeechWhenRingerOffTitle">Repeated speech when ringer is off (not yet implemented)</string>
