@@ -1,4 +1,3 @@
-forPackage("com.android.mms");
 forClass("android.app.Notification", {
   onNotificationStateChanged: function(e) {
     if(e.text.isEmpty())

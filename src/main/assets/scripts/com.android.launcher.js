@@ -1,4 +1,3 @@
-forPackage("com.android.launcher");
 forClass(".HandleView", {
 
   onViewClicked: function() {

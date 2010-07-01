@@ -1,4 +1,3 @@
-forPackage("android");
 forClass("com.android.internal.policy.impl.LockScreen", {
   onViewFocused: function() {
     return true;

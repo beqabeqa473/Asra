@@ -1,8 +1,4 @@
-var pkg = "";
-
-function forPackage(pk) {
-  pkg = pk;
-}
+var __pkg__ = "";
 
 function speak(str, shouldInterrupt) {
   if(shouldInterrupt != undefined)
@@ -17,6 +13,6 @@ function nextShouldNotInterrupt() {
 
 function forClass(cls, scr) {
   if(cls[0] == ".")
-    cls = pkg+cls;
-  Scripter.registerHandlerFor(pkg, cls, scr);
+    cls = __pkg__+cls;
+  Scripter.registerHandlerFor(__pkg__, cls, scr);
 }

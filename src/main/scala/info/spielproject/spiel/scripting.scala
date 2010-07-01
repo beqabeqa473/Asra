@@ -49,10 +49,15 @@ object Scripter {
     ScriptableObject.putProperty(myScope, "TTS", wrappedTTS)
 
     def run(code:String, filename:String) = try {
+      val p = filename.substring(0, filename.lastIndexOf("."))
+      val pkg = if(p.startsWith("_")) p.substring(1, p.size) else p
+      myScope.put("__pkg__", scope, pkg)
       myCx.evaluateString(myScope, code, filename, 1, null)
     } catch {
       case e:RhinoException => Log.e(this.toString, e.getMessage)
       case e => Log.e("spiel", e.toString)
+    } finally {
+      myScope.put("__pkg__", scope, null)
     }
 
     val spielDir = new File(Environment.getExternalStorageDirectory, "spiel")

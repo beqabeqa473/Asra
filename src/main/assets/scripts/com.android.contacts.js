@@ -1,6 +1,3 @@
-var Log = Packages.android.util.Log;
-
-forPackage("com.android.contacts");
 forClass("android.widget.EditText", {
 
   // Fix issue where inserted hyphens interrupt speech.
@@ -12,4 +9,3 @@ forClass("android.widget.EditText", {
   }
 
 });
-
