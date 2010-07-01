@@ -21,7 +21,6 @@ object StateObserver {
 
   }
 
-
   private var callAnsweredHandlers = List[() => Unit]()
   def onCallAnswered(h:() => Unit) = callAnsweredHandlers ::= h
   def callAnswered = callAnsweredHandlers.foreach { f => f() }
@@ -37,6 +36,10 @@ object StateObserver {
   private var ringerModeChangedHandlers = List[() => Unit]()
   def onRingerModeChanged(h:() => Unit) = ringerModeChangedHandlers ::= h
   def ringerModeChanged = ringerModeChangedHandlers.foreach { f => f() }
+
+  private[spiel] var _ringerOn = true
+  def isRingerOn = _ringerOn
+  def isRingerOff = !isRingerOn
 
   private var screenOffHandlers = List[() => Unit]()
   def onScreenOff(h:() => Unit) = screenOffHandlers ::= h

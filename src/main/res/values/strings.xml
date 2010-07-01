@@ -21,6 +21,8 @@
   <!-- Preferences -->
   <string name="talkingCallerIDTitle">Talking caller ID</string>
   <string name="talkingCallerIDSummary">Repeatedly announce caller ID details for incoming calls</string>
+  <string name="repeatedSpeechWhenRingerOffTitle">Repeated speech when ringer is off (not yet implemented)</string>
+  <string name="repeatedSpeechWhenRingerOffSummary">Speak repeated alerts for caller ID, voicemail, etc. even when ringer is off</string>
   <string name="voicemailAlertsTitle">Voicemail alerts</string>
   <string name="voicemailAlertsSummary">Repeatedly announce availability of new voicemail</string>
 </resources>

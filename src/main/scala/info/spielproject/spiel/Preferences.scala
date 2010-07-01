@@ -11,6 +11,8 @@ object Preferences {
     prefs = PreferenceManager.getDefaultSharedPreferences(service)
   }
 
+  def repeatedSpeechWhenRingerOff = prefs.getBoolean("repeatedSpeechWhenRingerOff", false)
+
   def talkingCallerID = prefs.getBoolean("talkingCallerID", true)
 
   def voicemailAlerts = prefs.getBoolean("voicemailAlerts", true)
