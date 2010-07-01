@@ -18,4 +18,9 @@
   <string name="searchText">search text</string>
   <string name="tab">tab</string>
 
+  <!-- Preferences -->
+  <string name="talkingCallerIDTitle">Talking caller ID</string>
+  <string name="talkingCallerIDSummary">Repeatedly announce caller ID details for incoming calls</string>
+  <string name="voicemailAlertsTitle">Voicemail alerts</string>
+  <string name="voicemailAlertsSummary">Repeatedly announce availability of new voicemail</string>
 </resources>
