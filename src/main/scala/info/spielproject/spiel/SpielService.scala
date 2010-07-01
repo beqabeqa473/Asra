@@ -16,7 +16,7 @@ class SpielService extends AccessibilityService {
     super.onCreate
     Log.d("spiel", "onCreate")
     //Debug.startMethodTracing("spiel")
-    //ExceptionHandler.register(this, "http://stacktrace.spielproject.info/index.php")
+    ExceptionHandler.register(this, "http://stacktrace.spielproject.info/index.php")
     Preferences(this)
     TTS(this)
     Handler(this)
