@@ -75,7 +75,10 @@ object TelephonyListener {
 
       var repeaterID = ""
 
-      StateReactor.onCallRinging { number => repeaterID = TTS.speakEvery(3, number) }
+      StateReactor.onCallRinging { number =>
+        if(Preferences.talkingCallerID_?)
+          repeaterID = TTS.speakEvery(3, number)
+      }
 
       StateReactor.onCallAnswered { () =>
         TTS.stop
