@@ -29,4 +29,7 @@
 
   <string name="scripts">Scripts</string>
 
+  <!-- Scripts menu -->
+  <string name="refresh">Refresh</string>
+
 </resources>
