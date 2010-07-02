@@ -7,19 +7,26 @@ object StateObserver {
 
   def apply(service:SpielService) {
 
-    def registerReceiver(r:(Context, Intent) => Unit, i:String) {
+    def registerReceiver(r:(Context, Intent) => Unit, intents:List[String]) {
+      val f = new IntentFilter
+      intents.foreach(f.addAction(_))
       service.registerReceiver(new BroadcastReceiver {
         override def onReceive(c:Context, i:Intent) = r(c, i)
-      }, new IntentFilter(i))
+      }, f)
     }
 
-    registerReceiver((c, i) => ringerModeChanged, AudioManager.RINGER_MODE_CHANGED_ACTION)
+    registerReceiver((c, i) => ringerModeChanged, AudioManager.RINGER_MODE_CHANGED_ACTION :: Nil)
 
-    registerReceiver((c, i) => screenOff , Intent.ACTION_SCREEN_OFF)
+    registerReceiver((c, i) => screenOff , Intent.ACTION_SCREEN_OFF :: Nil)
 
-    registerReceiver((c, i) => screenOn, Intent.ACTION_SCREEN_ON)
+    registerReceiver((c, i) => screenOn, Intent.ACTION_SCREEN_ON :: Nil)
 
+    registerReceiver((c, i) => applicationsChanged(i), Intent.ACTION_PACKAGE_ADDED :: Intent.ACTION_PACKAGE_REMOVED :: Nil)
   }
+
+  private var applicationsChangedHandlers = List[(Intent) => Unit]()
+  def onApplicationsChanged(h:(Intent) => Unit) = applicationsChangedHandlers ::= h
+  def applicationsChanged(i:Intent) = applicationsChangedHandlers.foreach { f => f(i) }
 
   private var callAnsweredHandlers = List[() => Unit]()
   def onCallAnswered(h:() => Unit) = callAnsweredHandlers ::= h
