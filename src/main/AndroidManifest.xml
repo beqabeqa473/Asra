@@ -24,5 +24,7 @@
 
     <activity android:name=".PreferencesActivity"/>
 
+    <activity android:name=".ScriptsActivity"/>
+
   </application>
 </manifest>

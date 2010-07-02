@@ -2,7 +2,7 @@ package info.spielproject.spiel.scripting
 
 import java.io.{File, FileInputStream, FileOutputStream, InputStream}
 
-import android.content.{Context => AContext}
+import android.content.{BroadcastReceiver, Context => AContext}
 import android.os.Environment
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
@@ -115,9 +115,7 @@ object Scripter {
     //odb = NeoDatis.open(directory.getAbsolutePath+"/spiel.db")
     db = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration, dbFile.getAbsolutePath)
 
-    db.queryByExample(classOf[Script]).toArray.foreach (
-      _.asInstanceOf[Script].run
-    )
+    scripts.foreach (_.run)
 
     true
   }
@@ -126,6 +124,8 @@ object Scripter {
     Context.exit
     db.close
   }
+
+  def scripts = db.queryByExample(classOf[Script]).toArray.map(_.asInstanceOf[Script]).toList
 
   def registerHandlerFor(pkg:String, cls:String, s:Object) {
     val scr = s.asInstanceOf[ScriptableObject]
