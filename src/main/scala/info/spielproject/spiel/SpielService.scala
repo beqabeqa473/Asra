@@ -22,6 +22,7 @@ class SpielService extends AccessibilityService {
     Handler(this)
     Scripter(this)
     StateObserver(this)
+    StateReactor(this)
     telephony.TelephonyListener(this)
   }
 

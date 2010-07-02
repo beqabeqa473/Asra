@@ -3,6 +3,8 @@ package info.spielproject.spiel
 object StateReactor {
   import StateObserver._
 
+  def apply(service:SpielService) {
+  }
 
   var callerIDRepeaterID = ""
 
