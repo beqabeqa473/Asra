@@ -30,6 +30,7 @@ class SpielService extends AccessibilityService {
     Log.d("spiel", "onDestroy")
     Handler.onDestroy
     TTS.shutdown
+    Scripter.onDestroy
     //Debug.stopMethodTracing
   }
 
