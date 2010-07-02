@@ -17,10 +17,11 @@ class SpielProject(info: ProjectInfo) extends AndroidProject(info) with Markdown
   val rhino = "rhino" % "js" % "1.7R2" from "http://spielproject.info/attachments/download/3/js.jar"
 
   override def proguardOption = """
+    -keep class info.spielproject.spiel.handlers.** { *; }
     -keep class info.spielproject.spiel.scripting.Scripter {
       public void registerHandlerFor(java.lang.String, java.lang.String, java.lang.Object);
     }
-    -keep class info.spielproject.spiel.handlers.** { *; }
+    -keep class com.db4o.**.* { *; }
   """
 
   val rhinoPath = Path.fromFile("lib_managed/scala_2.8.0.Beta1/compile/js-1.7R2.jar")

@@ -26,4 +26,7 @@
   <string name="repeatedSpeechWhenRingerOffSummary">Speak repeated alerts for caller ID, voicemail, etc. even when ringer is off</string>
   <string name="voicemailAlertsTitle">Voicemail alerts</string>
   <string name="voicemailAlertsSummary">Repeatedly announce availability of new voicemail</string>
+
+  <string name="scripts">Scripts</string>
+
 </resources>

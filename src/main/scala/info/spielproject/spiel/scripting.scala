@@ -1,11 +1,16 @@
 package info.spielproject.spiel.scripting
 
+import java.io.{File, FileInputStream, FileOutputStream, InputStream}
+
+import android.content.{Context => AContext}
 import android.os.Environment
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
-import java.io.{File, FileInputStream, FileOutputStream, InputStream}
 
+import com.db4o._
+//import com.neodatis.odb.plugin.engine.berkeleydb.NeoDatisBerkeleyDBPlugin
 import org.mozilla.javascript.{Context, Function, RhinoException, ScriptableObject}
+//import org.neodatis.odb.{NeoDatis, NeoDatisGlobalConfig, Objects, ODB}
 
 import info.spielproject.spiel._
 import handlers.{Callback, Handler}
@@ -26,6 +31,31 @@ class RhinoCallback(f:Function) extends Callback {
   }
 }
 
+
+class Script(
+  context:Context,
+  scope:ScriptableObject,
+  code:String,
+  filename:String,
+  val pkg:String = ""
+) {
+
+  run
+
+  def run = {
+    scope.put("__pkg__", scope, pkg)
+    try {
+      context.evaluateString(scope, code, filename, 1, null)
+    } catch {
+      case e:RhinoException => Log.e(this.toString, e.getMessage)
+      case e => Log.e("spiel", e.toString)
+    }finally {
+      scope.put("__pkg__", scope, null)
+    }
+  }
+
+}
+
 object Scripter {
 
   private var myCx:Context = null
@@ -33,6 +63,8 @@ object Scripter {
 
   def context = myCx
   def scope = myScope
+
+  private var db:ObjectContainer = null
 
   def apply(service:SpielService)  {
     myCx = Context.enter
@@ -48,22 +80,11 @@ object Scripter {
     val wrappedTTS = Context.javaToJS(TTS, myScope)
     ScriptableObject.putProperty(myScope, "TTS", wrappedTTS)
 
-    def run(code:String, filename:String) = try {
+    def run(code:String, filename:String) = {
       val p = filename.substring(0, filename.lastIndexOf("."))
       val pkg = if(p.startsWith("_")) p.substring(1, p.size) else p
-      myScope.put("__pkg__", scope, pkg)
-      myCx.evaluateString(myScope, code, filename, 1, null)
-    } catch {
-      case e:RhinoException => Log.e(this.toString, e.getMessage)
-      case e => Log.e("spiel", e.toString)
-    } finally {
-      myScope.put("__pkg__", scope, null)
+      new Script(myCx, scope, code, filename, pkg)
     }
-
-    val spielDir = new File(Environment.getExternalStorageDirectory, "spiel")
-    if(!spielDir.isDirectory) spielDir.mkdir
-    val scriptsDir = new File(spielDir, "scripts")
-    if(!scriptsDir.isDirectory) scriptsDir.mkdir
 
     val assets = service.getAssets
 
@@ -74,27 +95,36 @@ object Scripter {
       new String(b)
     }
 
-    for(fn <- assets.list("scripts") if(fn != "api.js")) {
-      if(!scriptsDir.list.contains(fn)) {
-        val script = new FileOutputStream(new File(scriptsDir, "_"+fn))
-        script.write(readAllAvailable(assets.open("scripts/"+fn)).getBytes)
-        script.close
-      }
-    }
-
-    def runScriptFile(f:String, asset:Boolean = false) = {
-      val is = if(asset) 
-        assets.open("scripts/"+f)
-      else
-        new FileInputStream(new File(scriptsDir, f))
+    def runScriptAsset(f:String) = {
+      val is = assets.open("scripts/"+f)
       run(readAllAvailable(is), f)
     }
 
-    runScriptFile("api.js", true)
-    scriptsDir.list.foreach { script => runScriptFile(script) }
+    runScriptAsset("api.js")
+    for(fn <- assets.list("scripts") if(fn != "api.js")) {
+      runScriptAsset(fn)
+    }
 
-    Context.exit
+    //val config = NeoDatisGlobalConfig.get
+    //config.setStorageEngineClass(classOf[NeoDatisBerkeleyDBPlugin])
+
+    val directory = service.getDir("data", AContext.MODE_PRIVATE)
+
+    val dbFile = new File(directory, "spiel.db")
+
+    //odb = NeoDatis.open(directory.getAbsolutePath+"/spiel.db")
+    db = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration, dbFile.getAbsolutePath)
+
+    db.queryByExample(classOf[Script]).toArray.foreach (
+      _.asInstanceOf[Script].run
+    )
+
     true
+  }
+
+  def onDestroy = {
+    Context.exit
+    db.close
   }
 
   def registerHandlerFor(pkg:String, cls:String, s:Object) {
