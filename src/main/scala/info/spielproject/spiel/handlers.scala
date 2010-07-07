@@ -89,7 +89,7 @@ object Handler extends Actor {
         val delay2 = i2.presentationTime-System.currentTimeMillis
         if(delay2 > 0) Thread.sleep(delay2)
         if(shouldDiscardOld(i2.event, i.event)) {
-          TTS.stop
+          //TTS.stop
           actWithLookahead(i2)
         } else {
           process(i.event)
@@ -182,8 +182,6 @@ class Handler(pkg:String, cls:String) {
 
   def speak(text:String, interrupt:Boolean):Unit = TTS.speak(text, interrupt)
   def speak(text:String):Unit = TTS.speak(text, !myNextShouldNotInterrupt)
-  def speak(list:java.util.List[CharSequence], interrupt:Boolean):Unit = TTS.speak(list.map(_.toString).toList, interrupt)
-  def speak(list:java.util.List[CharSequence]):Unit = TTS.speak(list.map(_.toString).toList, !myNextShouldNotInterrupt)
   def speak(list:List[String], interrupt:Boolean):Unit = TTS.speak(list, interrupt)
   def speak(list:List[String]):Unit = TTS.speak(list, !myNextShouldNotInterrupt)
 
@@ -210,17 +208,16 @@ class Handler(pkg:String, cls:String) {
   protected def byDefault(c:Callback) = dispatches("default") = c
 
   protected def utterancesFor(e:AccessibilityEvent) = {
-    val rv = collection.mutable.ListBuffer[String]()
-    if(e.getContentDescription != null)
-      rv += e.getContentDescription.toString
-    val txt = e.getText.foldLeft("") { (acc, text) =>
-      acc+(text match {
+    var rv = List[String]()
+    if(e.getContentDescription != null) rv ::= e.getContentDescription.toString
+    if(e.getText.size == 0) rv ::= ""
+    rv :::= e.getText.map { text =>
+      text match {
         case null => ""
-        case t => t.toString+" "
-      })
-    }
-    rv += txt.trim
-    rv.toList
+        case t => t.toString
+      }
+    }.toList
+    rv
   }
 
   def apply(e:AccessibilityEvent):Boolean = {
@@ -253,7 +250,7 @@ class Handlers {
 
   class AlertDialog extends Handler("android.app.AlertDialog") {
     onWindowStateChanged { e:AccessibilityEvent =>
-      speak(Handler.service.getString(R.string.alert) +=: e.getText, true)
+      speak(Handler.service.getString(R.string.alert) :: utterancesFor(e), true)
       nextShouldNotInterrupt
       true
     }
@@ -279,7 +276,7 @@ class Handlers {
 
   class Dialog extends Handler("android.app.Dialog") {
     onWindowStateChanged { e:AccessibilityEvent =>
-      speak(e.getText, true)
+      speak(utterancesFor(e), true)
       nextShouldNotInterrupt
       true
     }
@@ -397,7 +394,7 @@ class Handlers {
           else if(e.getRemovedCount > 0)
             speak(e.getBeforeText.toString.substring(e.getFromIndex, e.getFromIndex+e.getRemovedCount), true)
         else
-          speak(e.getText, false)
+          speak(utterancesFor(e), false)
       }
       true
     }

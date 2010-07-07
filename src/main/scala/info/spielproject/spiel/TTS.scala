@@ -1,28 +1,26 @@
 package info.spielproject.spiel
 
-import actors.Actor
-import Actor._
+import actors.Actor._
 import collection.JavaConversions._
 
 import android.content.Context
 import android.util.Log
 
-import android.speech.tts.TextToSpeech
-import TextToSpeech._
+import com.google.tts.TextToSpeechBeta
+import TextToSpeechBeta._
 
-object TTS extends OnInitListener with OnUtteranceCompletedListener with Actor {
+object TTS extends OnInitListener with OnUtteranceCompletedListener {
 
-  private var tts:TextToSpeech = null
+  private var tts:TextToSpeechBeta = null
 
   private var context:Context = null
 
   def apply(c:Context) {
-    tts = new TextToSpeech(c, this)
+    tts = new TextToSpeechBeta(c, this)
     context = c
-    start
   }
 
-  def onInit(status:Int) {
+  def onInit(status:Int, version:Int) {
     tts.setLanguage(java.util.Locale.getDefault)
     tts.setOnUtteranceCompletedListener(this)
     speak(context.getString(R.string.welcomeMsg), true)
@@ -41,7 +39,16 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener with Actor {
 
   def speak(text:String, flush:Boolean) {
     val mode = if(flush) QUEUE_FLUSH else QUEUE_ADD
-    this ! (text, mode)
+    if(text.length == 0)
+      tts.speak("blank", mode, null)
+    else if(text == " ")
+      tts.speak("space", mode, null)
+    else if(text.length == 1 && text >= "A" && text <= "Z") {
+      tts.setPitch(1.5f)
+      tts.speak("cap "+text, mode, null)
+      tts.setPitch(1)
+    } else
+      tts.speak(text, mode, null)
   }
 
   def speak(list:List[String], flush:Boolean):Unit = if(list != Nil) {
@@ -51,8 +58,7 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener with Actor {
 
   def stop {
     Log.d("spiel", "Stopping speech")
-    if(tts.isSpeaking)
-      tts.stop
+    tts.stop
   }
 
   private def speakWithUtteranceID(text:String, uid:String) {
@@ -82,22 +88,6 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener with Actor {
     }
     case Some(v) => speakWithUtteranceID(v._2, key)
     case None =>
-  }
-
-  def act() = loop {
-    receive {
-      case (text:String, mode:Int) =>
-        if(text.length == 0)
-          tts.speak("blank", mode, null)
-        else if(text == " ")
-          tts.speak("space", mode, null)
-        else if(text.length == 1 && text >= "A" && text <= "Z") {
-          tts.setPitch(1.5f)
-          tts.speak("cap "+text, mode, null)
-          tts.setPitch(1)
-        } else
-          tts.speak(text, mode, null)
-    }
   }
 
 }

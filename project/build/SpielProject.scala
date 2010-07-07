@@ -10,13 +10,15 @@ class SpielProject(info: ProjectInfo) extends AndroidProject(info) with Markdown
 
   override def androidPlatformName = "android-8"
 
-  val tts = "google" % "tts" % "2.1_rc01" from "http://eyes-free.googlecode.com/files/TTS_library_stub_2.1_rc01.jar"
+  val ttsVersion = "3.0_rc02"
+  val tts = "google" % "tts" % ttsVersion from "http://eyes-free.googlecode.com/files/TTS_library_stub_"+ttsVersion+".jar"
 
   val stacktrace = "com.nullwire" % "trace" % "latest" from "http://android-remote-stacktrace.googlecode.com/files/trace.jar"
 
   val rhino = "rhino" % "js" % "1.7R2" from "http://spielproject.info/attachments/download/3/js.jar"
 
   override def proguardOption = """
+    -keep class com.google.tts.** { *; }
     -keep class info.spielproject.spiel.scripting.Scripter {
       public void registerHandlerFor(java.lang.String, java.lang.String, java.lang.Object);
     }
