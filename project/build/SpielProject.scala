@@ -10,7 +10,8 @@ class SpielProject(info: ProjectInfo) extends AndroidProject(info) with Markdown
 
   override def androidPlatformName = "android-8"
 
-  val tts = "google" % "tts" % "2.1_rc01" from "http://eyes-free.googlecode.com/files/TTS_library_stub_2.1_rc01.jar"
+  val ttsVersion = "3.0_rc02"
+  val tts = "google" % "tts" % ttsVersion from "http://eyes-free.googlecode.com/files/TTS_library_stub_"+ttsVersion+".jar"
 
   val stacktrace = "com.nullwire" % "trace" % "latest" from "http://android-remote-stacktrace.googlecode.com/files/trace.jar"
 
