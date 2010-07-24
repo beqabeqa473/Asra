@@ -71,6 +71,8 @@ object Scripter {
     myCx.setOptimizationLevel(-1)
     myScope = myCx.initStandardObjects()
 
+    Bazaar(service)
+
     val wrappedHandler = Context.javaToJS(Handler, myScope)
     ScriptableObject.putProperty(myScope, "Handler", wrappedHandler)
 
@@ -147,6 +149,53 @@ object Scripter {
     }
 
     h
+  }
+
+}
+
+import actors.Actor._
+import collection.JavaConversions._
+
+import android.content.pm.PackageManager
+import dispatch._
+import dispatch.liftjson.Js._
+import net.liftweb.json._
+import JsonAST._
+import JsonParser._
+import Serialization.{read, write}
+
+object Bazaar {
+
+  private var pm:PackageManager = null
+
+  def apply(service:SpielService) {
+    pm = service.getPackageManager
+    actor { installOrUpdateScripts }
+  }
+
+  private val http = new Http
+  private val apiRoot = :/("192.168.1.2", 7070) / "api" / "v1" <:< Map("Accept" -> "application/json")
+
+  def installOrUpdateScripts {
+    val packages = pm.getInstalledPackages(0).map { i => i.packageName }
+    request(
+      apiRoot / "scripts" <<?
+      Map("packages" -> packages.reduceLeft[String] { (acc, n) =>
+        acc+","+n
+      })
+    ){ response =>
+      Log.d("spiel", "Response: "+response)
+      //val updates = response.values
+      //Log.d("spiel", "Updates: "+updates)
+    }
+  }
+
+  private def request(req:Request)(f:(JValue) => Unit) = {
+    try {
+      http(req ># { v => f(v) } )
+    } catch {
+      case e => Log.d("spiel", e.getMessage)
+    }
   }
 
 }
