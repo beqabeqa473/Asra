@@ -209,14 +209,15 @@ class Handler(pkg:String, cls:String) {
 
   protected def utterancesFor(e:AccessibilityEvent) = {
     var rv = List[String]()
-    if(e.getContentDescription != null) rv ::= e.getContentDescription.toString
-    if(e.getText.size == 0) rv ::= ""
+    if(e.getText.size == 0 && e.getContentDescription == null)
+      rv ::= ""
     rv :::= e.getText.map { text =>
       text match {
         case null => ""
         case t => t.toString
       }
     }.toList
+    if(e.getContentDescription != null) rv ::= e.getContentDescription.toString
     rv
   }
 
