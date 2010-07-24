@@ -13,6 +13,8 @@ You can run SBT without command line arguments and are then dropped into an SBT 
 
 will automatically and incrementally recompile the app upon source changes. With the basics of SBT introduced, here is how to build the app:
 
+First, set the ANDROID_SDK_HOME environment variable to the root directory of your Android SDK installation. Note that, as of this writing, the Android 2.2 SDK is needed to build Spiel. Once set, run the following command:
+
 $ sbt update
 
 This compiles the build system and retrieves all necessary plugins and dependencies. Next, to build the app, run:
@@ -20,6 +22,16 @@ This compiles the build system and retrieves all necessary plugins and dependenc
 $ sbt package-debug
 
 This leaves a spiel*.apk file in a subdirectory of target/ based on the Scala version against which Spiel has been built.
+
+If you have a device plugged in and recognized by _adb_, you can also run:
+
+$ sbt install-device
+
+Or, if already installed, use:
+
+$ sbt reinstall-device
+
+to build the app and to install the package directly. If Spiel is already running, it will be restarted automatically.
 
 Development Tips
 ----------------
