@@ -351,8 +351,10 @@ class Handlers {
 
     onNotificationStateChanged { e:AccessibilityEvent =>
       //Log.d("spiel", "onNotificationStateChanged")
-      if(e.getText.size > 0)
+      if(e.getText.size > 0) {
+        nextShouldNotInterrupt
         speak(utterancesFor(e), false)
+      }
       true
     }
 
