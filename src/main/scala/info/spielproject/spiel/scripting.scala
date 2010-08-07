@@ -158,7 +158,15 @@ object Scripter {
     db.close
   }
 
-  def scripts = db.queryByExample(classOf[Scripts]).asInstanceOf[Scripts]
+  def scripts = {
+    val s = db.queryByExample(classOf[Scripts])
+    Log.d("spiel", "Got "+s.getClass.getName)
+    if(s.isEmpty)
+      collection.mutable.Map[String, Script]()
+      
+    else
+      s.asInstanceOf[Scripts]
+  }
 
   def registerHandlerFor(cls:String, scr:Object) = script.map(_.registerHandlerFor(cls, scr))
 
