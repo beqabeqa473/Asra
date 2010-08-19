@@ -19,10 +19,7 @@ class SpielProject(info: ProjectInfo) extends AndroidProject(info) with Markdown
 
   override def proguardOption = """
     -keep class com.google.tts.** { *; }
-    -keep class info.spielproject.spiel.scripting.Scripter {
-      public void registerHandlerFor(java.lang.String, java.lang.String, java.lang.Object);
-    }
-    -keep class info.spielproject.spiel.handlers.** { *; }
+    -keep class info.spielproject.spiel.** { *; }
   """
 
   val rhinoPath = Path.fromFile("lib_managed/scala_2.8.0.Beta1/compile/js-1.7R2.jar")

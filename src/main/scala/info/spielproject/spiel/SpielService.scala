@@ -12,8 +12,8 @@ import scripting.Scripter
 
 class SpielService extends AccessibilityService {
 
-  override def onCreate {
-    super.onCreate
+  override def onCreate() {
+    super.onCreate()
     Log.d("spiel", "onCreate")
     //Debug.startMethodTracing("spiel")
     ExceptionHandler.register(this, "http://stacktrace.spielproject.info/index.php")
@@ -24,14 +24,16 @@ class SpielService extends AccessibilityService {
     StateObserver(this)
     StateReactor(this)
     telephony.TelephonyListener(this)
+    SpielService.initialized = true
   }
 
-  override def onDestroy {
+  override def onDestroy() {
     super.onDestroy
     Log.d("spiel", "onDestroy")
     Handler.onDestroy
     TTS.shutdown
     //Debug.stopMethodTracing
+    SpielService.initialized = false
   }
 
   override protected def onServiceConnected {
@@ -73,4 +75,8 @@ class SpielService extends AccessibilityService {
     Handler.handle(clone)
   }
 
+}
+
+object SpielService {
+  private[spiel] var initialized = false
 }

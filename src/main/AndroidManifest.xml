@@ -12,6 +12,7 @@
     <service android:name=".SpielService">
       <intent-filter>
         <action android:name="android.accessibilityservice.AccessibilityService" />
+        <category android:name="android.accessibilityservice.category.FEEDBACK_SPOKEN"/>
       </intent-filter>
     </service>
 
@@ -23,6 +24,8 @@
     </activity>>
 
     <activity android:name=".PreferencesActivity"/>
+
+    <provider android:name=".StatusProvider" android:authorities="info.spielproject.spiel.providers.StatusProvider"  />
 
   </application>
 </manifest>
