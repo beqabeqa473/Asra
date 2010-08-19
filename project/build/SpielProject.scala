@@ -26,7 +26,7 @@ class SpielProject(info: ProjectInfo) extends AndroidProject(info) with Markdown
     -keep class info.spielproject.spiel.** { *; }
   """
 
-  val rhinoPath = Path.fromFile("lib_managed/scala_2.8.0.RC7/compile/js-1.7R2.jar")
+  val rhinoPath = Path.fromFile("lib_managed/scala_"+buildScalaVersion+"/compile/js-1.7R2.jar")
   override def proguardExclude = super.proguardExclude+++rhinoPath
 
   override def dxTask = execTask {<x> {dxPath.absolutePath} --dex --output={classesDexPath.absolutePath} {classesMinJarPath.absolutePath} {rhinoPath.absolutePath}</x> }
