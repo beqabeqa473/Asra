@@ -21,7 +21,6 @@ class SpielProject(info: ProjectInfo) extends AndroidProject(info) with Markdown
   val dispatchLiftJson = "net.databinder" %% "dispatch-lift-json" % "0.7.4"
 
   override def proguardOption = """
-    -keep class com.db4o.**.* { *; }
     -keep class com.google.tts.** { *; }
     -keep class info.spielproject.spiel.** { *; }
   """

@@ -35,16 +35,26 @@ class PreferencesActivity extends PreferenceActivity {
   }
 }
 
+import android.widget.SimpleCursorAdapter
+
 class ScriptsActivity extends ListActivity {
 
   override def onCreate(bundle:Bundle) {
     super.onCreate(bundle)
-    refresh
+    refresh()
   }
 
-  private def refresh = setListAdapter(
-    new ArrayAdapter[Script](this, android.R.layout.simple_list_item_1, Scripter.scripts.values.toArray)
-  )
+  private def refresh() = {
+    val cursor = managedQuery(scripting.Provider.uri, scripting.Provider.columns.projection, null, null, null)
+    setListAdapter(
+      new SimpleCursorAdapter(this,
+        R.layout.script_row,
+        cursor,
+        scripting.Provider.columns.projection,
+        List(R.id.script_title).toArray
+      )
+    )
+  }
 
   private var menu:Option[Menu] = None
 

@@ -1,19 +1,19 @@
-package info.spielproject.spiel.scripting
+package info.spielproject.spiel
+package scripting
 
 import java.io.{File, FileInputStream, FileOutputStream, InputStream}
 import java.util.UUID
 
 import android.content.{BroadcastReceiver, Context => AContext}
+import android.database.Cursor
 import android.os.Environment
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 
-import com.db4o._
 //import com.neodatis.odb.plugin.engine.berkeleydb.NeoDatisBerkeleyDBPlugin
 import org.mozilla.javascript.{Context, Function, RhinoException, ScriptableObject}
 //import org.neodatis.odb.{NeoDatis, NeoDatisGlobalConfig, Objects, ODB}
 
-import info.spielproject.spiel._
 import handlers.{Callback, Handler}
 
 class RhinoCallback(f:Function) extends Callback {
@@ -33,8 +33,6 @@ class RhinoCallback(f:Function) extends Callback {
 }
 
 class Script(
-  context:Context,
-  scope:ScriptableObject,
   code:String,
   filename:String = "",
   val pkg:String = "",
@@ -42,15 +40,23 @@ class Script(
   val version:Int = 0
 ) {
 
+  def this(c:Cursor) = this(
+    c.getString(c.getColumnIndex(Provider.columns.code)),
+    c.getString(c.getColumnIndex(Provider.columns._id)),
+    c.getString(c.getColumnIndex(Provider.columns._id)),
+    c.getString(c.getColumnIndex(Provider.columns.remoteID)),
+    c.getInt(c.getColumnIndex(Provider.columns.version))
+  )
+
   def run() = {
-    scope.put("__pkg__", scope, pkg)
+    Scripter.scope.put("__pkg__", Scripter.scope, pkg)
     try {
-      context.evaluateString(scope, code, filename, 1, null)
+      Scripter.context.evaluateString(Scripter.scope, code, filename, 1, null)
     } catch {
       case e:RhinoException => Log.e(this.toString, e.getMessage)
       case e => Log.e("spiel", e.toString)
     }finally {
-      scope.put("__pkg__", scope, null)
+      Scripter.scope.put("__pkg__", Scripter.scope, null)
     }
   }
 
@@ -68,7 +74,7 @@ class Script(
       val func = new String(chars)
 
       if(Handler.dispatchers.valuesIterator.contains(func)) {
-        val f = scr.get(id, scope)
+        val f = scr.get(id, Scripter.scope)
         if(f.isInstanceOf[Function])
           h.dispatches(func) = new RhinoCallback(f.asInstanceOf[Function])
       } else
@@ -90,18 +96,12 @@ object Scripter {
   def context = myCx
   def scope = myScope
 
-  private var db:ObjectContainer = null
-
   private var script:Option[Script] = None
-
-  type Scripts = collection.mutable.Map[String, Script]
 
   def apply(service:SpielService)  {
     myCx = Context.enter
     myCx.setOptimizationLevel(-1)
     myScope = myCx.initStandardObjects()
-
-    Bazaar(service)
 
     val wrappedHandler = Context.javaToJS(Handler, myScope)
     ScriptableObject.putProperty(myScope, "Handler", wrappedHandler)
@@ -115,7 +115,7 @@ object Scripter {
     def run(code:String, filename:String) = {
       val p = filename.substring(0, filename.lastIndexOf("."))
       val pkg = if(p.startsWith("_")) p.substring(1, p.size) else p
-      script = Some(new Script(myCx, scope, code, filename, pkg))
+      script = Some(new Script(code, filename, pkg))
       script.map(_.run())
     }
 
@@ -138,42 +138,170 @@ object Scripter {
       runScriptAsset(fn)
     }
 
-    //val config = NeoDatisGlobalConfig.get
-    //config.setStorageEngineClass(classOf[NeoDatisBerkeleyDBPlugin])
+    val cursor = service.getContentResolver.query(Provider.uri, Provider.columns.projection, null, null, null)
+    cursor.moveToFirst()
+    while(!cursor.isAfterLast) {
+      val s = new Script(cursor)
+      s.run()
+      cursor.moveToNext()
+    }
+    cursor.close()
 
-    val directory = service.getDir("data", AContext.MODE_PRIVATE)
-
-    val dbFile = new File(directory, "spiel.db")
-
-    //odb = NeoDatis.open(directory.getAbsolutePath+"/spiel.db")
-    db = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration, dbFile.getAbsolutePath)
-
-    scripts.values.toList.foreach (_.run)
+    Bazaar(service)
 
     true
   }
 
   def onDestroy = {
     Context.exit
-    db.close
-  }
-
-  def scripts = {
-    val s = db.queryByExample(classOf[Scripts])
-    Log.d("spiel", "Got "+s.getClass.getName)
-    if(s.isEmpty)
-      collection.mutable.Map[String, Script]()
-      
-    else
-      s.asInstanceOf[Scripts]
   }
 
   def registerHandlerFor(cls:String, scr:Object) = script.map(_.registerHandlerFor(cls, scr))
 
 }
 
-import actors.Actor._
 import collection.JavaConversions._
+
+import android.content.{ContentProvider, ContentUris, ContentValues, UriMatcher}
+import android.database.SQLException
+import android.database.sqlite.{SQLiteDatabase, SQLiteOpenHelper, SQLiteQueryBuilder}
+import android.net.Uri
+import android.provider.BaseColumns
+import android.text.TextUtils
+
+object Provider {
+
+  val uri = Uri.parse("content://info.spielproject.spiel.scripting.Provider/scripts")
+
+  object columns extends BaseColumns {
+
+    val _id = "_id"
+    val pkg = "pkg"
+    val code = "code"
+    val remoteID = "remote_id"
+    val version = "version"
+
+    val projection = List(_id, pkg, code, remoteID, version).toArray
+
+    val projectionMap = Map(projection.map { k =>
+      k -> k
+    }:_*)
+
+    val defaultSortOrder = pkg
+
+  }
+
+}
+
+class Provider extends ContentProvider {
+  import Provider._
+
+  private val databaseName = "spiel.db"
+
+  private class DatabaseHelper(context:AContext) extends SQLiteOpenHelper(context, databaseName, null, 1) {
+
+    override def onCreate(db:SQLiteDatabase) {
+      val c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='scripts'", null);
+      if(c.getCount == 0) {
+        db.execSQL("CREATE TABLE scripts (_id INTEGER PRIMARY KEY AUTOINCREMENT, pkg TEXT NOT NULL, code TEXT NOT NULL, remote_id TEXT DEFAULT NULL, version INT DEFAULT NULL);")
+      }
+    }
+
+    override def onUpgrade(db:SQLiteDatabase, oldVersion:Int, newVersion:Int) {
+    }
+
+  }
+
+  object uriTypes extends Enumeration {
+    val collection = 0
+    val item = 1
+  }
+
+  private val matcher = new UriMatcher(UriMatcher.NO_MATCH)
+  matcher.addURI("info.spielproject.spiel.scripting.Provider", "scripts", uriTypes.collection)
+  matcher.addURI("info.spielproject.spiel.scripting.Provider", "scripts/*", uriTypes.item)
+
+  private var db:SQLiteDatabase = null
+
+  override def onCreate() = {
+    db=(new DatabaseHelper(getContext)).getWritableDatabase
+    if(db == null) false else true
+  }
+
+  private def collectionURI_?(u:Uri) = matcher.`match`(u) == uriTypes.collection
+
+  private val mimeType = "vnd.spiel.script"
+  private val collectionType = "vnd.android.cursor.dir/"+mimeType
+  private val itemType = "vnd.android.cursor.item/"+mimeType
+
+  override def getType(u:Uri) =  if(collectionURI_?(u)) collectionType else itemType
+
+  private val tableName = "scripts"
+
+  override def query(uri:Uri, projection:Array[String], selection:String, selectionArgs:Array[String], sort:String) = {
+
+    val qb=new SQLiteQueryBuilder
+    qb.setTables(tableName)
+
+    if(collectionURI_?(uri))
+      qb.setProjectionMap(columns.projectionMap)
+    else
+      qb.appendWhere(columns._id+"="+uri.getPathSegments().get(1))
+
+    val orderBy = if (TextUtils.isEmpty(sort)) columns.defaultSortOrder else sort
+
+    val c=qb.query(db, projection, selection, selectionArgs, null, null, orderBy)
+    c.setNotificationUri(getContext().getContentResolver(), uri)
+    c
+  }
+
+  override def insert(u:Uri, values:ContentValues) = {
+
+    if(values == null)
+      throw new IllegalArgumentException("values cannot be null")
+    else if(collectionURI_?(u)) 
+      throw new IllegalArgumentException("Unknown URI: "+u)
+
+    val rowID = db.insert(tableName, null, values)
+    if(rowID > 0) {
+      val ur = ContentUris.withAppendedId(uri, rowID)
+      getContext().getContentResolver().notifyChange(ur, null)
+      ur
+    } else
+      throw new SQLException("Failed to insert row into "+u);
+  }
+
+  override def update(u:Uri, values:ContentValues, where:String, whereArgs:Array[String]) = {
+
+    val count = if(collectionURI_?(u)) {
+      db.update(tableName, values, where, whereArgs);
+    } else {
+      val segment = u.getPathSegments.get(1)
+      val w = if(TextUtils.isEmpty(where)) "" else " AND ("+where+")"
+      db.update(tableName, values, columns._id+"="+segment+w, whereArgs)
+    }
+
+    getContext().getContentResolver().notifyChange(u, null);
+    count
+  }
+
+  override def delete(u:Uri, where:String, whereArgs:Array[String]) = {
+
+    val count = if(collectionURI_?(u)) {
+      db.delete(tableName, where, whereArgs);
+    } else {
+      val segment = u.getPathSegments.get(1)
+      val w = if(TextUtils.isEmpty(where)) "" else " AND ("+where+")"
+      db.delete(tableName, columns._id+"="+segment+w, whereArgs)
+    }
+
+    getContext().getContentResolver().notifyChange(u, null);
+    count
+  }
+
+}
+
+import actors.Actor._
 
 import android.content.pm.PackageManager
 import dispatch._
@@ -185,9 +313,14 @@ import Serialization.{read, write}
 
 object Bazaar {
 
+  val newScriptsView = "info.spielproject.spiel.intent.NEW_SCRIPTS_VIEW"
+
   private var pm:PackageManager = null
 
-  def apply(service:SpielService) {
+  private var service:SpielService = null
+
+  def apply(svc:SpielService) {
+    service = svc
     pm = service.getPackageManager
     actor { installOrUpdateScripts }
   }
@@ -200,9 +333,12 @@ object Bazaar {
     request(
       apiRoot / "scripts" <<?
       Map("packages" -> packages.reduceLeft[String] { (acc, n) =>
-        acc+","+(Scripter.scripts.get(n) match {
-          case Some(s) => s.id+" "+s.version
-          case None => n
+        acc+","+(service.getContentResolver.query(
+          Provider.uri, Provider.columns.projection, "pkg = ?", List(n).toArray, null
+        ) match {
+          case c:Cursor if(c.getCount > 1) =>
+            c.getString(c.getColumnIndex(Provider.columns.pkg))+" "+c.getString(c.getColumnIndex(Provider.columns.version))
+          case _ => n
         })
       })
     ){ response =>
