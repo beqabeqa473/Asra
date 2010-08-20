@@ -7,9 +7,10 @@ object StateObserver {
 
   def apply(service:SpielService) {
 
-    def registerReceiver(r:(Context, Intent) => Unit, intents:List[String]) {
+    def registerReceiver(r:(Context, Intent) => Unit, intents:List[String], dataScheme:Option[String] = None) {
       val f = new IntentFilter
       intents.foreach(f.addAction(_))
+      dataScheme.foreach(f.addDataScheme(_))
       service.registerReceiver(new BroadcastReceiver {
         override def onReceive(c:Context, i:Intent) = r(c, i)
       }, f)
@@ -21,9 +22,9 @@ object StateObserver {
 
     registerReceiver((c, i) => screenOn, Intent.ACTION_SCREEN_ON :: Nil)
 
-    registerReceiver((c, i) => applicationAdded(i), Intent.ACTION_PACKAGE_ADDED :: Nil)
+    registerReceiver((c, i) => applicationAdded(i), Intent.ACTION_PACKAGE_ADDED :: Nil, Some("package"))
 
-    registerReceiver((c, i) => applicationRemoved(i), Intent.ACTION_PACKAGE_REMOVED :: Nil)
+    registerReceiver((c, i) => applicationRemoved(i), Intent.ACTION_PACKAGE_REMOVED :: Nil, Some("package"))
 
   }
 
