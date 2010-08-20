@@ -16,7 +16,7 @@ object StateReactor {
     val packageName = intent.getData().getSchemeSpecificPart
     Log.d("spiel", "Package added: "+packageName)
     val i = new Intent(Intent.ACTION_VIEW)
-    i.addCategory(scripting.Bazaar.newScriptsView)
+    i.addCategory(scripting.BazaarProvider.newScriptsView)
     i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     //i.putExtra("scripts", Nil)
     //service.startActivity(i)

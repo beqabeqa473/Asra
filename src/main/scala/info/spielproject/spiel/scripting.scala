@@ -147,8 +147,6 @@ object Scripter {
     }
     cursor.close()
 
-    Bazaar(service)
-
     true
   }
 
@@ -168,6 +166,33 @@ import android.database.sqlite.{SQLiteDatabase, SQLiteOpenHelper, SQLiteQueryBui
 import android.net.Uri
 import android.provider.BaseColumns
 import android.text.TextUtils
+
+trait AbstractProvider {
+  this: ContentProvider =>
+
+  val matcher = new UriMatcher(UriMatcher.NO_MATCH)
+
+  object uriTypes extends Enumeration {
+    val collection = 0
+    val item = 1
+  }
+
+  def authority:String
+  def path:String
+
+  def addUris() {
+    matcher.addURI(authority, path, uriTypes.collection)
+    matcher.addURI(authority, path+"/#", uriTypes.item)
+  }
+
+  def collectionURI_?(u:Uri) = matcher.`match`(u) == uriTypes.collection
+
+  def mimeType:String
+  private val collectionType = "vnd.android.cursor.dir/"+mimeType
+  private val itemType = "vnd.android.cursor.item/"+mimeType
+
+  override def getType(u:Uri) =  if(collectionURI_?(u)) collectionType else itemType
+}
 
 object Provider {
 
@@ -193,7 +218,7 @@ object Provider {
 
 }
 
-class Provider extends ContentProvider {
+class Provider extends ContentProvider with AbstractProvider {
   import Provider._
 
   private val databaseName = "spiel.db"
@@ -212,15 +237,6 @@ class Provider extends ContentProvider {
 
   }
 
-  object uriTypes extends Enumeration {
-    val collection = 0
-    val item = 1
-  }
-
-  private val matcher = new UriMatcher(UriMatcher.NO_MATCH)
-  matcher.addURI("info.spielproject.spiel.scripting.Provider", "scripts", uriTypes.collection)
-  matcher.addURI("info.spielproject.spiel.scripting.Provider", "scripts/*", uriTypes.item)
-
   private var db:SQLiteDatabase = null
 
   override def onCreate() = {
@@ -228,13 +244,10 @@ class Provider extends ContentProvider {
     if(db == null) false else true
   }
 
-  private def collectionURI_?(u:Uri) = matcher.`match`(u) == uriTypes.collection
-
-  private val mimeType = "vnd.spiel.script"
-  private val collectionType = "vnd.android.cursor.dir/"+mimeType
-  private val itemType = "vnd.android.cursor.item/"+mimeType
-
-  override def getType(u:Uri) =  if(collectionURI_?(u)) collectionType else itemType
+  val mimeType = "vnd.spiel.script"
+  val authority = "info.spielproject.spiel.scripting.Provider"
+  val path = "scripts"
+  addUris()
 
   private val tableName = "scripts"
 
@@ -304,6 +317,7 @@ class Provider extends ContentProvider {
 import actors.Actor._
 
 import android.content.pm.PackageManager
+import android.database.MatrixCursor
 import dispatch._
 import dispatch.liftjson.Js._
 import net.liftweb.json._
@@ -311,11 +325,85 @@ import JsonAST._
 import JsonParser._
 import Serialization.{read, write}
 
-object Bazaar {
-
-  val newScriptsView = "info.spielproject.spiel.intent.NEW_SCRIPTS_VIEW"
+class BazaarProvider extends ContentProvider with AbstractProvider {
 
   private var pm:PackageManager = null
+
+  val mimeType = "vnd.spiel.bazaar.script"
+  val authority = "info.spielproject.spiel.scripting.bazaar.Provider"
+  val path = "scripts"
+  addUris()
+
+  def onCreate() = {
+    pm = getContext.getPackageManager
+    actor { checkRemoteScripts() }
+    true
+  }
+
+  private val http = new Http
+  private val apiRoot = :/("192.168.1.2", 7070) / "api" / "v1" <:< Map("Accept" -> "application/json")
+
+  private def request(req:Request)(f:(JValue) => Unit) = {
+    try {
+      http(req ># { v => f(v) } )
+    } catch {
+      case e => Log.d("spiel", e.getMessage)
+    }
+  }
+
+  override def query(uri:Uri, projection:Array[String], where:String, whereArgs:Array[String], sort:String) = {
+
+    Log.d("spiel", "Where: "+where)
+
+    val cursor = if(collectionURI_?(uri)) {
+      val c = new MatrixCursor(List("id", "package").toArray)
+      request(
+        apiRoot / "scripts" <<?
+        Map("packages" -> where)
+      ) { response =>
+        Log.d("spiel", "Response: "+response.values)
+      }
+      c
+    } else {
+      new MatrixCursor(List("").toArray)
+    }
+
+    cursor.setNotificationUri(getContext().getContentResolver(), uri)
+    cursor
+  }
+
+  override def insert(u:Uri, values:ContentValues) = null
+
+  override def update(u:Uri, values:ContentValues, where:String, whereArgs:Array[String]) = 0
+
+  override def delete(u:Uri, where:String, whereArgs:Array[String]) = 0
+
+  def checkRemoteScripts() {
+    val packages = pm.getInstalledPackages(0).map { i => i.packageName }
+    val where = packages.reduceLeft[String] { (acc, n) =>
+      acc+","+(getContext.getContentResolver.query(
+        Provider.uri, Provider.columns.projection, "pkg = ?", List(n).toArray, null
+      ) match {
+        case c:Cursor if(c.getCount > 1) =>
+          c.moveToFirst()
+          c.getString(c.getColumnIndex(Provider.columns.pkg))+" "+c.getString(c.getColumnIndex(Provider.columns.version))
+        case _ => n
+      })
+    }
+
+    getContext.getContentResolver.query(BazaarProvider.uri, null, where, null, null)
+  }
+
+}
+
+object BazaarProvider {
+  val newScriptsView = "info.spielproject.spiel.intent.NEW_SCRIPTS_VIEW"
+
+  val uri = Uri.parse("content://info.spielproject.spiel.scripting.bazaar.Provider/scripts")
+
+}
+
+/*object Bazaar {
 
   private var service:SpielService = null
 
@@ -325,14 +413,12 @@ object Bazaar {
     actor { installOrUpdateScripts }
   }
 
-  private val http = new Http
-  private val apiRoot = :/("192.168.1.2", 7070) / "api" / "v1" <:< Map("Accept" -> "application/json")
-
   def installOrUpdateScripts {
     val packages = pm.getInstalledPackages(0).map { i => i.packageName }
     request(
       apiRoot / "scripts" <<?
-      Map("packages" -> packages.reduceLeft[String] { (acc, n) =>
+      Map("packages" -> 
+      packages.reduceLeft[String] { (acc, n) =>
         acc+","+(service.getContentResolver.query(
           Provider.uri, Provider.columns.projection, "pkg = ?", List(n).toArray, null
         ) match {
@@ -348,12 +434,5 @@ object Bazaar {
     }
   }
 
-  private def request(req:Request)(f:(JValue) => Unit) = {
-    try {
-      http(req ># { v => f(v) } )
-    } catch {
-      case e => Log.d("spiel", e.getMessage)
-    }
-  }
 
-}
+}*/

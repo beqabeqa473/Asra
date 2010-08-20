@@ -39,5 +39,7 @@
 
     <provider android:name=".scripting.Provider" android:authorities="info.spielproject.spiel.scripting.Provider"/>
 
+    <provider android:name=".scripting.BazaarProvider" android:authorities="info.spielproject.spiel.scripting.bazaar.Provider"/>
+
   </application>
 </manifest>
