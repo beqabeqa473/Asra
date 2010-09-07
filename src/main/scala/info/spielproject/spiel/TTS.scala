@@ -23,8 +23,16 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
   def onInit(status:Int, version:Int) {
     tts.setLanguage(java.util.Locale.getDefault)
     tts.setOnUtteranceCompletedListener(this)
+    this.rate = Preferences.rateScale
+    this.pitch = Preferences.pitchScale
     speak(context.getString(R.string.welcomeMsg), true)
   }
+
+  def rate = 1f // No-op needed for setter
+  def rate_=(r:Float) = tts.setSpeechRate(r)
+
+  def pitch = 1f // No-op needed for setter
+  def pitch_=(p:Float) = tts.setPitch(p)
 
   def shutdown = tts.shutdown
 
@@ -44,9 +52,9 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     else if(text == " ")
       tts.speak("space", mode, null)
     else if(text.length == 1 && text >= "A" && text <= "Z") {
-      tts.setPitch(1.5f)
+      pitch = 1.5f
       tts.speak("cap "+text, mode, null)
-      tts.setPitch(1)
+      pitch = 1
     } else
       tts.speak(text, mode, null)
   }

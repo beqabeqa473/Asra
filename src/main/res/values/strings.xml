@@ -22,6 +22,10 @@
   <string name="preferences">Preferences</string>
 
   <string name="speechTitle">Speech</string>
+  <string name="rateScaleTitle">Rate scale</string>
+  <string name="rateScaleSummary">Factor by which default rate should be scaled</string>
+  <string name="pitchScaleTitle">Pitch scale</string>
+  <string name="pitchScaleSummary">Factor by which default pitch should be scaled</string>
   <string name="repeatedSpeechWhenRingerOffTitle">Repeated speech when ringer is off (not yet implemented)</string>
   <string name="repeatedSpeechWhenRingerOffSummary">Speak repeated alerts for caller ID, voicemail, etc. even when ringer is off</string>
 

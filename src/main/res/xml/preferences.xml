@@ -3,34 +3,48 @@
 <PreferenceScreen
   xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <PreferenceCategory>
-    <PreferenceScreen android:title="@string/speechTitle">>
+  <PreferenceScreen android:title="@string/speechTitle">>
 
-      <CheckBoxPreference
-        android:key="repeatedSpeechWhenRingerOff"
-        android:defaultValue="false"
-        android:title="@string/repeatedSpeechWhenRingerOffTitle"
-        android:summary="@string/repeatedSpeechWhenRingerOffSummary"/>
+    <EditTextPreference
+      android:key="rateScale"
+      android:inputType="number|numberDecimal"
+      android:title="@string/rateScaleTitle"
+      android:summary="@string/rateScaleSummary"
+      android:dialogTitle="@string/rateScaleTitle"
+      android:dialogMessage="@string/rateScaleSummary"
+      android:defaultValue="1"/>
 
-    </PreferenceScreen>
-  </PreferenceCategory>
+    <EditTextPreference
+      android:key="pitchScale"
+      android:inputType="number"
+      android:title="@string/pitchScaleTitle"
+      android:summary="@string/pitchScaleSummary"
+      android:dialogTitle="@string/pitchScaleTitle"
+      android:dialogMessage="@string/pitchScaleSummary"
+      android:defaultValue="1"/>
 
-  <PreferenceCategory>
-    <PreferenceScreen android:title="@string/notificationsTitle">
+    <CheckBoxPreference
+      android:key="repeatedSpeechWhenRingerOff"
+      android:defaultValue="false"
+      android:title="@string/repeatedSpeechWhenRingerOffTitle"
+      android:summary="@string/repeatedSpeechWhenRingerOffSummary"/>
 
-      <CheckBoxPreference
-        android:key="talkingCallerID"
-        android:defaultValue="true"
-        android:title="@string/talkingCallerIDTitle"
-        android:summary="@string/talkingCallerIDSummary"/>
+  </PreferenceScreen>
 
-      <CheckBoxPreference
-        android:key="voicemailAlerts"
-        android:defaultValue="true"
-        android:title="@string/voicemailAlertsTitle"
-        android:summary="@string/voicemailAlertsSummary"/>
+  <PreferenceScreen android:title="@string/notificationsTitle">
 
-    </PreferenceScreen>
-  </PreferenceCategory>
+    <CheckBoxPreference
+      android:key="talkingCallerID"
+      android:defaultValue="true"
+      android:title="@string/talkingCallerIDTitle"
+      android:summary="@string/talkingCallerIDSummary"/>
+
+    <CheckBoxPreference
+      android:key="voicemailAlerts"
+      android:defaultValue="true"
+      android:title="@string/voicemailAlertsTitle"
+      android:summary="@string/voicemailAlertsSummary"/>
+
+  </PreferenceScreen>
 
 </PreferenceScreen>
