@@ -5,6 +5,11 @@
 
   <PreferenceScreen android:title="@string/speechTitle">>
 
+    <ListPreference
+      android:key="speechEngine"
+      android:title="@string/speechEngineTitle"
+      />
+
     <EditTextPreference
       android:key="rateScale"
       android:inputType="number|numberDecimal"

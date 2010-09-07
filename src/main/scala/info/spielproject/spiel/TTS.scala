@@ -17,6 +17,7 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
 
   def apply(c:Context) {
     tts = new TextToSpeechBeta(c, this)
+    engine = Preferences.speechEngine
     context = c
   }
 
@@ -27,6 +28,16 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     this.pitch = Preferences.pitchScale
     speak(context.getString(R.string.welcomeMsg), true)
   }
+
+  def defaultEngine = tts.getDefaultEngineExtended
+
+  def engine = Preferences.speechEngine
+  def engine_=(e:String) = {
+    if(tts.setEngineByPackageNameExtended(e) != TextToSpeechBeta.SUCCESS) {
+      tts.setEngineByPackageNameExtended(defaultEngine)
+    }
+  }
+
 
   def rate = 1f // No-op needed for setter
   def rate_=(r:Float) = tts.setSpeechRate(r)

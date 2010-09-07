@@ -1,9 +1,12 @@
 package info.spielproject.spiel
 
+import collection.JavaConversions._
+
 import android.app.TabActivity
 import android.content.Intent
 import android.os.Bundle
-import android.preference.PreferenceActivity
+import android.preference.{ListPreference, PreferenceActivity}
+import android.util.Log
 import android.widget.TabHost
 
 class SpielActivity extends TabActivity {
@@ -23,5 +26,15 @@ class PreferencesActivity extends PreferenceActivity {
   override def onCreate(bundle:Bundle) {
     super.onCreate(bundle)
     addPreferencesFromResource(R.xml.preferences)
+    val intent = new Intent("android.intent.action.START_TTS_ENGINE")
+    val pm = getPackageManager
+    val engines = pm.queryIntentActivities(intent, 0).map { engine =>
+      var label = engine.loadLabel(pm).toString()
+      if(label == "") label = engine.activityInfo.name.toString()
+      (label, engine.activityInfo.packageName)
+    }
+    val enginesPreference = findPreference("speechEngine").asInstanceOf[ListPreference]
+    enginesPreference.setEntries(engines.map(_._1).toArray[CharSequence])
+    enginesPreference.setEntryValues(engines.map(_._2).toArray[CharSequence])
   }
 }
