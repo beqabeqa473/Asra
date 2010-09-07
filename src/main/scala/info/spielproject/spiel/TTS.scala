@@ -32,12 +32,12 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
   def defaultEngine = tts.getDefaultEngineExtended
 
   def engine = Preferences.speechEngine
+
   def engine_=(e:String) = {
     if(tts.setEngineByPackageNameExtended(e) != TextToSpeechBeta.SUCCESS) {
       tts.setEngineByPackageNameExtended(defaultEngine)
     }
   }
-
 
   def rate = 1f // No-op needed for setter
   def rate_=(r:Float) = tts.setSpeechRate(r)
@@ -56,17 +56,43 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     case None =>
   }
 
+  private val managedPunctuations = Map(
+    "!" -> R.string.exclamation,
+    "@" -> R.string.at,
+    "#" -> R.string.pound,
+    "$" -> R.string.dollar,
+    "%" -> R.string.percent,
+    "^" -> R.string.caret,
+    "&" -> R.string.ampersand,
+    "*" -> R.string.asterisk,
+    "(" -> R.string.leftParen,
+    ")" -> R.string.rightParen,
+    "_" -> R.string.underscore,
+    " " -> R.string.space,
+    "." -> R.string.period,
+    "," -> R.string.comma,
+    "<" -> R.string.lessThan,
+    ">" -> R.string.greaterThan,
+    "/" -> R.string.slash,
+    "\\" -> R.string.backslash,
+    "?" -> R.string.questionMark,
+    "\"" -> R.string.quote,
+    "'" -> R.string.apostrophe,
+    ";" -> R.string.semiColon,
+    ":" -> R.string.colon
+  )
+
   def speak(text:String, flush:Boolean) {
     val mode = if(flush) QUEUE_FLUSH else QUEUE_ADD
     if(text.length == 0)
       tts.speak("blank", mode, null)
-    else if(text == " ")
-      tts.speak("space", mode, null)
     else if(text.length == 1 && text >= "A" && text <= "Z") {
       pitch = 1.5f
       tts.speak("cap "+text, mode, null)
       pitch = 1
-    } else if(text.length == 1 && Preferences.fixMultivoice)
+    } else if(text.length == 1 && Preferences.managePunctuationSpeech && managedPunctuations.get(text) != None)
+      tts.speak(context.getString(managedPunctuations(text)), mode, null)
+    else if(text.length == 1 && Preferences.fixMultivoice)
       tts.speak(text+" ", mode, null)
     else
       tts.speak(text, mode, null)

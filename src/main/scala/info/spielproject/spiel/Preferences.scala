@@ -28,6 +28,8 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
   def fixMultivoice = prefs.getBoolean("fixMultivoice", false)
 
+  def managePunctuationSpeech = prefs.getBoolean("managePunctuationSpeech", false)
+
   def talkingCallerID = prefs.getBoolean("talkingCallerID", true)
 
   def voicemailAlerts = prefs.getBoolean("voicemailAlerts", true)
