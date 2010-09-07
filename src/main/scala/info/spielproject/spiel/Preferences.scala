@@ -22,6 +22,8 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
   def voicemailAlerts = prefs.getBoolean("voicemailAlerts", true)
 
+  def fixMultivoice = prefs.getBoolean("fixMultivoice", false)
+
   def onSharedPreferenceChanged(p:SharedPreferences, key:String) {
     key match {
       case "rateScale" => TTS.rate = rateScale

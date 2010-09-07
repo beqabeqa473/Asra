@@ -28,6 +28,8 @@
   <string name="pitchScaleSummary">Factor by which default pitch should be scaled</string>
   <string name="repeatedSpeechWhenRingerOffTitle">Repeated speech when ringer is off (not yet implemented)</string>
   <string name="repeatedSpeechWhenRingerOffSummary">Speak repeated alerts for caller ID, voicemail, etc. even when ringer is off</string>
+  <string name="fixMultivoiceTitle">Use one voice for all text</string>
+  <string name="fixMultivoiceSummary">Fix for bug where a different voice is used for speaking single characters in some synthesizers</string>
 
   <string name="notificationsTitle">Notifications</string>
   <string name="talkingCallerIDTitle">Talking caller ID</string>

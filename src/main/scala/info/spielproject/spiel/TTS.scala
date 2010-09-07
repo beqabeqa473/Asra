@@ -55,7 +55,9 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
       pitch = 1.5f
       tts.speak("cap "+text, mode, null)
       pitch = 1
-    } else
+    } else if(text.length == 1 && Preferences.fixMultivoice)
+      tts.speak(text+" ", mode, null)
+    else
       tts.speak(text, mode, null)
   }
 

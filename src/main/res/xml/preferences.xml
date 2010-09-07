@@ -29,6 +29,12 @@
       android:title="@string/repeatedSpeechWhenRingerOffTitle"
       android:summary="@string/repeatedSpeechWhenRingerOffSummary"/>
 
+    <CheckBoxPreference
+      android:key="fixMultivoice"
+      android:defaultValue="false"
+      android:title="@string/fixMultivoiceTitle"
+      android:summary="@string/fixMultivoiceSummary"/>
+
   </PreferenceScreen>
 
   <PreferenceScreen android:title="@string/notificationsTitle">
