@@ -2,20 +2,35 @@
 
 <PreferenceScreen
   xmlns:android="http://schemas.android.com/apk/res/android">
-  <CheckBoxPreference
-    android:key="talkingCallerID"
-    android:defaultValue="true"
-    android:title="@string/talkingCallerIDTitle"
-    android:summary="@string/talkingCallerIDSummary"/>
-  <CheckBoxPreference
-    android:key="repeatedSpeechWhenRingerOff"
-    android:defaultValue="false"
-    android:title="@string/repeatedSpeechWhenRingerOffTitle"
-    android:summary="@string/repeatedSpeechWhenRingerOffSummary"/>
 
-  <CheckBoxPreference
-    android:key="voicemailAlerts"
-    android:defaultValue="true"
-    android:title="@string/voicemailAlertsTitle"
-    android:summary="@string/voicemailAlertsSummary"/>
+  <PreferenceCategory>
+    <PreferenceScreen android:title="@string/speechTitle">>
+
+      <CheckBoxPreference
+        android:key="repeatedSpeechWhenRingerOff"
+        android:defaultValue="false"
+        android:title="@string/repeatedSpeechWhenRingerOffTitle"
+        android:summary="@string/repeatedSpeechWhenRingerOffSummary"/>
+
+    </PreferenceScreen>
+  </PreferenceCategory>
+
+  <PreferenceCategory>
+    <PreferenceScreen android:title="@string/notificationsTitle">
+
+      <CheckBoxPreference
+        android:key="talkingCallerID"
+        android:defaultValue="true"
+        android:title="@string/talkingCallerIDTitle"
+        android:summary="@string/talkingCallerIDSummary"/>
+
+      <CheckBoxPreference
+        android:key="voicemailAlerts"
+        android:defaultValue="true"
+        android:title="@string/voicemailAlertsTitle"
+        android:summary="@string/voicemailAlertsSummary"/>
+
+    </PreferenceScreen>
+  </PreferenceCategory>
+
 </PreferenceScreen>
