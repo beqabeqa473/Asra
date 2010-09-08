@@ -54,14 +54,6 @@ object StateReactor {
     TTS.speak("Locked.", false) 
   }
 
-  onShakingStarted { () =>
-    //TTS.speak("Shaking", true)
-  }
-
-  onShakingStopped { () =>
-    //TTS.speak("Stopped shaking", true)
-  }
-
   private var voicemailIndicator:Option[String] = None
 
   onMessageWaiting { () =>
@@ -71,6 +63,22 @@ object StateReactor {
 
   onMessageNoLongerWaiting { () =>
     voicemailIndicator.foreach { i => TTS.stopRepeatedSpeech(i) }
+  }
+
+  onProximityFar { () =>
+    //TTS.speak("Far away.", true)
+  }
+
+  onProximityNear { () =>
+    //TTS.speak("Nearby.", true)
+  }
+
+  onShakingStarted { () =>
+    //TTS.speak("Shaking", true)
+  }
+
+  onShakingStopped { () =>
+    //TTS.speak("Stopped shaking", true)
   }
 
 }

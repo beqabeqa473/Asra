@@ -32,6 +32,7 @@ object StateObserver {
 
     sensorManager = service.getSystemService(Context.SENSOR_SERVICE).asInstanceOf[SensorManager]
     shakerEnabled = true
+    proximitySensorEnabled = true
 
   }
 
@@ -46,6 +47,14 @@ object StateObserver {
   private var callRingingHandlers = List[(String) => Unit]()
   def onCallRinging(h:(String) => Unit) = callRingingHandlers ::= h
   def callRinging(number:String) = callRingingHandlers.foreach { f => f(number) }
+
+  private var proximityFarHandlers = List[() => Unit]()
+  def onProximityFar(h:() => Unit) = proximityFarHandlers ::= h
+  def proximityFar() = proximityFarHandlers.foreach { f => f() }
+
+  private var proximityNearHandlers = List[() => Unit]()
+  def onProximityNear(h:() => Unit) = proximityNearHandlers ::= h
+  def proximityNear() = proximityNearHandlers.foreach { f => f() }
 
   private var ringerModeChangedHandlers = List[(String) => Unit]()
   def onRingerModeChanged(h:(String) => Unit) = ringerModeChangedHandlers ::= h
@@ -120,6 +129,36 @@ object StateObserver {
     else if(!v && _shakerEnabled)
       sensorManager.unregisterListener(shaker)
     _shakerEnabled = v
+  }
+
+  private var maxProximitySensorRange = 0f
+
+  private val proximityListener = new SensorEventListener {
+
+    def onSensorChanged(e:SensorEvent) {
+      val distance = e.values(0)
+      if(distance < maxProximitySensorRange)
+        proximityNear()
+      else
+        proximityFar()
+      
+    }
+
+    def onAccuracyChanged(sensor:Sensor, accuracy:Int) { }
+
+  }
+
+  private var _proximitySensorEnabled = false
+  def proximitySensorEnabled = _proximitySensorEnabled
+
+  def proximitySensorEnabled_=(v:Boolean) {
+    val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY)
+    if(sensor != null && v && !proximitySensorEnabled) {
+      maxProximitySensorRange = sensor.getMaximumRange
+      sensorManager.registerListener(proximityListener, sensor, SensorManager.SENSOR_DELAY_UI)
+    } else if(!v && proximitySensorEnabled)
+      sensorManager.unregisterListener(proximityListener)
+    _proximitySensorEnabled = v
   }
 
 }
