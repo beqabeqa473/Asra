@@ -75,7 +75,8 @@ object Scripter {
     }
 
     for(fn <- assets.list("scripts") if(fn != "api.js")) {
-      if(!scriptsDir.list.contains(fn)) {
+      val list = scriptsDir.list()
+      if(list == null || !list.contains(fn)) {
         val script = new FileOutputStream(new File(scriptsDir, "_"+fn))
         script.write(readAllAvailable(assets.open("scripts/"+fn)).getBytes)
         script.close
