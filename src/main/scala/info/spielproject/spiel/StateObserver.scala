@@ -45,10 +45,6 @@ object StateObserver {
   def onRingerModeChanged(h:(String) => Unit) = ringerModeChangedHandlers ::= h
   def ringerModeChanged(mode:String) = ringerModeChangedHandlers.foreach { f => f(mode) }
 
-  private[spiel] var _ringerOn = true
-  def isRingerOn = _ringerOn
-  def isRingerOff = !isRingerOn
-
   private var screenOffHandlers = List[() => Unit]()
   def onScreenOff(h:() => Unit) = screenOffHandlers ::= h
   def screenOff = screenOffHandlers.foreach { f => f() }

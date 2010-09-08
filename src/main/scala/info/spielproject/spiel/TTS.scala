@@ -129,7 +129,7 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
   def stopRepeatedSpeech(key:String) = repeatedSpeech -= key
 
   private def performRepeatedSpeech(key:String):Unit = repeatedSpeech.get(key) match {
-    case Some(v) if(Preferences.repeatedSpeechWhenRingerOff == false && StateObserver.isRingerOff) => actor {
+    case Some(v) if(Preferences.repeatedSpeechWhenRingerOff == false && StateReactor.isRingerOff) => actor {
       Thread.sleep(v._1*1000)
       performRepeatedSpeech(key)
     }
