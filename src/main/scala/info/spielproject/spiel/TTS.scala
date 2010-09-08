@@ -129,7 +129,7 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
   def stopRepeatedSpeech(key:String) = repeatedSpeech -= key
 
   private def performRepeatedSpeech(key:String):Unit = repeatedSpeech.get(key) match {
-    case Some(v) if(Preferences.repeatedSpeechWhenRingerOff == false && StateReactor.isRingerOff) => actor {
+    case Some(v) if(Preferences.repeatedSpeechWhenRingerOff == false && StateReactor.ringerOff_?) => actor {
       Thread.sleep(v._1*1000)
       performRepeatedSpeech(key)
     }
@@ -137,12 +137,20 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     case None =>
   }
 
+  private def shouldSpeakNotification:Boolean = {
+    if(StateReactor.ringerOff_?) return false
+    if(!Preferences.speakNotificationsWhenScreenOff && StateReactor.screenOff_?) return false
+    true
+  }
+
   def speakNotification(text:String) {
-    speak(text, false)
+    if(shouldSpeakNotification)
+      speak(text, false)
   }
 
   def speakNotification(text:List[String]) {
-    speak(text, false)
+    if(shouldSpeakNotification)
+      speak(text, false)
   }
 
 }

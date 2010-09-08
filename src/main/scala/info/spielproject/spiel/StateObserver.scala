@@ -1,9 +1,12 @@
 package info.spielproject.spiel
 
 import android.content.{BroadcastReceiver, Context, Intent, IntentFilter}
+import android.hardware.{Sensor, SensorEvent, SensorEventListener, SensorManager}
 import android.media.AudioManager
 
 object StateObserver {
+
+  private var sensorManager:SensorManager = null
 
   def apply(service:SpielService) {
 
@@ -26,6 +29,9 @@ object StateObserver {
     registerReceiver((c, i) => screenOff , Intent.ACTION_SCREEN_OFF)
 
     registerReceiver((c, i) => screenOn, Intent.ACTION_SCREEN_ON)
+
+    sensorManager = service.getSystemService(Context.SENSOR_SERVICE).asInstanceOf[SensorManager]
+    shakerEnabled = true
 
   }
 
@@ -53,6 +59,14 @@ object StateObserver {
   def onScreenOn(h:() => Unit) = screenOnHandlers ::= h
   def screenOn = screenOnHandlers.foreach { f => f() }
 
+  private var shakingStartedHandlers = List[() => Unit]()
+  def onShakingStarted(h:() => Unit) = shakingStartedHandlers ::= h
+  def shakingStarted() = shakingStartedHandlers.foreach { f => f() }
+
+  private var shakingStoppedHandlers = List[() => Unit]()
+  def onShakingStopped(h:() => Unit) = shakingStoppedHandlers ::= h
+  def shakingStopped() = shakingStoppedHandlers.foreach { f => f() }
+
   private var messageNoLongerWaitingHandlers = List[() => Unit]()
   def onMessageNoLongerWaiting(h:() => Unit) = messageNoLongerWaitingHandlers ::= h
   def messageNoLongerWaiting = messageNoLongerWaitingHandlers.foreach { f => f() }
@@ -60,5 +74,52 @@ object StateObserver {
   private var messageWaitingHandlers = List[() => Unit]()
   def onMessageWaiting(h:() => Unit) = messageWaitingHandlers ::= h
   def messageWaiting = messageWaitingHandlers.foreach { f => f() }
+
+  private var _shakerEnabled = false
+
+  def shakerEnabled = _shakerEnabled
+
+  private val shakerThreshold = 2.6d*SensorManager.GRAVITY_EARTH*SensorManager.GRAVITY_EARTH
+
+  private val shaker = new SensorEventListener {
+
+    def onSensorChanged(e:SensorEvent) {
+      val netForce = e.values(0)*e.values(0)+e.values(1)*e.values(1)+e.values(2)*e.values(2)
+      if(shakerThreshold < netForce)
+        StateObserver.isShaking()
+      else
+        StateObserver.isNotShaking()
+    }
+
+    def onAccuracyChanged(sensor:Sensor, accuracy:Int) { }
+
+  }
+
+  private var lastShakeAt = 0l
+
+  private def isShaking() {
+    val now = System.currentTimeMillis
+    if(lastShakeAt == 0)
+      shakingStarted()
+    lastShakeAt = now
+  }
+
+  private val gap = 500
+
+  private def isNotShaking() {
+    val now = System.currentTimeMillis
+    if(lastShakeAt != 0 && now-lastShakeAt > gap) {
+      lastShakeAt = 0
+      shakingStopped()
+    }
+  }  
+
+  def shakerEnabled_=(v:Boolean) {
+    if(v && !shakerEnabled)
+      sensorManager.registerListener(shaker, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_UI)
+    else if(!v && _shakerEnabled)
+      sensorManager.unregisterListener(shaker)
+    _shakerEnabled = v
+  }
 
 }

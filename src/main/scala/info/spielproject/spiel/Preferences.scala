@@ -24,8 +24,6 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
   def pitchScale = prefs.getString("pitchScale", "1").toFloat
 
-  def repeatedSpeechWhenRingerOff = prefs.getBoolean("repeatedSpeechWhenRingerOff", false)
-
   def fixMultivoice = prefs.getBoolean("fixMultivoice", false)
 
   def managePunctuationSpeech = prefs.getBoolean("managePunctuationSpeech", false)
@@ -33,6 +31,10 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
   def talkingCallerID = prefs.getBoolean("talkingCallerID", true)
 
   def voicemailAlerts = prefs.getBoolean("voicemailAlerts", true)
+
+  def speakNotificationsWhenScreenOff = prefs.getBoolean("speakNotificationsWhenScreenOff", true)
+
+  def repeatedSpeechWhenRingerOff = prefs.getBoolean("repeatedSpeechWhenRingerOff", false)
 
   def onSharedPreferenceChanged(p:SharedPreferences, key:String) {
     key match {

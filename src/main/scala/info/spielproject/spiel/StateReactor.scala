@@ -7,11 +7,11 @@ import android.util.Log
 object StateReactor {
   import StateObserver._
 
-  private[spiel] var _ringerOn:Boolean = false
+  private[spiel] var ringerOn:Boolean = false
 
   def apply(service:SpielService) {
     val audioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
-    _ringerOn = audioManager.getRingerMode != AudioManager.RINGER_MODE_SILENT
+    ringerOn = audioManager.getRingerMode != AudioManager.RINGER_MODE_SILENT
   }
 
   var callerIDRepeaterID = ""
@@ -32,17 +32,35 @@ object StateReactor {
     callerIDRepeaterID = ""
   }
 
-  def isRingerOn = _ringerOn
-  def isRingerOff = !isRingerOn
+  def ringerOn_? = ringerOn
+  def ringerOff_? = !ringerOn_?
 
   onRingerModeChanged { (mode) =>
     Log.d("spiel", "Ringer mode changed: "+mode)
-    _ringerOn = mode != "silent"
+    ringerOn = mode != "silent"
   }
 
-  onScreenOff { () => TTS.speak("Locked.", false) }
+  private var screenOn = true
+  def screenOn_? = screenOn
+  def screenOff_? = !screenOn_?
 
-  onScreenOn { () => TTS.speak("Locked.", false) }
+  onScreenOff { () =>
+    screenOn = false
+    TTS.speak("Locked.", false)
+  }
+
+  onScreenOn { () =>
+    screenOn = true
+    TTS.speak("Locked.", false) 
+  }
+
+  onShakingStarted { () =>
+    //TTS.speak("Shaking", true)
+  }
+
+  onShakingStopped { () =>
+    //TTS.speak("Stopped shaking", true)
+  }
 
   private var voicemailIndicator:Option[String] = None
 

@@ -29,12 +29,6 @@
       android:defaultValue="1"/>
 
     <CheckBoxPreference
-      android:key="repeatedSpeechWhenRingerOff"
-      android:defaultValue="false"
-      android:title="@string/repeatedSpeechWhenRingerOffTitle"
-      android:summary="@string/repeatedSpeechWhenRingerOffSummary"/>
-
-    <CheckBoxPreference
       android:key="fixMultivoice"
       android:defaultValue="false"
       android:title="@string/fixMultivoiceTitle"
@@ -48,7 +42,7 @@
 
   </PreferenceScreen>
 
-  <PreferenceScreen android:title="@string/notificationsTitle">
+  <PreferenceScreen android:title="@string/alertsTitle">
 
     <CheckBoxPreference
       android:key="talkingCallerID"
@@ -61,6 +55,22 @@
       android:defaultValue="true"
       android:title="@string/voicemailAlertsTitle"
       android:summary="@string/voicemailAlertsSummary"/>
+
+  </PreferenceScreen>
+
+  <PreferenceScreen android:title="@string/notificationsTitle">
+
+    <CheckBoxPreference
+      android:key="speakNotificationsWhenScreenOff"
+      android:defaultValue="true"
+      android:title="@string/speakNotificationsWhenScreenOffTitle"
+      android:summary="@string/speakNotificationsWhenScreenOffSummary"/>
+
+    <CheckBoxPreference
+      android:key="repeatedSpeechWhenRingerOff"
+      android:defaultValue="false"
+      android:title="@string/repeatedSpeechWhenRingerOffTitle"
+      android:summary="@string/repeatedSpeechWhenRingerOffSummary"/>
 
   </PreferenceScreen>
 

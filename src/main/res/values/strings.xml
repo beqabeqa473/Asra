@@ -27,18 +27,23 @@
   <string name="rateScaleSummary">Factor by which default rate should be scaled</string>
   <string name="pitchScaleTitle">Pitch scale</string>
   <string name="pitchScaleSummary">Factor by which default pitch should be scaled</string>
-  <string name="repeatedSpeechWhenRingerOffTitle">Repeated speech when ringer is off</string>
-  <string name="repeatedSpeechWhenRingerOffSummary">Speak repeated alerts for caller ID, voicemail, etc. even when ringer is off</string>
   <string name="fixMultivoiceTitle">Fix multi-voice issue</string>
   <string name="fixMultivoiceSummary">Fix for bug where a different voice is used for speaking single characters in some synthesizers</string>
   <string name="managePunctuationSpeechTitle">Manage punctuation speech</string>
   <string name="managePunctuationSpeechSummary">Delegate speaking of some unhandled punctuation to Spiel</string>
 
-  <string name="notificationsTitle">Notifications</string>
+  <string name="alertsTitle">Alerts</string>
   <string name="talkingCallerIDTitle">Talking caller ID</string>
   <string name="talkingCallerIDSummary">Repeatedly announce caller ID details for incoming calls</string>
   <string name="voicemailAlertsTitle">Voicemail alerts</string>
   <string name="voicemailAlertsSummary">Repeatedly announce availability of new voicemail</string>
+
+  <string name="notificationsTitle">Notifications</string>
+  <string name="speakNotificationsWhenScreenOffTitle">Speak notifications when screen is off</string>
+  <string name="speakNotificationsWhenScreenOffSummary">Avoid speaking notifications when the phone screen is off</string>
+  <string name="repeatedSpeechWhenRingerOffTitle">Repeated speech when ringer is off</string>
+  <string name="repeatedSpeechWhenRingerOffSummary">Speak repeated alerts for caller ID, voicemail, etc. even when ringer is off</string>
+
 
   <!-- Punctuation -->
   <string name="exclamation">exclaim</string>
@@ -64,4 +69,5 @@
   <string name="apostrophe">apostrophe</string>
   <string name="semiColon">semi colon</string>
   <string name="colon">colon</string>
+
 </resources>
