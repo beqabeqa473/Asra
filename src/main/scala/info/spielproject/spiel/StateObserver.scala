@@ -13,7 +13,15 @@ object StateObserver {
       }, new IntentFilter(i))
     }
 
-    registerReceiver((c, i) => ringerModeChanged, AudioManager.RINGER_MODE_CHANGED_ACTION)
+    registerReceiver({ (c, i) =>
+      val extra = i.getIntExtra(AudioManager.EXTRA_RINGER_MODE, AudioManager.RINGER_MODE_NORMAL)
+      val mode = extra match {
+        case AudioManager.RINGER_MODE_NORMAL => "normal"
+        case AudioManager.RINGER_MODE_SILENT => "silent"
+        case AudioManager.RINGER_MODE_VIBRATE => "vibrate"
+      }
+      ringerModeChanged(mode)
+    }, AudioManager.RINGER_MODE_CHANGED_ACTION)
 
     registerReceiver((c, i) => screenOff , Intent.ACTION_SCREEN_OFF)
 
@@ -33,9 +41,9 @@ object StateObserver {
   def onCallRinging(h:(String) => Unit) = callRingingHandlers ::= h
   def callRinging(number:String) = callRingingHandlers.foreach { f => f(number) }
 
-  private var ringerModeChangedHandlers = List[() => Unit]()
-  def onRingerModeChanged(h:() => Unit) = ringerModeChangedHandlers ::= h
-  def ringerModeChanged = ringerModeChangedHandlers.foreach { f => f() }
+  private var ringerModeChangedHandlers = List[(String) => Unit]()
+  def onRingerModeChanged(h:(String) => Unit) = ringerModeChangedHandlers ::= h
+  def ringerModeChanged(mode:String) = ringerModeChangedHandlers.foreach { f => f(mode) }
 
   private[spiel] var _ringerOn = true
   def isRingerOn = _ringerOn

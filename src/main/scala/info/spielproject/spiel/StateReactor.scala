@@ -1,5 +1,7 @@
 package info.spielproject.spiel
 
+import android.util.Log
+
 object StateReactor {
   import StateObserver._
 
@@ -23,6 +25,11 @@ object StateReactor {
     TTS.stopRepeatedSpeech(callerIDRepeaterID)
     callerIDRepeaterID = ""
   }
+
+  onRingerModeChanged { (mode) =>
+    Log.d("spiel", "Ringer mode changed: "+mode)
+  }
+
 
   onScreenOff { () => TTS.speak("Locked.", false) }
 
