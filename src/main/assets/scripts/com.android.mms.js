@@ -2,7 +2,7 @@ forClass("android.app.Notification", {
   onNotificationStateChanged: function(e) {
     if(e.text.isEmpty())
       return true;
-    speak("Incoming SMS");
+    speakNotification("SMS");
     nextShouldNotInterrupt();
     return false;
   }

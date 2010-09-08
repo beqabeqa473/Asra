@@ -184,6 +184,8 @@ class Handler(pkg:String, cls:String) {
   def speak(text:String):Unit = TTS.speak(text, !myNextShouldNotInterrupt)
   def speak(list:List[String], interrupt:Boolean):Unit = TTS.speak(list, interrupt)
   def speak(list:List[String]):Unit = TTS.speak(list, !myNextShouldNotInterrupt)
+  def speakNotification(text:String) = TTS.speakNotification(text)
+  def speakNotification(text:List[String]) = TTS.speakNotification(text)
 
   def nextShouldNotInterrupt = Handler.nextShouldNotInterrupt
 
@@ -353,7 +355,7 @@ class Handlers {
       //Log.d("spiel", "onNotificationStateChanged")
       if(e.getText.size > 0) {
         nextShouldNotInterrupt
-        speak(utterancesFor(e), false)
+        speakNotification(utterancesFor(e))
       }
       true
     }

@@ -7,6 +7,10 @@ function speak(str, shouldInterrupt) {
     TTS.speak(str, !Handler.nextShouldNotInterrupt());
 }
 
+function speakNotification(str) {
+  TTS.speakNotification(str)
+}
+
 function nextShouldNotInterrupt() {
   Handler.nextShouldNotInterrupt();
 }

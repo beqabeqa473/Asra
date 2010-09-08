@@ -137,4 +137,12 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     case None =>
   }
 
+  def speakNotification(text:String) {
+    speak(text, false)
+  }
+
+  def speakNotification(text:List[String]) {
+    speak(text, false)
+  }
+
 }
