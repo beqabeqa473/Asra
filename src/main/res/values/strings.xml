@@ -53,9 +53,13 @@
   <string name="viewRecentEventsSummary">Displays recent accessibility events with added functionality for script developers</string>
 
   <string name="events">Events</string>
-  <string name="noEvents">No events available. Please enable \"View most recent accessibility events\" in the \"Scripting and debugging\" menu first.</string>
+  <string name="noEvents">No events available. Please enable \"View most recent accessibility events\" in the \"Scripting and debugging\" menu first. If you have done this and none are displaying, press Menu then select \"Refresh\".</string>
+
+  <!-- Menu items -->
+  <string name="refresh">Refresh</string>
 
   <!-- Punctuation -->
+
   <string name="exclamation">exclaim</string>
   <string name="at">at</string>
   <string name="pound">pound</string>
