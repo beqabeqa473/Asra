@@ -80,4 +80,14 @@
 
   </PreferenceScreen>
 
+  <PreferenceScreen android:title="@string/scriptingDebuggingTitle">
+
+    <CheckBoxPreference
+      android:key="sendBacktraces"
+      android:defaultValue="false"
+      android:title="@string/sendBacktracesTitle"
+      android:summary="@string/sendBacktracesSummary"/>
+
+  </PreferenceScreen>
+
 </PreferenceScreen>

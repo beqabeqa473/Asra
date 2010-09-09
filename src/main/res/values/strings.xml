@@ -46,6 +46,10 @@
   <string name="repeatedSpeechWhenRingerOffTitle">Repeated speech when ringer is off</string>
   <string name="repeatedSpeechWhenRingerOffSummary">Speak repeated alerts for caller ID, voicemail, etc. even when ringer is off</string>
 
+  <string name="scriptingDebuggingTitle">Scripting and debugging</string>
+  <string name="sendBacktracesTitle">Send backtraces when Spiel crashes</string>
+  <string name="sendBacktracesSummary">Automatically send anonymous error reports to the developer whenever Spiel crashes (requires restart)</string>
+
   <string name="events">Events</string>
 
   <!-- Punctuation -->

@@ -36,10 +36,12 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
   def repeatedSpeechWhenRingerOff = prefs.getBoolean("repeatedSpeechWhenRingerOff", false)
 
+  def sendBacktraces = prefs.getBoolean("sendBacktraces", false)
+
   def onSharedPreferenceChanged(p:SharedPreferences, key:String) {
     key match {
-      case "rateScale" => TTS.rate = rateScale
       case "pitchScale" => TTS.pitch = pitchScale
+      case "rateScale" => TTS.rate = rateScale
       case "speechEngine" =>
         TTS.engine = speechEngine
       case _ =>

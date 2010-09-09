@@ -36,7 +36,7 @@ object StateReactor {
 
   onMessageWaiting { () =>
     if(Preferences.voicemailAlerts)
-      TTS.speakEvery(180, "New voicemail")
+      voicemailIndicator = Some(TTS.speakEvery(180, "New voicemail"))
   }
 
   onMessageNoLongerWaiting { () =>
