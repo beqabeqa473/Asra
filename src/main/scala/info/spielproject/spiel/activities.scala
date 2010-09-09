@@ -11,6 +11,8 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.widget.{ArrayAdapter, TabHost}
 
+import handlers._
+
 class Spiel extends TabActivity {
   override def onCreate(bundle:Bundle) {
     super.onCreate(bundle)
@@ -19,6 +21,11 @@ class Spiel extends TabActivity {
     host.addTab(host.newTabSpec("preferences")
       .setIndicator(getString(R.string.preferences))
       .setContent(new Intent(this, classOf[PreferencesActivity]))
+    )
+
+    host.addTab(host.newTabSpec("events")
+      .setIndicator(getString(R.string.events))
+      .setContent(new Intent(this, classOf[Events]))
     )
 
   }
@@ -59,10 +66,10 @@ class Events extends ListActivity {
 
   private def refresh() {
     setListAdapter(
-      new ArrayAdapter[AccessibilityEvent](
+      new ArrayAdapter[PrettyAccessibilityEvent](
         this,
         android.R.layout.simple_list_item_1,
-        handlers.EventReviewQueue.toArray
+        EventReviewQueue.toArray
       )
     )
   }

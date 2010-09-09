@@ -30,6 +30,8 @@
       </intent-filter>
     </activity>
 
+    <activity android:name=".activities.Events"/>
+
     <provider android:name=".StatusProvider" android:authorities="info.spielproject.spiel.providers.StatusProvider"  />
 
   </application>

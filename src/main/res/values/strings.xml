@@ -46,6 +46,7 @@
   <string name="repeatedSpeechWhenRingerOffTitle">Repeated speech when ringer is off</string>
   <string name="repeatedSpeechWhenRingerOffSummary">Speak repeated alerts for caller ID, voicemail, etc. even when ringer is off</string>
 
+  <string name="events">Events</string>
 
   <!-- Punctuation -->
   <string name="exclamation">exclaim</string>

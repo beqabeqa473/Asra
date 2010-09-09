@@ -17,8 +17,24 @@ class NativeCallback(f:AccessibilityEvent => Boolean) extends Callback{
   def apply(e:AccessibilityEvent) = f(e)
 }
 
-object EventReviewQueue extends collection.mutable.Queue[AccessibilityEvent] {
-  def apply(e:AccessibilityEvent) = {
+class PrettyAccessibilityEvent(e:AccessibilityEvent) {
+  override lazy val toString = {
+    val eventType = Handler.dispatchers(e.getEventType)
+    val text = if(e.getText.length == 0)
+      "no text: " 
+    else
+      "Text: "+e.getText.foldLeft("") ((acc, v) => acc+" "+v)+": "
+    val contentDescription = if(e.getContentDescription != null)
+      e.getContentDescription+": "
+    else ""
+    val className = e.getClassName
+    val packageName = e.getPackageName
+    eventType+": "+text+contentDescription+" class: "+className+": package: "+packageName
+  }
+}
+
+object EventReviewQueue extends collection.mutable.Queue[PrettyAccessibilityEvent] {
+  def apply(e:PrettyAccessibilityEvent) = {
     enqueue(e)
     if(length > 50) drop(length-50)
   }
@@ -105,7 +121,7 @@ object Handler extends Actor {
   }
 
   private def process(e:AccessibilityEvent) {
-    EventReviewQueue(e)
+    EventReviewQueue(new PrettyAccessibilityEvent(e))
     Log.d("spiel", "Event "+e.toString)
 
     nextShouldNotInterruptCalled = false
