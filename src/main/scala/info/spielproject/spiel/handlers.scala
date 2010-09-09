@@ -1,4 +1,5 @@
-package info.spielproject.spiel.handlers
+package info.spielproject.spiel
+package handlers
 
 import actors.Actor
 import Actor._
@@ -8,14 +9,19 @@ import android.view.accessibility.AccessibilityEvent
 import collection.JavaConversions._
 import collection.mutable.Map
 
-import info.spielproject.spiel._
-
 abstract class Callback {
   def apply(e:AccessibilityEvent):Boolean
 }
 
 class NativeCallback(f:AccessibilityEvent => Boolean) extends Callback{
   def apply(e:AccessibilityEvent) = f(e)
+}
+
+object EventReviewQueue extends collection.mutable.Queue[AccessibilityEvent] {
+  def apply(e:AccessibilityEvent) = {
+    enqueue(e)
+    if(length > 50) drop(length-50)
+  }
 }
 
 object Handler extends Actor {
@@ -99,6 +105,7 @@ object Handler extends Actor {
   }
 
   private def process(e:AccessibilityEvent) {
+    EventReviewQueue(e)
     Log.d("spiel", "Event "+e.toString)
 
     nextShouldNotInterruptCalled = false

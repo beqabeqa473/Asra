@@ -2,12 +2,13 @@ package info.spielproject.spiel
 
 import collection.JavaConversions._
 
-import android.app.TabActivity
+import android.app.{ListActivity, TabActivity}
 import android.content.Intent
 import android.os.Bundle
 import android.preference.{ListPreference, Preference, PreferenceActivity}
 import android.util.Log
-import android.widget.TabHost
+import android.view.accessibility.AccessibilityEvent
+import android.widget.{ArrayAdapter, TabHost}
 
 class SpielActivity extends TabActivity {
   override def onCreate(bundle:Bundle) {
@@ -46,4 +47,23 @@ class PreferencesActivity extends PreferenceActivity {
       }
     })
   }
+}
+
+class Events extends ListActivity {
+
+  override def onCreate(bundle:Bundle) {
+    super.onCreate(bundle)
+    refresh()
+  }
+
+  private def refresh() {
+    setListAdapter(
+      new ArrayAdapter[AccessibilityEvent](
+        this,
+        android.R.layout.simple_list_item_1,
+        handlers.EventReviewQueue.toArray
+      )
+    )
+  }
+
 }
