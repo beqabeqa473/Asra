@@ -1,4 +1,5 @@
 package info.spielproject.spiel
+package activities
 
 import collection.JavaConversions._
 
@@ -10,7 +11,7 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.widget.{ArrayAdapter, TabHost}
 
-class SpielActivity extends TabActivity {
+class Spiel extends TabActivity {
   override def onCreate(bundle:Bundle) {
     super.onCreate(bundle)
     val host = getTabHost
