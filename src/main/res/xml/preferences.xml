@@ -40,6 +40,12 @@
       android:title="@string/managePunctuationSpeechTitle"
       android:summary="@string/managePunctuationSpeechSummary"/>
 
+    <Preference
+      android:key="textToSpeechSettings"
+      android:title="@string/textToSpeechTitle"
+      android:summary="@string/textToSpeechSummary"
+      android:persistent="false"/>
+
   </PreferenceScreen>
 
   <PreferenceScreen android:title="@string/alertsTitle">

@@ -5,7 +5,7 @@ import collection.JavaConversions._
 import android.app.TabActivity
 import android.content.Intent
 import android.os.Bundle
-import android.preference.{ListPreference, PreferenceActivity}
+import android.preference.{ListPreference, Preference, PreferenceActivity}
 import android.util.Log
 import android.widget.TabHost
 
@@ -36,5 +36,14 @@ class PreferencesActivity extends PreferenceActivity {
     val enginesPreference = findPreference("speechEngine").asInstanceOf[ListPreference]
     enginesPreference.setEntries(engines.map(_._1).toArray[CharSequence])
     enginesPreference.setEntryValues(engines.map(_._2).toArray[CharSequence])
+    val ttsPreference = findPreference("textToSpeechSettings")
+    ttsPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener {
+      def onPreferenceClick(p:Preference) = {
+        val intent = new Intent
+        intent.setClassName("com.android.settings", "com.android.settings.TextToSpeechSettings")
+        startActivity(intent)
+        false
+      }
+    })
   }
 }

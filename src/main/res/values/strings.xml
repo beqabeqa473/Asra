@@ -31,6 +31,8 @@
   <string name="fixMultivoiceSummary">Fix for bug where a different voice is used for speaking single characters in some synthesizers</string>
   <string name="managePunctuationSpeechTitle">Manage punctuation speech</string>
   <string name="managePunctuationSpeechSummary">Delegate speaking of some unhandled punctuation to Spiel</string>
+  <string name="textToSpeechTitle">Text to Speech settings</string>
+  <string name="textToSpeechSummary">Set system-wide TTS properties</string>
 
   <string name="alertsTitle">Alerts</string>
   <string name="talkingCallerIDTitle">Talking caller ID</string>
