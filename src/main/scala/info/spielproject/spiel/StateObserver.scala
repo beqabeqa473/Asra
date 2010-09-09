@@ -26,9 +26,9 @@ object StateObserver {
       ringerModeChanged(mode)
     }, AudioManager.RINGER_MODE_CHANGED_ACTION)
 
-    registerReceiver((c, i) => screenOff , Intent.ACTION_SCREEN_OFF)
+    registerReceiver((c, i) => screenOff() , Intent.ACTION_SCREEN_OFF)
 
-    registerReceiver((c, i) => screenOn, Intent.ACTION_SCREEN_ON)
+    registerReceiver((c, i) => screenOn(), Intent.ACTION_SCREEN_ON)
 
     sensorManager = service.getSystemService(Context.SENSOR_SERVICE).asInstanceOf[SensorManager]
     shakerEnabled = true
@@ -37,52 +37,111 @@ object StateObserver {
   }
 
   private var callAnsweredHandlers = List[() => Unit]()
-  def onCallAnswered(h:() => Unit) = callAnsweredHandlers ::= h
-  def callAnswered = callAnsweredHandlers.foreach { f => f() }
+
+  def onCallAnswered(h:() => Unit) = {
+    callAnsweredHandlers ::= h
+    h
+  }
+
+  def callAnswered() = callAnsweredHandlers.foreach { f => f() }
 
   private var callIdleHandlers = List[() => Unit]()
-  def onCallIdle(h:() => Unit) = callIdleHandlers ::= h
+
+  def onCallIdle(h:() => Unit) = {
+    callIdleHandlers ::= h
+    h
+  }
+
   def callIdle = callIdleHandlers.foreach { f => f() }
 
   private var callRingingHandlers = List[(String) => Unit]()
-  def onCallRinging(h:(String) => Unit) = callRingingHandlers ::= h
+
+  def onCallRinging(h:(String) => Unit) = {
+    callRingingHandlers ::= h
+    h
+  }
+
   def callRinging(number:String) = callRingingHandlers.foreach { f => f(number) }
 
   private var proximityFarHandlers = List[() => Unit]()
-  def onProximityFar(h:() => Unit) = proximityFarHandlers ::= h
+
+  def onProximityFar(h:() => Unit) = {
+    proximityFarHandlers ::= h
+    h
+  }
+
   def proximityFar() = proximityFarHandlers.foreach { f => f() }
 
   private var proximityNearHandlers = List[() => Unit]()
-  def onProximityNear(h:() => Unit) = proximityNearHandlers ::= h
+
+  def onProximityNear(h:() => Unit) = {
+    proximityNearHandlers ::= h
+    h
+  }
+
   def proximityNear() = proximityNearHandlers.foreach { f => f() }
 
   private var ringerModeChangedHandlers = List[(String) => Unit]()
-  def onRingerModeChanged(h:(String) => Unit) = ringerModeChangedHandlers ::= h
+
+  def onRingerModeChanged(h:(String) => Unit) = {
+    ringerModeChangedHandlers ::= h
+    h
+  }
+
   def ringerModeChanged(mode:String) = ringerModeChangedHandlers.foreach { f => f(mode) }
 
   private var screenOffHandlers = List[() => Unit]()
-  def onScreenOff(h:() => Unit) = screenOffHandlers ::= h
-  def screenOff = screenOffHandlers.foreach { f => f() }
+
+  def onScreenOff(h:() => Unit) = {
+    screenOffHandlers ::= h
+    h
+  }
+
+  def screenOff() = screenOffHandlers.foreach { f => f() }
 
   private var screenOnHandlers = List[() => Unit]()
-  def onScreenOn(h:() => Unit) = screenOnHandlers ::= h
-  def screenOn = screenOnHandlers.foreach { f => f() }
+
+  def onScreenOn(h:() => Unit) = {
+    screenOnHandlers ::= h
+    h
+  }
+
+  def screenOn() = screenOnHandlers.foreach { f => f() }
 
   private var shakingStartedHandlers = List[() => Unit]()
-  def onShakingStarted(h:() => Unit) = shakingStartedHandlers ::= h
+
+  def onShakingStarted(h:() => Unit) = {
+    shakingStartedHandlers ::= h
+    h
+  }
+
   def shakingStarted() = shakingStartedHandlers.foreach { f => f() }
 
   private var shakingStoppedHandlers = List[() => Unit]()
-  def onShakingStopped(h:() => Unit) = shakingStoppedHandlers ::= h
+
+  def onShakingStopped(h:() => Unit) = {
+    shakingStoppedHandlers ::= h
+    h
+  }
+
   def shakingStopped() = shakingStoppedHandlers.foreach { f => f() }
 
   private var messageNoLongerWaitingHandlers = List[() => Unit]()
-  def onMessageNoLongerWaiting(h:() => Unit) = messageNoLongerWaitingHandlers ::= h
-  def messageNoLongerWaiting = messageNoLongerWaitingHandlers.foreach { f => f() }
+
+  def onMessageNoLongerWaiting(h:() => Unit) = {
+    messageNoLongerWaitingHandlers ::= h
+    h
+  }
+
+  def messageNoLongerWaiting() = messageNoLongerWaitingHandlers.foreach { f => f() }
 
   private var messageWaitingHandlers = List[() => Unit]()
-  def onMessageWaiting(h:() => Unit) = messageWaitingHandlers ::= h
-  def messageWaiting = messageWaitingHandlers.foreach { f => f() }
+
+  def onMessageWaiting(h:() => Unit) = {
+    messageWaitingHandlers ::= h
+  }
+
+  def messageWaiting() = messageWaitingHandlers.foreach { f => f() }
 
   private var _shakerEnabled = false
 
