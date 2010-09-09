@@ -121,8 +121,10 @@ object Handler extends Actor {
   }
 
   private def process(e:AccessibilityEvent) {
-    EventReviewQueue(new PrettyAccessibilityEvent(e))
-    Log.d("spiel", "Event "+e.toString)
+    if(Preferences.viewRecentEvents) {
+      EventReviewQueue(new PrettyAccessibilityEvent(e))
+      Log.d("spiel", "Event "+e.toString)
+    }
 
     nextShouldNotInterruptCalled = false
     var continue = true 

@@ -65,13 +65,22 @@ class Events extends ListActivity {
   }
 
   private def refresh() {
-    setListAdapter(
-      new ArrayAdapter[PrettyAccessibilityEvent](
-        this,
-        android.R.layout.simple_list_item_1,
-        EventReviewQueue.toArray
+    if(Preferences.viewRecentEvents)
+      setListAdapter(
+        new ArrayAdapter[PrettyAccessibilityEvent](
+          this,
+          android.R.layout.simple_list_item_1,
+          EventReviewQueue.toArray
+        )
       )
-    )
+    else
+      setListAdapter(
+        new ArrayAdapter[String](
+          this,
+          android.R.layout.simple_list_item_1,
+          List(getString(R.string.noEvents)).toArray
+        )
+      )
   }
 
 }

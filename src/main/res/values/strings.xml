@@ -49,8 +49,11 @@
   <string name="scriptingDebuggingTitle">Scripting and debugging</string>
   <string name="sendBacktracesTitle">Send backtraces when Spiel crashes</string>
   <string name="sendBacktracesSummary">Automatically send anonymous error reports to the developer whenever Spiel crashes (requires restart)</string>
+  <string name="viewRecentEventsTitle">View most recent accessibility events</string>
+  <string name="viewRecentEventsSummary">Displays recent accessibility events with added functionality for script developers</string>
 
   <string name="events">Events</string>
+  <string name="noEvents">No events available. Please enable \"View most recent accessibility events\" in the \"Scripting and debugging\" menu first.</string>
 
   <!-- Punctuation -->
   <string name="exclamation">exclaim</string>
