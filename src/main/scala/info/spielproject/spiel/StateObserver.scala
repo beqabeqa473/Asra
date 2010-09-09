@@ -31,9 +31,6 @@ object StateObserver {
     registerReceiver((c, i) => screenOn(), Intent.ACTION_SCREEN_ON)
 
     sensorManager = service.getSystemService(Context.SENSOR_SERVICE).asInstanceOf[SensorManager]
-    shakerEnabled = true
-    proximitySensorEnabled = true
-
   }
 
   private var callAnsweredHandlers = List[() => Unit]()
@@ -67,6 +64,7 @@ object StateObserver {
 
   def onProximityFar(h:() => Unit) = {
     proximityFarHandlers ::= h
+    proximitySensorEnabled = true
     h
   }
 
@@ -76,6 +74,7 @@ object StateObserver {
 
   def onProximityNear(h:() => Unit) = {
     proximityNearHandlers ::= h
+    proximitySensorEnabled = true
     h
   }
 
@@ -112,6 +111,7 @@ object StateObserver {
 
   def onShakingStarted(h:() => Unit) = {
     shakingStartedHandlers ::= h
+    shakerEnabled = true
     h
   }
 
@@ -121,6 +121,7 @@ object StateObserver {
 
   def onShakingStopped(h:() => Unit) = {
     shakingStoppedHandlers ::= h
+    shakerEnabled = true
     h
   }
 

@@ -32,6 +32,25 @@ object StateReactor {
     callerIDRepeaterID = ""
   }
 
+  private var voicemailIndicator:Option[String] = None
+
+  onMessageWaiting { () =>
+    if(Preferences.voicemailAlerts)
+      TTS.speakEvery(180, "New voicemail")
+  }
+
+  onMessageNoLongerWaiting { () =>
+    voicemailIndicator.foreach { i => TTS.stopRepeatedSpeech(i) }
+  }
+
+  /*onProximityFar { () =>
+    //TTS.speak("Far away.", true)
+  }
+
+  onProximityNear { () =>
+    //TTS.speak("Nearby.", true)
+  }*/
+
   def ringerOn_? = ringerOn
   def ringerOff_? = !ringerOn_?
 
@@ -54,31 +73,12 @@ object StateReactor {
     TTS.speak("Locked.", false) 
   }
 
-  private var voicemailIndicator:Option[String] = None
-
-  onMessageWaiting { () =>
-    if(Preferences.voicemailAlerts)
-      TTS.speakEvery(180, "New voicemail")
-  }
-
-  onMessageNoLongerWaiting { () =>
-    voicemailIndicator.foreach { i => TTS.stopRepeatedSpeech(i) }
-  }
-
-  onProximityFar { () =>
-    //TTS.speak("Far away.", true)
-  }
-
-  onProximityNear { () =>
-    //TTS.speak("Nearby.", true)
-  }
-
-  onShakingStarted { () =>
+  /*onShakingStarted { () =>
     //TTS.speak("Shaking", true)
   }
 
   onShakingStopped { () =>
     //TTS.speak("Stopped shaking", true)
-  }
+  }*/
 
 }
