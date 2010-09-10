@@ -46,6 +46,7 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
       case "rateScale" => TTS.rate = rateScale
       case "speechEngine" =>
         TTS.engine = speechEngine
+      case "viewRecentEvents" if(!viewRecentEvents) => handlers.EventReviewQueue.clear()
       case _ =>
     }
   }
