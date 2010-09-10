@@ -234,9 +234,9 @@ class Handler(pkg:String, cls:String) {
 
   protected def byDefault(c:Callback) = dispatches("default") = c
 
-  protected def utterancesFor(e:AccessibilityEvent) = {
+  protected def utterancesFor(e:AccessibilityEvent, alwaysAddBlank:Boolean = true) = {
     var rv = List[String]()
-    if(e.getText.size == 0 && e.getContentDescription == null)
+    if(e.getText.size == 0 && e.getContentDescription == null && alwaysAddBlank)
       rv ::= ""
     rv :::= e.getText.map { text =>
       text match {
@@ -269,7 +269,7 @@ class Handler(pkg:String, cls:String) {
 
 trait GenericButtonHandler extends Handler {
   onViewFocused { e:AccessibilityEvent =>
-    speak(utterancesFor(e)++(Handler.service.getString(R.string.button) :: Nil))
+    speak(utterancesFor(e, false)++(Handler.service.getString(R.string.button) :: Nil))
     true
   }
 }
@@ -296,7 +296,7 @@ class Handlers {
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(utterancesFor(e)++(Handler.service.getString(R.string.checkbox) :: Nil))
+      speak(utterancesFor(e, false)++(Handler.service.getString(R.string.checkbox) :: Nil))
       true
     }
 
@@ -353,7 +353,7 @@ class Handlers {
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(utterancesFor(e)++(Handler.service.getString(R.string.radioButton) :: Nil))
+      speak(utterancesFor(e, false)++(Handler.service.getString(R.string.radioButton) :: Nil))
       true
     }
 
