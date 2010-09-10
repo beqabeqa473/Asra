@@ -138,7 +138,7 @@ object Handler extends Actor {
         } else {
           Log.d("spiel", "Dispatching to "+pkg+":"+cls)
           alreadyCalled ::= h
-          if(pkg == "" || cls == "")
+          if(pkg == "" || cls == "" && handlers.get((e.getPackageName.toString, e.getClassName.toString)) == None)
             handlers(e.getPackageName.toString -> e.getClassName.toString) = h
           !h(e)
         }
