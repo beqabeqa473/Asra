@@ -17,11 +17,11 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
 
   def apply(c:Context) {
     tts = new TextToSpeechBeta(c, this)
-    engine = Preferences.speechEngine
     context = c
   }
 
   def onInit(status:Int, version:Int) {
+    engine = Preferences.speechEngine
     tts.setLanguage(java.util.Locale.getDefault)
     tts.setOnUtteranceCompletedListener(this)
     this.rate = Preferences.rateScale
