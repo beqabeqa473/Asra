@@ -99,6 +99,11 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
   }
 
   def speak(list:List[String], flush:Boolean):Unit = if(list != Nil) {
+    if(flush) {
+      stop
+      // Let queue empty before adding new items. Avoids jumbled speech.
+      Thread.sleep(40)
+    }
     speak(list.head, flush)
     list.tail.foreach { str => speak(str, false) }
   }
