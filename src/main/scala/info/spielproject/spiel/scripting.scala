@@ -74,14 +74,20 @@ object Scripter {
       new String(b)
     }
 
-    for(fn <- assets.list("scripts") if(fn != "api.js")) {
-      val list = scriptsDir.list()
-      if(list == null || !list.contains(fn)) {
-        val script = new FileOutputStream(new File(scriptsDir, "_"+fn))
-        script.write(readAllAvailable(assets.open("scripts/"+fn)).getBytes)
-        script.close
+    try {
+      for(fn <- assets.list("scripts") if(fn != "api.js")) {
+        val list = scriptsDir.list()
+        if(list == null || !list.contains(fn)) {
+          val script = new FileOutputStream(new File(scriptsDir, "_"+fn))
+          script.write(readAllAvailable(assets.open("scripts/"+fn)).getBytes)
+          script.close
+        }
       }
+    } catch {
+      // TODO: Handle this better. We'll launch, just without scripts.
+      case _ =>
     }
+
 
     def runScriptFile(f:String, asset:Boolean = false) = {
       val is = if(asset) 
@@ -92,7 +98,8 @@ object Scripter {
     }
 
     runScriptFile("api.js", true)
-    scriptsDir.list.foreach { script => runScriptFile(script) }
+    if(scriptsDir.list() != null)
+      scriptsDir.list().foreach { script => runScriptFile(script) }
 
     Context.exit
     true
