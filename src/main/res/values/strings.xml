@@ -27,6 +27,8 @@
   <string name="rateScaleSummary">Factor by which default rate should be scaled</string>
   <string name="pitchScaleTitle">Pitch scale</string>
   <string name="pitchScaleSummary">Factor by which default pitch should be scaled</string>
+  <string name="echoByCharTitle">Echo by character</string>
+  <string name="echoByWordTitle">Echo by word</string>
   <string name="fixMultivoiceTitle">Fix multi-voice issue</string>
   <string name="fixMultivoiceSummary">Fix for bug where a different voice is used for speaking single characters in some synthesizers</string>
   <string name="managePunctuationSpeechTitle">Manage punctuation speech</string>

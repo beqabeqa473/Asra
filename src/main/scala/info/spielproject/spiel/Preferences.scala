@@ -24,6 +24,10 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
   def pitchScale = prefs.getString("pitchScale", "1").toFloat
 
+  def echoByChar = prefs.getBoolean("echoByChar", true)
+
+  def echoByWord = prefs.getBoolean("echoByWord", false)
+
   def fixMultivoice = prefs.getBoolean("fixMultivoice", false)
 
   def managePunctuationSpeech = prefs.getBoolean("managePunctuationSpeech", false)
@@ -44,6 +48,7 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
     key match {
       case "pitchScale" => TTS.pitch = pitchScale
       case "rateScale" => TTS.rate = rateScale
+      case "echoByWord" if(!echoByWord) => TTS.clearCharBuffer()
       case "speechEngine" =>
         TTS.engine = speechEngine
       case "viewRecentEvents" if(!viewRecentEvents) => handlers.EventReviewQueue.clear()

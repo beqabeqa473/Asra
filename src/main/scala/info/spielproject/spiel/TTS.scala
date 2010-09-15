@@ -150,6 +150,33 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     case None =>
   }
 
+  private var charBuffer = ""
+
+  def speakCharacter(char:String) {
+    if(Preferences.echoByChar)
+      speak(char, true)
+    if(Preferences.echoByWord) {
+      if((char >= "a" && char <= "z") || (char >= "A" && char <= "Z"))
+        charBuffer += char
+      else
+        speakCharBuffer()
+    }
+  }
+
+  def removeFromCharBuffer(start:Int, end:Int) {
+    charBuffer = charBuffer.take(start)+charBuffer.drop(end+1)
+  }
+
+  def clearCharBuffer() {
+    charBuffer = ""
+  }
+
+  def speakCharBuffer() {
+    if(charBuffer != "")
+      speak(charBuffer, true)
+    clearCharBuffer()
+  }
+
   private def shouldSpeakNotification:Boolean = {
     if(StateReactor.ringerOff_?) return false
     if(!Preferences.speakNotificationsWhenScreenOff && StateReactor.screenOff_?) return false

@@ -127,6 +127,12 @@ object Handler extends Actor {
     }
 
     nextShouldNotInterruptCalled = false
+
+    if(e.getEventType != TYPE_VIEW_TEXT_CHANGED && Preferences.echoByWord) {
+      TTS.speakCharBuffer()
+      nextShouldNotInterrupt
+    }
+
     var continue = true 
     var alreadyCalled = List[Handler]()
 
@@ -417,12 +423,16 @@ class Handlers {
       //Log.d("spiel", "onViewTextChanged")
       if(e.getAddedCount > 0 || e.getRemovedCount > 0) {
         if(e.isPassword)
-          speak("*", true)
+          TTS.speakCharacter("*")
         else
           if(e.getAddedCount > 0)
-            speak(("" /: e.getText) (_ + _).substring(e.getFromIndex,   e.getFromIndex+e.getAddedCount), true)
-          else if(e.getRemovedCount > 0)
-            speak(e.getBeforeText.toString.substring(e.getFromIndex, e.getFromIndex+e.getRemovedCount), true)
+            TTS.speakCharacter(("" /: e.getText) (_ + _).substring(e.getFromIndex,   e.getFromIndex+e.getAddedCount))
+          else if(e.getRemovedCount > 0) {
+            val start = e.getFromIndex
+            val end = e.getFromIndex+e.getRemovedCount
+            TTS.removeFromCharBuffer(start, end)
+            speak(e.getBeforeText.toString.substring(start, end), true)
+          }
         else
           speak(utterancesFor(e), false)
       }
