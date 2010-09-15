@@ -4,6 +4,7 @@ import actors.Actor._
 import collection.JavaConversions._
 
 import android.content.Context
+import android.os.Build.VERSION
 import android.util.Log
 
 import com.google.tts.TextToSpeechBeta
@@ -29,14 +30,22 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     speak(context.getString(R.string.welcomeMsg), true)
   }
 
-  def defaultEngine = tts.getDefaultEngineExtended
+  def defaultEngine = {
+    if(VERSION.SDK_INT >= 8) defaultEngineV8 else ""
+  }
+
+  private def defaultEngineV8 = tts.getDefaultEngine
 
   def engine = Preferences.speechEngine
 
   def engine_=(e:String) = {
-    if(tts.setEngineByPackageNameExtended(e) != TextToSpeechBeta.SUCCESS) {
-      tts.setEngineByPackageNameExtended(defaultEngine)
-    }
+    if(VERSION.SDK_INT >= 8)
+      setEngineV8(e)
+  }
+
+  private def setEngineV8(e:String) {
+    if(tts.setEngineByPackageName(e) != TextToSpeechBeta.SUCCESS)
+      tts.setEngineByPackageName(defaultEngine)
   }
 
   def rate = 1f // No-op needed for setter
