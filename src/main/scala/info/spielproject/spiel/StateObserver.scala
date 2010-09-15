@@ -42,6 +42,8 @@ object StateObserver {
 
   def callAnswered() = callAnsweredHandlers.foreach { f => f() }
 
+  def removeOnCallAnswered(h:() => Unit) = callAnsweredHandlers = callAnsweredHandlers.filterNot(_ == h)
+
   private var callIdleHandlers = List[() => Unit]()
 
   def onCallIdle(h:() => Unit) = {
@@ -51,6 +53,8 @@ object StateObserver {
 
   def callIdle = callIdleHandlers.foreach { f => f() }
 
+  def removeOnCallIdle(h:() => Unit) = callIdleHandlers = callIdleHandlers.filterNot(_ == h)
+
   private var callRingingHandlers = List[(String) => Unit]()
 
   def onCallRinging(h:(String) => Unit) = {
@@ -59,6 +63,29 @@ object StateObserver {
   }
 
   def callRinging(number:String) = callRingingHandlers.foreach { f => f(number) }
+
+  def removeCallRinging(h:(String) => Unit) = callRingingHandlers = callRingingHandlers.filterNot(_ == h)
+
+  private var messageNoLongerWaitingHandlers = List[() => Unit]()
+
+  def onMessageNoLongerWaiting(h:() => Unit) = {
+    messageNoLongerWaitingHandlers ::= h
+    h
+  }
+
+  def messageNoLongerWaiting() = messageNoLongerWaitingHandlers.foreach { f => f() }
+
+  def removeMessageNoLongerWaiting(h:() => Unit) = messageNoLongerWaitingHandlers = messageNoLongerWaitingHandlers.filterNot(_ == h)
+
+  private var messageWaitingHandlers = List[() => Unit]()
+
+  def onMessageWaiting(h:() => Unit) = {
+    messageWaitingHandlers ::= h
+  }
+
+  def messageWaiting() = messageWaitingHandlers.foreach { f => f() }
+
+  def removeMessageWaiting(h:() => Unit) = messageWaitingHandlers = messageWaitingHandlers.filterNot(_ == h)
 
   private var proximityFarHandlers = List[() => Unit]()
 
@@ -70,6 +97,9 @@ object StateObserver {
 
   def proximityFar() = proximityFarHandlers.foreach { f => f() }
 
+  def removeProximityFar(h:() => Unit) = proximityFarHandlers = proximityFarHandlers.filterNot(_ == h)
+
+
   private var proximityNearHandlers = List[() => Unit]()
 
   def onProximityNear(h:() => Unit) = {
@@ -80,6 +110,8 @@ object StateObserver {
 
   def proximityNear() = proximityNearHandlers.foreach { f => f() }
 
+  def removeProximityNear(h:() => Unit) = proximityNearHandlers = proximityNearHandlers.filterNot(_ == h)
+
   private var ringerModeChangedHandlers = List[(String) => Unit]()
 
   def onRingerModeChanged(h:(String) => Unit) = {
@@ -88,6 +120,8 @@ object StateObserver {
   }
 
   def ringerModeChanged(mode:String) = ringerModeChangedHandlers.foreach { f => f(mode) }
+
+  def removeRingerModeChanged(h:(String) => Unit) = ringerModeChangedHandlers = ringerModeChangedHandlers.filterNot(_ == h)
 
   private var screenOffHandlers = List[() => Unit]()
 
@@ -98,6 +132,8 @@ object StateObserver {
 
   def screenOff() = screenOffHandlers.foreach { f => f() }
 
+  def removeScreenOff(h:() => Unit) = screenOffHandlers = screenOffHandlers.filterNot(_ == h)
+
   private var screenOnHandlers = List[() => Unit]()
 
   def onScreenOn(h:() => Unit) = {
@@ -106,6 +142,8 @@ object StateObserver {
   }
 
   def screenOn() = screenOnHandlers.foreach { f => f() }
+
+  def removeScreenOn(h:() => Unit) = screenOnHandlers = screenOnHandlers.filterNot(_ == h)
 
   private var shakingStartedHandlers = List[() => Unit]()
 
@@ -117,6 +155,8 @@ object StateObserver {
 
   def shakingStarted() = shakingStartedHandlers.foreach { f => f() }
 
+  def removeShakingStarted(h:() => Unit) = shakingStartedHandlers = shakingStartedHandlers.filterNot(_ == h)
+
   private var shakingStoppedHandlers = List[() => Unit]()
 
   def onShakingStopped(h:() => Unit) = {
@@ -127,22 +167,7 @@ object StateObserver {
 
   def shakingStopped() = shakingStoppedHandlers.foreach { f => f() }
 
-  private var messageNoLongerWaitingHandlers = List[() => Unit]()
-
-  def onMessageNoLongerWaiting(h:() => Unit) = {
-    messageNoLongerWaitingHandlers ::= h
-    h
-  }
-
-  def messageNoLongerWaiting() = messageNoLongerWaitingHandlers.foreach { f => f() }
-
-  private var messageWaitingHandlers = List[() => Unit]()
-
-  def onMessageWaiting(h:() => Unit) = {
-    messageWaitingHandlers ::= h
-  }
-
-  def messageWaiting() = messageWaitingHandlers.foreach { f => f() }
+  def removeShakingStopped(h:() => Unit) = shakingStoppedHandlers = shakingStoppedHandlers.filterNot(_ == h)
 
   private var _shakerEnabled = false
 
