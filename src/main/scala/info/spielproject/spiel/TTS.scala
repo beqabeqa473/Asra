@@ -5,6 +5,7 @@ import collection.JavaConversions._
 
 import android.content.Context
 import android.os.Build.VERSION
+import android.speech.tts.TextToSpeech
 import android.util.Log
 
 import com.google.tts.TextToSpeechBeta
@@ -31,6 +32,7 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
   }
 
   def defaultEngine = {
+    Log.d("spiel", "Delegating defaultEngine() for API level "+VERSION.SDK_INT)
     if(VERSION.SDK_INT >= 8) defaultEngineV8 else ""
   }
 
@@ -39,13 +41,17 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
   def engine = Preferences.speechEngine
 
   def engine_=(e:String) = {
+    Log.d("spiel", "Delegating setEngine() for API level "+VERSION.SDK_INT)
     if(VERSION.SDK_INT >= 8)
       setEngineV8(e)
   }
 
   private def setEngineV8(e:String) {
-    if(tts.setEngineByPackageName(e) != TextToSpeechBeta.SUCCESS)
+    Log.d("spiel", "TTS.setEngineV8("+e+")")
+    if(tts.setEngineByPackageName(e) != TextToSpeech.SUCCESS) {
       tts.setEngineByPackageName(defaultEngine)
+      Log.d("spiel", "Error setting speech engine. Reverting to "+defaultEngine)
+    }
   }
 
   def rate = 1f // No-op needed for setter
