@@ -14,6 +14,9 @@ import android.widget.{ArrayAdapter, TabHost}
 
 import handlers._
 import triggers.Triggers
+/**
+ * Activity that serves as a host for other tabs.
+*/
 
 class Spiel extends TabActivity {
   override def onCreate(bundle:Bundle) {
@@ -33,10 +36,16 @@ class Spiel extends TabActivity {
   }
 }
 
+/**
+ * Activity for setting preferences.
+*/
+
 class PreferencesActivity extends PreferenceActivity {
   override def onCreate(bundle:Bundle) {
     super.onCreate(bundle)
     addPreferencesFromResource(R.xml.preferences)
+
+    // We need to set some preferences dynamically. First, set engines.
     val intent = new Intent("android.intent.action.START_TTS_ENGINE")
     val pm = getPackageManager
     val engines = pm.queryIntentActivities(intent, 0).map { engine =>
@@ -47,6 +56,8 @@ class PreferencesActivity extends PreferenceActivity {
     val enginesPreference = findPreference("speechEngine").asInstanceOf[ListPreference]
     enginesPreference.setEntries(engines.map(_._1).toArray[CharSequence])
     enginesPreference.setEntryValues(engines.map(_._2).toArray[CharSequence])
+
+    // Now set the shortcut to system-wide TTS settings.
     val ttsPreference = findPreference("textToSpeechSettings")
     ttsPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener {
       def onPreferenceClick(p:Preference) = {
@@ -56,6 +67,8 @@ class PreferencesActivity extends PreferenceActivity {
         false
       }
     })
+
+    // Set up triggers. First add an action for "None," then concat others.
     val actions = ("None", "") :: Triggers.actions.map((v) => (v._2.name, v._1)).toList
     val onShake = findPreference("onShakingStarted").asInstanceOf[ListPreference]
     onShake.setEntries(actions.map(_._1).toArray[CharSequence])
@@ -65,6 +78,10 @@ class PreferencesActivity extends PreferenceActivity {
     onProximityNear.setEntryValues(actions.map(_._2).toArray[CharSequence])
   }
 }
+
+/**
+ * Lists most recently-received AccessibilityEvents.
+*/
 
 class Events extends ListActivity {
 
