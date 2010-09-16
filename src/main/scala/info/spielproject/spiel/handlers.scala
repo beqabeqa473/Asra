@@ -430,7 +430,8 @@ class Handlers {
           else if(e.getRemovedCount > 0) {
             val start = e.getFromIndex
             val end = e.getFromIndex+e.getRemovedCount
-            TTS.removeFromCharBuffer(start, end)
+            if(Preferences.echoByWord)
+              TTS.removeFromCharBuffer(start, end)
             speak(e.getBeforeText.toString.substring(start, end), true)
           }
         else
