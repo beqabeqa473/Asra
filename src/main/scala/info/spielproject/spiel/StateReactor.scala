@@ -4,15 +4,25 @@ import android.content.Context
 import android.media.AudioManager
 import android.util.Log
 
+/**
+ * Singleton which registers many callbacks initiated by <code>StateObserver</code>.
+*/
+
 object StateReactor {
   import StateObserver._
 
   private[spiel] var ringerOn:Boolean = false
 
+  /**
+   * Initializes based on the specified <code>SpielService</code>, setting initial states.
+  */
+
   def apply(service:SpielService) {
     val audioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
     ringerOn = audioManager.getRingerMode != AudioManager.RINGER_MODE_SILENT
   }
+
+  // Manage repeating of caller ID information, stopping when appropriate.
 
   var callerIDRepeaterID = ""
 
@@ -32,6 +42,8 @@ object StateReactor {
     callerIDRepeaterID = ""
   }
 
+  // Manage speaking of occasional voicemail notification.
+
   private var voicemailIndicator:Option[String] = None
 
   onMessageWaiting { () =>
@@ -43,13 +55,7 @@ object StateReactor {
     voicemailIndicator.foreach { i => TTS.stopRepeatedSpeech(i) }
   }
 
-  /*onProximityFar { () =>
-    //TTS.speak("Far away.", true)
-  }
-
-  onProximityNear { () =>
-    //TTS.speak("Nearby.", true)
-  }*/
+  // Note ringer state, silencing spoken notifications if desired.
 
   def ringerOn_? = ringerOn
   def ringerOff_? = !ringerOn_?
@@ -58,6 +64,8 @@ object StateReactor {
     Log.d("spiel", "Ringer mode changed: "+mode)
     ringerOn = mode != "silent"
   }
+
+  // Note screen state, silencing notification speech if desired and speaking "Locked."
 
   private var screenOn = true
   def screenOn_? = screenOn
@@ -72,13 +80,5 @@ object StateReactor {
     screenOn = true
     TTS.speak("Locked.", false) 
   }
-
-  /*onShakingStarted { () =>
-    //TTS.speak("Shaking", true)
-  }
-
-  onShakingStopped { () =>
-    //TTS.speak("Stopped shaking", true)
-  }*/
 
 }
