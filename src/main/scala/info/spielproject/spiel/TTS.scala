@@ -22,7 +22,11 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     context = c
   }
 
+  private var usingTTSExtended = false
+
   def onInit(status:Int, version:Int) {
+    usingTTSExtended = version != -1
+    Log.d("spiel", "Initialized TTS: "+version+", "+usingTTSExtended)
     engine = Preferences.speechEngine
     tts.setLanguage(java.util.Locale.getDefault)
     tts.setOnUtteranceCompletedListener(this)
@@ -36,8 +40,18 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     if(VERSION.SDK_INT >= 8) defaultEngineV8 else ""
   }
 
-  private def defaultEngineV8 = tts.getDefaultEngine
+  private def defaultEngineV8 = {
+    Log.d("spiel", "defaultEngineV8")
+    if(usingTTSExtended)
+      defaultEngineExtended
+    else
+      tts.getDefaultEngine
+  }
 
+  def defaultEngineExtended = {
+    Log.d("spiel", "defaultEngineExtended")
+    tts.getDefaultEngineExtended
+  }
   def engine = Preferences.speechEngine
 
   def engine_=(e:String) = {
@@ -48,7 +62,17 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
 
   private def setEngineV8(e:String) {
     Log.d("spiel", "TTS.setEngineV8("+e+")")
-    if(tts.setEngineByPackageName(e) != TextToSpeech.SUCCESS) {
+    if(usingTTSExtended)
+      setEngineExtended(e)
+    else if(tts.setEngineByPackageName(e) != TextToSpeech.SUCCESS) {
+      tts.setEngineByPackageName(defaultEngine)
+      Log.d("spiel", "Error setting speech engine. Reverting to "+defaultEngine)
+    }
+  }
+
+  private def setEngineExtended(e:String) {
+    Log.d("spiel", "setEngineExtended("+e+")")
+    if(tts.setEngineByPackageNameExtended(e) != TextToSpeechBeta.SUCCESS) {
       tts.setEngineByPackageName(defaultEngine)
       Log.d("spiel", "Error setting speech engine. Reverting to "+defaultEngine)
     }
