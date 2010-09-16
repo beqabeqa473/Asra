@@ -11,6 +11,10 @@ import handlers.Handler
 import scripting.Scripter
 import triggers.Triggers
 
+/**
+ * <code>AccessibilityService</code> implementation that serves as main entry point.
+*/
+
 class SpielService extends AccessibilityService {
 
   override def onCreate() {
@@ -53,6 +57,8 @@ class SpielService extends AccessibilityService {
 
   override def onAccessibilityEvent(event:AccessibilityEvent) {
 
+    // Clone an AccessibilityEvent since the system recycles them 
+    // aggressively, sometimes before we're done with them.
     def clone = {
       val e = AccessibilityEvent.obtain
       e.setAddedCount(event.getAddedCount())
