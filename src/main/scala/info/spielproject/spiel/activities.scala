@@ -13,6 +13,7 @@ import android.view.accessibility.AccessibilityEvent
 import android.widget.{ArrayAdapter, TabHost}
 
 import handlers._
+import triggers.Triggers
 
 class Spiel extends TabActivity {
   override def onCreate(bundle:Bundle) {
@@ -55,6 +56,13 @@ class PreferencesActivity extends PreferenceActivity {
         false
       }
     })
+    val actions = ("None", "") :: Triggers.actions.map((v) => (v._2.name, v._1)).toList
+    val onShake = findPreference("onShakingStarted").asInstanceOf[ListPreference]
+    onShake.setEntries(actions.map(_._1).toArray[CharSequence])
+    onShake.setEntryValues(actions.map(_._2).toArray[CharSequence])
+    val onProximityNear = findPreference("onProximityNear").asInstanceOf[ListPreference]
+    onProximityNear.setEntries(actions.map(_._1).toArray[CharSequence])
+    onProximityNear.setEntryValues(actions.map(_._2).toArray[CharSequence])
   }
 }
 

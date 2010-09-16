@@ -9,6 +9,7 @@ import com.nullwire.trace.ExceptionHandler
 
 import handlers.Handler
 import scripting.Scripter
+import triggers.Triggers
 
 class SpielService extends AccessibilityService {
 
@@ -24,6 +25,7 @@ class SpielService extends AccessibilityService {
     Scripter(this)
     StateObserver(this)
     StateReactor(this)
+    Triggers(this)
     telephony.TelephonyListener(this)
     SpielService.initialized = true
   }

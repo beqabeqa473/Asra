@@ -2,6 +2,9 @@ package info.spielproject.spiel
 
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
+import android.util.Log
+
+import triggers._
 
 object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -40,6 +43,15 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
   def repeatedSpeechWhenRingerOff = prefs.getBoolean("repeatedSpeechWhenRingerOff", false)
 
+  private def triggerPreference(trigger:String) = prefs.getString(trigger, "") match {
+    case "" => None
+    case str => Some(Triggers.actions(str))
+  }
+
+  def onProximityNear = triggerPreference("onProximityNear")
+
+  def onShakingStarted = triggerPreference("onShakingStarted")
+
   def sendBacktraces = prefs.getBoolean("sendBacktraces", false)
 
   def viewRecentEvents = prefs.getBoolean("viewRecentEvents", false)
@@ -51,6 +63,8 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
       case "echoByWord" if(!echoByWord) => TTS.clearCharBuffer()
       case "speechEngine" =>
         TTS.engine = speechEngine
+      case "onProximityNear" => ProximityNear(onProximityNear)
+      case "onShakingStarted" => ShakingStarted(onShakingStarted)
       case "viewRecentEvents" if(!viewRecentEvents) => handlers.EventReviewQueue.clear()
       case _ =>
     }

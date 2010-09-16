@@ -7,8 +7,7 @@
 
     <ListPreference
       android:key="speechEngine"
-      android:title="@string/speechEngineTitle"
-      />
+      android:title="@string/speechEngineTitle"/>
 
     <EditTextPreference
       android:key="rateScale"
@@ -87,6 +86,20 @@
       android:defaultValue="false"
       android:title="@string/repeatedSpeechWhenRingerOffTitle"
       android:summary="@string/repeatedSpeechWhenRingerOffSummary"/>
+
+  </PreferenceScreen>
+
+  <PreferenceScreen android:title="@string/triggersTitle" android:summary="@string/triggersSummary">
+
+    <ListPreference
+      android:key="onShakingStarted"
+      android:title="@string/onShakeTitle"
+      android:summary="@string/onShakeSummary"/>
+
+    <ListPreference
+      android:key="onProximityNear"
+      android:title="@string/onProximityNearTitle"
+      android:summary="@string/onProximityNearSummary"/>
 
   </PreferenceScreen>
 

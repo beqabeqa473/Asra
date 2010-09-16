@@ -1,17 +1,25 @@
 package info.spielproject.spiel
 package triggers
 
+import android.util.Log
+
 /**
  * Defines a named action to be carried out.
 */
 
-abstract class Action(val name:String, val function:() => Unit)
+abstract class Action(val key:String, val name:String, val function:() => Unit) {
+  Triggers._actions(key) = this
+}
 
-/**
- * Stop speech.
-*/
+class Actions {
 
-object StopSpeech extends Action("Stop speech", () => TTS.stop)
+  /**
+   * Stop speech.
+  */
+
+  class StopSpeech extends Action("stopSpeech", "Stop speech", () => TTS.stop)
+
+}
 
 /**
  * Ties a physical action to a function's execution.
@@ -24,10 +32,11 @@ abstract class Trigger {
   def action = _action
 
   def apply(a:Option[Action]) {
-    a.map((act) => install()).getOrElse {
-      action.foreach((a) => uninstall(a.function))
-    }
+    _action.foreach((act) => uninstall(act.function))
     _action = a
+    a.foreach { (act) => 
+      install()
+    }
   }
 
   def install()
@@ -36,8 +45,29 @@ abstract class Trigger {
 
 }
 
+object Triggers {
+
+  private[triggers] var _actions:collection.mutable.Map[String, Action] = collection.mutable.Map.empty
+
+  def actions = _actions
+
+  def apply(service:SpielService) {
+    val a = new Actions
+    a.getClass.getDeclaredClasses.foreach { cls =>
+      try {
+        val cons = cls.getConstructor(classOf[Actions])
+        if(cons != null)
+          cons.newInstance(a)
+      } catch { case _ => }
+    }
+    ProximityNear(Preferences.onProximityNear)
+    ShakingStarted(Preferences.onShakingStarted)
+  }
+
+}
+
 /**
- * Triggered when the proximity sensor registers something nearby.
+  * Triggered when the proximity sensor registers something nearby.
 */
 
 object ProximityNear extends Trigger {
@@ -49,7 +79,7 @@ object ProximityNear extends Trigger {
 }
 
 /**
- * Triggers when device is shaken.
+  * Triggers when device is shaken.
 */
 
 object ShakingStarted extends Trigger {

@@ -3,6 +3,7 @@ package info.spielproject.spiel
 import android.content.{BroadcastReceiver, Context, Intent, IntentFilter}
 import android.hardware.{Sensor, SensorEvent, SensorEventListener, SensorManager}
 import android.media.AudioManager
+import android.util.Log
 
 object StateObserver {
 
@@ -97,8 +98,11 @@ object StateObserver {
 
   def proximityFar() = proximityFarHandlers.foreach { f => f() }
 
-  def removeProximityFar(h:() => Unit) = proximityFarHandlers = proximityFarHandlers.filterNot(_ == h)
-
+  def removeProximityFar(h:() => Unit) = {
+    proximityFarHandlers = proximityFarHandlers.filterNot(_ == h)
+    if(proximityFarHandlers == Nil && proximityNearHandlers == Nil)
+      proximitySensorEnabled = false
+  }
 
   private var proximityNearHandlers = List[() => Unit]()
 
@@ -110,7 +114,11 @@ object StateObserver {
 
   def proximityNear() = proximityNearHandlers.foreach { f => f() }
 
-  def removeProximityNear(h:() => Unit) = proximityNearHandlers = proximityNearHandlers.filterNot(_ == h)
+  def removeProximityNear(h:() => Unit) = {
+    proximityNearHandlers = proximityNearHandlers.filterNot(_ == h)
+    if(proximityFarHandlers == Nil && proximityNearHandlers == Nil)
+      proximitySensorEnabled = false
+  }
 
   private var ringerModeChangedHandlers = List[(String) => Unit]()
 
@@ -155,7 +163,11 @@ object StateObserver {
 
   def shakingStarted() = shakingStartedHandlers.foreach { f => f() }
 
-  def removeShakingStarted(h:() => Unit) = shakingStartedHandlers = shakingStartedHandlers.filterNot(_ == h)
+  def removeShakingStarted(h:() => Unit) = {
+    shakingStartedHandlers = shakingStartedHandlers.filterNot(_ == h)
+    if(shakingStartedHandlers == Nil && shakingStoppedHandlers == Nil)
+      shakerEnabled = false
+  }
 
   private var shakingStoppedHandlers = List[() => Unit]()
 
@@ -167,7 +179,11 @@ object StateObserver {
 
   def shakingStopped() = shakingStoppedHandlers.foreach { f => f() }
 
-  def removeShakingStopped(h:() => Unit) = shakingStoppedHandlers = shakingStoppedHandlers.filterNot(_ == h)
+  def removeShakingStopped(h:() => Unit) = {
+    shakingStoppedHandlers = shakingStoppedHandlers.filterNot(_ == h)
+    if(shakingStartedHandlers == Nil && shakingStoppedHandlers == Nil)
+      shakerEnabled = false
+  }
 
   private var _shakerEnabled = false
 

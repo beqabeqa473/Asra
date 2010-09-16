@@ -48,6 +48,14 @@
   <string name="repeatedSpeechWhenRingerOffTitle">Repeated speech when ringer is off</string>
   <string name="repeatedSpeechWhenRingerOffSummary">Speak repeated alerts for caller ID, voicemail, etc. even when ringer is off</string>
 
+  <string name="triggersTitle">Triggers</string>
+  <string name="triggersSummary">Set actions to run in response to physical events</string>
+  <string name="onShakeTitle">On shake</string>
+  <string name="onShakeSummary">Set an action to perform when the device is shaken</string>
+  <string name="onProximityNearTitle">On proximity near</string>
+  <string name="onProximityNearSummary">Set an action to perform when the proximity sensor determines that something is near</string>
+
+
   <string name="scriptingDebuggingTitle">Scripting and debugging</string>
   <string name="sendBacktracesTitle">Send backtraces when Spiel crashes</string>
   <string name="sendBacktracesSummary">Automatically send anonymous error reports to the developer whenever Spiel crashes (requires restart)</string>
