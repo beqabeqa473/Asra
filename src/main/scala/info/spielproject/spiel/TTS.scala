@@ -187,15 +187,10 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     if(Preferences.echoByChar)
       speak(char, true)
     if(Preferences.echoByWord) {
-      if((char >= "a" && char <= "z") || (char >= "A" && char <= "Z"))
-        charBuffer += char
-      else
+      charBuffer += char
+      if(!(char >= "a" && char <= "z") && !(char >= "A" && char <= "Z"))
         speakCharBuffer()
     }
-  }
-
-  def removeFromCharBuffer(start:Int, end:Int) {
-    charBuffer = charBuffer.take(start)+charBuffer.drop(end+1)
   }
 
   def clearCharBuffer() {
