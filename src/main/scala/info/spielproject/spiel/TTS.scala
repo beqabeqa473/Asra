@@ -11,11 +11,19 @@ import android.util.Log
 import com.google.tts.TextToSpeechBeta
 import TextToSpeechBeta._
 
+/**
+ * Singleton facade around TTS functionality.
+*/
+
 object TTS extends OnInitListener with OnUtteranceCompletedListener {
 
   private var tts:TextToSpeechBeta = null
 
   private var context:Context = null
+
+  /**
+   * Initialize TTS based on specified <code>Context</code>.
+  */
 
   def apply(c:Context) {
     tts = new TextToSpeechBeta(c, this)
@@ -35,6 +43,10 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     speak(context.getString(R.string.welcomeMsg), true)
   }
 
+  /**
+   * @return default engine, or empty string if unknown
+  */
+
   def defaultEngine = {
     Log.d("spiel", "Delegating defaultEngine() for API level "+VERSION.SDK_INT)
     if(VERSION.SDK_INT >= 8) defaultEngineV8 else ""
@@ -48,11 +60,20 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
       tts.getDefaultEngine
   }
 
-  def defaultEngineExtended = {
+  private def defaultEngineExtended = {
     Log.d("spiel", "defaultEngineExtended")
     tts.getDefaultEngineExtended
   }
+
+  /**
+   * @return desired speech engine
+  */
+
   def engine = Preferences.speechEngine
+
+  /**
+   * Set desired speech engine
+  */
 
   def engine_=(e:String) = {
     Log.d("spiel", "Delegating setEngine() for API level "+VERSION.SDK_INT)
@@ -78,11 +99,33 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     }
   }
 
+  /**
+   * @return desired rate scale
+  */
+
   def rate = 1f // No-op needed for setter
+
+  /**
+   * Set desired rate scale
+  */
+
   def rate_=(r:Float) = tts.setSpeechRate(r)
 
+  /**
+   * @return desired pitch scale
+  */
+
   def pitch = 1f // No-op needed for setter
+
+  /**
+   * Set desired pitch scale
+  */
+
   def pitch_=(p:Float) = tts.setPitch(p)
+
+  /**
+   * Shut down TTS, freeing up resources.
+  */
 
   def shutdown = tts.shutdown
 
@@ -121,6 +164,10 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     ":" -> R.string.colon
   )
 
+  /**
+   * Speaks the specified text, optionally flushing current speech.
+  */
+
   def speak(text:String, flush:Boolean) {
     val mode = if(flush) QUEUE_FLUSH else QUEUE_ADD
     if(text.length == 0)
@@ -137,6 +184,10 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
       tts.speak(text, mode, null)
   }
 
+  /**
+   * Speaks the specified List of strings, optionally flushing speech.
+  */
+
   def speak(list:List[String], flush:Boolean):Unit = if(list != Nil) {
     if(flush) {
       stop
@@ -146,6 +197,10 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     speak(list.head, flush)
     list.tail.foreach { str => speak(str, false) }
   }
+
+  /**
+   * Stops speech.
+  */
 
   def stop {
     Log.d("spiel", "Stopping speech")
@@ -163,12 +218,22 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
 
   private val random = new java.util.Random
 
+  /**
+   * Speaks the specified text every N seconds.
+   *
+   * @return ID used to stop repeated speech
+  */
+
   def speakEvery(seconds:Int, text:String) = {
     val key = random.nextInt.toString
     repeatedSpeech(key) = (seconds, text)
     performRepeatedSpeech(key)
     key
   }
+
+  /**
+   * Stops repeated speech using the ID returned by <code>speakEvery</code>.
+  */
 
   def stopRepeatedSpeech(key:String) = repeatedSpeech -= key
 
@@ -183,6 +248,11 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
 
   private var charBuffer = ""
 
+  /**
+   * Handle speech for the specified character. Either speak immediately, or 
+   * add to a buffer for speaking later.
+  */
+
   def speakCharacter(char:String) {
     if(Preferences.echoByChar)
       speak(char, true)
@@ -193,9 +263,20 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     }
   }
 
+  /**
+   * Clear the buffer of characters to be spoken.
+  */
+
   def clearCharBuffer() {
     charBuffer = ""
   }
+
+  /**
+   * Speak and clear the buffer of characters. Since clearing should always 
+   * happen after speaking, these two operations are done in a single call. 
+   * Should I ever discover cases where this behavior isn't desired, then 
+   * the behavior will be made optional.
+  */
 
   def speakCharBuffer() {
     if(charBuffer != "")
@@ -209,10 +290,21 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     true
   }
 
+
+  /**
+   * Handle speaking of the specified notification strg based on preferences 
+   * and phone state.
+  */
+
   def speakNotification(text:String) {
     if(shouldSpeakNotification)
       speak(text, false)
   }
+
+  /**
+   * Handle speaking of the specified notification List of strings based on 
+   * preferences and phone state.
+  */
 
   def speakNotification(text:List[String]) {
     if(shouldSpeakNotification)
