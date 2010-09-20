@@ -8,9 +8,17 @@ import android.telephony.{PhoneStateListener, TelephonyManager}
 import TelephonyManager._
 import android.util.Log
 
+/**
+ * Singleton that listens to telephony state, calling relevant handlers.
+*/
+
 object TelephonyListener extends PhoneStateListener {
 
   private var service:SpielService = null
+
+  /**
+   * Initialize this <code>TelephonyListener</code> based on the specified <code>SpielService</code>.
+  */
 
   def apply(s:SpielService) {
     service = s
@@ -20,7 +28,9 @@ object TelephonyListener extends PhoneStateListener {
 
   private def cursorFor(uri:Uri) = service.getContentResolver.query(uri, null, null, null, null)
 
-  def resolve(number:String) = {
+  // Resolve the number to a contact where possible. Handles differing API versions.
+
+  private def resolve(number:String) = {
     if(VERSION.SDK_INT >= 5)
       resolveV5(number)
     else {
@@ -36,7 +46,7 @@ object TelephonyListener extends PhoneStateListener {
     }
   }
 
-  def resolveV5(number:String) = {
+  private def resolveV5(number:String) = {
     val uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number))
     val cursor = cursorFor(uri)
     var name = number
