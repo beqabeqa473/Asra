@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <PreferenceScreen android:title="@string/speechTitle">>
+
+    <ListPreference
+      android:key="speechEngine"
+      android:title="@string/speechEngineTitle"/>
+
+    <EditTextPreference
+      android:key="rateScale"
+      android:inputType="number|numberDecimal"
+      android:title="@string/rateScaleTitle"
+      android:summary="@string/rateScaleSummary"
+      android:dialogTitle="@string/rateScaleTitle"
+      android:dialogMessage="@string/rateScaleSummary"
+      android:defaultValue="1"/>
+
+    <EditTextPreference
+      android:key="pitchScale"
+      android:inputType="number"
+      android:title="@string/pitchScaleTitle"
+      android:summary="@string/pitchScaleSummary"
+      android:dialogTitle="@string/pitchScaleTitle"
+      android:dialogMessage="@string/pitchScaleSummary"
+      android:defaultValue="1"/>
+
+    <CheckBoxPreference
+      android:key="echoByChar"
+      android:defaultValue="true"
+      android:title="@string/echoByCharTitle"/>
+
+    <CheckBoxPreference
+      android:key="echoByWord"
+      android:defaultValue="false"
+      android:title="@string/echoByWordTitle"/>
+
+    <CheckBoxPreference
+      android:key="fixMultivoice"
+      android:defaultValue="false"
+      android:title="@string/fixMultivoiceTitle"
+      android:summary="@string/fixMultivoiceSummary"/>
+
+    <CheckBoxPreference
+      android:key="managePunctuationSpeech"
+      android:defaultValue="false"
+      android:title="@string/managePunctuationSpeechTitle"
+      android:summary="@string/managePunctuationSpeechSummary"/>
+
+    <Preference
+      android:key="textToSpeechSettings"
+      android:title="@string/textToSpeechTitle"
+      android:summary="@string/textToSpeechSummary"
+      android:persistent="false"/>
+
+  </PreferenceScreen>
+
+  <PreferenceScreen android:title="@string/alertsTitle">
+
+    <CheckBoxPreference
+      android:key="talkingCallerID"
+      android:defaultValue="true"
+      android:title="@string/talkingCallerIDTitle"
+      android:summary="@string/talkingCallerIDSummary"/>
+
+    <CheckBoxPreference
+      android:key="voicemailAlerts"
+      android:defaultValue="true"
+      android:title="@string/voicemailAlertsTitle"
+      android:summary="@string/voicemailAlertsSummary"/>
+
+  </PreferenceScreen>
+
+  <PreferenceScreen android:title="@string/notificationsTitle">
+
+    <CheckBoxPreference
+      android:key="speakNotificationsWhenScreenOff"
+      android:defaultValue="true"
+      android:title="@string/speakNotificationsWhenScreenOffTitle"
+      android:summary="@string/speakNotificationsWhenScreenOffSummary"/>
+
+    <CheckBoxPreference
+      android:key="repeatedSpeechWhenRingerOff"
+      android:defaultValue="false"
+      android:title="@string/repeatedSpeechWhenRingerOffTitle"
+      android:summary="@string/repeatedSpeechWhenRingerOffSummary"/>
+
+  </PreferenceScreen>
+
+  <PreferenceScreen android:title="@string/triggersTitle" android:summary="@string/triggersSummary">
+
+    <ListPreference
+      android:key="onShakingStarted"
+      android:title="@string/onShakeTitle"
+      android:summary="@string/onShakeSummary"/>
+
+    <ListPreference
+      android:key="onProximityNear"
+      android:title="@string/onProximityNearTitle"
+      android:summary="@string/onProximityNearSummary"/>
+
+  </PreferenceScreen>
+
+  <PreferenceScreen android:title="@string/scriptingDebuggingTitle">
+
+    <CheckBoxPreference
+      android:key="sendBacktraces"
+      android:defaultValue="false"
+      android:title="@string/sendBacktracesTitle"
+      android:summary="@string/sendBacktracesSummary"/>
+
+    <CheckBoxPreference
+      android:key="viewRecentEvents"
+      android:defaultValue="false"
+      android:title="@string/viewRecentEventsTitle"
+      android:summary="@string/viewRecentEventsSummary"/>
+
+  </PreferenceScreen>
+
+</PreferenceScreen>

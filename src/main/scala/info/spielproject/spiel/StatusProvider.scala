@@ -5,7 +5,15 @@ import android.database.{Cursor, MatrixCursor}
 import android.net.Uri;
 import android.util.Log
 
+/**
+ * Indicates to other apps that a screen reader is active.
+*/
+
 class StatusProvider extends ContentProvider {
+
+  // This code was blatantly ripped off from TalkBack, Scalafied and 
+  // simplified. I don't fully understand it myself and as such won't 
+  // document it, but it does seem to work.
 
   private val cursorValue = new Array[String](1)
   cursorValue(0) = ""

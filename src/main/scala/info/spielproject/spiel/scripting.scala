@@ -10,11 +10,13 @@ import android.os.Environment
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 
-//import com.neodatis.odb.plugin.engine.berkeleydb.NeoDatisBerkeleyDBPlugin
 import org.mozilla.javascript.{Context, Function, RhinoException, ScriptableObject}
-//import org.neodatis.odb.{NeoDatis, NeoDatisGlobalConfig, Objects, ODB}
 
 import handlers.{Callback, Handler}
+
+/**
+ * Handler callback that executes a Rhino script.
+*/
 
 class RhinoCallback(f:Function) extends Callback {
   def apply(e:AccessibilityEvent):Boolean = {
@@ -68,14 +70,20 @@ class Script(
 
     scr.getIds.foreach { property =>
 
+      // Iterate through object properties, mangling them slightly and 
+      // mapping them to AccessibilityEvent types.
+
       val id = property.asInstanceOf[String]
       val chars = id.substring(2, id.length).toCharArray
       chars(0) = chars(0).toLower
       val func = new String(chars)
 
+      // Check to ensure that the property name maps to a valid AccessibilityEvent type.
+
       if(Handler.dispatchers.valuesIterator.contains(func)) {
         val f = scr.get(id, Scripter.scope)
         if(f.isInstanceOf[Function])
+          // Map the script to an Android AccessibilityEvent type.
           h.dispatches(func) = new RhinoCallback(f.asInstanceOf[Function])
       } else
         Log.e("spiel", func+" is not a valid handler. Skipping.")
@@ -88,6 +96,10 @@ class Script(
 
 }
 
+/**
+ * Singleton granting convenient access to the Rhino scripting subsystem.
+*/
+
 object Scripter {
 
   private var myCx:Context = null
@@ -98,11 +110,16 @@ object Scripter {
 
   private var script:Option[Script] = None
 
+  /**
+   * Initialize the scripting subsystem based on the specified service.
+  */
+
   def apply(service:SpielService)  {
     myCx = Context.enter
     myCx.setOptimizationLevel(-1)
     myScope = myCx.initStandardObjects()
 
+    // Inject some Spiel objects into the scripting environment.
     val wrappedHandler = Context.javaToJS(Handler, myScope)
     ScriptableObject.putProperty(myScope, "Handler", wrappedHandler)
 
@@ -112,6 +129,8 @@ object Scripter {
     val wrappedTTS = Context.javaToJS(TTS, myScope)
     ScriptableObject.putProperty(myScope, "TTS", wrappedTTS)
 
+    // Run the given code as a string, reporting the specified filename in 
+    // warnings and errors.
     def run(code:String, filename:String) = {
       val p = filename.substring(0, filename.lastIndexOf("."))
       val pkg = if(p.startsWith("_")) p.substring(1, p.size) else p
@@ -119,8 +138,7 @@ object Scripter {
       script.map(_.run())
     }
 
-    val assets = service.getAssets
-
+    // Handy function to read all data from a stream into a string.
     def readAllAvailable(is:InputStream):String = {
       val a = is.available
       val b = new Array[Byte](a)
@@ -128,14 +146,25 @@ object Scripter {
       new String(b)
     }
 
-    def runScriptAsset(f:String) = {
-      val is = assets.open("scripts/"+f)
+    val spielDir = new File(Environment.getExternalStorageDirectory, "spiel")
+    if(!spielDir.isDirectory) spielDir.mkdir
+    val scriptsDir = new File(spielDir, "scripts")
+    if(!scriptsDir.isDirectory) scriptsDir.mkdir
+
+    val assets = service.getAssets
+
+    // Run a script, optionally directly from the assets folder in the package.
+    def runScript(f:String, asset:Boolean = false) = {
+      val is = if(asset) 
+        assets.open("scripts/"+f)
+      else
+        new FileInputStream(new File(scriptsDir, f))
       run(readAllAvailable(is), f)
     }
 
-    runScriptAsset("api.js")
+    runScript("api.js", true)
     for(fn <- assets.list("scripts") if(fn != "api.js")) {
-      runScriptAsset(fn)
+      runScript(fn, true)
     }
 
     val cursor = service.getContentResolver.query(Provider.uri, Provider.columns.projection, null, null, null)
@@ -145,7 +174,24 @@ object Scripter {
       s.run()
       cursor.moveToNext()
     }
+
+    // Load scripts from /spiel/scripts folder on SD card.
+
+    try {
+      val list = scriptsDir.list()
+      if(list != null) {
+        list.foreach(fn => runScript(fn, false))
+      }
+    } catch {
+      // TODO: Handle this better. We'll launch, just without scripts.
+      case _ =>
+    }
+
     cursor.close()
+
+    runScript("api.js", true)
+    if(scriptsDir.list() != null)
+      scriptsDir.list().foreach { script => runScript(script) }
 
     true
   }
@@ -342,6 +388,9 @@ class BazaarProvider extends ContentProvider with AbstractProvider {
 
   private val http = new Http
   private val apiRoot = :/("192.168.1.2", 7070) / "api" / "v1" <:< Map("Accept" -> "application/json")
+  /**
+   * Register a Handler for a given package and class.
+  */
 
   private def request(req:Request)(f:(JValue) => Unit) = {
     try {
@@ -367,7 +416,6 @@ class BazaarProvider extends ContentProvider with AbstractProvider {
     } else {
       new MatrixCursor(List("").toArray)
     }
-
     cursor.setNotificationUri(getContext().getContentResolver(), uri)
     cursor
   }
@@ -402,37 +450,3 @@ object BazaarProvider {
   val uri = Uri.parse("content://info.spielproject.spiel.scripting.bazaar.Provider/scripts")
 
 }
-
-/*object Bazaar {
-
-  private var service:SpielService = null
-
-  def apply(svc:SpielService) {
-    service = svc
-    pm = service.getPackageManager
-    actor { installOrUpdateScripts }
-  }
-
-  def installOrUpdateScripts {
-    val packages = pm.getInstalledPackages(0).map { i => i.packageName }
-    request(
-      apiRoot / "scripts" <<?
-      Map("packages" -> 
-      packages.reduceLeft[String] { (acc, n) =>
-        acc+","+(service.getContentResolver.query(
-          Provider.uri, Provider.columns.projection, "pkg = ?", List(n).toArray, null
-        ) match {
-          case c:Cursor if(c.getCount > 1) =>
-            c.getString(c.getColumnIndex(Provider.columns.pkg))+" "+c.getString(c.getColumnIndex(Provider.columns.version))
-          case _ => n
-        })
-      })
-    ){ response =>
-      Log.d("spiel", "Response: "+response)
-      //val updates = response.values
-      //Log.d("spiel", "Updates: "+updates)
-    }
-  }
-
-
-}*/

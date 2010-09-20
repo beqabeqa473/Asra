@@ -9,6 +9,11 @@ import com.nullwire.trace.ExceptionHandler
 
 import handlers.Handler
 import scripting.Scripter
+import triggers.Triggers
+
+/**
+ * <code>AccessibilityService</code> implementation that serves as main entry point.
+*/
 
 class SpielService extends AccessibilityService {
 
@@ -16,14 +21,16 @@ class SpielService extends AccessibilityService {
     super.onCreate()
     Log.d("spiel", "onCreate")
     //Debug.startMethodTracing("spiel")
-    ExceptionHandler.register(this, "http://stacktrace.spielproject.info/index.php")
     Preferences(this)
+    if(Preferences.sendBacktraces)
+      ExceptionHandler.register(this, "http://stacktrace.spielproject.info/index.php")
     TTS(this)
     Handler(this)
     Scripter(this)
     StateObserver(this)
     StateReactor(this)
-    telephony.TelephonyListener(this)
+    Triggers(this)
+    TelephonyListener(this)
     SpielService.initialized = true
   }
 
@@ -51,6 +58,8 @@ class SpielService extends AccessibilityService {
 
   override def onAccessibilityEvent(event:AccessibilityEvent) {
 
+    // Clone an AccessibilityEvent since the system recycles them 
+    // aggressively, sometimes before we're done with them.
     def clone = {
       val e = AccessibilityEvent.obtain
       e.setAddedCount(event.getAddedCount())

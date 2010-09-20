@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+  <!-- Initial welcome message-->
+  <string name="welcomeMsg">Welcome to Spiel!</string>
+
+  <!-- View names and actions -->
+  <string name="alert">Alert!</string>
+  <string name="button">button</string>
+  <string name="checkbox">checkbox</string>
+  <string name="checked">checked</string>
+  <string name="editText">edit text</string>
+  <string name="menu">menu</string>
+  <string name="notChecked">not checked</string>
+  <string name="password">password</string>
+  <string name="radioButton">radio button</string>
+  <string name="searchText">search text</string>
+  <string name="tab">tab</string>
+
+  <!-- Preferences -->
+  <string name="preferences">Preferences</string>
+
+  <string name="speechTitle">Speech</string>
+  <string name="speechEngineTitle">Speech engine</string>
+  <string name="rateScaleTitle">Rate scale</string>
+  <string name="rateScaleSummary">Factor by which default rate should be scaled</string>
+  <string name="pitchScaleTitle">Pitch scale</string>
+  <string name="pitchScaleSummary">Factor by which default pitch should be scaled</string>
+  <string name="echoByCharTitle">Echo by character</string>
+  <string name="echoByWordTitle">Echo by word</string>
+  <string name="fixMultivoiceTitle">Fix multi-voice issue</string>
+  <string name="fixMultivoiceSummary">Fix for bug where a different voice is used for speaking single characters in some synthesizers</string>
+  <string name="managePunctuationSpeechTitle">Manage punctuation speech</string>
+  <string name="managePunctuationSpeechSummary">Delegate speaking of some unhandled punctuation to Spiel</string>
+  <string name="textToSpeechTitle">Text to Speech settings</string>
+  <string name="textToSpeechSummary">Set system-wide TTS properties</string>
+
+  <string name="alertsTitle">Alerts</string>
+  <string name="talkingCallerIDTitle">Talking caller ID</string>
+  <string name="talkingCallerIDSummary">Repeatedly announce caller ID details for incoming calls</string>
+  <string name="voicemailAlertsTitle">Voicemail alerts</string>
+  <string name="voicemailAlertsSummary">Repeatedly announce availability of new voicemail</string>
+
+  <string name="notificationsTitle">Notifications</string>
+  <string name="speakNotificationsWhenScreenOffTitle">Speak notifications when screen is off</string>
+  <string name="speakNotificationsWhenScreenOffSummary">Avoid speaking notifications when the phone screen is off</string>
+  <string name="repeatedSpeechWhenRingerOffTitle">Repeated speech when ringer is off</string>
+  <string name="repeatedSpeechWhenRingerOffSummary">Speak repeated alerts for caller ID, voicemail, etc. even when ringer is off</string>
+
+  <string name="triggersTitle">Triggers</string>
+  <string name="triggersSummary">Set actions to run in response to physical events</string>
+  <string name="onShakeTitle">On shake</string>
+  <string name="onShakeSummary">Set an action to perform when the device is shaken</string>
+  <string name="onProximityNearTitle">On proximity near</string>
+  <string name="onProximityNearSummary">Set an action to perform when the proximity sensor determines that something is near</string>
+
+  <string name="scriptingDebuggingTitle">Scripting and debugging</string>
+  <string name="sendBacktracesTitle">Send backtraces when Spiel crashes</string>
+  <string name="sendBacktracesSummary">Automatically send anonymous error reports to the developer whenever Spiel crashes (requires restart)</string>
+  <string name="viewRecentEventsTitle">View most recent accessibility events</string>
+  <string name="viewRecentEventsSummary">Displays recent accessibility events with added functionality for script developers</string>
+
+  <string name="events">Events</string>
+  <string name="noEvents">No events available. Please enable \"View most recent accessibility events\" in the \"Scripting and debugging\" menu first. If you have done this and none are displaying, press Menu then select \"Refresh\".</string>
+
+  <string name="scripts">Scripts</string>
+
+  <!-- Menu items -->
+  <string name="refresh">Refresh</string>
+
+  <!-- Punctuation -->
+
+  <string name="exclamation">exclaim</string>
+  <string name="at">at</string>
+  <string name="pound">pound</string>
+  <string name="dollar">dollar</string>
+  <string name="percent">percent</string>
+  <string name="caret">caret</string>
+  <string name="ampersand">and</string>
+  <string name="asterisk">star</string>
+  <string name="leftParen">left paren</string>
+  <string name="rightParen">right paren</string>
+  <string name="underscore">underscore</string>
+  <string name="space">space</string>
+  <string name="period">dot</string>
+  <string name="comma">comma</string>
+  <string name="lessThan">less</string>
+  <string name="greaterThan">greater</string>
+  <string name="slash">slash</string>
+  <string name="backslash">backslash</string>
+  <string name="questionMark">question</string>
+  <string name="quote">quote</string>
+  <string name="apostrophe">apostrophe</string>
+  <string name="semiColon">semi colon</string>
+  <string name="colon">colon</string>
+
+</resources>
