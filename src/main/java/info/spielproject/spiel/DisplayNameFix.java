@@ -1,4 +1,4 @@
-package info.spielproject.spiel.telephony;
+package info.spielproject.spiel;
 
 import android.provider.ContactsContract;
 

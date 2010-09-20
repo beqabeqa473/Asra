@@ -30,7 +30,7 @@ class SpielService extends AccessibilityService {
     StateObserver(this)
     StateReactor(this)
     Triggers(this)
-    telephony.TelephonyListener(this)
+    TelephonyListener(this)
     SpielService.initialized = true
   }
 
