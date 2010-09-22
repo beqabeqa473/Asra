@@ -205,10 +205,8 @@ object Handler extends Actor {
 
     // If echo-by-word is enabled and we've just received a non-text-change, 
     // speak the buffered characters.
-    if(e.getEventType != TYPE_VIEW_TEXT_CHANGED && Preferences.echoByWord) {
+    if(e.getEventType != TYPE_VIEW_TEXT_CHANGED && Preferences.echoByWord)
       TTS.speakCharBuffer()
-      nextShouldNotInterrupt
-    }
 
     // Now we engage in the complex process of dispatching events. This 
     // happens in several steps, but let's first create a variable to 

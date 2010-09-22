@@ -279,8 +279,10 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
   */
 
   def speakCharBuffer() {
-    if(charBuffer != "")
+    if(charBuffer != "") {
       speak(charBuffer, true)
+      handlers.Handler.nextShouldNotInterrupt
+    }
     clearCharBuffer()
   }
 
@@ -290,9 +292,8 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     true
   }
 
-
   /**
-   * Handle speaking of the specified notification strg based on preferences 
+   * Handle speaking of the specified notification string based on preferences 
    * and phone state.
   */
 
