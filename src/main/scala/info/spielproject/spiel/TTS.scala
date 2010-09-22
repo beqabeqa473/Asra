@@ -35,8 +35,8 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
   def onInit(status:Int, version:Int) {
     usingTTSExtended = version != -1
     Log.d("spiel", "Initialized TTS: "+version+", "+usingTTSExtended)
-    engine = Preferences.speechEngine
     tts.setLanguage(java.util.Locale.getDefault)
+    engine = Preferences.speechEngine
     tts.setOnUtteranceCompletedListener(this)
     this.rate = Preferences.rateScale
     this.pitch = Preferences.pitchScale
