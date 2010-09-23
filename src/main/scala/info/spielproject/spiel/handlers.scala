@@ -369,6 +369,7 @@ class Handler(pkg:String, cls:String) {
 
   protected def utterancesFor(e:AccessibilityEvent, addBlank:Boolean = true) = {
     var rv = List[String]()
+    if(e.isChecked) rv ::= service.getString(R.string.checked)
     if(e.getText.size == 0 && e.getContentDescription == null && addBlank)
       rv ::= ""
     rv :::= e.getText.map { text =>
