@@ -31,8 +31,8 @@ class Actions {
 
   class ToggleSpiel extends Action("toggleSpiel", "Toggle whether Spiel is enabled", { () =>
     if(SpielService.enabled) {
-      SpielService.enabled = false
       TTS.speak("Spiel off.", true)
+      SpielService.enabled = false
     } else {
       SpielService.enabled = true
       TTS.speak("Spiel on.", true)

@@ -169,6 +169,7 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
   */
 
   def speak(text:String, flush:Boolean) {
+    if(!SpielService.enabled) return
     val mode = if(flush) QUEUE_FLUSH else QUEUE_ADD
     if(text.length == 0)
       tts.speak("blank", mode, null)
@@ -203,11 +204,13 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
   */
 
   def stop {
+    if(!SpielService.enabled) return
     Log.d("spiel", "Stopping speech")
     tts.stop
   }
 
   private def speakWithUtteranceID(text:String, uid:String) {
+    if(!SpielService.enabled) return
     Log.d("spiel", "Speaking: "+text)
     val params = new java.util.HashMap[String, String]()
     params.put("utteranceId", uid) // TODO: Why won't Scala see Engine?
