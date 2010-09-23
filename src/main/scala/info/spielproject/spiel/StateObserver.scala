@@ -24,11 +24,22 @@ object StateObserver {
 
   def apply(service:SpielService) {
 
-    def registerReceiver(r:(Context, Intent) => Unit, i:String) {
+    def registerReceiver(r:(Context, Intent) => Unit, intents:List[String], dataScheme:Option[String] = None) {
+      val f = new IntentFilter
+      intents.foreach(f.addAction(_))
+      dataScheme.foreach(f.addDataScheme(_))
       service.registerReceiver(new BroadcastReceiver {
         override def onReceive(c:Context, i:Intent) = r(c, i)
-      }, new IntentFilter(i))
+      }, f)
     }
+
+    registerReceiver((c, i) => screenOff , Intent.ACTION_SCREEN_OFF :: Nil)
+
+    registerReceiver((c, i) => screenOn, Intent.ACTION_SCREEN_ON :: Nil)
+
+    registerReceiver((c, i) => applicationAdded(i), Intent.ACTION_PACKAGE_ADDED :: Nil, Some("package"))
+
+    registerReceiver((c, i) => applicationRemoved(i), Intent.ACTION_PACKAGE_REMOVED :: Nil, Some("package"))
 
     registerReceiver({ (c, i) =>
       val extra = i.getIntExtra(AudioManager.EXTRA_RINGER_MODE, AudioManager.RINGER_MODE_NORMAL)
@@ -38,14 +49,26 @@ object StateObserver {
         case AudioManager.RINGER_MODE_VIBRATE => "vibrate"
       }
       ringerModeChanged(mode)
-    }, AudioManager.RINGER_MODE_CHANGED_ACTION)
+    }, AudioManager.RINGER_MODE_CHANGED_ACTION :: Nil)
 
-    registerReceiver((c, i) => screenOff() , Intent.ACTION_SCREEN_OFF)
+    registerReceiver((c, i) => screenOff() , Intent.ACTION_SCREEN_OFF :: Nil)
 
-    registerReceiver((c, i) => screenOn(), Intent.ACTION_SCREEN_ON)
+    registerReceiver((c, i) => screenOn(), Intent.ACTION_SCREEN_ON :: Nil)
 
     sensorManager = service.getSystemService(Context.SENSOR_SERVICE).asInstanceOf[SensorManager]
   }
+
+  private var applicationAddedHandlers = List[(Intent) => Unit]()
+
+  def onApplicationAdded(h:(Intent) => Unit) = applicationAddedHandlers ::= h
+
+  def applicationAdded(i:Intent) = applicationAddedHandlers.foreach { f => f(i) }
+
+  private var applicationRemovedHandlers = List[(Intent) => Unit]()
+
+  def onApplicationRemoved(h:(Intent) => Unit) = applicationRemovedHandlers ::= h
+
+  def applicationRemoved(i:Intent) = applicationRemovedHandlers.foreach { f => f(i) }
 
   private var callAnsweredHandlers = List[() => Unit]()
 
@@ -135,7 +158,7 @@ object StateObserver {
    * Runs handlers when voicemail indicator is canceled.
   */
 
-  def messageNoLongerWaiting() = messageNoLongerWaitingHandlers.foreach { f => f() }
+  def messageNoLongerWaiting() = messageNoLongerWaitingHandlers.foreach { f=> f() }
 
   /**
    * Removes handler from being run when voicemail indicator is canceled.

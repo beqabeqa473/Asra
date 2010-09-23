@@ -30,9 +30,33 @@
       </intent-filter>
     </activity>
 
+    <activity android:name=".activities.Scripts"/>
+
     <activity android:name=".activities.Events"/>
 
+    <activity android:name=".ScriptsActivity"/>
+
+    <activity android:name=".NewScriptsActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name=".intent.NEW_SCRIPTS_VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+      </intent-filter>
+    </activity>
+
+    <activity android:name=".activities.ScriptInstaller">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="info.spielproject.spiel.intent.NEW_SCRIPTS_VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+      </intent-filter>
+    </activity>
+
     <provider android:name=".StatusProvider" android:authorities="info.spielproject.spiel.providers.StatusProvider"  />
+
+    <provider android:name=".scripting.Provider" android:authorities="info.spielproject.spiel.scripting.Provider"/>
+
+    <provider android:name=".scripting.BazaarProvider" android:authorities="info.spielproject.spiel.scripting.bazaar.Provider"/>
 
   </application>
 </manifest>

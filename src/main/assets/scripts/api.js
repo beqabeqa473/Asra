@@ -18,5 +18,5 @@ function nextShouldNotInterrupt() {
 function forClass(cls, scr) {
   if(cls[0] == ".")
     cls = __pkg__+cls;
-  Scripter.registerHandlerFor(__pkg__, cls, scr);
+  Scripter.registerHandlerFor(cls, scr);
 }

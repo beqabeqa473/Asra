@@ -3,17 +3,20 @@ package activities
 
 import collection.JavaConversions._
 
-import android.app.{ListActivity, TabActivity}
-import android.content.Intent
+import android.app.{Activity, ListActivity, TabActivity}
+import android.content.{Context, Intent}
 import android.os.Bundle
 import android.preference.{ListPreference, Preference, PreferenceActivity}
 import android.util.Log
-import android.view.{Menu, MenuInflater, MenuItem}
+import android.view.{Menu, MenuInflater, MenuItem, View, ViewGroup}
 import android.view.accessibility.AccessibilityEvent
-import android.widget.{ArrayAdapter, TabHost}
+import android.widget.{ArrayAdapter, Button, CheckBox, ListView, TabHost}
+
+import scripting._
 
 import handlers._
 import triggers.Triggers
+
 /**
  * Activity that serves as a host for other tabs.
 */
@@ -26,6 +29,11 @@ class Spiel extends TabActivity {
     host.addTab(host.newTabSpec("preferences")
       .setIndicator(getString(R.string.preferences))
       .setContent(new Intent(this, classOf[PreferencesActivity]))
+    )
+
+    host.addTab(host.newTabSpec("scripts")
+      .setIndicator(getString(R.string.scripts))
+      .setContent(new Intent(this, classOf[Scripts]))
     )
 
     host.addTab(host.newTabSpec("events")
@@ -80,17 +88,67 @@ class PreferencesActivity extends PreferenceActivity {
 }
 
 /**
- * Lists most recently-received AccessibilityEvents.
+ * Trait implementing a "Refresh" menu item and action.
 */
 
-class Events extends ListActivity {
+trait Refreshable {
+  this: Activity =>
+
+  override def onOptionsItemSelected(item:MenuItem) = {
+    item.getItemId match {
+      case R.id.refresh => refresh
+    }
+    true
+  }
+
+  def refresh()
+
+}
+
+import android.widget.SimpleCursorAdapter
+
+class Scripts extends ListActivity with Refreshable {
 
   override def onCreate(bundle:Bundle) {
     super.onCreate(bundle)
     refresh()
   }
 
-  private def refresh() {
+  def refresh() = {
+    val cursor = managedQuery(scripting.Provider.uri, scripting.Provider.columns.projection, null, null, null)
+    setListAdapter(
+      new SimpleCursorAdapter(this,
+        R.layout.script_row,
+        cursor,
+        List(scripting.Provider.columns.pkg).toArray,
+        List(R.id.script_title).toArray
+      )
+    )
+    BazaarProvider.checkRemoteScripts()
+  }
+
+  private var menu:Option[Menu] = None
+
+  override def onCreateOptionsMenu(m:Menu):Boolean = {
+    menu = Some(m)
+    new MenuInflater(this).inflate(R.menu.scripts, menu.get)
+    super.onCreateOptionsMenu(m)
+  }
+
+}
+
+/**
+ * Lists most recently-received AccessibilityEvents.
+*/
+
+class Events extends ListActivity with Refreshable {
+
+  override def onCreate(bundle:Bundle) {
+    super.onCreate(bundle)
+    refresh()
+  }
+
+  def refresh() {
     if(Preferences.viewRecentEvents)
       setListAdapter(
         new ArrayAdapter[PrettyAccessibilityEvent](
@@ -117,11 +175,67 @@ class Events extends ListActivity {
     super.onCreateOptionsMenu(m)
   }
 
-  override def onOptionsItemSelected(item:MenuItem) = {
-    item.getItemId match {
-      case R.id.refresh => refresh()
-    }
-    true
+}
+
+/**
+ * Activity that handles the installation of scripts.
+*/
+
+class ScriptInstaller extends Activity {
+
+  override def onCreate(bundle:Bundle) {
+    super.onCreate(bundle)
+    setContentView(R.layout.script_installer)
+
+    val scripts = findViewById(R.id.scripts).asInstanceOf[ListView]
+    scripts.setAdapter(
+      new ArrayAdapter[Script](
+        this,
+        android.R.layout.simple_list_item_multiple_choice,
+        BazaarProvider.newOrUpdatedScripts.toArray
+      )
+    )
+    scripts.setItemsCanFocus(false)
+    scripts.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE)
+
+    findViewById(R.id.selectAll).asInstanceOf[Button].setOnClickListener(
+      new View.OnClickListener {
+        def onClick(v:View) {
+          for(p <- 0.to(BazaarProvider.newOrUpdatedScripts.size-1)) {
+            scripts.setItemChecked(p, true)
+          }
+        }
+      }
+    )
+
+    findViewById(R.id.deselectAll).asInstanceOf[Button].setOnClickListener(
+      new View.OnClickListener {
+        def onClick(v:View) = scripts.clearChoices()
+      }
+    )
+
+    findViewById(R.id.install).asInstanceOf[Button].setOnClickListener(
+      new View.OnClickListener {
+        def onClick(v:View) {
+          val checked = scripts.getCheckedItemPositions()
+          for(scriptID <- 0.to(BazaarProvider.newOrUpdatedScripts.size-1)) {
+            if(checked.get(scriptID)) {
+              val script = BazaarProvider.newOrUpdatedScripts(scriptID)
+              script.run()
+              script.save()
+            }
+          }
+          finish()
+        }
+      }
+    )
+
+    findViewById(R.id.cancel).asInstanceOf[Button].setOnClickListener(
+      new View.OnClickListener {
+        def onClick(v:View) = finish()
+      }
+    )
+
   }
 
 }

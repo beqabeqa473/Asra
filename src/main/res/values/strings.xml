@@ -55,7 +55,6 @@
   <string name="onProximityNearTitle">On proximity near</string>
   <string name="onProximityNearSummary">Set an action to perform when the proximity sensor determines that something is near</string>
 
-
   <string name="scriptingDebuggingTitle">Scripting and debugging</string>
   <string name="sendBacktracesTitle">Send backtraces when Spiel crashes</string>
   <string name="sendBacktracesSummary">Automatically send anonymous error reports to the developer whenever Spiel crashes (requires restart)</string>
@@ -64,6 +63,14 @@
 
   <string name="events">Events</string>
   <string name="noEvents">No events available. Please enable \"View most recent accessibility events\" in the \"Scripting and debugging\" menu first. If you have done this and none are displaying, press Menu then select \"Refresh\".</string>
+
+  <string name="scripts">Scripts</string>
+
+  <string name="newOrUpdatedScripts">New or updated scripts are available. Please choose which you wish to install.</string>
+  <string name="selectAll">Select all</string>
+  <string name="deselectAll">Deselect all</string>
+  <string name="install">Install</string>
+  <string name="cancel">Cancel</string>
 
   <!-- Menu items -->
   <string name="refresh">Refresh</string>

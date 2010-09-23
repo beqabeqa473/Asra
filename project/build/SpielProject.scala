@@ -17,12 +17,15 @@ class SpielProject(info: ProjectInfo) extends AndroidProject(info) with Markdown
 
   val rhino = "rhino" % "js" % "1.7R2" from "http://spielproject.info/attachments/download/3/js.jar"
 
+  val databinder = "databinder" at "http://databinder.net/repo/"
+  val dispatchLiftJson = "net.databinder" %% "dispatch-lift-json" % "0.7.4"
+
   override def proguardOption = """
     -keep class com.google.tts.** { *; }
     -keep class info.spielproject.spiel.** { *; }
   """
 
-  val rhinoPath = Path.fromFile("lib_managed/scala_2.8.0.Beta1/compile/js-1.7R2.jar")
+  val rhinoPath = Path.fromFile("lib_managed/scala_"+buildScalaVersion+"/compile/js-1.7R2.jar")
   override def proguardExclude = super.proguardExclude+++rhinoPath
 
   override def dxTask = execTask {<x> {dxPath.absolutePath} --dex --output={classesDexPath.absolutePath} {classesMinJarPath.absolutePath} {rhinoPath.absolutePath}</x> }

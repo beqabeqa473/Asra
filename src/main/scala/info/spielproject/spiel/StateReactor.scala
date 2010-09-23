@@ -1,6 +1,6 @@
 package info.spielproject.spiel
 
-import android.content.Context
+import android.content.{Context, Intent}
 import android.media.AudioManager
 import android.util.Log
 
@@ -20,6 +20,20 @@ object StateReactor {
   def apply(service:SpielService) {
     val audioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
     ringerOn = audioManager.getRingerMode != AudioManager.RINGER_MODE_SILENT
+  }
+
+  onApplicationAdded { intent =>
+    val packageName = intent.getData().getSchemeSpecificPart
+    Log.d("spiel", "Package added: "+packageName)
+    val i = new Intent(Intent.ACTION_VIEW)
+    i.addCategory(scripting.BazaarProvider.newScriptsView)
+    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    //i.putExtra("scripts", Nil)
+    //service.startActivity(i)
+  }
+
+  onApplicationRemoved { intent =>
+    Log.d("spiel", "Application removed: "+intent)
   }
 
   // Manage repeating of caller ID information, stopping when appropriate.
