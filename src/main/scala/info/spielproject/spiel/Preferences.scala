@@ -100,7 +100,7 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
   def repeatedSpeechWhenRingerOff = prefs.getBoolean("repeatedSpeechWhenRingerOff", false)
 
-  private def triggerPreference(trigger:String) = prefs.getString(trigger, "") match {
+  private def triggerPreference(trigger:String, default:String = "") = prefs.getString(trigger, default) match {
     case "" => None
     case str => Some(Triggers.actions(str))
   }
@@ -109,7 +109,7 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
    * Indicates <code>Action</code> to run on proximity nearness.
   */
 
-  def onProximityNear = triggerPreference("onProximityNear")
+  def onProximityNear = triggerPreference("onProximityNear", "stopSpeech")
 
   /**
    * Indicates <code>Action</code> to run when shaking starts.

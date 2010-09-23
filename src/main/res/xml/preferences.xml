@@ -99,7 +99,8 @@
     <ListPreference
       android:key="onProximityNear"
       android:title="@string/onProximityNearTitle"
-      android:summary="@string/onProximityNearSummary"/>
+      android:summary="@string/onProximityNearSummary"
+      android:defaultValue="stopSpeech"/>
 
   </PreferenceScreen>
 
