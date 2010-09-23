@@ -25,6 +25,20 @@ class Actions {
 
   class StopSpeech extends Action("stopSpeech", "Stop speech", () => TTS.stop)
 
+  /**
+   * Toggle whether or not Spiel is enabled.
+  */
+
+  class ToggleSpiel extends Action("toggleSpiel", "Toggle whether Spiel is enabled", { () =>
+    if(SpielService.enabled) {
+      SpielService.enabled = false
+      TTS.speak("Spiel off.", true)
+    } else {
+      SpielService.enabled = true
+      TTS.speak("Spiel on.", true)
+    }
+  })
+
 }
 
 /**

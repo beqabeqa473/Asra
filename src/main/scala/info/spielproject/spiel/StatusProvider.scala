@@ -37,7 +37,7 @@ class StatusProvider extends ContentProvider {
   def onCreate() = true
 
   override def query(uri:Uri, projection:Array[String], selection:String, selectionArgs:Array[String], sortOrder:String):Cursor = {
-    val status = if(SpielService.initialized) 1 else 0
+    val status = if(SpielService.enabled) 1 else 0
     new StatusCursor(status)
   }
 

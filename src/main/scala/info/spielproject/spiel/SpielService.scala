@@ -32,7 +32,7 @@ class SpielService extends AccessibilityService {
     StateReactor(this)
     Triggers(this)
     TelephonyListener(this)
-    SpielService.initialized = true
+    SpielService.enabled = true
   }
 
   override def onDestroy() {
@@ -42,7 +42,7 @@ class SpielService extends AccessibilityService {
     TTS.shutdown
     Scripter.onDestroy
     //Debug.stopMethodTracing
-    SpielService.initialized = false
+    SpielService.enabled = false
   }
 
   override protected def onServiceConnected {
@@ -58,6 +58,8 @@ class SpielService extends AccessibilityService {
   override def onInterrupt = TTS.stop
 
   override def onAccessibilityEvent(event:AccessibilityEvent) {
+
+    if(!SpielService.enabled) return
 
     // Clone an AccessibilityEvent since the system recycles them 
     // aggressively, sometimes before we're done with them.
@@ -89,5 +91,7 @@ class SpielService extends AccessibilityService {
 }
 
 object SpielService {
-  private[spiel] var initialized = false
+
+  var enabled = false
+
 }
