@@ -2,9 +2,8 @@ package info.spielproject.spiel
 package scripting
 
 import java.io.{File, FileInputStream, FileOutputStream, InputStream}
-import java.util.UUID
 
-import android.content.{BroadcastReceiver, Context => AContext}
+import android.content.{BroadcastReceiver, ContentValues, Context => AContext, Intent}
 import android.database.Cursor
 import android.os.Environment
 import android.util.Log
@@ -35,23 +34,32 @@ class RhinoCallback(f:Function) extends Callback {
 }
 
 class Script(
-  code:String,
+  context:AContext,
+  val code:String,
   filename:String = "",
   val pkg:String = "",
-  val id:String = UUID.randomUUID.toString,
+  val id:Option[Int] = None,
+  val remoteID:Option[String] = None,
   val version:Int = 0
 ) {
 
-  def this(c:Cursor) = this(
+  def this(context:AContext, c:Cursor) = this(
+    context,
     c.getString(c.getColumnIndex(Provider.columns.code)),
-    c.getString(c.getColumnIndex(Provider.columns._id)),
-    c.getString(c.getColumnIndex(Provider.columns._id)),
-    c.getString(c.getColumnIndex(Provider.columns.remoteID)),
+    c.getString(c.getColumnIndex(Provider.columns.pkg)),
+    c.getString(c.getColumnIndex(Provider.columns.pkg)),
+    if(c.getColumnIndex(Provider.columns._id) == -1)
+      None
+    else Some(c.getInt(c.getColumnIndex(Provider.columns._id))),
+    Option(c.getString(c.getColumnIndex(Provider.columns.remoteID))),
     c.getInt(c.getColumnIndex(Provider.columns.version))
   )
 
   def run() = {
+    handlers.foreach(Handler.unregisterHandler(_))
+    handlers = Nil
     Scripter.scope.put("__pkg__", Scripter.scope, pkg)
+    Scripter.script = Some(this)
     try {
       Scripter.context.evaluateString(Scripter.scope, code, filename, 1, null)
     } catch {
@@ -59,10 +67,15 @@ class Script(
       case e => Log.e("spiel", e.toString)
     }finally {
       Scripter.scope.put("__pkg__", Scripter.scope, null)
+      Scripter.script = None
     }
   }
 
   private var handlers = List[Handler]()
+
+  /**
+   * Register a Handler for a given package and class.
+  */
 
   def registerHandlerFor(cls:String, s:Object) {
     val scr = s.asInstanceOf[ScriptableObject]
@@ -94,6 +107,31 @@ class Script(
     h
   }
 
+  def save() {
+    val resolver = context.getContentResolver
+    val values = new ContentValues
+    values.put(Provider.columns.pkg, pkg)
+    values.put(Provider.columns.code, code)
+    values.put(Provider.columns.remoteID, remoteID.getOrElse(null))
+    values.put(Provider.columns.version, new java.lang.Integer(version))
+    id.map { i =>
+      resolver.update(Provider.uri, values, "_id = ?", List(i.toString).toArray)
+    }.orElse {
+      remoteID.map { rid =>
+        val cursor = resolver.query(Provider.uri, null, "remote_id = ?", List(rid).toArray, null)
+        var rv:Any = null
+        if(cursor.getCount > 0)
+          rv = resolver.update(Provider.uri, values, "remote_id = ?", List(rid).toArray)
+        else
+          rv = resolver.insert(Provider.uri, values)
+        cursor.close()
+        rv
+      }
+    }.getOrElse(resolver.insert(Provider.uri, values))
+  }
+
+  override val toString = pkg
+
 }
 
 /**
@@ -108,7 +146,7 @@ object Scripter {
   def context = myCx
   def scope = myScope
 
-  private var script:Option[Script] = None
+  private[scripting] var script:Option[Script] = None
 
   /**
    * Initialize the scripting subsystem based on the specified service.
@@ -134,7 +172,7 @@ object Scripter {
     def run(code:String, filename:String) = {
       val p = filename.substring(0, filename.lastIndexOf("."))
       val pkg = if(p.startsWith("_")) p.substring(1, p.size) else p
-      script = Some(new Script(code, filename, pkg))
+      script = Some(new Script(service, code, filename, pkg))
       script.map(_.run())
     }
 
@@ -168,12 +206,15 @@ object Scripter {
     }
 
     val cursor = service.getContentResolver.query(Provider.uri, Provider.columns.projection, null, null, null)
+    Log.d("spielscript", "Beginning run.")
     cursor.moveToFirst()
     while(!cursor.isAfterLast) {
-      val s = new Script(cursor)
+      val s = new Script(service, cursor)
+      Log.d("spielscript", "Running "+s.pkg)
       s.run()
       cursor.moveToNext()
     }
+    cursor.close()
 
     // Load scripts from /spiel/scripts folder on SD card.
 
@@ -318,10 +359,12 @@ class Provider extends ContentProvider with AbstractProvider {
 
     if(values == null)
       throw new IllegalArgumentException("values cannot be null")
-    else if(collectionURI_?(u)) 
+    else if(!collectionURI_?(u)) 
       throw new IllegalArgumentException("Unknown URI: "+u)
 
+    Log.d("spiel", "Got values: "+values)
     val rowID = db.insert(tableName, null, values)
+    Log.d("spiel", "Row ID: "+rowID)
     if(rowID > 0) {
       val ur = ContentUris.withAppendedId(uri, rowID)
       getContext().getContentResolver().notifyChange(ur, null)
@@ -373,24 +416,15 @@ import Serialization.{read, write}
 
 class BazaarProvider extends ContentProvider with AbstractProvider {
 
-  private var pm:PackageManager = null
-
   val mimeType = "vnd.spiel.bazaar.script"
   val authority = "info.spielproject.spiel.scripting.bazaar.Provider"
   val path = "scripts"
   addUris()
 
-  def onCreate() = {
-    pm = getContext.getPackageManager
-    actor { checkRemoteScripts() }
-    true
-  }
+  def onCreate() = true
 
   private val http = new Http
-  private val apiRoot = :/("192.168.1.2", 7070) / "api" / "v1" <:< Map("Accept" -> "application/json")
-  /**
-   * Register a Handler for a given package and class.
-  */
+  private val apiRoot = :/("bazaar.spielproject.info") / "api" / "v1" <:< Map("Accept" -> "application/json")
 
   private def request(req:Request)(f:(JValue) => Unit) = {
     try {
@@ -405,12 +439,18 @@ class BazaarProvider extends ContentProvider with AbstractProvider {
     Log.d("spiel", "Where: "+where)
 
     val cursor = if(collectionURI_?(uri)) {
-      val c = new MatrixCursor(List("id", "package").toArray)
+      val c = new MatrixCursor(List(Provider.columns.remoteID, Provider.columns.pkg, Provider.columns.code, Provider.columns.version).toArray)
       request(
         apiRoot / "scripts" <<?
-        Map("packages" -> where)
+        Map("q" -> where)
       ) { response =>
-        Log.d("spiel", "Response: "+response.values)
+        response.values.asInstanceOf[List[Map[String, Any]]].foreach { r =>
+          val rb = c.newRow()
+          rb.add(r("id"))
+          rb.add(r("package"))
+          rb.add(r("code"))
+          rb.add(r("version"))
+        }
       }
       c
     } else {
@@ -426,27 +466,63 @@ class BazaarProvider extends ContentProvider with AbstractProvider {
 
   override def delete(u:Uri, where:String, whereArgs:Array[String]) = 0
 
-  def checkRemoteScripts() {
-    val packages = pm.getInstalledPackages(0).map { i => i.packageName }
-    val where = packages.reduceLeft[String] { (acc, n) =>
-      acc+","+(getContext.getContentResolver.query(
-        Provider.uri, Provider.columns.projection, "pkg = ?", List(n).toArray, null
-      ) match {
-        case c:Cursor if(c.getCount > 1) =>
-          c.moveToFirst()
-          c.getString(c.getColumnIndex(Provider.columns.pkg))+" "+c.getString(c.getColumnIndex(Provider.columns.version))
-        case _ => n
-      })
-    }
-
-    getContext.getContentResolver.query(BazaarProvider.uri, null, where, null, null)
-  }
-
 }
 
 object BazaarProvider {
+
   val newScriptsView = "info.spielproject.spiel.intent.NEW_SCRIPTS_VIEW"
 
   val uri = Uri.parse("content://info.spielproject.spiel.scripting.bazaar.Provider/scripts")
+
+  private var context:AContext = null
+
+  private var pm:PackageManager = null
+
+  /**
+   * Initialize the Bazaar based off the specified <code>Context</code>.
+  */
+
+  def apply(c:AContext) {
+    context = c
+    pm = context.getPackageManager
+    checkRemoteScripts()
+  }
+
+  private var _newOrUpdatedScripts:List[Script] = Nil
+  def newOrUpdatedScripts = _newOrUpdatedScripts
+
+  def checkRemoteScripts() = actor {
+    val packages = pm.getInstalledPackages(0).map { i => i.packageName }
+    val where = packages.reduceLeft[String] { (acc, n) =>
+      acc+","+(context.getContentResolver.query(
+        Provider.uri, Provider.columns.projection, "pkg = ?", List(n).toArray, null
+      ) match {
+        case c:Cursor if(c.getCount == 1) =>
+          c.moveToFirst()
+          val rv = c.getString(c.getColumnIndex(Provider.columns.remoteID))+" "+c.getString(c.getColumnIndex(Provider.columns.version))
+          c.close()
+          rv
+        case c:Cursor =>
+          c.close()
+          n
+      })
+    }
+
+    val cursor = context.getContentResolver.query(BazaarProvider.uri, null, where, null, null)
+    _newOrUpdatedScripts = Nil
+    cursor.moveToFirst()
+    while(!cursor.isAfterLast) {
+      val script = new Script(context, cursor)
+      _newOrUpdatedScripts ::= script
+      cursor.moveToNext()
+    }
+    cursor.close()
+    if(newOrUpdatedScripts != Nil) {
+      val intent = new Intent(Intent.ACTION_VIEW)
+      intent.addCategory(newScriptsView)
+      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      context.startActivity(intent)
+    }
+  }
 
 }

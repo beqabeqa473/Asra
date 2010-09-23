@@ -8,7 +8,7 @@ import android.view.accessibility.AccessibilityEvent
 import com.nullwire.trace.ExceptionHandler
 
 import handlers.Handler
-import scripting.Scripter
+import scripting._
 import triggers.Triggers
 
 /**
@@ -27,6 +27,7 @@ class SpielService extends AccessibilityService {
     TTS(this)
     Handler(this)
     Scripter(this)
+    BazaarProvider(this)
     StateObserver(this)
     StateReactor(this)
     Triggers(this)

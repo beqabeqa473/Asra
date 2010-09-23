@@ -78,6 +78,14 @@ object Handler extends Actor {
   // Maps (packageName, className) tuples to specific Handler instances.
   private var handlers = Map[(String, String), Handler]()
 
+  /**
+   * Unregisters the given <code>Handler</code>.
+  */
+
+  def unregisterHandler(h:Handler) = {
+    handlers = handlers.filter(v => v._2 != h)
+  }
+
   // Track and report state of whether next AccessibilityEvent should interrupt speech.
   private var myNextShouldNotInterrupt = false
   def shouldNextInterrupt = !myNextShouldNotInterrupt

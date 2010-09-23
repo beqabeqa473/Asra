@@ -66,6 +66,12 @@
 
   <string name="scripts">Scripts</string>
 
+  <string name="newOrUpdatedScripts">New or updated scripts are available. Please choose which you wish to install.</string>
+  <string name="selectAll">Select all</string>
+  <string name="deselectAll">Deselect all</string>
+  <string name="install">Install</string>
+  <string name="cancel">Cancel</string>
+
   <!-- Menu items -->
   <string name="refresh">Refresh</string>
 
