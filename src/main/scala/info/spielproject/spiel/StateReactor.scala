@@ -1,8 +1,10 @@
 package info.spielproject.spiel
 
-import android.content.{Context, Intent}
+import android.content.{ContentUris, Context, Intent}
 import android.media.AudioManager
 import android.util.Log
+
+import scripting._
 
 /**
  * Singleton which registers many callbacks initiated by <code>StateObserver</code>.
@@ -13,27 +15,38 @@ object StateReactor {
 
   private[spiel] var ringerOn:Boolean = false
 
+  private var service:SpielService = null
+
   /**
    * Initializes based on the specified <code>SpielService</code>, setting initial states.
   */
 
-  def apply(service:SpielService) {
+  def apply(svc:SpielService) {
+    service = svc
     val audioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
     ringerOn = audioManager.getRingerMode != AudioManager.RINGER_MODE_SILENT
   }
 
+  // Check Bazaar for new scripts on app installation.
+
   onApplicationAdded { intent =>
-    val packageName = intent.getData().getSchemeSpecificPart
-    Log.d("spiel", "Package added: "+packageName)
-    val i = new Intent(Intent.ACTION_VIEW)
-    i.addCategory(scripting.BazaarProvider.newScriptsView)
-    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    //i.putExtra("scripts", Nil)
-    //service.startActivity(i)
+    BazaarProvider.checkRemoteScripts()
   }
 
   onApplicationRemoved { intent =>
-    Log.d("spiel", "Application removed: "+intent)
+    val packageName = intent.getData().getSchemeSpecificPart
+    val cursor = service.getContentResolver.query(Provider.uri, null, "pkg = ?", List(packageName).toArray, null)
+    if(cursor.getCount > 0) {
+      cursor.moveToFirst()
+      while(!cursor.isAfterLast) {
+        val script = new Script(service, cursor)
+        script.uninstall()
+        val scriptURI = ContentUris.withAppendedId(Provider.uri, script.id.get)
+        service.getContentResolver.delete(scriptURI, null, null)
+        cursor.moveToNext()
+      }
+    }
+    cursor.close()
   }
 
   // Manage repeating of caller ID information, stopping when appropriate.

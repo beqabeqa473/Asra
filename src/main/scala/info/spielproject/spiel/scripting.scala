@@ -56,8 +56,7 @@ class Script(
   )
 
   def run() = {
-    handlers.foreach(Handler.unregisterHandler(_))
-    handlers = Nil
+    uninstall()
     Scripter.scope.put("__pkg__", Scripter.scope, pkg)
     Scripter.script = Some(this)
     try {
@@ -131,6 +130,11 @@ class Script(
   }
 
   override val toString = pkg
+
+  def uninstall() {
+    handlers.foreach(Handler.unregisterHandler(_))
+    handlers = Nil
+  }
 
 }
 
