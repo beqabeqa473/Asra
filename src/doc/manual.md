@@ -61,6 +61,14 @@ forClass("android.widget.Button" {
 
 Placing this code in the file _com.acme.android.js_ causes it to be triggered whenever any buttons in the _com.acme.android_ app are encountered.
 
+There is a convenience shorthand with _forClass_. If the class which you are scripting resides in the package for which you are scripting, or in one of its subpackages, you can replace the package name with just a ".". For instance, again with our app in the package _com.acme.android_, you might encounter events originating from the class _com.acme.android.views.MyCustomWidget_. You can script events from this class as follows:
+
+<pre>
+forClass(".views.MyCustomWidget" {
+  ...
+});
+</pre>
+
 ### Events
 
 It is also necessary to specify which events from a given class and package are of interest before a script is functional. Android accessibility currently defines several event types which the API generates. Please consult its own documentation to learn when these events are generated and which properties are associated with each. As previously stated, however, the names Spiel associates with these events are slightly more human-friendly. The following event types are supported, and should map quite obviously to their Android counterparts:
@@ -153,7 +161,7 @@ In general, you shouldn't explicitly use the second argument, as Spiel's event h
 
 #### speakNotification()
 
-Speaking of notifications is more complex than is simply speaking strings. The screen or ringer may be off, and the user may have enabled the preference to not speak notifications in those particular situations. This function honors these preferences, and should be used whenever your script needs to speak something incidental to its operation not in response to a user's direct action. For instance, if your script speaks an incoming SMS, then it should use this method as to not do so when the user prefers not to hear it. The function accepts a single argument:
+Speaking of notifications is more complex than is simply speaking strings. The screen or ringer may be off, and the user may have enabled the preference to not speak notifications in those instances. This function honors these preferences, and should be used whenever your script needs to speak something incidental to its operation not in response to a user's direct action. For example, if your script speaks an incoming SMS, then it should use this method as to not do so when the user prefers not to hear it. The function accepts a single argument:
 
  * Notification text to be spoken
 
@@ -171,17 +179,21 @@ As the Android documentation demonstrates, each event has a number of properties
 
 Spiel's scripting layer defines somewhat more convenient access to these properties, however. For instance, while Java-based APIs must access an event's _text_ property by calling its _getText()_ method, Spiel scripts need only refer to the _text_ property to access the same information.
 
-Completing the above example, let's say that the events for the unlabeled buttons in _com.acme.android_ have _currentItemIndex_ properties of 4, 5 and 6. Building on the functions described in the previous sections, we might complete our script as follows:
+Completing the above example, let's say that the events for the unlabeled buttons in _com.acme.android_ have _currentItemIndex_ properties of 4, 5 and 6. Building on the functions described in the previous sections, and incorporating internationalization, we might complete our script as follows:
 
 <pre>
+setString("newAccount", "New account");
+setString("existingAccount", "Existing account");
+setString("support", "Support");
+
 forClass("android.widget.Button" {
   onViewFocused: function(event) {
     if(event.currentItemIndex == 4)
-      speak("New account");
+      speak(getString("newAccount"));
     else if(event.currentItemIndex == 5)
-      speak("Existing account");
+      speak(getString("existingAccount"));
     else if(event.currentItemIndex == 6)
-      speak("Support");
+      speak(getString("support"));
     nextShouldNotInterrupt();
     return false;
   }
@@ -194,7 +206,7 @@ Here we do several things. As previously described, we intercept events of the g
 
 While knowing how to script is one thing, knowing which events to intercept (or indeed, if any are available to intercept) is another matter entirely. Fortunately, Spiel offers several convenience features to make scripting easier. To enable these, navigate to Spiel's preferences, select _Scripting and debugging_, then enable _Display most recent accessibility events_.
 
-When this is done, a tab labeled _Events_ starts populating with the 50 most recently-generated accessibility events. This makes it fairly easy to determine whethera given action is generating an event and, if so, whether that event includes properties that might be used to script it.
+When this is done, a tab labeled _Events_ starts populating with the 50 most recently-generated accessibility events. This makes it fairly easy to determine whether a given action is raising an event and, if so, whether that event includes properties that might be used to script it.
 
 Events are also sent to the device log. By using the Android SDK and running the following command:
 
@@ -215,3 +227,58 @@ Spiel checks for scripts in a number of locations, each with a very specific pur
  * The Spiel scripts directory on your SD card, typically /spiel/scripts. Here is where your own scripts should be developed before being shared with others via the Spiel Bazaar.
 
 The main point to keep in mind is that scripts you develop or copy will always override those provided by others, or by Spiel itself. This provides you as the user with a great deal of power, but as any comic book fan knows, with great power comes great responsibility. Be aware of the scripts located on your SD card, and be sure that they don't redefine core functions, or other handlers you may not wish to be replaced.
+
+## Practical Examples
+
+Contrivances are one thing, but actual examples are usually quite helpful. Below are annotated scripts from Spiel, along with explanations of the problems they solve.
+
+Note that all of these scripts are available on the Bazaar, and should be made available to any devices running the apps they augment. While these instructions invite you to place the code on your SD card, this is only for experimentation purposes and isn't needed should you want the features they offer.
+
+### Simple: Launcher on 2.1 and Below
+
+The Android 2.1 launcher includes an unlabeled control that apparently looks like a drawer handle. Expanding this handle makes your entire list of apps available.
+
+Two problems exist here. First, the handle itself is unlabeled. Next, clicking on the handle gives no accessible indication that anything has happened. You aren't taken to a new screen or given any indication as to what has changed.
+
+The below script solves both problems. First, it adds code that speaks the string "Expanded" when the handle is clicked. It then intercepts focus events to speak "Drawer handle" when this widget receives focus. Notice we use the dot shorthand for the _HandleView_ class. Since it resides in the package for which the script was written, _com.android.launcher_, this is a nice convenience. The following code can be placed in _com.android.launcher.js_ in the _/spiel/scripts_ directory on your SD card.
+
+<pre>
+setString("drawerHandle", "Drawer handle");
+setString("expanded", "Expanded");
+
+forClass(".HandleView", {
+
+  onViewClicked: function() {
+    speak(getString("expanded"));
+    return true;
+  },
+
+  onViewFocused: function() {
+    speak(getString("drawerHandle"));
+    return true;
+  }
+
+});
+</pre>
+
+### Complex: Dialer Entry Bug
+
+Android has an annoying bug which surfaces when entering numbers into the dialer. When hyphens are automatically inserted, speech becomes far more spammy than it should, and you'll hear those in preference to the text you enter.
+
+We can't completely fix this issue in Spiel, since the contacts app needs to be modified not to raise spurious AccessibilityEvents. It hasn't yet in over a year, so in the meantime you can use this script to lessen the spam somewhat. This code can be placed in _com.android.contacts.js_ in the _/spiel/scripts_ directory on your SD card.
+
+<pre>
+forClass("android.widget.EditText", {
+
+  // Fix issue where inserted hyphens interrupt speech.
+  onViewTextChanged: function(e) {
+    if(this.lastText == e.text.get(0).toString().replace("-", ""))
+      return true;
+    this.lastText = e.text.get(0).toString().replace("-", "");
+    return false;
+  }
+
+});
+</pre>
+
+The above code is slightly more complex. Basically, we determine if the text of the current event with hyphens removed equals that of the last event received by this handler. If it does then we return true, silently swallowing the event without presenting it. Otherwise, it removes hyphens from the text of the current event and saves that as the last received text, passing the event further along the chain. The result is that hyphens will be spoken in response to some number entries, but they won't be spoken multiple times, as would occur if this script was not installed.
