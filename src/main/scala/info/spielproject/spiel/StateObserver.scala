@@ -390,7 +390,7 @@ object StateObserver {
   def shakerEnabled = _shakerEnabled
 
   // This may need tweaking, but this seems like a good value for an intentional shake.
-  private val shakerThreshold = 2.6d*SensorManager.GRAVITY_EARTH*SensorManager.GRAVITY_EARTH
+  private val shakerThreshold = 3d*SensorManager.GRAVITY_EARTH*SensorManager.GRAVITY_EARTH
 
   private val shaker = new SensorEventListener {
 
