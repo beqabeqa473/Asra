@@ -20,3 +20,20 @@ function forClass(cls, scr) {
     cls = __pkg__+cls;
   Scripter.registerHandlerFor(cls, scr);
 }
+
+// TODO: I don't know JavaScript well or don't know how it interfaces to 
+// Java. This can probably be optimized.
+function setString(name, arg1, arg2, arg3, arg4) {
+  if(arg4 != undefined)
+    return Scripter.setString(name, arg1, arg2, arg3, arg4);
+  else if(arg3 != undefined)
+    return Scripter.setString(name, arg1, arg2, arg3);
+  else if(arg2 != undefined)
+    return Scripter.setString(name, arg1, arg2);
+  else
+    Scripter.setString(name, arg1);
+}
+
+function getString(name) {
+  return Scripter.getString(__pkg__, name);
+}

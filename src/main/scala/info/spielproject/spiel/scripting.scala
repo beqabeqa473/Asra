@@ -23,12 +23,15 @@ class RhinoCallback(f:Function) extends Callback {
     var args = new Array[Object](1)
     args(0) = e
     try {
+      Scripter.scope.put("__pkg__", Scripter.scope, e.getPackageName)
       Context.toBoolean(f.call(Scripter.context, Scripter.scope, Scripter.scope, args))
     } catch {
       case e =>
         TTS.speak("Script error: "+e.getMessage, true)
         Log.e("spiel", "Error running script: "+e.getMessage)
         false
+    } finally {
+      Scripter.scope.put("__pkg__", Scripter.scope, null)
     }
   }
 }
@@ -134,6 +137,7 @@ class Script(
   def uninstall() {
     handlers.foreach(Handler.unregisterHandler(_))
     handlers = Nil
+    Scripter.unsetStringsFor(pkg)
   }
 
 }
@@ -246,6 +250,45 @@ object Scripter {
   }
 
   def registerHandlerFor(cls:String, scr:Object) = script.map(_.registerHandlerFor(cls, scr))
+
+  private var strings = collection.mutable.Map[List[String], String]()
+
+  def setString(name:String, value:String) {
+    val pkg = script.map(_.pkg).getOrElse("")
+    strings(List(pkg, name)) = value
+  }
+
+  def setString(name:String, value:String, language:String) {
+    val pkg = script.map(_.pkg).getOrElse("")
+    strings(List(pkg, name, language)) = value
+  }
+
+  def setString(name:String, value:String, language:String, country:String) {
+    val pkg = script.map(_.pkg).getOrElse("")
+    strings(List(pkg, name, language, country)) = value
+  }
+
+  def setString(name:String, value:String, language:String, country:String, variant:String) {
+    val pkg = script.map(_.pkg).getOrElse("")
+    strings(List(pkg, name, language, country, variant)) = value
+  }
+
+  def unsetStringsFor(pkg:String) {
+    strings = strings.filter (v => v._1.head != pkg)
+  }
+
+  def getString(pkg:String, name:String):String = {
+    val locale = java.util.Locale.getDefault
+    val language = locale.getLanguage
+    val country = locale.getCountry
+    val variant = locale.getVariant
+    strings.get(List(pkg, name, language, country, variant))
+    .orElse(strings.get(List(pkg, name, language, country)))
+    .orElse(strings.get(List(pkg, name, language)))
+    .orElse(strings.get(List(pkg, name)))
+    .getOrElse("")
+  }
+
 
 }
 
