@@ -89,6 +89,55 @@ forClass("android.widget.Button" {
 });
 </pre>
 
+### A Word on Internationalization
+
+If your scripts become widely popular, it is entirely possible that they will be installed by users who either don't speak your language, or who speak a country or cultural variant. As such, you should internationalize any spoken strings within your script to make translation to other languages and dialects possible.
+
+Spiel's scripting subsystem tries to make internationalization as simple as possible by offering a variety of ways to set language strings, and by using sensible defaults and fallback behaviors. Strings are assigned to symbolic names, which are retrieved whenever you wish to speak them. The functions to assign strings are as follows:
+
+<pre>
+setString(name, value)
+setString(name, language, value)
+setString(name, language, country, value)
+setString(name, language, country, variant, value)
+</pre>
+
+To retrieve a string for speaking, simply call:
+
+<pre>
+getString(name)
+</pre>
+
+String names are first matched against language, country and variant, then against language and country, then simply against language. If none matches, the default is used.
+
+We'll use English as an example, as I am regrettably ignorant of most other languages. Say, for instance, you wish to speak the string "Color". All that is needed for this is to call:
+
+<pre>
+setString("color", "Color)
+</pre>
+
+Then, if you wish to retrieve this string later, simply call:
+
+<pre>
+getString("color")
+</pre>
+
+And "Color" will be returned.
+
+Now, say you're targetting a UK English audience. Simply add this:
+
+<pre>
+setString("color", "en", "UK", "Colour")
+</pre>
+
+Now, devices with a UK English locale receive the string "Colour" when calling:
+
+<pre>
+getString("color")
+</pre>
+
+All others simply receive "Color". To translate to other languages, simply copy the lines, calling the function with your specific language, country and variant filled in to whatever level of detail you require.
+
 ### Handling Events
 
 All of the power of Javascript is available to you when handling events. However, Spiel exposes a few convenience functions for speaking and interrupting text, documented below.
