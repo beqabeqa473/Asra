@@ -10,7 +10,7 @@ import android.preference.{ListPreference, Preference, PreferenceActivity}
 import android.util.Log
 import android.view.{Menu, MenuInflater, MenuItem, View, ViewGroup}
 import android.view.accessibility.AccessibilityEvent
-import android.widget.{ArrayAdapter, Button, CheckBox, ListView, TabHost}
+import android.widget.{AdapterView, ArrayAdapter, Button, CheckBox, ListView, TabHost}
 
 import scripting._
 
@@ -181,7 +181,7 @@ class Events extends ListActivity with Refreshable {
  * Activity that handles the installation of scripts.
 */
 
-class ScriptInstaller extends Activity {
+class ScriptInstaller extends Activity with AdapterView.OnItemClickListener {
 
   override def onCreate(bundle:Bundle) {
     super.onCreate(bundle)
@@ -195,7 +195,7 @@ class ScriptInstaller extends Activity {
         BazaarProvider.newOrUpdatedScripts.toArray
       )
     )
-    scripts.setItemsCanFocus(false)
+    scripts.setOnItemClickListener(this)
     scripts.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE)
 
     findViewById(R.id.selectAll).asInstanceOf[Button].setOnClickListener(
@@ -236,6 +236,15 @@ class ScriptInstaller extends Activity {
       }
     )
 
+  }
+
+  // Needed because clicking a list without a listener doesn't raise AccessibilityEvents.
+  def onItemClick(parent:AdapterView[_], view:View, position:Int, id:Long) {
+    val list = parent.asInstanceOf[ListView]
+    if(list.isItemChecked(position))
+      TTS.speak(getString(R.string.checked), true)
+    else
+      TTS.speak(getString(R.string.notChecked), true)
   }
 
 }
