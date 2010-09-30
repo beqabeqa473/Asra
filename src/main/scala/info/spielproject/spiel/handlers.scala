@@ -378,12 +378,7 @@ class Handler(pkg:String, cls:String) {
     if(e.isChecked && !e.getText.contains(service.getString(R.string.checked))) rv ::= service.getString(R.string.checked)
     if(e.getText.size == 0 && e.getContentDescription == null && addBlank)
       rv ::= ""
-    rv :::= e.getText.map { text =>
-      text match {
-        case null => ""
-        case t => t.toString
-      }
-    }.toList
+    rv :::= e.getText.filter(_ != null).map(_.toString).toList
     if(e.getContentDescription != null) rv ::= e.getContentDescription.toString
     rv
   }
