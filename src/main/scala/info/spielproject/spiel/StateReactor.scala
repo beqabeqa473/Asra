@@ -99,13 +99,17 @@ object StateReactor {
   def screenOff_? = !screenOn_?
 
   onScreenOff { () =>
-    screenOn = false
-    TTS.speak("Locked.", false)
+    if(screenOn) {
+      TTS.speak("Locked.", false)
+      screenOn = false
+    }
   }
 
   onScreenOn { () =>
-    screenOn = true
-    TTS.speak("Locked.", false) 
+    if(!screenOn) {
+      screenOn = true
+      TTS.speak("Locked.", false) 
+    }
   }
 
 }
