@@ -484,7 +484,7 @@ class BazaarProvider extends ContentProvider with AbstractProvider {
     val cursor = if(collectionURI_?(uri)) {
       val c = new MatrixCursor(List(Provider.columns.remoteID, Provider.columns.pkg, Provider.columns.code, Provider.columns.version).toArray)
       request(
-        apiRoot / "scripts" <<?
+        apiRoot / "scripts" <<
         Map("q" -> where)
       ) { response =>
         response.values.asInstanceOf[List[Map[String, Any]]].foreach { r =>
