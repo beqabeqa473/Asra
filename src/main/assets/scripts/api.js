@@ -37,3 +37,7 @@ function setString(name, arg1, arg2, arg3, arg4) {
 function getString(name) {
   return Scripter.getString(__pkg__, name);
 }
+
+function log(msg) {
+  Scripter.log(__pkg__, msg)
+}

@@ -284,6 +284,7 @@ object Scripter {
     .getOrElse("")
   }
 
+  def log(pkg:String, msg:String) = Log.d("spiel", pkg+": "+msg)
 
 }
 
