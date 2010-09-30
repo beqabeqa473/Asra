@@ -59,13 +59,14 @@ class Script(
   )
 
   def run() = {
+    Log.d("spiel", "Running "+pkg)
     uninstall()
     Scripter.scope.put("__pkg__", Scripter.scope, pkg)
     Scripter.script = Some(this)
     try {
       Scripter.context.evaluateString(Scripter.scope, code, filename, 1, null)
     } catch {
-      case e:RhinoException => Log.e(this.toString, e.getMessage)
+      case e:RhinoException => Log.e("spiel", "Error creating script: "+e.getMessage)
       case e => Log.e("spiel", e.toString)
     }finally {
       Scripter.scope.put("__pkg__", Scripter.scope, null)
@@ -218,7 +219,6 @@ object Scripter {
     cursor.moveToFirst()
     while(!cursor.isAfterLast) {
       val s = new Script(service, cursor)
-      Log.d("spielscript", "Running "+s.pkg)
       s.run()
       cursor.moveToNext()
     }
@@ -229,18 +229,13 @@ object Scripter {
     try {
       val list = scriptsDir.list()
       if(list != null) {
+        Log.d("spiel", "Got local scripts: "+list)
         list.foreach(fn => runScript(fn, false))
       }
     } catch {
       // TODO: Handle this better. We'll launch, just without scripts.
-      case _ =>
+      case e => Log.d("spiel", e.getMessage)
     }
-
-    cursor.close()
-
-    runScript("api.js", true)
-    if(scriptsDir.list() != null)
-      scriptsDir.list().foreach { script => runScript(script) }
 
     true
   }
