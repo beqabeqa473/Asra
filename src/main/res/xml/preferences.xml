@@ -49,6 +49,12 @@
       android:title="@string/managePunctuationSpeechTitle"
       android:summary="@string/managePunctuationSpeechSummary"/>
 
+    <CheckBoxPreference
+      android:key="increaseInCallVolume"
+      android:defaultValue="false"
+      android:title="@string/increaseInCallVolumeTitle"
+      android:summary="@string/increaseInCallVolumeSummary"/>
+
     <Preference
       android:key="textToSpeechSettings"
       android:title="@string/textToSpeechTitle"

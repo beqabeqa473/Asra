@@ -1,5 +1,7 @@
 package info.spielproject.spiel
 
+import actors.Actor._
+
 import android.content.{ContentUris, Context, Intent}
 import android.media.AudioManager
 import android.util.Log
@@ -17,13 +19,15 @@ object StateReactor {
 
   private var service:SpielService = null
 
+  private var audioManager:AudioManager = null
+
   /**
    * Initializes based on the specified <code>SpielService</code>, setting initial states.
   */
 
   def apply(svc:SpielService) {
     service = svc
-    val audioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
+    audioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
     ringerOn = audioManager.getRingerMode != AudioManager.RINGER_MODE_SILENT
   }
 
@@ -58,15 +62,26 @@ object StateReactor {
       callerIDRepeaterID = TTS.speakEvery(3, number)
   }
 
+  private var preCallMediaVolume:Option[Int] = None
+
   onCallAnswered { () =>
     TTS.stop
     TTS.stopRepeatedSpeech(callerIDRepeaterID)
     callerIDRepeaterID = ""
+    if(Preferences.increaseInCallVolume) {
+      val pcmv = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+      preCallMediaVolume = Some(pcmv)
+      audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0)
+    }
   }
 
   onCallIdle { () =>
     TTS.stopRepeatedSpeech(callerIDRepeaterID)
     callerIDRepeaterID = ""
+    preCallMediaVolume.foreach { pcmv =>
+      audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, pcmv, 0)
+      preCallMediaVolume = None
+    }
   }
 
   // Manage speaking of occasional voicemail notification.

@@ -1,6 +1,7 @@
 package info.spielproject.spiel
 
-import android.content.SharedPreferences
+import android.content.{Context, SharedPreferences}
+import android.media.AudioManager
 import android.preference.PreferenceManager
 import android.util.Log
 
@@ -15,6 +16,8 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
   private var prefs:SharedPreferences = null
 
+  private var audioManager:AudioManager = null
+
   /**
    * Initialized based on the provided <code>SpielService</code>.
   */
@@ -22,6 +25,7 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
   def apply(service:SpielService) {
     prefs = PreferenceManager.getDefaultSharedPreferences(service)
     prefs.registerOnSharedPreferenceChangeListener(this)
+    audioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
   }
 
   /**
@@ -75,6 +79,12 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
   */
 
   def managePunctuationSpeech = prefs.getBoolean("managePunctuationSpeech", false)
+
+  /**
+   * Indicates whether in-call volume of speech is to be increased.
+  */
+
+  def increaseInCallVolume = prefs.getBoolean("increaseInCallVolume", false)
 
   /**
    * Indicates whether the talking caller ID is enabled.
