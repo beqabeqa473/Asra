@@ -4,7 +4,7 @@ package activities
 import collection.JavaConversions._
 
 import android.app.{Activity, AlertDialog, ListActivity, TabActivity}
-import android.content.{ContentUris, Context, Intent}
+import android.content.{ContentUris, Context, DialogInterface, Intent}
 import android.database.Cursor
 import android.os.Bundle
 import android.preference.{ListPreference, Preference, PreferenceActivity}
@@ -155,9 +155,19 @@ class Scripts extends ListActivity with Refreshable {
     c.close()
     item.getItemId match {
       case R.id.delete =>
-        getContentResolver.delete(uri, null, null)
-        script.foreach(_.uninstall())
-        cursor.requery()
+        script.foreach { s =>
+          new AlertDialog.Builder(this)
+          .setMessage(getString(R.string.confirmDelete, s.pkg))
+          .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener {
+            def onClick(i:DialogInterface, what:Int) {
+              getContentResolver.delete(uri, null, null)
+              s.uninstall()
+              cursor.requery()
+            }
+          })
+          .setNegativeButton(getString(R.string.no), null)
+          .show()
+        }
       case R.id.copyToExternalStorage =>
         script.foreach { s =>
           val filename = s.writeToExternalStorage()

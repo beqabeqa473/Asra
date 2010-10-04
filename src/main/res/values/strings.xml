@@ -77,6 +77,7 @@
   <string name="delete">Delete</string>
   <string name="copyToExternalStorage">Copy to external storage</string>
 
+  <string name="confirmDelete">Are you sure you wish to delete the script for package %1$s?</string>
   <string name="scriptCopied">Script copied to %1$s.</string>
 
   <string name="newOrUpdatedScripts">New or updated scripts are available. Please choose which you wish to install.</string>
