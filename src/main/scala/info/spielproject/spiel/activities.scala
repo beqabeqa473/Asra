@@ -3,7 +3,7 @@ package activities
 
 import collection.JavaConversions._
 
-import android.app.{Activity, ListActivity, TabActivity}
+import android.app.{Activity, AlertDialog, ListActivity, TabActivity}
 import android.content.{ContentUris, Context, Intent}
 import android.database.Cursor
 import android.os.Bundle
@@ -119,12 +119,12 @@ class Scripts extends ListActivity with Refreshable {
   private var cursor:Cursor = null
 
   def refresh() = {
-    cursor = managedQuery(scripting.Provider.uri, scripting.Provider.columns.projection, null, null, null)
+    cursor = managedQuery(Provider.uri, Provider.columns.projection, null, null, null)
     setListAdapter(
       new SimpleCursorAdapter(this,
         R.layout.script_row,
         cursor,
-        List(scripting.Provider.columns.pkg).toArray,
+        List(Provider.columns.pkg).toArray,
         List(R.id.script_title).toArray
       )
     )
@@ -145,20 +145,28 @@ class Scripts extends ListActivity with Refreshable {
 
   override def onContextItemSelected(item:MenuItem) = {
     val selection = item.getMenuInfo.asInstanceOf[AdapterView.AdapterContextMenuInfo].id
+    val uri = ContentUris.withAppendedId(Provider.uri, selection)
+    val c = getContentResolver.query(uri, null, null, null, null)
+    c.moveToFirst()
+    val script:Option[Script] = if(c.isAfterLast)
+      None
+    else
+      Some(new Script(this, c))
+    c.close()
     item.getItemId match {
       case R.id.delete =>
-        val uri = ContentUris.withAppendedId(scripting.Provider.uri, selection)
-        val c = getContentResolver.query(uri, null, null, null, null)
-        c.moveToFirst()
-        while(!c.isAfterLast) {
-          val script = new scripting.Script(this, cursor)
-          script.uninstall()
-          c.moveToNext()
-        }
-        c.close()
         getContentResolver.delete(uri, null, null)
+        script.foreach(_.uninstall())
         cursor.requery()
-      case R.id.copyToSDCard =>
+      case R.id.copyToExternalStorage =>
+        script.foreach { s =>
+          val filename = s.writeToExternalStorage()
+          new AlertDialog.Builder(this)
+          .setMessage(getString(R.string.scriptCopied, filename))
+          .setPositiveButton(getString(R.string.ok), null)
+          .show()
+          
+        }
     }
     true
   }

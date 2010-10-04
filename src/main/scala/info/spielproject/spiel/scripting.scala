@@ -1,7 +1,7 @@
 package info.spielproject.spiel
 package scripting
 
-import java.io.{File, FileInputStream, FileOutputStream, InputStream}
+import java.io.{File, FileInputStream, FileOutputStream, FileWriter, InputStream}
 
 import android.content.{BroadcastReceiver, ContentValues, Context => AContext, Intent}
 import android.database.Cursor
@@ -134,6 +134,14 @@ class Script(
   }
 
   override val toString = pkg
+
+  def writeToExternalStorage() = {
+    val file = new File(Environment.getExternalStorageDirectory+"/spiel/scripts/"+pkg+".js")
+    val writer = new FileWriter(file, false)
+    writer.write(code)
+    writer.close()
+    file.getAbsolutePath
+  }
 
   def uninstall() {
     handlers.foreach(Handler.unregisterHandler(_))

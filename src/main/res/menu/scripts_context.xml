@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
   <item android:id="@+id/delete" android:title="@string/delete"/>
-  <item android:id="@+id/copyToSDCard" android:title="@string/copyToSDCard"/>
+  <item android:id="@+id/copyToExternalStorage" android:title="@string/copyToExternalStorage"/>
 </menu>

@@ -75,16 +75,23 @@
 
   <!-- Script context menu -->
   <string name="delete">Delete</string>
-  <string name="copyToSDCard">Copy to SD card</string>
+  <string name="copyToExternalStorage">Copy to external storage</string>
+
+  <string name="scriptCopied">Script copied to %1$s.</string>
 
   <string name="newOrUpdatedScripts">New or updated scripts are available. Please choose which you wish to install.</string>
   <string name="selectAll">Select all</string>
   <string name="deselectAll">Deselect all</string>
   <string name="install">Install</string>
-  <string name="cancel">Cancel</string>
 
   <!-- Menu items -->
   <string name="refresh">Refresh</string>
+
+  <!-- Dialog buttons -->
+  <string name="ok">OK</string>
+  <string name="cancel">Cancel</string>
+  <string name="yes">Yes</string>
+  <string name="no">No</string>
 
   <!-- Punctuation -->
 
