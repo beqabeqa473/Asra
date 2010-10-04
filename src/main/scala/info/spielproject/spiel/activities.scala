@@ -4,11 +4,12 @@ package activities
 import collection.JavaConversions._
 
 import android.app.{Activity, ListActivity, TabActivity}
-import android.content.{Context, Intent}
+import android.content.{ContentUris, Context, Intent}
+import android.database.Cursor
 import android.os.Bundle
 import android.preference.{ListPreference, Preference, PreferenceActivity}
 import android.util.Log
-import android.view.{Menu, MenuInflater, MenuItem, View, ViewGroup}
+import android.view.{ContextMenu, Menu, MenuInflater, MenuItem, View, ViewGroup}
 import android.view.accessibility.AccessibilityEvent
 import android.widget.{AdapterView, ArrayAdapter, Button, CheckBox, ListView, TabHost}
 
@@ -111,11 +112,14 @@ class Scripts extends ListActivity with Refreshable {
 
   override def onCreate(bundle:Bundle) {
     super.onCreate(bundle)
+    registerForContextMenu(getListView)
     refresh()
   }
 
+  private var cursor:Cursor = null
+
   def refresh() = {
-    val cursor = managedQuery(scripting.Provider.uri, scripting.Provider.columns.projection, null, null, null)
+    cursor = managedQuery(scripting.Provider.uri, scripting.Provider.columns.projection, null, null, null)
     setListAdapter(
       new SimpleCursorAdapter(this,
         R.layout.script_row,
@@ -133,6 +137,30 @@ class Scripts extends ListActivity with Refreshable {
     menu = Some(m)
     new MenuInflater(this).inflate(R.menu.scripts, menu.get)
     super.onCreateOptionsMenu(m)
+  }
+
+  override def onCreateContextMenu(menu:ContextMenu, v:View, info:ContextMenu.ContextMenuInfo) {
+    new MenuInflater(this).inflate(R.menu.scripts_context, menu)
+  }
+
+  override def onContextItemSelected(item:MenuItem) = {
+    val selection = item.getMenuInfo.asInstanceOf[AdapterView.AdapterContextMenuInfo].id
+    item.getItemId match {
+      case R.id.delete =>
+        val uri = ContentUris.withAppendedId(scripting.Provider.uri, selection)
+        val c = getContentResolver.query(uri, null, null, null, null)
+        c.moveToFirst()
+        while(!c.isAfterLast) {
+          val script = new scripting.Script(this, cursor)
+          script.uninstall()
+          c.moveToNext()
+        }
+        c.close()
+        getContentResolver.delete(uri, null, null)
+        cursor.requery()
+      case R.id.copyToSDCard =>
+    }
+    true
   }
 
 }

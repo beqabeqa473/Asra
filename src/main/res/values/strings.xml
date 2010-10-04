@@ -73,6 +73,10 @@
 
   <string name="scripts">Scripts</string>
 
+  <!-- Script context menu -->
+  <string name="delete">Delete</string>
+  <string name="copyToSDCard">Copy to SD card</string>
+
   <string name="newOrUpdatedScripts">New or updated scripts are available. Please choose which you wish to install.</string>
   <string name="selectAll">Select all</string>
   <string name="deselectAll">Deselect all</string>
