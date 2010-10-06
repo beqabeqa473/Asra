@@ -8,16 +8,13 @@ import android.os.Build.VERSION
 import android.speech.tts.TextToSpeech
 import android.util.Log
 
-import com.google.tts.TextToSpeechBeta
-import TextToSpeechBeta._
-
 /**
  * Singleton facade around TTS functionality.
 */
 
-object TTS extends OnInitListener with OnUtteranceCompletedListener {
+object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceCompletedListener {
 
-  private var tts:TextToSpeechBeta = null
+  private var tts:TextToSpeech = null
 
   private var context:Context = null
 
@@ -26,15 +23,11 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
   */
 
   def apply(c:Context) {
-    tts = new TextToSpeechBeta(c, this)
+    tts = new TextToSpeech(c, this)
     context = c
   }
 
-  private var usingTTSExtended = false
-
-  def onInit(status:Int, version:Int) {
-    usingTTSExtended = version != -1
-    Log.d("spiel", "Initialized TTS: "+version+", "+usingTTSExtended)
+  def onInit(status:Int) {
     tts.setLanguage(java.util.Locale.getDefault)
     engine = Preferences.speechEngine
     tts.setOnUtteranceCompletedListener(this)
@@ -54,15 +47,7 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
 
   private def defaultEngineV8 = {
     Log.d("spiel", "defaultEngineV8")
-    if(usingTTSExtended)
-      defaultEngineExtended
-    else
-      tts.getDefaultEngine
-  }
-
-  private def defaultEngineExtended = {
-    Log.d("spiel", "defaultEngineExtended")
-    tts.getDefaultEngineExtended
+    tts.getDefaultEngine
   }
 
   /**
@@ -83,17 +68,7 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
 
   private def setEngineV8(e:String) {
     Log.d("spiel", "TTS.setEngineV8("+e+")")
-    if(usingTTSExtended)
-      setEngineExtended(e)
-    else if(tts.setEngineByPackageName(e) != TextToSpeech.SUCCESS) {
-      tts.setEngineByPackageName(defaultEngine)
-      Log.d("spiel", "Error setting speech engine. Reverting to "+defaultEngine)
-    }
-  }
-
-  private def setEngineExtended(e:String) {
-    Log.d("spiel", "setEngineExtended("+e+")")
-    if(tts.setEngineByPackageNameExtended(e) != TextToSpeechBeta.SUCCESS) {
+    if(tts.setEngineByPackageName(e) != TextToSpeech.SUCCESS) {
       tts.setEngineByPackageName(defaultEngine)
       Log.d("spiel", "Error setting speech engine. Reverting to "+defaultEngine)
     }
@@ -170,7 +145,8 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
 
   def speak(text:String, flush:Boolean) {
     if(!SpielService.enabled) return
-    val mode = if(flush) QUEUE_FLUSH else QUEUE_ADD
+    val mode = if(flush) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD
+    //if(flush) stop
     if(text.length == 0)
       tts.speak("blank", mode, null)
     else if(text.length == 1 && text >= "A" && text <= "Z") {
@@ -214,7 +190,7 @@ object TTS extends OnInitListener with OnUtteranceCompletedListener {
     Log.d("spiel", "Speaking: "+text)
     val params = new java.util.HashMap[String, String]()
     params.put("utteranceId", uid) // TODO: Why won't Scala see Engine?
-    tts.speak(text, QUEUE_FLUSH, params).toString
+    tts.speak(text, TextToSpeech.QUEUE_FLUSH, params).toString
   }
 
   private var repeatedSpeech = collection.mutable.Map[String, Tuple2[Int, String]]()

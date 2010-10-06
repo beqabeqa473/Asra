@@ -10,9 +10,6 @@ class SpielProject(info: ProjectInfo) extends AndroidProject(info) with Markdown
 
   override def androidPlatformName = "android-8"
 
-  val ttsVersion = "3.0_market"
-  val tts = "google" % "tts" % ttsVersion from "http://eyes-free.googlecode.com/files/TTS_library_stub_"+ttsVersion+".jar"
-
   val stacktrace = "com.nullwire" % "trace" % "latest" from "http://android-remote-stacktrace.googlecode.com/files/trace.jar"
 
   val rhino = "rhino" % "js" % "1.7R2" from "http://spielproject.info/attachments/download/3/js.jar"
@@ -21,7 +18,6 @@ class SpielProject(info: ProjectInfo) extends AndroidProject(info) with Markdown
   val dispatchLiftJson = "net.databinder" %% "dispatch-lift-json" % "0.7.4"
 
   override def proguardOption = """
-    -keep class com.google.tts.** { *; }
     -keep class info.spielproject.spiel.** { *; }
   """
 
