@@ -11,7 +11,7 @@ import android.preference.{ListPreference, Preference, PreferenceActivity}
 import android.util.Log
 import android.view.{ContextMenu, Menu, MenuInflater, MenuItem, View, ViewGroup}
 import android.view.accessibility.AccessibilityEvent
-import android.widget.{AdapterView, ArrayAdapter, Button, CheckBox, ListView, TabHost}
+import android.widget.{AdapterView, ArrayAdapter, Button, CheckBox, ListView, RadioButton, RadioGroup, TabHost}
 
 import scripting._
 
@@ -108,19 +108,39 @@ trait Refreshable {
 
 import android.widget.SimpleCursorAdapter
 
-class Scripts extends ListActivity with Refreshable {
+class Scripts extends Activity with Refreshable with RadioGroup.OnCheckedChangeListener {
+
+  private var listView:ListView = null
+
+  private var system = true
 
   override def onCreate(bundle:Bundle) {
     super.onCreate(bundle)
-    registerForContextMenu(getListView)
+    setContentView(R.layout.scripts)
+    listView = findViewById(R.id.scripts).asInstanceOf[ListView]
+    registerForContextMenu(listView)
+    val mode = findViewById(R.id.mode).asInstanceOf[RadioGroup]
+    mode.setOnCheckedChangeListener(this)
+    mode.check(R.id.system)
+  }
+
+  def onCheckedChanged(group:RadioGroup, id:Int) {
+    system = id == R.id.system
     refresh()
+  }
+
+  def refresh() = {
+    if(system)
+      refreshSystem()
+    else
+      refreshUser()
   }
 
   private var cursor:Cursor = null
 
-  def refresh() = {
+  private def refreshSystem() {
     cursor = managedQuery(Provider.uri, Provider.columns.projection, null, null, null)
-    setListAdapter(
+    listView.setAdapter(
       new SimpleCursorAdapter(this,
         R.layout.script_row,
         cursor,
@@ -129,6 +149,17 @@ class Scripts extends ListActivity with Refreshable {
       )
     )
     BazaarProvider.checkRemoteScripts()
+  }
+
+  private def refreshUser() {
+    Log.d("spielscript", "refreshUser(): "+Scripter.userScripts)
+    listView.setAdapter(
+      new ArrayAdapter[Script](
+        this,
+        android.R.layout.simple_list_item_1,
+        Scripter.userScripts
+      )
+    )
   }
 
   private var menu:Option[Menu] = None
@@ -140,43 +171,63 @@ class Scripts extends ListActivity with Refreshable {
   }
 
   override def onCreateContextMenu(menu:ContextMenu, v:View, info:ContextMenu.ContextMenuInfo) {
-    new MenuInflater(this).inflate(R.menu.scripts_context, menu)
+    val menuID = if(system) R.menu.system_scripts_context else R.menu.user_scripts_context
+    new MenuInflater(this).inflate(menuID, menu)
   }
 
   override def onContextItemSelected(item:MenuItem) = {
-    val selection = item.getMenuInfo.asInstanceOf[AdapterView.AdapterContextMenuInfo].id
-    val uri = ContentUris.withAppendedId(Provider.uri, selection)
-    val c = getContentResolver.query(uri, null, null, null, null)
-    c.moveToFirst()
-    val script:Option[Script] = if(c.isAfterLast)
-      None
-    else
-      Some(new Script(this, c))
-    c.close()
-    item.getItemId match {
-      case R.id.delete =>
-        script.foreach { s =>
+    if(system) {
+      val selection = item.getMenuInfo.asInstanceOf[AdapterView.AdapterContextMenuInfo].id
+      val uri = ContentUris.withAppendedId(Provider.uri, selection)
+      val c = getContentResolver.query(uri, null, null, null, null)
+      c.moveToFirst()
+      val script:Option[Script] = if(c.isAfterLast)
+        None
+      else
+        Some(new Script(this, c))
+      c.close()
+      item.getItemId match {
+        case R.id.copyToExternalStorage =>
+          script.foreach { s =>
+            val filename = s.writeToExternalStorage()
+            new AlertDialog.Builder(this)
+            .setMessage(getString(R.string.scriptCopied, filename))
+            .setPositiveButton(getString(R.string.ok), null)
+            .show()
+            
+          }
+        case R.id.delete =>
+          script.foreach { s =>
+            new AlertDialog.Builder(this)
+            .setMessage(getString(R.string.confirmDelete, s.pkg))
+            .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener {
+              def onClick(i:DialogInterface, what:Int) {
+                getContentResolver.delete(uri, null, null)
+                s.uninstall()
+                cursor.requery()
+              }
+            })
+            .setNegativeButton(getString(R.string.no), null)
+            .show()
+          }
+      }
+    } else {
+      val script = Scripter.userScripts(item.getMenuInfo.asInstanceOf[AdapterView.AdapterContextMenuInfo].position)
+      item.getItemId match {
+        case R.id.reload => script.reload()
+        case R.id.delete =>
           new AlertDialog.Builder(this)
-          .setMessage(getString(R.string.confirmDelete, s.pkg))
+          .setMessage(getString(R.string.confirmDelete, script.pkg))
           .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener {
             def onClick(i:DialogInterface, what:Int) {
-              getContentResolver.delete(uri, null, null)
-              s.uninstall()
-              cursor.requery()
+              script.delete()
+              script.uninstall()
+              refreshUser()
             }
           })
           .setNegativeButton(getString(R.string.no), null)
           .show()
-        }
-      case R.id.copyToExternalStorage =>
-        script.foreach { s =>
-          val filename = s.writeToExternalStorage()
-          new AlertDialog.Builder(this)
-          .setMessage(getString(R.string.scriptCopied, filename))
-          .setPositiveButton(getString(R.string.ok), null)
-          .show()
-          
-        }
+      }
     }
     true
   }

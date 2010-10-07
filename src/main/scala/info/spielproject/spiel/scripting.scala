@@ -38,12 +38,13 @@ class RhinoCallback(f:Function) extends Callback {
 
 class Script(
   context:AContext,
-  val code:String,
+  private var code:String,
   filename:String = "",
   val pkg:String = "",
   val id:Option[Int] = None,
   val remoteID:Option[String] = None,
-  val version:Int = 0
+  val version:Int = 0,
+  asset:Boolean = false
 ) {
 
   def this(context:AContext, c:Cursor) = this(
@@ -56,6 +57,22 @@ class Script(
     else Some(c.getInt(c.getColumnIndex(Provider.columns._id))),
     Option(c.getString(c.getColumnIndex(Provider.columns.remoteID))),
     c.getInt(c.getColumnIndex(Provider.columns.version))
+  )
+
+  def this(context:AContext, is:InputStream, filename:String, asset:Boolean) = this(
+    context,
+    Script.readAllAvailable(is),
+    filename,
+    filename.substring(0, filename.lastIndexOf(".")),
+    None, None, 0, asset
+  )
+
+  def this(context:AContext, filename:String, asset:Boolean) = this(
+    context,
+    if(asset)
+      context.getAssets.open(filename)
+    else new FileInputStream(new File(Scripter.scriptsDir, filename)),
+    filename, asset = asset
   )
 
   def run() = {
@@ -143,12 +160,34 @@ class Script(
     file.getAbsolutePath
   }
 
+  def reload() {
+    val inputStream = if(asset)
+      context.getAssets.open(filename)
+    else new FileInputStream(new File(Scripter.scriptsDir, filename))
+    code = Script.readAllAvailable(inputStream)
+    run()
+  }
+
+  def delete() {
+    if(!asset)
+      new File(Scripter.scriptsDir, filename).delete()
+  }
+
   def uninstall() {
     handlers.foreach(Handler.unregisterHandler(_))
     handlers = Nil
     Scripter.unsetStringsFor(pkg)
   }
 
+}
+
+object Script {
+  private def readAllAvailable(is:InputStream):String = {
+    val a = is.available
+    val b = new Array[Byte](a)
+    is.read(b)
+    new String(b)
+  }
 }
 
 /**
@@ -165,11 +204,18 @@ object Scripter {
 
   private[scripting] var script:Option[Script] = None
 
+  private var _scriptsDir:File = null
+
+  def scriptsDir = _scriptsDir
+
+  private var service:SpielService = null
+
   /**
    * Initialize the scripting subsystem based on the specified service.
   */
 
-  def apply(service:SpielService)  {
+  def apply(svc:SpielService)  {
+    service = svc
     myCx = Context.enter
     myCx.setOptimizationLevel(-1)
     myScope = myCx.initStandardObjects()
@@ -184,42 +230,16 @@ object Scripter {
     val wrappedTTS = Context.javaToJS(TTS, myScope)
     ScriptableObject.putProperty(myScope, "TTS", wrappedTTS)
 
-    // Run the given code as a string, reporting the specified filename in 
-    // warnings and errors.
-    def run(code:String, filename:String) = {
-      val p = filename.substring(0, filename.lastIndexOf("."))
-      val pkg = if(p.startsWith("_")) p.substring(1, p.size) else p
-      script = Some(new Script(service, code, filename, pkg))
-      script.map(_.run())
-    }
-
-    // Handy function to read all data from a stream into a string.
-    def readAllAvailable(is:InputStream):String = {
-      val a = is.available
-      val b = new Array[Byte](a)
-      is.read(b)
-      new String(b)
-    }
-
     val spielDir = new File(Environment.getExternalStorageDirectory, "spiel")
     if(!spielDir.isDirectory) spielDir.mkdir
-    val scriptsDir = new File(spielDir, "scripts")
+    _scriptsDir = new File(spielDir, "scripts")
     if(!scriptsDir.isDirectory) scriptsDir.mkdir
 
+    new Script(service, "scripts/api.js", true).run()
+
     val assets = service.getAssets
-
-    // Run a script, optionally directly from the assets folder in the package.
-    def runScript(f:String, asset:Boolean = false) = {
-      val is = if(asset) 
-        assets.open("scripts/"+f)
-      else
-        new FileInputStream(new File(scriptsDir, f))
-      run(readAllAvailable(is), f)
-    }
-
-    runScript("api.js", true)
     for(fn <- assets.list("scripts") if(fn != "api.js")) {
-      runScript(fn, true)
+      new Script(service, fn, true).run()
     }
 
     val cursor = service.getContentResolver.query(Provider.uri, Provider.columns.projection, null, null, null)
@@ -234,22 +254,20 @@ object Scripter {
 
     // Load scripts from /spiel/scripts folder on SD card.
 
-    try {
-      val list = scriptsDir.list()
-      if(list != null) {
-        Log.d("spiel", "Got local scripts: "+list)
-        list.foreach(fn => runScript(fn, false))
-      }
-    } catch {
-      // TODO: Handle this better. We'll launch, just without scripts.
-      case e => Log.d("spiel", e.getMessage)
-    }
+    userScripts.foreach(_.run())
 
     true
   }
 
   def onDestroy = {
     Context.exit
+  }
+
+  def userScripts = {
+    val list = scriptsDir.list()
+    Log.d("spielscript", "Listing contents of "+scriptsDir+": "+list.toList)
+    if(list == null) List[Script]()
+    else list.toList.map(new Script(service, _, false))
   }
 
   def registerHandlerFor(cls:String, scr:Object) = script.map(_.registerHandlerFor(cls, scr))

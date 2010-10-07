@@ -73,9 +73,13 @@
 
   <string name="scripts">Scripts</string>
 
+  <string name="system">System</string>
+  <string name="user">User</string>
+
   <!-- Script context menu -->
   <string name="delete">Delete</string>
   <string name="copyToExternalStorage">Copy to external storage</string>
+  <string name="reload">Reload</string>
 
   <string name="confirmDelete">Are you sure you wish to delete the script for package %1$s?</string>
   <string name="scriptCopied">Script copied to %1$s.</string>
