@@ -2,6 +2,7 @@ package info.spielproject.spiel
 package scripting
 
 import java.io.{File, FileInputStream, FileOutputStream, FileWriter, InputStream}
+import java.lang.Integer
 
 import android.content.{BroadcastReceiver, ContentValues, Context => AContext, Intent}
 import android.database.Cursor
@@ -131,6 +132,7 @@ class Script(
     val resolver = context.getContentResolver
     val values = new ContentValues
     values.put(Provider.columns.pkg, pkg)
+    values.put(Provider.columns.label, Script.labelFor(pkg, context))
     values.put(Provider.columns.code, code)
     values.put(Provider.columns.remoteID, remoteID.getOrElse(null))
     values.put(Provider.columns.version, new java.lang.Integer(version))
@@ -150,7 +152,7 @@ class Script(
     }.getOrElse(resolver.insert(Provider.uri, values))
   }
 
-  override val toString = pkg
+  override val toString = Script.labelFor(pkg, context)
 
   def writeToExternalStorage() = {
     val file = new File(Environment.getExternalStorageDirectory+"/spiel/scripts/"+pkg+".js")
@@ -182,12 +184,23 @@ class Script(
 }
 
 object Script {
+
   private def readAllAvailable(is:InputStream):String = {
     val a = is.available
     val b = new Array[Byte](a)
     is.read(b)
     new String(b)
   }
+
+  def labelFor(pkg:String, c:AContext = Scripter.service) = {
+    try {
+      val pm = c.getPackageManager
+      pm.getApplicationInfo(pkg, 0).loadLabel(pm).toString
+    } catch {
+      case _ => pkg
+    }
+  }
+
 }
 
 /**
@@ -208,7 +221,7 @@ object Scripter {
 
   def scriptsDir = _scriptsDir
 
-  private var service:SpielService = null
+  private[scripting] var service:SpielService = null
 
   /**
    * Initialize the scripting subsystem based on the specified service.
@@ -358,17 +371,18 @@ object Provider {
 
     val _id = "_id"
     val pkg = "pkg"
+    val label = "label"
     val code = "code"
     val remoteID = "remote_id"
     val version = "version"
 
-    val projection = List(_id, pkg, code, remoteID, version).toArray
+    val projection = List(_id, pkg, label, code, remoteID, version).toArray
 
     val projectionMap = Map(projection.map { k =>
       k -> k
     }:_*)
 
-    val defaultSortOrder = pkg
+    val defaultSortOrder = label
 
   }
 
@@ -379,16 +393,39 @@ class Provider extends ContentProvider with AbstractProvider {
 
   private val databaseName = "spiel.db"
 
-  private class DatabaseHelper(context:AContext) extends SQLiteOpenHelper(context, databaseName, null, 1) {
+  private class DatabaseHelper(context:AContext) extends SQLiteOpenHelper(context, databaseName, null, 2) {
 
     override def onCreate(db:SQLiteDatabase) {
       val c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='scripts'", null);
       if(c.getCount == 0) {
-        db.execSQL("CREATE TABLE scripts (_id INTEGER PRIMARY KEY AUTOINCREMENT, pkg TEXT NOT NULL, code TEXT NOT NULL, remote_id TEXT DEFAULT NULL, version INT DEFAULT NULL);")
+        db.execSQL("CREATE TABLE scripts (_id INTEGER PRIMARY KEY AUTOINCREMENT, pkg TEXT NOT NULL, label TEXT NOT NULL, description TEXT NOT NULL DEFAULT '', code TEXT NOT NULL, remote_id TEXT NOT NULL, version INT NOT NULL);")
       }
     }
 
     override def onUpgrade(db:SQLiteDatabase, oldVersion:Int, newVersion:Int) {
+      Log.d("spielup", "On upgrade from "+oldVersion+" to "+newVersion)
+      if(oldVersion < 2) {
+        db.execSQL("CREATE TABLE tmp (_id, pkg, code, remote_id, version);")
+        db.execSQL("INSERT into TMP select _id, pkg, code, remote_id, version from scripts;")
+        db.execSQL("DROP TABLE scripts;")
+        db.execSQL("CREATE TABLE scripts (_id INTEGER PRIMARY KEY AUTOINCREMENT, pkg TEXT NOT NULL, label TEXT NOT NULL, code TEXT NOT NULL, description TEXT NOT NULL default '', remote_id TEXT NOT NULL, version INT NOT NULL);")
+        val c = db.rawQuery("SELECT * FROM tmp;", null)
+        c.moveToFirst()
+        while(!c.isAfterLast) {
+          val values = new ContentValues()
+          values.put(Provider.columns._id, new Integer(c.getInt(c.getColumnIndex(Provider.columns._id))))
+          val pkg = c.getString(c.getColumnIndex(Provider.columns.pkg))
+          values.put(Provider.columns.pkg, pkg)
+          values.put(Provider.columns.label, Script.labelFor(pkg, getContext))
+          values.put(Provider.columns.code, c.getString(c.getColumnIndex(Provider.columns.code)))
+          values.put(Provider.columns.remoteID, c.getString(c.getColumnIndex(Provider.columns.remoteID)))
+          values.put(Provider.columns.version, new Integer(c.getInt(c.getColumnIndex(Provider.columns.version))))
+          db.insert("scripts", null, values)
+          c.moveToNext()
+        }
+        c.close()
+        db.execSQL("DROP TABLE tmp;")
+      }
     }
 
   }
@@ -431,9 +468,7 @@ class Provider extends ContentProvider with AbstractProvider {
     else if(!collectionURI_?(u)) 
       throw new IllegalArgumentException("Unknown URI: "+u)
 
-    Log.d("spiel", "Got values: "+values)
     val rowID = db.insert(tableName, null, values)
-    Log.d("spiel", "Row ID: "+rowID)
     if(rowID > 0) {
       val ur = ContentUris.withAppendedId(uri, rowID)
       getContext().getContentResolver().notifyChange(ur, null)
@@ -492,14 +527,16 @@ class BazaarProvider extends ContentProvider with AbstractProvider {
 
   def onCreate() = true
 
-  private val http = new Http
+  private var http = new Http
   private val apiRoot = :/("bazaar.spielproject.info") / "api" / "v1" <:< Map("Accept" -> "application/json")
 
   private def request(req:Request)(f:(JValue) => Unit) = {
     try {
       http(req ># { v => f(v) } )
     } catch {
-      case e => Log.d("spiel", e.getMessage)
+      case e =>
+        Log.d("spiel", e.getMessage)
+        http = new Http
     }
   }
 
