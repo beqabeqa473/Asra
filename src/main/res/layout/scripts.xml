@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
+
+  <RadioGroup
+    android:id="@+id/mode"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
+
+    <RadioButton
+      android:id="@+id/system"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/system"/>
+
+    <RadioButton
+      android:id="@+id/user"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/user"/>
+
+  </RadioGroup>
+
+  <ScrollView
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
+    <ListView
+      android:id="@+id/scripts"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"/>
+  </ScrollView>
+
+</LinearLayout>

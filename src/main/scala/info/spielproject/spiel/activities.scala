@@ -144,7 +144,7 @@ class Scripts extends Activity with Refreshable with RadioGroup.OnCheckedChangeL
       new SimpleCursorAdapter(this,
         R.layout.script_row,
         cursor,
-        List(Provider.columns.pkg).toArray,
+        List(Provider.columns.label).toArray,
         List(R.id.script_title).toArray
       )
     )
