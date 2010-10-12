@@ -15,6 +15,10 @@ function nextShouldNotInterrupt() {
   Handler.nextShouldNotInterrupt();
 }
 
+function tick() {
+  TTS.tick()
+}
+
 function forClass(cls, scr) {
   if(cls[0] == ".")
     cls = __pkg__+cls;

@@ -34,6 +34,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     this.rate = Preferences.rateScale
     this.pitch = Preferences.pitchScale
     speak(context.getString(R.string.welcomeMsg), true)
+    tts.addEarcon("tick", "info.spielproject.spiel", R.raw.tick)
   }
 
   /**
@@ -174,6 +175,12 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     speak(list.head, flush)
     list.tail.foreach { str => speak(str, false) }
   }
+
+  /**
+   * Play a tick.
+  */
+
+  def tick() = tts.playEarcon("tick", 0, null)
 
   /**
    * Stops speech.
