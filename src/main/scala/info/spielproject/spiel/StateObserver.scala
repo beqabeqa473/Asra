@@ -53,6 +53,14 @@ object StateObserver {
 
     registerReceiver((c, i) => screenOff() , Intent.ACTION_SCREEN_OFF :: Nil)
 
+    registerReceiver({ (c, i) =>
+      val bluetooth = i.getIntExtra("android.bluetooth.headset.extra.STATE", -1)
+      val on = i.getIntExtra("state", 0) == 1 || bluetooth == 2
+      // Don't generate a callback if bluetooth is connecting.
+      if(bluetooth != 1)
+        headsetStateChanged(on, bluetooth != -1)
+    }, Intent.ACTION_HEADSET_PLUG :: "android.bluetooth.headset.action.STATE_CHANGED" :: Nil)
+
     registerReceiver((c, i) => screenOn(), Intent.ACTION_SCREEN_ON :: Nil)
 
     sensorManager = service.getSystemService(Context.SENSOR_SERVICE).asInstanceOf[SensorManager]
@@ -276,6 +284,29 @@ object StateObserver {
   */
 
   def removeRingerModeChanged(h:(String) => Unit) = ringerModeChangedHandlers = ringerModeChangedHandlers.filterNot(_ == h)
+
+  private var headsetStateChangedHandlers = List[(Boolean, Boolean) => Unit]()
+
+  /**
+   * Registers handler to be run when headset state changes.
+  */
+
+  def onHeadsetStateChanged(h:(Boolean, Boolean) => Unit) = {
+    headsetStateChangedHandlers ::= h
+    h
+  }
+
+  /**
+   * Run registered handlers when headset state changes.
+  */
+
+  def headsetStateChanged(on:Boolean, bluetooth:Boolean) = headsetStateChangedHandlers.foreach { f => f(on, bluetooth) }
+
+  /**
+   * Remove handler from being run when headset state changes.
+  */
+
+  def removeHeadsetStateChanged(h:(Boolean, Boolean) => Unit) = headsetStateChangedHandlers = headsetStateChangedHandlers.filterNot(_ == h)
 
   private var screenOffHandlers = List[() => Unit]()
 

@@ -2,8 +2,9 @@ package info.spielproject.spiel
 
 import actors.Actor._
 
-import android.content.{ContentUris, Context, Intent}
+import android.content.{BroadcastReceiver, ContentUris, Context, Intent, IntentFilter}
 import android.media.AudioManager
+import android.os.Build.VERSION
 import android.util.Log
 
 import scripting._
@@ -64,11 +65,20 @@ object StateReactor {
 
   private var preCallMediaVolume:Option[Int] = None
 
+  private var _inCall = false
+
+  /**
+   * Returns <code>true</code> if in call, <code>false</code> otherwise.
+  */
+
+  def inCall = _inCall
+
   onCallAnswered { () =>
+    _inCall = true
     TTS.stop
     TTS.stopRepeatedSpeech(callerIDRepeaterID)
     callerIDRepeaterID = ""
-    if(Preferences.increaseInCallVolume) {
+    if(Preferences.increaseInCallVolume && !headsetOn && !audioManager.isBluetoothScoOn && !audioManager.isBluetoothA2dpOn && !audioManager.isWiredHeadsetOn) {
       val pcmv = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
       preCallMediaVolume = Some(pcmv)
       audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0)
@@ -76,11 +86,83 @@ object StateReactor {
   }
 
   onCallIdle { () =>
+    _inCall = false
     TTS.stopRepeatedSpeech(callerIDRepeaterID)
     callerIDRepeaterID = ""
+    if(usingSco) {
+      actor {
+        // Wait until dialer sets audio mode so we can alter it for SCO reconnection.
+        Thread.sleep(1000)
+        startBluetoothSco()
+      }
+    }
     preCallMediaVolume.foreach { pcmv =>
       audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, pcmv, 0)
       preCallMediaVolume = None
+    }
+  }
+
+  private var usingSco = false
+
+  private class btReceiver extends BroadcastReceiver {
+
+    val f = new IntentFilter
+    f.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_CHANGED)
+    service.registerReceiver(this, f)
+
+    audioManager.startBluetoothSco()
+
+    private var wasConnected = false
+
+    def cleanup() {
+      if(!inCall) audioManager.setMode(AudioManager.MODE_NORMAL)
+      audioManager.stopBluetoothSco()
+      usingSco = false
+      wasConnected = false
+      service.unregisterReceiver(this)
+    }
+
+    override def onReceive(c:Context, i:Intent) {
+      val state = i.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, AudioManager.SCO_AUDIO_STATE_DISCONNECTED)
+      Log.d("spielhead", "State: "+state)
+      if(state == AudioManager.SCO_AUDIO_STATE_CONNECTED) {
+        usingSco = true
+        Log.d("spielhead", "Connected")
+        audioManager.setMode(AudioManager.MODE_IN_CALL)
+        wasConnected = true
+      } else if(state == AudioManager.SCO_AUDIO_STATE_ERROR) {
+        cleanup()
+      } else if(wasConnected) {
+        cleanup()
+      }
+    }
+  }
+
+  private def startBluetoothSco() = if(VERSION.SDK_INT >= 8 && !audioManager.isBluetoothA2dpOn) {
+    new btReceiver
+  }
+
+  private var headsetOn = false
+
+  onHeadsetStateChanged { (on, bluetooth) =>
+    headsetOn = on
+    if(Preferences.increaseInCallVolume && inCall) {
+      if(on) {
+        preCallMediaVolume.foreach { pcmv =>
+          audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, pcmv, 0)
+        }
+      } else {
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0)
+      }
+    }
+    if(bluetooth) {
+      Log.d("spielhead", "Bluetooth7 event: "+on)
+      if(on) {
+        actor {
+          Thread.sleep(5000)
+          startBluetoothSco()
+        }
+      }
     }
   }
 
