@@ -106,11 +106,12 @@ object StateReactor {
 
   private class btReceiver extends BroadcastReceiver {
 
-    val f = new IntentFilter
-    f.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_CHANGED)
-    service.registerReceiver(this, f)
-
-    audioManager.startBluetoothSco()
+    if(audioManager.isBluetoothScoAvailableOffCall) {
+      val f = new IntentFilter
+      f.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_CHANGED)
+      service.registerReceiver(this, f)
+      audioManager.startBluetoothSco()
+    }
 
     private var wasConnected = false
 
@@ -138,7 +139,7 @@ object StateReactor {
     }
   }
 
-  private def startBluetoothSco() = if(VERSION.SDK_INT >= 8 && !audioManager.isBluetoothA2dpOn) {
+  private def startBluetoothSco() = if(VERSION.SDK_INT >= 8 && !audioManager.isBluetoothA2dpOn && Preferences.useBluetoothSCO) {
     new btReceiver
   }
 

@@ -38,6 +38,12 @@
       android:title="@string/echoByWordTitle"/>
 
     <CheckBoxPreference
+      android:key="useBluetoothSCO"
+      android:defaultValue="false"
+      android:title="@string/useBluetoothSCOTitle"
+      android:summary="@string/useBluetoothSCOSummary"/>
+
+    <CheckBoxPreference
       android:key="fixMultivoice"
       android:defaultValue="false"
       android:title="@string/fixMultivoiceTitle"

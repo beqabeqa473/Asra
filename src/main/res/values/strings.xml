@@ -33,13 +33,14 @@
   <string name="pitchScaleSummary">Factor by which default pitch should be scaled</string>
   <string name="echoByCharTitle">Echo by character</string>
   <string name="echoByWordTitle">Echo by word</string>
+  <string name="useBluetoothSCOTitle">Use Bluetooth SCO</string>
+  <string name="useBluetoothSCOSummary">Route off-call audio through Bluetooth SCO earpieces, requires Android 2.2 or greater (experimental!)</string>
   <string name="fixMultivoiceTitle">Fix multi-voice issue</string>
   <string name="fixMultivoiceSummary">Fix for bug where a different voice is used for speaking single characters in some synthesizers</string>
   <string name="managePunctuationSpeechTitle">Manage punctuation speech</string>
   <string name="managePunctuationSpeechSummary">Delegate speaking of some unhandled punctuation to Spiel</string>
   <string name="increaseInCallVolumeTitle">Increase in-call volume</string>
   <string name="increaseInCallVolumeSummary">Use louder volume for speech during calls</string>
-  <string name="inCallVolumeTitle">In-call volume</string>
   <string name="textToSpeechTitle">Text to Speech settings</string>
   <string name="textToSpeechSummary">Set system-wide TTS properties</string>
 

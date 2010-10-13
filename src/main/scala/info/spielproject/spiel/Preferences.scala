@@ -134,6 +134,12 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
   def sendBacktraces = prefs.getBoolean("sendBacktraces", false)
 
   /**
+   * Indicates whether Bluetooth SCO is to be used when available.
+  */
+
+  def useBluetoothSCO = prefs.getBoolean("useBluetoothSCO", false)
+
+  /**
    * Indicates whether recent <code>AccessibilityEvent</code>s are to be viewed/logged.
   */
 
