@@ -130,7 +130,7 @@ object Handler extends Actor {
   }
 
   // How long to wait before processing a given AccessibilityEvent.
-  private val timeout = 300
+  private val timeout = 200
 
   // Record an event and the time that event is to be presented. This helps 
   // in instances where we receive lots of events and don't necessarily want 
@@ -144,24 +144,24 @@ object Handler extends Actor {
   */
 
   def handle(event:AccessibilityEvent) = {
-    this ! Item(event, System.currentTimeMillis+timeout/2)
+    this ! Item(event, System.currentTimeMillis+timeout)
   }
 
   // This gets fun. First we receive the message passed to an actor, 
   // immediately passing it off to another method.
 
   def act = react {
-    case i:Item => actWithLookahead(i)
+    case i:Item =>
+      // How long should we wait before presenting this event?
+      val delay = i.presentationTime-System.currentTimeMillis
+      // If we must delay then do so.
+      if(delay > 0) Thread.sleep(delay)
+      actWithLookahead(i)
   }
 
   import AccessibilityEvent._
 
   private def actWithLookahead(i:Item):Unit = {
-
-    // How long should we wait before presenting this event?
-    val delay = i.presentationTime-System.currentTimeMillis
-    // If we must delay then do so.
-    if(delay > 0) Thread.sleep(delay)
 
     // Sometimes we want to discard events--if someone is scrolling through 
     // a list too quickly for us to speak, for instance. In those instances, 
@@ -184,20 +184,19 @@ object Handler extends Actor {
     // a short interval and, if we receive a new event, we determine if it 
     // can replace the old event and continue. If we have no new events and 
     // time out, then we simply present what we last received.
-    reactWithin(timeout/2) {
+    reactWithin(timeout) {
       case actors.TIMEOUT =>
         process(i.event)
         act
       case i2:Item =>
         // Do we need to delay before handling this item? If so, do.
-        val delay2 = i2.presentationTime-System.currentTimeMillis
-        if(delay2 > 0) Thread.sleep(delay2)
-        if(shouldDiscardOld(i2.event, i.event)) {
-          //TTS.stop
+        val delay = i2.presentationTime-System.currentTimeMillis
+        if(delay > 0) Thread.sleep(delay)
+        if(shouldDiscardOld(i2.event, i.event))
           actWithLookahead(i2)
-        } else {
+        else {
           process(i.event)
-          actWithLookahead(i2)
+          actWithLookahead(i2.copy(presentationTime = System.currentTimeMillis+timeout))
         }
     }
   }
