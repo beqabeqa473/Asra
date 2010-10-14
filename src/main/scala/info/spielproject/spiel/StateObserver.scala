@@ -51,8 +51,6 @@ object StateObserver {
       ringerModeChanged(mode)
     }, AudioManager.RINGER_MODE_CHANGED_ACTION :: Nil)
 
-    registerReceiver((c, i) => screenOff() , Intent.ACTION_SCREEN_OFF :: Nil)
-
     registerReceiver({ (c, i) =>
       val bluetooth = i.getIntExtra("android.bluetooth.headset.extra.STATE", -1)
       val on = i.getIntExtra("state", 0) == 1 || bluetooth == 2
@@ -60,6 +58,8 @@ object StateObserver {
       if(bluetooth != 1)
         headsetStateChanged(on, bluetooth != -1)
     }, Intent.ACTION_HEADSET_PLUG :: "android.bluetooth.headset.action.STATE_CHANGED" :: Nil)
+
+    registerReceiver((c, i) => screenOff() , Intent.ACTION_SCREEN_OFF :: Nil)
 
     registerReceiver((c, i) => screenOn(), Intent.ACTION_SCREEN_ON :: Nil)
 
