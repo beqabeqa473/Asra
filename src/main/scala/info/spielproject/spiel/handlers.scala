@@ -573,7 +573,7 @@ class Handlers {
           TTS.speakCharacter("*")
         else
           if(e.getAddedCount > 0)
-            TTS.speakCharacter(("" /: e.getText) (_ + _).substring(e.getFromIndex,   e.getFromIndex+e.getAddedCount))
+            TTS.speakCharacter(e.getText.mkString.substring(e.getFromIndex,   e.getFromIndex+e.getAddedCount))
           else if(e.getRemovedCount > 0) {
             val start = e.getFromIndex
             val end = e.getFromIndex+e.getRemovedCount
