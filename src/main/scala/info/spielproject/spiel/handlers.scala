@@ -415,7 +415,7 @@ class Handler(pkg:String, cls:String) {
 
 trait GenericButtonHandler extends Handler {
   onViewFocused { e:AccessibilityEvent =>
-    speak(utterancesFor(e, false)++(Handler.service.getString(R.string.button) :: Nil))
+    speak(Handler.service.getString(R.string.button, utterancesFor(e, false).mkString(": ")))
     true
   }
 }
@@ -429,7 +429,7 @@ class Handlers {
 
   class AlertDialog extends Handler("android.app.AlertDialog") {
     onWindowStateChanged { e:AccessibilityEvent =>
-      speak(Handler.service.getString(R.string.alert) :: utterancesFor(e), true)
+      speak(Handler.service.getString(R.string.alert, utterancesFor(e).mkString(": ")), true)
       nextShouldNotInterrupt
       true
     }
@@ -447,7 +447,7 @@ class Handlers {
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(utterancesFor(e, false)++(Handler.service.getString(R.string.checkbox) :: Nil))
+      speak(Handler.service.getString(R.string.checkbox, utterancesFor(e, false).mkString(": ")))
       true
     }
 
@@ -464,11 +464,10 @@ class Handlers {
   class EditText extends Handler("android.widget.EditText") {
     onViewFocused { e:AccessibilityEvent =>
       if(e.getCurrentItemIndex != -1) {
-        if(!e.isPassword) {
-          speak(utterancesFor(e), false)
-          speak(Handler.service.getString(R.string.editText), false)
-        } else
-          speak(utterancesFor(e)++(Handler.service.getString(R.string.password) :: Nil))
+        if(!e.isPassword)
+          speak(Handler.service.getString(R.string.editText, utterancesFor(e).mkString(": ")), false)
+        else
+          speak(Handler.service.getString(R.string.password, utterancesFor(e).mkString(": ")))
       }
       true
     }
@@ -504,7 +503,7 @@ class Handlers {
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(utterancesFor(e, false)++(Handler.service.getString(R.string.radioButton) :: Nil))
+      speak(Handler.service.getString(R.string.radioButton, utterancesFor(e).mkString(": ")))
       true
     }
 
@@ -512,15 +511,14 @@ class Handlers {
 
   class SearchBox extends Handler("android.app.SearchDialog$SearchAutoComplete") {
     onViewFocused { e:AccessibilityEvent =>
-      speak(utterancesFor(e))
-      speak(Handler.service.getString(R.string.searchText), false)
+      speak(Handler.service.getString(R.string.searchText, utterancesFor(e).mkString(": ")), false)
       true
     }
   }
 
   class Tab extends Handler("android.widget.RelativeLayout") {
     onViewFocused { e:AccessibilityEvent =>
-      speak(utterancesFor(e)++(Handler.service.getString(R.string.tab) :: Nil), true)
+      speak(Handler.service.getString(R.string.tab, utterancesFor(e).mkString(": ")), true)
       true
     }
   }

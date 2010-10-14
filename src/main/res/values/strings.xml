@@ -10,17 +10,17 @@
   <string name="spielOff">Spiel off.</string>
 
   <!-- View names and actions -->
-  <string name="alert">Alert!</string>
-  <string name="button">button</string>
-  <string name="checkbox">checkbox</string>
+  <string name="alert">Alert! %1$s</string>
+  <string name="button">%1$s: button</string>
+  <string name="checkbox">%1$s: checkbox</string>
   <string name="checked">checked</string>
-  <string name="editText">edit text</string>
+  <string name="editText">%1$s: edit text</string>
   <string name="menu">menu</string>
   <string name="notChecked">not checked</string>
-  <string name="password">password</string>
-  <string name="radioButton">radio button</string>
-  <string name="searchText">search text</string>
-  <string name="tab">tab</string>
+  <string name="password">%1$s: password</string>
+  <string name="radioButton">%1$s: radio button</string>
+  <string name="searchText">%1$s: search text</string>
+  <string name="tab">%1$s: tab</string>
 
   <!-- Preferences -->
   <string name="preferences">Preferences</string>
