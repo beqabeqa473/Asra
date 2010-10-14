@@ -562,7 +562,7 @@ class Handlers {
     onViewSelected { e:AccessibilityEvent =>
       //Log.d("spiel", "onViewSelected")
       if(utterancesFor(e).length > 0)
-        speak(utterancesFor(e))
+        speak(Handler.service.getString(R.string.listItem, utterancesFor(e).mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
       true
     }
 
