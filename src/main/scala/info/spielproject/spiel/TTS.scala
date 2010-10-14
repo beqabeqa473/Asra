@@ -149,10 +149,10 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     val mode = if(flush) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD
     //if(flush) stop
     if(text.length == 0)
-      tts.speak("blank", mode, null)
+      tts.speak(context.getString(R.string.blank), mode, null)
     else if(text.length == 1 && text >= "A" && text <= "Z") {
       pitch = 1.5f
-      tts.speak("cap "+text, mode, null)
+      tts.speak(context.getString(R.string.cap, text), mode, null)
       pitch = 1
     } else if(text.length == 1 && Preferences.managePunctuationSpeech && managedPunctuations.get(text) != None)
       tts.speak(context.getString(managedPunctuations(text)), mode, null)

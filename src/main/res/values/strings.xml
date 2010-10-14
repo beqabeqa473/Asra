@@ -100,8 +100,10 @@
   <string name="yes">Yes</string>
   <string name="no">No</string>
 
-  <!-- Punctuation -->
+  <!-- Punctuation and other speech-related strings -->
 
+  <string name="blank">blank</string>
+  <string name="cap">cap %1$s</string>
   <string name="exclamation">exclaim</string>
   <string name="at">at</string>
   <string name="pound">pound</string>
