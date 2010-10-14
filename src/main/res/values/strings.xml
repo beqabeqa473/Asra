@@ -100,6 +100,11 @@
   <string name="yes">Yes</string>
   <string name="no">No</string>
 
+  <!-- Action names -->
+
+  <string name="stopSpeech">Stop speech</string>
+  <string name="toggleSpiel">Toggle whether or not Spiel is enabled</string>
+
   <!-- Punctuation and other speech-related strings -->
 
   <string name="blank">blank</string>

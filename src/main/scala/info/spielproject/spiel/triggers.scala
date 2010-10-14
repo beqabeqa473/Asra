@@ -23,13 +23,13 @@ class Actions {
    * Stop speech.
   */
 
-  class StopSpeech extends Action("stopSpeech", "Stop speech", () => TTS.stop)
+  class StopSpeech extends Action("stopSpeech", Triggers.service.getString(R.string.stopSpeech), () => TTS.stop)
 
   /**
    * Toggle whether or not Spiel is enabled.
   */
 
-  class ToggleSpiel extends Action("toggleSpiel", "Toggle whether Spiel is enabled", { () =>
+  class ToggleSpiel extends Action("toggleSpiel", Triggers.service.getString(R.string.toggleSpiel), { () =>
     if(SpielService.enabled) {
       TTS.speak("Spiel off.", true)
       SpielService.enabled = false
@@ -92,11 +92,14 @@ object Triggers {
 
   def actions = _actions
 
+  private[triggers] var service:SpielService = null
+
   /**
    * Initialize triggers using the specified <code>SpielService</code>.
   */
 
-  def apply(service:SpielService) {
+  def apply(svc:SpielService) {
+    service = svc
     // Here's where we iterate through the above <code>Actions</code> class, 
     // registering all <code>Action</code> classes it contains. Doing this 
     // obviates the need to manually register new actions on creation.
