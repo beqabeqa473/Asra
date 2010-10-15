@@ -400,6 +400,7 @@ class Provider extends ContentProvider with AbstractProvider {
       if(c.getCount == 0) {
         db.execSQL("CREATE TABLE scripts (_id INTEGER PRIMARY KEY AUTOINCREMENT, pkg TEXT NOT NULL, label TEXT NOT NULL, description TEXT NOT NULL DEFAULT '', code TEXT NOT NULL, remote_id TEXT NOT NULL, version INT NOT NULL);")
       }
+      c.close()
     }
 
     override def onUpgrade(db:SQLiteDatabase, oldVersion:Int, newVersion:Int) {
