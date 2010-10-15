@@ -5,6 +5,7 @@ import collection.JavaConversions._
 
 import android.content.Context
 import android.os.Build.VERSION
+import android.os.Environment
 import android.speech.tts.TextToSpeech
 import android.util.Log
 
@@ -23,18 +24,34 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   */
 
   def apply(c:Context) {
-    tts = new TextToSpeech(c, this)
     context = c
+    init()
   }
+
+  /**
+   * Initialize or re-initialize TTS.
+  */
+
+  def init() = {
+    tts = new TextToSpeech(context, this)
+  }
+
+  private var welcomed = false
 
   def onInit(status:Int) {
     tts.setLanguage(java.util.Locale.getDefault)
-    engine = Preferences.speechEngine
+    if(Environment.getExternalStorageState == Environment.MEDIA_MOUNTED)
+      engine = Preferences.speechEngine
+    else
+      engine = "com.svox.pico"
     tts.setOnUtteranceCompletedListener(this)
     this.rate = Preferences.rateScale
     this.pitch = Preferences.pitchScale
-    speak(context.getString(R.string.welcomeMsg), true)
     tts.addEarcon("tick", "info.spielproject.spiel", R.raw.tick)
+    if(!welcomed) {
+      speak(context.getString(R.string.welcomeMsg), true)
+      welcomed = true
+    }
   }
 
   /**

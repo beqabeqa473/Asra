@@ -4,7 +4,9 @@ import actors.Actor._
 
 import android.content.{BroadcastReceiver, ContentUris, Context, Intent, IntentFilter}
 import android.media.AudioManager
+import android.net.Uri
 import android.os.Build.VERSION
+import android.os.Environment
 import android.util.Log
 
 import scripting._
@@ -160,10 +162,24 @@ object StateReactor {
       Log.d("spielhead", "Bluetooth7 event: "+on)
       if(on) {
         actor {
-          Thread.sleep(5000)
+          Thread.sleep(10000)
           startBluetoothSco()
         }
       }
+    }
+  }
+
+  onMediaMounted { path =>
+    if(path == Uri.fromFile(Environment.getExternalStorageDirectory)) {
+      Log.d("spielcheck", "Media mounted at "+path)
+      TTS.engine = Preferences.speechEngine
+    }
+  }
+
+  onMediaUnmounted { path =>
+    if(path == Uri.fromFile(Environment.getExternalStorageDirectory)) {
+      Log.d("spielcheck", "Media unmounted at "+path)
+      TTS.init()
     }
   }
 
