@@ -278,7 +278,6 @@ object Scripter {
 
   def userScripts = {
     val list = scriptsDir.list()
-    Log.d("spielscript", "Listing contents of "+scriptsDir+": "+list.toList)
     if(list == null) List[Script]()
     else list.toList.map(new Script(service, _, false))
   }
