@@ -6,6 +6,7 @@ import collection.JavaConversions._
 import android.app.{Activity, AlertDialog, ListActivity, TabActivity}
 import android.content.{ContentUris, Context, DialogInterface, Intent}
 import android.database.Cursor
+import android.os.Build.VERSION
 import android.os.Bundle
 import android.preference.{ListPreference, Preference, PreferenceActivity}
 import android.util.Log
@@ -54,17 +55,26 @@ class PreferencesActivity extends PreferenceActivity {
     super.onCreate(bundle)
     addPreferencesFromResource(R.xml.preferences)
 
-    // We need to set some preferences dynamically. First, set engines.
-    val intent = new Intent("android.intent.action.START_TTS_ENGINE")
-    val pm = getPackageManager
-    val engines = pm.queryIntentActivities(intent, 0).map { engine =>
-      var label = engine.loadLabel(pm).toString()
-      if(label == "") label = engine.activityInfo.name.toString()
-      (label, engine.activityInfo.packageName)
-    }
     val enginesPreference = findPreference("speechEngine").asInstanceOf[ListPreference]
-    enginesPreference.setEntries(engines.map(_._1).toArray[CharSequence])
-    enginesPreference.setEntryValues(engines.map(_._2).toArray[CharSequence])
+    val bluetoothPreference = findPreference("useBluetoothSCO")
+    if(VERSION.SDK_INT < 8) {
+      enginesPreference.setEnabled(false)
+      enginesPreference.setShouldDisableView(true)
+      enginesPreference.setSelectable(false)
+      bluetoothPreference.setEnabled(false)
+      bluetoothPreference.setShouldDisableView(true)
+      enginesPreference.setSelectable(false)
+    } else {
+      val intent = new Intent("android.intent.action.START_TTS_ENGINE")
+      val pm = getPackageManager
+      val engines = pm.queryIntentActivities(intent, 0).map { engine =>
+        var label = engine.loadLabel(pm).toString()
+        if(label == "") label = engine.activityInfo.name.toString()
+        (label, engine.activityInfo.packageName)
+      }
+      enginesPreference.setEntries(engines.map(_._1).toArray[CharSequence])
+      enginesPreference.setEntryValues(engines.map(_._2).toArray[CharSequence])
+    }
 
     // Now set the shortcut to system-wide TTS settings.
     val ttsPreference = findPreference("textToSpeechSettings")

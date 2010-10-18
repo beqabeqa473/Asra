@@ -5,9 +5,11 @@
   <!-- Initial welcome message-->
   <string name="welcomeMsg">Welcome to Spiel!</string>
 
-  <!-- On/off alerts -->
+  <!-- On/off and other alerts -->
   <string name="spielOn">Spiel on.</string>
   <string name="spielOff">Spiel off.</string>
+  <string name="screenOffLocked">Screen off. Locked.</string>
+  <string name="screenOnLocked">Screen on. Locked.</string>
 
   <!-- View names and actions -->
   <string name="alert">Alert! %1$s</string>
@@ -35,7 +37,7 @@
   <string name="echoByCharTitle">Echo by character</string>
   <string name="echoByWordTitle">Echo by word</string>
   <string name="useBluetoothSCOTitle">Use Bluetooth SCO</string>
-  <string name="useBluetoothSCOSummary">Route off-call audio through Bluetooth SCO earpieces, requires Android 2.2 or greater (experimental!)</string>
+  <string name="useBluetoothSCOSummary">Route off-call audio through Bluetooth SCO earpieces (experimental!)</string>
   <string name="fixMultivoiceTitle">Fix multi-voice issue</string>
   <string name="fixMultivoiceSummary">Fix for bug where a different voice is used for speaking single characters in some synthesizers</string>
   <string name="managePunctuationSpeechTitle">Manage punctuation speech</string>
@@ -100,8 +102,10 @@
   <string name="yes">Yes</string>
   <string name="no">No</string>
 
-  <!-- Action names -->
+  <!-- Action names and related -->
 
+  <string name="createScriptTemplate">Create a script template for the most recent accessibility event</string>
+  <string name="templateCreated">Template created.</string>
   <string name="stopSpeech">Stop speech</string>
   <string name="toggleSpiel">Toggle whether or not Spiel is enabled</string>
 
