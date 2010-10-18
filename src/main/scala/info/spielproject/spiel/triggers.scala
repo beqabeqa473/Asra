@@ -27,7 +27,7 @@ class Actions {
    * Create a script template based on the last <code>AccessibilityEvent</code>.
   */
 
-  class CreateScriptTemplate extends Action("createScriptTemplate", Triggers.service.getString(R.string.createScriptTemplate), () =>
+  class CreateScriptTemplate extends Action("createScriptTemplate", Triggers.service.getString(R.string.createScriptTemplateAction), () =>
     EventReviewQueue.reverse.headOption.foreach { event =>
       val filename = Scripter.createTemplateFor(event.e)
       TTS.speak(Triggers.service.getString(R.string.templateCreated, filename), true)

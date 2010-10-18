@@ -74,6 +74,7 @@
 
   <string name="events">Events</string>
   <string name="noEvents">No events available. Please enable \"View most recent accessibility events\" in the \"Scripting and debugging\" menu first. If you have done this and none are displaying, press Menu then select \"Refresh\".</string>
+  <string name="createScriptTemplate">Create script template</string>
 
   <string name="scripts">Scripts</string>
 
@@ -104,7 +105,7 @@
 
   <!-- Action names and related -->
 
-  <string name="createScriptTemplate">Create a script template for the most recent accessibility event</string>
+  <string name="createScriptTemplateAction">Create a script template for the most recent accessibility event</string>
   <string name="templateCreated">Template created in %1$s.</string>
   <string name="stopSpeech">Stop speech</string>
   <string name="toggleSpiel">Toggle whether or not Spiel is enabled</string>

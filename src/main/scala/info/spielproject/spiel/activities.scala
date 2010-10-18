@@ -252,6 +252,7 @@ class Events extends ListActivity with Refreshable {
 
   override def onCreate(bundle:Bundle) {
     super.onCreate(bundle)
+    registerForContextMenu(getListView)
     refresh()
   }
 
@@ -280,6 +281,23 @@ class Events extends ListActivity with Refreshable {
     menu = Some(m)
     new MenuInflater(this).inflate(R.menu.events, menu.get)
     super.onCreateOptionsMenu(m)
+  }
+
+  override def onCreateContextMenu(menu:ContextMenu, v:View, info:ContextMenu.ContextMenuInfo) {
+    new MenuInflater(this).inflate(R.menu.events_context, menu)
+  }
+
+  override def onContextItemSelected(item:MenuItem) = {
+    val event = EventReviewQueue(item.getMenuInfo.asInstanceOf[AdapterView.AdapterContextMenuInfo].position)
+    item.getItemId match {
+      case R.id.createTemplate =>
+        val filename = Scripter.createTemplateFor(event.e)
+        new AlertDialog.Builder(this)
+        .setMessage(getString(R.string.templateCreated, filename))
+        .setPositiveButton(getString(R.string.ok), null)
+        .show()
+    }
+    true
   }
 
 }
