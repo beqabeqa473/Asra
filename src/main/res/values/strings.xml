@@ -17,6 +17,7 @@
   <string name="checkbox">%1$s: checkbox</string>
   <string name="checked">checked</string>
   <string name="editText">%1$s: edit text</string>
+  <string name="emptyList">empty list</string>
   <string name="listItem">%1$s: %2$s of %3$s</string>
   <string name="menu">menu</string>
   <string name="notChecked">not checked</string>

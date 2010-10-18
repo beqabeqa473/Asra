@@ -582,6 +582,8 @@ class Handlers {
       //Log.d("spiel", "onViewSelected")
       if(e.getCurrentItemIndex >= 0 && utterancesFor(e).length > 0)
         speak(Handler.service.getString(R.string.listItem, utterancesFor(e).mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
+      else if(e.getCurrentItemIndex == -1 && e.getItemCount == 0)
+        speak(Handler.service.getString(R.string.emptyList))
       true
     }
 
