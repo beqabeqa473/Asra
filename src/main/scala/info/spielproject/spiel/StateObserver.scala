@@ -472,12 +472,14 @@ object StateObserver {
   def shakerEnabled = _shakerEnabled
 
   // This may need tweaking, but this seems like a good value for an intentional shake.
-  private val shakerThreshold = 3d*SensorManager.GRAVITY_EARTH*SensorManager.GRAVITY_EARTH
+  private val shakerThreshold = 2.7
 
   private val shaker = new SensorEventListener {
 
     def onSensorChanged(e:SensorEvent) {
-      val netForce = e.values(0)*e.values(0)+e.values(1)*e.values(1)+e.values(2)*e.values(2)
+      val netForce = math.sqrt(math.pow(e.values(0)/SensorManager.GRAVITY_EARTH, 2)
+      +math.pow(e.values(1)/SensorManager.GRAVITY_EARTH, 2)
+      +math.pow(e.values(2)/SensorManager.GRAVITY_EARTH, 2))
       if(shakerThreshold < netForce)
         StateObserver.isShaking()
       else
