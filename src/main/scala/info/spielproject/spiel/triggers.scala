@@ -1,7 +1,11 @@
 package info.spielproject.spiel
 package triggers
 
+import android.content.{BroadcastReceiver, Context, Intent}
 import android.util.Log
+
+import handlers.EventReviewQueue
+import scripting.Scripter
 
 /**
  * Defines a named action to be carried out by a <code>Trigger</code>.
@@ -18,6 +22,17 @@ abstract class Action(val key:String, val name:String, val function:() => Unit) 
 */
 
 class Actions {
+
+  /**
+   * Create a script template based on the last <code>AccessibilityEvent</code>.
+  */
+
+  class CreateScriptTemplate extends Action("createScriptTemplate", Triggers.service.getString(R.string.createScriptTemplate), () =>
+    EventReviewQueue.reverse.headOption.foreach { event =>
+      val filename = Scripter.createTemplateFor(event.e)
+      TTS.speak(Triggers.service.getString(R.string.templateCreated, filename), true)
+    }
+  )
 
   /**
    * Stop speech.

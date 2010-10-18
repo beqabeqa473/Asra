@@ -324,6 +324,20 @@ object Scripter {
 
   def log(pkg:String, msg:String) = Log.d("spiel", pkg+": "+msg)
 
+  /**
+   * Create or append to a script template for the specified <code>AccessibilityEvent</code>.
+  */
+
+  def createTemplateFor(e:AccessibilityEvent) = {
+    val handler = "on"+Handler.dispatchers(e.getEventType).capitalize
+    val code = "forClass(\""+e.getClassName+"\", {\n  "+handler+": function(e) {\n    // "+e.toString+"\n    return true\n  }\n})\n"
+    val file = new File(scriptsDir, e.getPackageName+".js")
+    val writer = new FileWriter(file, true)
+    writer.write(code)
+    writer.close()
+    scriptsDir+"/"+file.getName
+  }
+
 }
 
 import collection.JavaConversions._
