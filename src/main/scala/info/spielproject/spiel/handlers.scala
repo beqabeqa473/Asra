@@ -3,7 +3,10 @@ package handlers
 
 import actors.Actor
 import Actor._
+import collection.JavaConversions._
 
+import android.app.{ActivityManager, Service}
+import android.content.Context
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import collection.JavaConversions._
@@ -36,7 +39,10 @@ class NativeCallback(f:AccessibilityEvent => Boolean) extends Callback{
  * Wrapper that pretty-prints <code>AccessibilityEvent</code>s.
 */
 
-class PrettyAccessibilityEvent(e:AccessibilityEvent) {
+class PrettyAccessibilityEvent(val e:AccessibilityEvent) {
+
+  val activityName = Handler.currentActivity
+
   override lazy val toString = {
     val eventType = Handler.dispatchers(e.getEventType)
     val text = if(e.getText.length == 0)
@@ -48,7 +54,7 @@ class PrettyAccessibilityEvent(e:AccessibilityEvent) {
     else ""
     val className = e.getClassName
     val packageName = e.getPackageName
-    eventType+": "+text+contentDescription+" class: "+className+": package: "+packageName
+    eventType+": "+text+contentDescription+" index: "+e.getCurrentItemIndex+" count: "+e.getItemCount+" package: "+packageName+" activity: "+activityName+" class: "+className
   }
 }
 
@@ -302,6 +308,18 @@ object Handler extends Actor {
     TYPE_WINDOW_STATE_CHANGED -> "windowStateChanged"
   )
 
+  /**
+   * @return <code>Activity</code> currently in foreground
+  */
+
+  def currentActivity = {
+    val manager = service.getSystemService(Context.ACTIVITY_SERVICE).asInstanceOf[ActivityManager]
+    val tasks = manager.getRunningTasks(1)
+    if(!tasks.isEmpty)
+      tasks.head.topActivity.getClassName
+    else null
+  }
+
 }
 
 /**
@@ -518,7 +536,8 @@ class Handlers {
 
   class Tab extends Handler("android.widget.RelativeLayout") {
     onViewFocused { e:AccessibilityEvent =>
-      speak(Handler.service.getString(R.string.tab, utterancesFor(e).mkString(": ")), true)
+      if(e.getText.size > 0)
+        speak(Handler.service.getString(R.string.tab, utterancesFor(e).mkString(": ")), true)
       true
     }
   }
@@ -561,7 +580,7 @@ class Handlers {
 
     onViewSelected { e:AccessibilityEvent =>
       //Log.d("spiel", "onViewSelected")
-      if(utterancesFor(e).length > 0)
+      if(e.getCurrentItemIndex >= 0 && utterancesFor(e).length > 0)
         speak(Handler.service.getString(R.string.listItem, utterancesFor(e).mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
       true
     }

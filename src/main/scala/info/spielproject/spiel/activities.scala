@@ -291,7 +291,7 @@ class Events extends ListActivity with Refreshable {
     val event = EventReviewQueue(item.getMenuInfo.asInstanceOf[AdapterView.AdapterContextMenuInfo].position)
     item.getItemId match {
       case R.id.createTemplate =>
-        val filename = Scripter.createTemplateFor(event.e)
+        val filename = Scripter.createTemplateFor(event)
         new AlertDialog.Builder(this)
         .setMessage(getString(R.string.templateCreated, filename))
         .setPositiveButton(getString(R.string.ok), null)

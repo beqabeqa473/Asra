@@ -29,7 +29,7 @@ class Actions {
 
   class CreateScriptTemplate extends Action("createScriptTemplate", Triggers.service.getString(R.string.createScriptTemplateAction), () =>
     EventReviewQueue.reverse.headOption.foreach { event =>
-      val filename = Scripter.createTemplateFor(event.e)
+      val filename = Scripter.createTemplateFor(event)
       TTS.speak(Triggers.service.getString(R.string.templateCreated, filename), true)
     }
   )

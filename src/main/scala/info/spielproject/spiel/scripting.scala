@@ -4,6 +4,8 @@ package scripting
 import java.io.{File, FileInputStream, FileOutputStream, FileWriter, InputStream}
 import java.lang.Integer
 
+import handlers.PrettyAccessibilityEvent
+
 import android.content.{BroadcastReceiver, ContentValues, Context => AContext, Intent}
 import android.database.Cursor
 import android.os.Environment
@@ -21,8 +23,9 @@ import handlers.{Callback, Handler}
 class RhinoCallback(f:Function) extends Callback {
   def apply(e:AccessibilityEvent):Boolean = {
     Context.enter
-    var args = new Array[Object](1)
+    var args = new Array[Object](2)
     args(0) = e
+    args(1) = Handler.currentActivity
     try {
       Scripter.scope.put("__pkg__", Scripter.scope, e.getPackageName)
       Context.toBoolean(f.call(Scripter.context, Scripter.scope, Scripter.scope, args))
@@ -328,10 +331,10 @@ object Scripter {
    * Create or append to a script template for the specified <code>AccessibilityEvent</code>.
   */
 
-  def createTemplateFor(e:AccessibilityEvent) = {
-    val handler = "on"+Handler.dispatchers(e.getEventType).capitalize
-    val code = "forClass(\""+e.getClassName+"\", {\n  "+handler+": function(e) {\n    // "+e.toString+"\n    return true\n  }\n})\n"
-    val file = new File(scriptsDir, e.getPackageName+".js")
+  def createTemplateFor(event:PrettyAccessibilityEvent) = {
+    val handler = "on"+Handler.dispatchers(event.e.getEventType).capitalize
+    val code = "forClass(\""+event.e.getClassName+"\", {\n  "+handler+": function(e, activity) {\n    // "+event.toString+"\n    return false\n  }\n})\n"
+    val file = new File(scriptsDir, event.e.getPackageName+".js")
     val writer = new FileWriter(file, true)
     writer.write(code)
     writer.close()
