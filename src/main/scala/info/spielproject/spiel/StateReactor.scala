@@ -214,7 +214,7 @@ object StateReactor {
 
   onScreenOff { () =>
     if(screenOn) {
-      TTS.speak("Locked.", false)
+      TTS.speak(service.getString(R.string.screenOffLocked), false)
       screenOn = false
     }
   }
@@ -222,7 +222,7 @@ object StateReactor {
   onScreenOn { () =>
     if(!screenOn) {
       screenOn = true
-      TTS.speak("Locked.", false) 
+      TTS.speak(service.getString(R.string.screenOnLocked), false) 
     }
   }
 
