@@ -615,7 +615,9 @@ object BazaarProvider {
   def newOrUpdatedScripts = _newOrUpdatedScripts
 
   def checkRemoteScripts() = actor {
-    val packages = pm.getInstalledPackages(0).map { i => i.packageName }
+    val installedPackages = pm.getInstalledPackages(0).map { i => i.packageName }
+    val userPackages = Scripter.userScripts.map(_.pkg)
+    val packages = installedPackages.filterNot(userPackages.contains(_))
     val where = packages.reduceLeft[String] { (acc, n) =>
       acc+","+(context.getContentResolver.query(
         Provider.uri, Provider.columns.projection, "pkg = ?", List(n).toArray, null
