@@ -69,12 +69,6 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
   def echoByWord = prefs.getBoolean("echoByWord", false)
 
   /**
-   * Indicates whether the multi-voice fix is to be used.
-  */
-
-  def fixMultivoice = prefs.getBoolean("fixMultivoice", false)
-
-  /**
    * Indicates whether punctuation speech is to be managed by Spiel.
   */
 

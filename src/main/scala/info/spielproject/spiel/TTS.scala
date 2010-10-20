@@ -173,8 +173,6 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
       pitch = 1
     } else if(text.length == 1 && Preferences.managePunctuationSpeech && managedPunctuations.get(text) != None)
       tts.speak(context.getString(managedPunctuations(text)), mode, null)
-    else if(text.length == 1 && Preferences.fixMultivoice)
-      tts.speak(text+" ", mode, null)
     else
       tts.speak(text, mode, null)
   }

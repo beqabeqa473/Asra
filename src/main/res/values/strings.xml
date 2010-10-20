@@ -39,8 +39,6 @@
   <string name="echoByWordTitle">Echo by word</string>
   <string name="useBluetoothSCOTitle">Use Bluetooth SCO</string>
   <string name="useBluetoothSCOSummary">Route off-call audio through Bluetooth SCO earpieces (experimental!)</string>
-  <string name="fixMultivoiceTitle">Fix multi-voice issue</string>
-  <string name="fixMultivoiceSummary">Fix for bug where a different voice is used for speaking single characters in some synthesizers</string>
   <string name="managePunctuationSpeechTitle">Manage punctuation speech</string>
   <string name="managePunctuationSpeechSummary">Delegate speaking of some unhandled punctuation to Spiel</string>
   <string name="increaseInCallVolumeTitle">Increase in-call volume</string>

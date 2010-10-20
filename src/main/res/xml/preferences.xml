@@ -44,12 +44,6 @@
       android:summary="@string/useBluetoothSCOSummary"/>
 
     <CheckBoxPreference
-      android:key="fixMultivoice"
-      android:defaultValue="false"
-      android:title="@string/fixMultivoiceTitle"
-      android:summary="@string/fixMultivoiceSummary"/>
-
-    <CheckBoxPreference
       android:key="managePunctuationSpeech"
       android:defaultValue="false"
       android:title="@string/managePunctuationSpeechTitle"
