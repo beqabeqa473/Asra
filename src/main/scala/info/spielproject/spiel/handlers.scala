@@ -211,7 +211,7 @@ object Handler extends Actor {
   private def process(e:AccessibilityEvent) {
     if(Preferences.viewRecentEvents) {
       EventReviewQueue(new PrettyAccessibilityEvent(e))
-      Log.d("spiel", "Event "+e.toString)
+      Log.d("spiel", "Event "+e.toString+"; Activity: "+currentActivity)
     }
 
     nextShouldNotInterruptCalled = false
