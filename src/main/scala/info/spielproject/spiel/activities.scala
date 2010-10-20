@@ -323,12 +323,18 @@ class ScriptInstaller extends Activity with AdapterView.OnItemClickListener {
     scripts.setOnItemClickListener(this)
     scripts.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE)
 
+    def selectAll() {
+      for(p <- 0.to(scripts.getCount-1)) {
+        scripts.setItemChecked(p, true)
+      }
+    }
+
+    selectAll()
+
     findViewById(R.id.selectAll).asInstanceOf[Button].setOnClickListener(
       new View.OnClickListener {
         def onClick(v:View) {
-          for(p <- 0.to(BazaarProvider.newOrUpdatedScripts.size-1)) {
-            scripts.setItemChecked(p, true)
-          }
+          selectAll()
         }
       }
     )
