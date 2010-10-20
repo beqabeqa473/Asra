@@ -90,14 +90,12 @@
     <CheckBoxPreference
       android:key="speakNotificationsWhenScreenOff"
       android:defaultValue="true"
-      android:title="@string/speakNotificationsWhenScreenOffTitle"
-      android:summary="@string/speakNotificationsWhenScreenOffSummary"/>
+      android:title="@string/speakNotificationsWhenScreenOffTitle"/>
 
     <CheckBoxPreference
       android:key="repeatedSpeechWhenRingerOff"
       android:defaultValue="false"
-      android:title="@string/repeatedSpeechWhenRingerOffTitle"
-      android:summary="@string/repeatedSpeechWhenRingerOffSummary"/>
+      android:title="@string/repeatedSpeechWhenRingerOffTitle"/>
 
   </PreferenceScreen>
 

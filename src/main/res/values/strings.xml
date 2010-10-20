@@ -55,10 +55,8 @@
   <string name="voicemailAlertsSummary">Repeatedly announce availability of new voicemail</string>
 
   <string name="notificationsTitle">Notifications</string>
-  <string name="speakNotificationsWhenScreenOffTitle">Speak notifications when screen is off</string>
-  <string name="speakNotificationsWhenScreenOffSummary">Avoid speaking notifications when the phone screen is off</string>
-  <string name="repeatedSpeechWhenRingerOffTitle">Repeated speech when ringer is off</string>
-  <string name="repeatedSpeechWhenRingerOffSummary">Speak repeated alerts for caller ID, voicemail, etc. even when ringer is off</string>
+  <string name="speakNotificationsWhenScreenOffTitle">Speak notifications even when screen is off</string>
+  <string name="repeatedSpeechWhenRingerOffTitle">Repeated speech for caller ID, voicemail notifications, etc. when ringer is off</string>
 
   <string name="triggersTitle">Triggers</string>
   <string name="triggersSummary">Set actions to run in response to physical events</string>
