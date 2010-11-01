@@ -136,7 +136,7 @@ object Handler extends Actor {
   }
 
   // How long to wait before processing a given AccessibilityEvent.
-  private val timeout = 200
+  private val timeout = 100
 
   // Record an event and the time that event is to be presented. This helps 
   // in instances where we receive lots of events and don't necessarily want 
@@ -493,6 +493,21 @@ class Handlers {
 
   class ImageButton extends Handler("android.widget.ImageButton") with GenericButtonHandler
 
+  class ImageView extends Handler("android.widget.ImageView") {
+    onViewFocused { e:AccessibilityEvent =>
+      speak(Handler.service.getString(R.string.image, utterancesFor(e, false).mkString(": ")))
+      true
+    }
+  }
+
+  class ListView extends Handler("android.widget.ListView") {
+    onViewSelected { e:AccessibilityEvent =>
+      if(Handler.shouldNextInterrupt) TTS.stop
+      speak(Handler.service.getString(R.string.listItem, utterancesFor(e).mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
+      true
+    }
+  }
+
   class Menu extends Handler("com.android.internal.view.menu.MenuView") {
 
     onViewSelected { e:AccessibilityEvent =>
@@ -581,7 +596,7 @@ class Handlers {
     onViewSelected { e:AccessibilityEvent =>
       //Log.d("spiel", "onViewSelected")
       if(e.getCurrentItemIndex >= 0 && utterancesFor(e).length > 0)
-        speak(Handler.service.getString(R.string.listItem, utterancesFor(e).mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
+        speak(utterancesFor(e))
       else if(e.getCurrentItemIndex == -1 && e.getItemCount == 0)
         speak(Handler.service.getString(R.string.emptyList))
       true
@@ -594,7 +609,13 @@ class Handlers {
           TTS.speakCharacter("*")
         else
           if(e.getAddedCount > 0)
-            TTS.speakCharacter(e.getText.mkString.substring(e.getFromIndex,   e.getFromIndex+e.getAddedCount))
+            // We're getting an exception here due to what appear to be 
+            // malformed AccessibilityEvents.
+            try {
+              TTS.speakCharacter(e.getText.mkString.substring(e.getFromIndex,   e.getFromIndex+e.getAddedCount))
+            } catch {
+              case e => Log.d("spiel", "Think we have a malformed event. Got "+e.getMessage)
+            }
           else if(e.getRemovedCount > 0) {
             val start = e.getFromIndex
             val end = e.getFromIndex+e.getRemovedCount
