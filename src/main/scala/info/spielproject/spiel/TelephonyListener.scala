@@ -48,11 +48,19 @@ object TelephonyListener extends PhoneStateListener {
 
   private def resolveV5(number:String) = {
     val uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number))
-    val cursor = cursorFor(uri)
-    var name = number
-    if(cursor.getCount > 0) {
-      while(cursor.moveToNext) {
-        name = cursor.getString(cursor.getColumnIndex(DisplayNameFix.DISPLAY_NAME))
+    var name = ""
+    val cursor = if(number != null && number != "") {
+      name = number
+      Some(cursorFor(uri))
+    } else {
+      name = "Unknown"
+      None
+    }
+    cursor.foreach { c =>
+      if(c.getCount > 0) {
+        while(c.moveToNext) {
+          name = c.getString(c.getColumnIndex(DisplayNameFix.DISPLAY_NAME))
+        }
       }
     }
     name
