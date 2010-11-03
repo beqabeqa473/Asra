@@ -88,8 +88,6 @@ class Script(
     Log.d("spiel", "Running "+pkg)
     uninstall()
     Scripter.scope.put("__pkg__", Scripter.scope, pkg)
-    Scripter.scope.put("ANDROID_PLATFORM_VERSION", Scripter.scope, VERSION.SDK_INT)
-    Scripter.scope.put("SPIEL_API_VERSION", Scripter.scope, 1)
     Scripter.script = Some(this)
     try {
       Scripter.context.evaluateString(Scripter.scope, code, filename, 1, null)
@@ -253,6 +251,9 @@ object Scripter {
 
     val wrappedTTS = Context.javaToJS(TTS, myScope)
     ScriptableObject.putProperty(myScope, "TTS", wrappedTTS)
+
+    myScope.put("ANDROID_PLATFORM_VERSION", myScope, VERSION.SDK_INT)
+    myScope.put("SPIEL_API_VERSION", myScope, 1)
 
     val spielDir = new File(Environment.getExternalStorageDirectory, "spiel")
     if(!spielDir.isDirectory) spielDir.mkdir
