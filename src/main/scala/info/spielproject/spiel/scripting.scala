@@ -296,6 +296,33 @@ object Scripter {
 
   def registerHandlerFor(cls:String, scr:Object) = script.map(_.registerHandlerFor(cls, scr))
 
+  private var _preferences = Map[String, Map[String, Map[String, Any]]]()
+
+  def preferences = _preferences
+
+  def addBooleanPreference(key:String, title:String, summary:String, default:Boolean) {
+    val pkg = script.map(_.pkg).getOrElse("")
+    val preference = Map(
+      "title" -> title,
+      "summary" -> summary,
+      "type" -> 'boolean,
+      "default" -> default
+    )
+    if(_preferences.get(pkg) == None)
+      _preferences = _preferences.updated(pkg, Map.empty)
+    val current = _preferences(pkg)
+    _preferences = _preferences.updated(pkg, current.updated(key, preference))
+  }
+
+  def getBooleanPreference(pkg:String, key:String):Boolean = {
+    preferences.get(pkg).flatMap { prefs =>
+      prefs.get(key).map { pref =>
+        val default = pref("default").asInstanceOf[Boolean]
+        Preferences.sharedPreferences.getBoolean(pkg+"_"+key, default)
+      }
+    }.getOrElse(false)
+  }
+
   private var strings = collection.mutable.Map[List[String], String]()
 
   def setString(name:String, value:String) {

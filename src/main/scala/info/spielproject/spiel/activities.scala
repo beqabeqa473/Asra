@@ -8,7 +8,7 @@ import android.content.{ContentUris, Context, DialogInterface, Intent}
 import android.database.Cursor
 import android.os.Build.VERSION
 import android.os.Bundle
-import android.preference.{ListPreference, Preference, PreferenceActivity}
+import android.preference.{CheckBoxPreference, ListPreference, Preference, PreferenceActivity, PreferenceCategory, PreferenceScreen}
 import android.util.Log
 import android.view.{ContextMenu, Menu, MenuInflater, MenuItem, View, ViewGroup}
 import android.view.accessibility.AccessibilityEvent
@@ -90,7 +90,6 @@ class PreferencesActivity extends PreferenceActivity {
       pitchScale.setSelectable(false)
     }
 
-
     // Now set the shortcut to system-wide TTS settings.
     val ttsPreference = findPreference("textToSpeechSettings")
     ttsPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener {
@@ -110,6 +109,30 @@ class PreferencesActivity extends PreferenceActivity {
     val onProximityNear = findPreference("onProximityNear").asInstanceOf[ListPreference]
     onProximityNear.setEntries(actions.map(_._1).toArray[CharSequence])
     onProximityNear.setEntryValues(actions.map(_._2).toArray[CharSequence])
+
+    val scripts = findPreference("scripts").asInstanceOf[PreferenceScreen]
+    if(Scripter.preferences == Map.empty) {
+      scripts.setEnabled(false)
+      scripts.setSelectable(false)
+    } else {
+      Scripter.preferences.foreach { pkg =>
+        val screen = getPreferenceManager.createPreferenceScreen(this)
+        scripts.addPreference(screen)
+        screen.setTitle(Script.labelFor(pkg._1))
+        screen.setEnabled(true)
+        screen.setSelectable(true)
+        pkg._2.foreach { pkgpref =>
+          val pref = pkgpref._2
+          val preference = new CheckBoxPreference(this)
+          val key = pkg._1+"_"+pkgpref._1
+          preference.setKey(key)
+          preference.setTitle(pref("title").asInstanceOf[String])
+          preference.setSummary(pref("summary").asInstanceOf[String])
+          preference.setChecked(pref("default").asInstanceOf[Boolean])
+          screen.addPreference(preference)
+        }
+      }
+    }
   }
 }
 

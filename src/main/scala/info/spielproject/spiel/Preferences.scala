@@ -16,6 +16,8 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
   private var prefs:SharedPreferences = null
 
+  def sharedPreferences = prefs
+
   private var audioManager:AudioManager = null
 
   /**
@@ -125,7 +127,7 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
    * Indicates whether backtraces are to be sent.
   */
 
-  def sendBacktraces = prefs.getBoolean("sendBacktraces", false)
+  def sendBacktraces = prefs.getBoolean("sendBacktraces", true)
 
   /**
    * Indicates whether Bluetooth SCO is to be used when available.

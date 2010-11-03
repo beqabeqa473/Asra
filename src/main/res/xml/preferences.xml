@@ -108,6 +108,10 @@
 
   </PreferenceScreen>
 
+  <PreferenceScreen android:title="@string/scripts"
+    android:key="scripts"
+    />
+
   <PreferenceScreen android:title="@string/scriptingDebuggingTitle">
 
     <CheckBoxPreference
