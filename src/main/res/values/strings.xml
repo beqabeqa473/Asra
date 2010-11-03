@@ -18,6 +18,7 @@
   <string name="checked">checked</string>
   <string name="editText">%1$s: edit text</string>
   <string name="emptyList">empty list</string>
+  <string name="image">%1$s: image</string>
   <string name="listItem">%1$s: %2$s of %3$s</string>
   <string name="menu">menu</string>
   <string name="notChecked">not checked</string>
@@ -82,6 +83,7 @@
   <string name="delete">Delete</string>
   <string name="copyToExternalStorage">Copy to external storage</string>
   <string name="reload">Reload</string>
+  <string name="postToBazaar">Post to Bazaar</string>
 
   <string name="confirmDelete">Are you sure you wish to delete the script for package %1$s?</string>
   <string name="scriptCopied">Script copied to %1$s.</string>

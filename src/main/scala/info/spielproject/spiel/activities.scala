@@ -56,15 +56,15 @@ class PreferencesActivity extends PreferenceActivity {
     addPreferencesFromResource(R.xml.preferences)
 
     val enginesPreference = findPreference("speechEngine").asInstanceOf[ListPreference]
-    val bluetoothPreference = findPreference("useBluetoothSCO")
     if(VERSION.SDK_INT < 8) {
       enginesPreference.setEnabled(false)
       enginesPreference.setShouldDisableView(true)
       enginesPreference.setSelectable(false)
+      val bluetoothPreference = findPreference("useBluetoothSCO")
       bluetoothPreference.setEnabled(false)
       bluetoothPreference.setShouldDisableView(true)
-      enginesPreference.setSelectable(false)
-    } else {
+      bluetoothPreference.setSelectable(false)
+    } else if(!TTS.defaultsEnforced_?) {
       val intent = new Intent("android.intent.action.START_TTS_ENGINE")
       val pm = getPackageManager
       val engines = pm.queryIntentActivities(intent, 0).map { engine =>
@@ -75,6 +75,21 @@ class PreferencesActivity extends PreferenceActivity {
       enginesPreference.setEntries(engines.map(_._1).toArray[CharSequence])
       enginesPreference.setEntryValues(engines.map(_._2).toArray[CharSequence])
     }
+
+    if(TTS.defaultsEnforced_?) {
+      enginesPreference.setEnabled(false)
+      enginesPreference.setShouldDisableView(true)
+      enginesPreference.setSelectable(false)
+      val rateScale = findPreference("rateScale")
+      rateScale.setEnabled(false)
+      rateScale.setShouldDisableView(true)
+      rateScale.setSelectable(false)
+      val pitchScale = findPreference("pitchScale")
+      pitchScale.setEnabled(false)
+      pitchScale.setShouldDisableView(true)
+      pitchScale.setSelectable(false)
+    }
+
 
     // Now set the shortcut to system-wide TTS settings.
     val ttsPreference = findPreference("textToSpeechSettings")
@@ -183,6 +198,14 @@ class Scripts extends Activity with Refreshable with RadioGroup.OnCheckedChangeL
   override def onCreateContextMenu(menu:ContextMenu, v:View, info:ContextMenu.ContextMenuInfo) {
     val menuID = if(system) R.menu.system_scripts_context else R.menu.user_scripts_context
     new MenuInflater(this).inflate(menuID, menu)
+    if(!system) {
+      val script = Scripter.userScripts(info.asInstanceOf[AdapterView.AdapterContextMenuInfo].position)
+      if(!script.successfullyRan_?) {
+        val item = menu.findItem(R.id.postToBazaar)
+        item.setEnabled(false)
+        item.setVisible(false)
+      }
+    }
   }
 
   override def onContextItemSelected(item:MenuItem) = {

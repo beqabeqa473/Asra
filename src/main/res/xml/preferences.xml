@@ -112,7 +112,7 @@
 
     <CheckBoxPreference
       android:key="sendBacktraces"
-      android:defaultValue="false"
+      android:defaultValue="true"
       android:title="@string/sendBacktracesTitle"
       android:summary="@string/sendBacktracesSummary"/>
 
