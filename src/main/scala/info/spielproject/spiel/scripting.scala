@@ -9,6 +9,7 @@ import handlers.PrettyAccessibilityEvent
 import android.content.{BroadcastReceiver, ContentValues, Context => AContext, Intent}
 import android.database.Cursor
 import android.os.Environment
+import android.os.Build.VERSION
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 
@@ -83,6 +84,8 @@ class Script(
     Log.d("spiel", "Running "+pkg)
     uninstall()
     Scripter.scope.put("__pkg__", Scripter.scope, pkg)
+    Scripter.scope.put("ANDROID_PLATFORM_VERSION", Scripter.scope, VERSION.SDK_INT)
+    Scripter.scope.put("SPIEL_API_VERSION", Scripter.scope, 1)
     Scripter.script = Some(this)
     try {
       Scripter.context.evaluateString(Scripter.scope, code, filename, 1, null)
