@@ -80,6 +80,10 @@ class Script(
     filename, asset = asset
   )
 
+  private var successfullyRan = false
+
+  def successfullyRan_? = successfullyRan
+
   def run() = {
     Log.d("spiel", "Running "+pkg)
     uninstall()
@@ -89,6 +93,7 @@ class Script(
     Scripter.script = Some(this)
     try {
       Scripter.context.evaluateString(Scripter.scope, code, filename, 1, null)
+      successfullyRan = true
     } catch {
       case e:RhinoException => Log.e("spiel", "Error creating script: "+e.getMessage)
       case e => Log.e("spiel", e.toString)
