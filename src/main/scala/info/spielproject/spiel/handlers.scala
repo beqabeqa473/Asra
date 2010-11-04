@@ -502,8 +502,8 @@ class Handlers {
 
   class ListView extends Handler("android.widget.ListView") {
     onViewSelected { e:AccessibilityEvent =>
-      if(Handler.shouldNextInterrupt) TTS.stop
-      speak(Handler.service.getString(R.string.listItem, utterancesFor(e).mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
+      if(e.getCurrentItemIndex >= 0)
+        speak(Handler.service.getString(R.string.listItem, utterancesFor(e).mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
       true
     }
   }
