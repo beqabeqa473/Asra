@@ -51,8 +51,18 @@ class Spiel extends TabActivity {
 */
 
 class PreferencesActivity extends PreferenceActivity {
+
   override def onCreate(bundle:Bundle) {
     super.onCreate(bundle)
+    val intent = getIntent
+    if(intent.getStringExtra("package") == null)
+      initGlobalPreferences()
+    else {
+      setPreferenceScreen(scriptPreferencesFor(intent.getStringExtra("package")))
+    }
+  }
+
+  private def initGlobalPreferences() {
     addPreferencesFromResource(R.xml.preferences)
 
     val enginesPreference = findPreference("speechEngine").asInstanceOf[ListPreference]
@@ -116,24 +126,29 @@ class PreferencesActivity extends PreferenceActivity {
       scripts.setSelectable(false)
     } else {
       Scripter.preferences.foreach { pkg =>
-        val screen = getPreferenceManager.createPreferenceScreen(this)
-        scripts.addPreference(screen)
-        screen.setTitle(Script.labelFor(pkg._1))
-        screen.setEnabled(true)
-        screen.setSelectable(true)
-        pkg._2.foreach { pkgpref =>
-          val pref = pkgpref._2
-          val preference = new CheckBoxPreference(this)
-          val key = pkg._1+"_"+pkgpref._1
-          preference.setKey(key)
-          preference.setTitle(pref("title").asInstanceOf[String])
-          preference.setSummary(pref("summary").asInstanceOf[String])
-          preference.setChecked(pref("default").asInstanceOf[Boolean])
-          screen.addPreference(preference)
-        }
+        scripts.addPreference(scriptPreferencesFor(pkg._1))
       }
     }
   }
+
+  private def scriptPreferencesFor(pkg:String) = {
+    val screen = getPreferenceManager.createPreferenceScreen(this)
+    screen.setTitle(Script.labelFor(pkg))
+    screen.setEnabled(true)
+    screen.setSelectable(true)
+    Scripter.preferences(pkg).foreach { pkgpref =>
+      val pref = pkgpref._2
+      val preference = new CheckBoxPreference(this)
+      val key = pkg+"_"+pkgpref._1
+      preference.setKey(key)
+      preference.setTitle(pref("title").asInstanceOf[String])
+      preference.setSummary(pref("summary").asInstanceOf[String])
+      preference.setChecked(pref("default").asInstanceOf[Boolean])
+      screen.addPreference(preference)
+    }
+    screen
+  }
+
 }
 
 /**
@@ -221,8 +236,30 @@ class Scripts extends Activity with Refreshable with RadioGroup.OnCheckedChangeL
   override def onCreateContextMenu(menu:ContextMenu, v:View, info:ContextMenu.ContextMenuInfo) {
     val menuID = if(system) R.menu.system_scripts_context else R.menu.user_scripts_context
     new MenuInflater(this).inflate(menuID, menu)
-    if(!system) {
+    if(system) {
+      val selection = info.asInstanceOf[AdapterView.AdapterContextMenuInfo].id
+      val uri = ContentUris.withAppendedId(Provider.uri, selection)
+      val c = getContentResolver.query(uri, null, null, null, null)
+      c.moveToFirst()
+      val script:Option[Script] = if(c.isAfterLast)
+        None
+      else
+        Some(new Script(this, c))
+      c.close()
+      script.foreach { scr =>
+        if(!scr.preferences_?) {
+          val item = menu.findItem(R.id.preferences)
+          item.setEnabled(false)
+          item.setVisible(false)
+        }
+      }
+    } else {
       val script = Scripter.userScripts(info.asInstanceOf[AdapterView.AdapterContextMenuInfo].position)
+      if(!script.preferences_?) {
+        val item = menu.findItem(R.id.preferences)
+        item.setEnabled(false)
+        item.setVisible(false)
+      }
       if(!script.successfullyRan_?) {
         val item = menu.findItem(R.id.postToBazaar)
         item.setEnabled(false)
@@ -243,6 +280,12 @@ class Scripts extends Activity with Refreshable with RadioGroup.OnCheckedChangeL
         Some(new Script(this, c))
       c.close()
       item.getItemId match {
+        case R.id.preferences =>
+          script.foreach { s =>
+            val intent = new Intent(this, classOf[PreferencesActivity])
+            intent.putExtra("package", s.pkg)
+            startActivity(intent)
+          }
         case R.id.copyToExternalStorage =>
           script.foreach { s =>
             val filename = s.writeToExternalStorage()
@@ -270,6 +313,10 @@ class Scripts extends Activity with Refreshable with RadioGroup.OnCheckedChangeL
     } else {
       val script = Scripter.userScripts(item.getMenuInfo.asInstanceOf[AdapterView.AdapterContextMenuInfo].position)
       item.getItemId match {
+        case R.id.preferences =>
+          val intent = new Intent(this, classOf[PreferencesActivity])
+          intent.putExtra("package", script.pkg)
+          startActivity(intent)
         case R.id.reload => script.reload()
         case R.id.delete =>
           new AlertDialog.Builder(this)
