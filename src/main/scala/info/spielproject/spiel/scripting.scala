@@ -48,6 +48,7 @@ class Script(
   val pkg:String = "",
   val id:Option[Int] = None,
   val remoteID:Option[String] = None,
+  description:Option[String] = None,
   val version:Int = 0,
   asset:Boolean = false
 ) {
@@ -61,6 +62,7 @@ class Script(
       None
     else Some(c.getInt(c.getColumnIndex(Provider.columns._id))),
     Option(c.getString(c.getColumnIndex(Provider.columns.remoteID))),
+    Option(c.getString(c.getColumnIndex(Provider.columns.description))),
     c.getInt(c.getColumnIndex(Provider.columns.version))
   )
 
@@ -69,7 +71,7 @@ class Script(
     Script.readAllAvailable(is),
     filename,
     filename.substring(0, filename.lastIndexOf(".")),
-    None, None, 0, asset
+    None, None, None, 0, asset
   )
 
   def this(context:AContext, filename:String, asset:Boolean) = this(
@@ -161,7 +163,11 @@ class Script(
     }.getOrElse(resolver.insert(Provider.uri, values))
   }
 
-  override val toString = Script.labelFor(pkg, context)
+  override val toString = {
+    val l = Script.labelFor(pkg, context)
+    description.map(l+": "+_).getOrElse(l)
+  }
+
 
   def writeToExternalStorage() = {
     val file = new File(Environment.getExternalStorageDirectory+"/spiel/scripts/"+pkg+".js")
@@ -188,7 +194,10 @@ class Script(
     handlers.foreach(Handler.unregisterHandler(_))
     handlers = Nil
     Scripter.unsetStringsFor(pkg)
+    Scripter.removePreferencesFor(pkg)
   }
+
+  def preferences_? = Scripter.preferences.get(pkg) != None
 
 }
 
@@ -323,6 +332,10 @@ object Scripter {
     }.getOrElse(false)
   }
 
+  def removePreferencesFor(pkg:String) {
+    _preferences -= pkg
+  }
+
   private var strings = collection.mutable.Map[List[String], String]()
 
   def setString(name:String, value:String) {
@@ -424,11 +437,12 @@ object Provider {
     val _id = "_id"
     val pkg = "pkg"
     val label = "label"
+    val description = "description"
     val code = "code"
     val remoteID = "remote_id"
     val version = "version"
 
-    val projection = List(_id, pkg, label, code, remoteID, version).toArray
+    val projection = List(_id, pkg, description, label, code, remoteID, version).toArray
 
     val projectionMap = Map(projection.map { k =>
       k -> k
@@ -594,19 +608,18 @@ class BazaarProvider extends ContentProvider with AbstractProvider {
   }
 
   override def query(uri:Uri, projection:Array[String], where:String, whereArgs:Array[String], sort:String) = {
-
-    Log.d("spiel", "Where: "+where)
-
     val cursor = if(collectionURI_?(uri)) {
-      val c = new MatrixCursor(List(Provider.columns.remoteID, Provider.columns.pkg, Provider.columns.code, Provider.columns.version).toArray)
+      val c = new MatrixCursor(List(Provider.columns.remoteID, Provider.columns.pkg, Provider.columns.description, Provider.columns.code, Provider.columns.version).toArray)
       request(
         apiRoot / "scripts" <<
         Map("q" -> where)
       ) { response =>
         response.values.asInstanceOf[List[Map[String, Any]]].foreach { r =>
+          Log.d("spielcheck", "R: "+r)
           val rb = c.newRow()
           rb.add(r("id"))
           rb.add(r("package"))
+          rb.add(r("description"))
           rb.add(r("code"))
           rb.add(r("version"))
         }
