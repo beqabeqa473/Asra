@@ -48,6 +48,7 @@ class Script(
   val pkg:String = "",
   val id:Option[Int] = None,
   val remoteID:Option[String] = None,
+  owner:Option[String] = None,
   description:Option[String] = None,
   val version:Int = 0,
   asset:Boolean = false
@@ -62,6 +63,7 @@ class Script(
       None
     else Some(c.getInt(c.getColumnIndex(Provider.columns._id))),
     Option(c.getString(c.getColumnIndex(Provider.columns.remoteID))),
+    Option(    c.getString(c.getColumnIndex(Provider.columns.owner))),
     Option(c.getString(c.getColumnIndex(Provider.columns.description))),
     c.getInt(c.getColumnIndex(Provider.columns.version))
   )
@@ -71,7 +73,7 @@ class Script(
     Script.readAllAvailable(is),
     filename,
     filename.substring(0, filename.lastIndexOf(".")),
-    None, None, None, 0, asset
+    None, None, None, None, 0, asset
   )
 
   def this(context:AContext, filename:String, asset:Boolean) = this(
@@ -164,8 +166,9 @@ class Script(
   }
 
   override val toString = {
-    val l = Script.labelFor(pkg, context)
-    description.map(l+": "+_).getOrElse(l)
+    Script.labelFor(pkg, context)+description.map { d =>
+      if(d != "") ": "+d else ""
+    }.getOrElse("")
   }
 
 
@@ -437,12 +440,13 @@ object Provider {
     val _id = "_id"
     val pkg = "pkg"
     val label = "label"
+    val owner = "owner"
     val description = "description"
     val code = "code"
     val remoteID = "remote_id"
     val version = "version"
 
-    val projection = List(_id, pkg, description, label, code, remoteID, version).toArray
+    val projection = List(_id, pkg, label, owner, description, code, remoteID, version).toArray
 
     val projectionMap = Map(projection.map { k =>
       k -> k
@@ -459,12 +463,12 @@ class Provider extends ContentProvider with AbstractProvider {
 
   private val databaseName = "spiel.db"
 
-  private class DatabaseHelper(context:AContext) extends SQLiteOpenHelper(context, databaseName, null, 2) {
+  private class DatabaseHelper(context:AContext) extends SQLiteOpenHelper(context, databaseName, null, 3) {
 
     override def onCreate(db:SQLiteDatabase) {
       val c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='scripts'", null);
       if(c.getCount == 0) {
-        db.execSQL("CREATE TABLE scripts (_id INTEGER PRIMARY KEY AUTOINCREMENT, pkg TEXT NOT NULL, label TEXT NOT NULL, description TEXT NOT NULL DEFAULT '', code TEXT NOT NULL, remote_id TEXT NOT NULL, version INT NOT NULL);")
+        db.execSQL("CREATE TABLE scripts (_id INTEGER PRIMARY KEY AUTOINCREMENT, pkg TEXT NOT NULL, label TEXT NOT NULL, owner TEXT NOT NULL, description TEXT NOT NULL DEFAULT '', code TEXT NOT NULL, remote_id TEXT NOT NULL, version INT NOT NULL);")
       }
       c.close()
     }
@@ -484,6 +488,28 @@ class Provider extends ContentProvider with AbstractProvider {
           val pkg = c.getString(c.getColumnIndex(Provider.columns.pkg))
           values.put(Provider.columns.pkg, pkg)
           values.put(Provider.columns.label, Script.labelFor(pkg, getContext))
+          values.put(Provider.columns.code, c.getString(c.getColumnIndex(Provider.columns.code)))
+          values.put(Provider.columns.remoteID, c.getString(c.getColumnIndex(Provider.columns.remoteID)))
+          values.put(Provider.columns.version, new Integer(c.getInt(c.getColumnIndex(Provider.columns.version))))
+          db.insert("scripts", null, values)
+          c.moveToNext()
+        }
+        c.close()
+        db.execSQL("DROP TABLE tmp;")
+      }
+      if(oldVersion < 3) {
+        db.execSQL("CREATE TABLE tmp (_id, pkg, label, code, remote_id, description, version);")
+        db.execSQL("INSERT into TMP select _id, pkg, label, code, remote_id, description, version from scripts;")
+        db.execSQL("DROP TABLE scripts;")
+        db.execSQL("CREATE TABLE scripts (_id INTEGER PRIMARY KEY AUTOINCREMENT, pkg TEXT NOT NULL, label TEXT NOT NULL, owner TEXT NOT NULL, description TEXT NOT NULL DEFAULT '', code TEXT NOT NULL, remote_id TEXT NOT NULL, version INT NOT NULL);")
+        val c = db.rawQuery("SELECT * FROM tmp;", null)
+        c.moveToFirst()
+        while(!c.isAfterLast) {
+          val values = new ContentValues()
+          values.put(Provider.columns._id, new Integer(c.getInt(c.getColumnIndex(Provider.columns._id))))
+          values.put(Provider.columns.pkg, c.getString(c.getColumnIndex(Provider.columns.pkg)))
+          values.put(Provider.columns.label, c.getString(c.getColumnIndex(Provider.columns.label)))
+          values.put(Provider.columns.owner, "")
           values.put(Provider.columns.code, c.getString(c.getColumnIndex(Provider.columns.code)))
           values.put(Provider.columns.remoteID, c.getString(c.getColumnIndex(Provider.columns.remoteID)))
           values.put(Provider.columns.version, new Integer(c.getInt(c.getColumnIndex(Provider.columns.version))))
@@ -619,6 +645,7 @@ class BazaarProvider extends ContentProvider with AbstractProvider {
           val rb = c.newRow()
           rb.add(r("id"))
           rb.add(r("package"))
+          rb.add(r("owner"))
           rb.add(r("description"))
           rb.add(r("code"))
           rb.add(r("version"))
