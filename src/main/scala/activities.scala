@@ -3,7 +3,7 @@ package activities
 
 import collection.JavaConversions._
 
-import android.app.{Activity, AlertDialog, ListActivity, TabActivity}
+import android.app.{Activity, AlertDialog, Dialog, ListActivity, TabActivity}
 import android.content.{ContentUris, Context, DialogInterface, Intent}
 import android.database.Cursor
 import android.os.Build.VERSION
@@ -12,7 +12,7 @@ import android.preference.{CheckBoxPreference, ListPreference, Preference, Prefe
 import android.util.Log
 import android.view.{ContextMenu, Menu, MenuInflater, MenuItem, View, ViewGroup}
 import android.view.accessibility.AccessibilityEvent
-import android.widget.{AdapterView, ArrayAdapter, Button, CheckBox, ListView, RadioButton, RadioGroup, TabHost}
+import android.widget.{AdapterView, ArrayAdapter, Button, CheckBox, EditText, ListView, RadioButton, RadioGroup, TabHost}
 
 import scripting._
 
@@ -318,6 +318,10 @@ class Scripts extends Activity with Refreshable with RadioGroup.OnCheckedChangeL
           intent.putExtra("package", script.pkg)
           startActivity(intent)
         case R.id.reload => script.reload()
+        case R.id.postToBazaar =>
+          if(Preferences.bazaarUsername == "" || Preferences.bazaarPassword == "") {
+            showDialog(credentialsDialog)
+          }
         case R.id.delete =>
           new AlertDialog.Builder(this)
           .setMessage(getString(R.string.confirmDelete, script.pkg))
@@ -333,6 +337,38 @@ class Scripts extends Activity with Refreshable with RadioGroup.OnCheckedChangeL
       }
     }
     true
+  }
+
+  private val credentialsDialog = 1
+
+  override protected def onCreateDialog(dialogType:Int) = dialogType match {
+    case credentialsDialog =>
+      val dialog = new Dialog(this)
+      dialog.setContentView(R.layout.bazaar_credentials)
+      val username = dialog.findViewById(R.id.username).asInstanceOf[EditText]
+      val password = dialog.findViewById(R.id.username).asInstanceOf[EditText]
+      def clearValues() {
+        username.setText("")
+        password.setText("")
+      }
+      dialog.findViewById(R.id.ok).asInstanceOf[Button].setOnClickListener(new View.OnClickListener {
+        def onClick(v:View) {
+          if(username.getText.toString != "" && password.getText.toString != "") {
+            Preferences.bazaarUsername = username.getText.toString
+            Preferences.bazaarPassword = password.getText.toString
+            dialog.dismiss()
+          } else {
+            dialog.show()
+          }
+        }
+      })
+      dialog.findViewById(R.id.cancel).asInstanceOf[Button].setOnClickListener(new View.OnClickListener {
+        def onClick(v:View) = {
+          clearValues()
+          dialog.dismiss()
+        }
+      })
+      dialog
   }
 
 }

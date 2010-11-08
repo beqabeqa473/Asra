@@ -85,6 +85,10 @@
   <string name="reload">Reload</string>
   <string name="postToBazaar">Post to Bazaar</string>
 
+  <string name="bazaar_credentials">Please enter your Spiel Bazaar credentials below.</string>
+  <string name="bazaar_username_label">Username</string>
+  <string name="bazaar_password_label">Password</string>
+
   <string name="confirmDelete">Are you sure you wish to delete the script for package %1$s?</string>
   <string name="scriptCopied">Script copied to %1$s.</string>
 

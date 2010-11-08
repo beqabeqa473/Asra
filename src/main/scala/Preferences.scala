@@ -141,6 +141,38 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
   def viewRecentEvents = prefs.getBoolean("viewRecentEvents", false)
 
+  /**
+   * Returns the Bazaar username.
+  */
+
+  def bazaarUsername = prefs.getString("bazaarUsername", "")
+
+  /**
+   * Sets the Bazaar username.
+  */
+
+  def bazaarUsername_=(v:String) {
+    val editor = prefs.edit()
+    editor.putString("bazaarUsername", v)
+    editor.commit()
+  }
+
+  /**
+   * Returns the Bazaar username.
+  */
+
+  def bazaarPassword = prefs.getString("bazaarPassword", "")
+
+  /**
+   * Sets the Bazaar password.
+  */
+
+  def bazaarPassword_=(v:String) {
+    val editor = prefs.edit()
+    editor.putString("bazaarPassword", v)
+    editor.commit()
+  }
+
   def onSharedPreferenceChanged(p:SharedPreferences, key:String) {
     key match {
       case "pitchScale" => TTS.pitch = pitchScale

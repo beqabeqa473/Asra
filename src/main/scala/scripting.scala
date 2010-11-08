@@ -300,7 +300,7 @@ object Scripter {
     Context.exit
   }
 
-  def userScripts = {
+  lazy val userScripts = {
     val list = scriptsDir.list()
     if(list == null) List[Script]()
     else list.toList.map(new Script(service, _, false))
