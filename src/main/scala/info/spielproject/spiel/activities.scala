@@ -401,24 +401,32 @@ class Events extends ListActivity with Refreshable {
 
 class ScriptInstaller extends Activity with AdapterView.OnItemClickListener {
 
+  private var scripts:List[Script] = Nil
+
   override def onCreate(bundle:Bundle) {
     super.onCreate(bundle)
     setContentView(R.layout.script_installer)
 
-    val scripts = findViewById(R.id.scripts).asInstanceOf[ListView]
-    scripts.setAdapter(
+    val scriptsList = findViewById(R.id.scripts).asInstanceOf[ListView]
+    scripts = BazaarProvider.newOrUpdatedScripts
+    scriptsList.setAdapter(
       new ArrayAdapter[Script](
         this,
         android.R.layout.simple_list_item_multiple_choice,
-        BazaarProvider.newOrUpdatedScripts.toArray
+        scripts.toArray
       )
     )
-    scripts.setOnItemClickListener(this)
-    scripts.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE)
+    scriptsList.setOnItemClickListener(this)
+    scriptsList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE)
 
     def selectAll() {
-      for(p <- 0.to(scripts.getCount-1)) {
-        scripts.setItemChecked(p, true)
+      var seen:List[String] = Nil
+      for(p <- 0.to(scriptsList.getCount-1)) {
+        val script = scripts(p)
+        if(!seen.contains(script.pkg)) {
+          seen ::= script.pkg
+          scriptsList.setItemChecked(p, true)
+        }
       }
     }
 
@@ -434,17 +442,17 @@ class ScriptInstaller extends Activity with AdapterView.OnItemClickListener {
 
     findViewById(R.id.deselectAll).asInstanceOf[Button].setOnClickListener(
       new View.OnClickListener {
-        def onClick(v:View) = scripts.clearChoices()
+        def onClick(v:View) = scriptsList.clearChoices()
       }
     )
 
     findViewById(R.id.install).asInstanceOf[Button].setOnClickListener(
       new View.OnClickListener {
         def onClick(v:View) {
-          val checked = scripts.getCheckedItemPositions()
-          for(scriptID <- 0.to(BazaarProvider.newOrUpdatedScripts.size-1)) {
+          val checked = scriptsList.getCheckedItemPositions()
+          for(scriptID <- 0.to(scripts.size-1)) {
             if(checked.get(scriptID)) {
-              val script = BazaarProvider.newOrUpdatedScripts(scriptID)
+              val script = scripts(scriptID)
               script.run()
               script.save()
             }
@@ -462,12 +470,18 @@ class ScriptInstaller extends Activity with AdapterView.OnItemClickListener {
 
   }
 
-  // Needed because clicking a list without a listener doesn't raise AccessibilityEvents.
   def onItemClick(parent:AdapterView[_], view:View, position:Int, id:Long) {
     val list = parent.asInstanceOf[ListView]
-    if(list.isItemChecked(position))
+    // Needed because clicking a list without a listener doesn't raise AccessibilityEvents.
+    if(list.isItemChecked(position)) {
       TTS.speak(getString(R.string.checked), true)
-    else
+      val current = scripts(position)
+      for(i <- 0.to(list.getCount-1)) {
+        val script = scripts(position)
+        if(script != current && script.pkg == current.pkg)
+          list.setItemChecked(i, false)
+      }
+    } else
       TTS.speak(getString(R.string.notChecked), true)
   }
 
