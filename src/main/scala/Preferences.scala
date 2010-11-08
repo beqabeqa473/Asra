@@ -42,7 +42,7 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
   def speechEngine_=(e:String) {
     val editor = prefs.edit()
-    editor.putString("speechEngine", TTS.defaultEngine)
+    editor.putString("speechEngine", e)
     editor.commit()
   }
 
