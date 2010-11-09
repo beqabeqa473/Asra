@@ -4,7 +4,7 @@ import java.io.File
 
 import org.clapper.sbtplugins.MarkdownPlugin
 
-class SpielProject(info: ProjectInfo) extends AndroidProject(info) with MarkdownPlugin {
+class SpielProject(info: ProjectInfo) extends AndroidProject(info) with MarkdownPlugin with MarketPublish {
 
   val scanDirectories = mainAssetsPath/"scripts" :: Nil
 
@@ -53,5 +53,8 @@ class SpielProject(info: ProjectInfo) extends AndroidProject(info) with Markdown
     markdown(manualMD, manualHTML, log)
     Some("")
   }
+
+  val keyalias = "spiel"
+  override def keystorePath = Path.userHome / ".keystore" / "spiel.keystore"
 
 }
