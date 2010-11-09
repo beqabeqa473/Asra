@@ -43,7 +43,7 @@ class RhinoCallback(f:Function) extends Callback {
 
 class Script(
   context:AContext,
-  private var code:String,
+  private[scripting] var code:String,
   filename:String = "",
   val pkg:String = "",
   val id:Option[Int] = None,
@@ -103,6 +103,7 @@ class Script(
       Scripter.scope.put("__pkg__", Scripter.scope, null)
       Scripter.script = None
     }
+    successfullyRan
   }
 
   private var handlers = List[Handler]()
@@ -146,6 +147,8 @@ class Script(
     val values = new ContentValues
     values.put(Provider.columns.pkg, pkg)
     values.put(Provider.columns.label, Script.labelFor(pkg, context))
+    values.put(Provider.columns.owner, owner.get)
+    values.put(Provider.columns.description, description.getOrElse(""))
     values.put(Provider.columns.code, code)
     values.put(Provider.columns.remoteID, remoteID.getOrElse(null))
     values.put(Provider.columns.version, new java.lang.Integer(version))
@@ -180,7 +183,7 @@ class Script(
     file.getAbsolutePath
   }
 
-  def reload() {
+  def reload() = {
     val inputStream = if(asset)
       context.getAssets.open(filename)
     else new FileInputStream(new File(Scripter.scriptsDir, filename))
@@ -300,7 +303,7 @@ object Scripter {
     Context.exit
   }
 
-  lazy val userScripts = {
+  def userScripts = {
     val list = scriptsDir.list()
     if(list == null) List[Script]()
     else list.toList.map(new Script(service, _, false))
@@ -555,7 +558,6 @@ class Provider extends ContentProvider with AbstractProvider {
   }
 
   override def insert(u:Uri, values:ContentValues) = {
-
     if(values == null)
       throw new IllegalArgumentException("values cannot be null")
     else if(!collectionURI_?(u)) 
@@ -635,13 +637,12 @@ class BazaarProvider extends ContentProvider with AbstractProvider {
 
   override def query(uri:Uri, projection:Array[String], where:String, whereArgs:Array[String], sort:String) = {
     val cursor = if(collectionURI_?(uri)) {
-      val c = new MatrixCursor(List(Provider.columns.remoteID, Provider.columns.pkg, Provider.columns.description, Provider.columns.code, Provider.columns.version).toArray)
+      val c = new MatrixCursor(List(Provider.columns.remoteID, Provider.columns.pkg, Provider.columns.owner, Provider.columns.description, Provider.columns.code, Provider.columns.version).toArray)
       request(
         apiRoot / "scripts" <<
         Map("q" -> where)
       ) { response =>
         response.values.asInstanceOf[List[Map[String, Any]]].foreach { r =>
-          Log.d("spielcheck", "R: "+r)
           val rb = c.newRow()
           rb.add(r("id"))
           rb.add(r("package"))
@@ -659,7 +660,17 @@ class BazaarProvider extends ContentProvider with AbstractProvider {
     cursor
   }
 
-  override def insert(u:Uri, values:ContentValues) = null
+  override def insert(u:Uri, values:ContentValues) = {
+    val parameters = collection.mutable.Map[String, String]()
+    parameters("package") = values.getAsString("pkg")
+    parameters("code") = values.getAsString("code")
+    http((
+      apiRoot / "script" << parameters as(Preferences.bazaarUsername, Preferences.bazaarPassword)
+    ) ># { response =>
+      /// xxx
+    })
+    null
+  }
 
   override def update(u:Uri, values:ContentValues, where:String, whereArgs:Array[String]) = 0
 
@@ -724,6 +735,13 @@ object BazaarProvider {
       intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
       context.startActivity(intent)
     }
+  }
+
+  def post(script:Script) {
+    val values = new ContentValues()
+    values.put("package", script.pkg)
+    values.put("code", script.code)
+    context.getContentResolver.insert(BazaarProvider.uri, values)
   }
 
 }

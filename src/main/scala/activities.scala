@@ -12,7 +12,7 @@ import android.preference.{CheckBoxPreference, ListPreference, Preference, Prefe
 import android.util.Log
 import android.view.{ContextMenu, Menu, MenuInflater, MenuItem, View, ViewGroup}
 import android.view.accessibility.AccessibilityEvent
-import android.widget.{AdapterView, ArrayAdapter, Button, CheckBox, EditText, ListView, RadioButton, RadioGroup, TabHost}
+import android.widget.{AdapterView, ArrayAdapter, Button, CheckBox, EditText, ListView, RadioButton, RadioGroup, TabHost, TextView}
 
 import scripting._
 
@@ -260,11 +260,6 @@ class Scripts extends Activity with Refreshable with RadioGroup.OnCheckedChangeL
         item.setEnabled(false)
         item.setVisible(false)
       }
-      if(!script.successfullyRan_?) {
-        val item = menu.findItem(R.id.postToBazaar)
-        item.setEnabled(false)
-        item.setVisible(false)
-      }
     }
   }
 
@@ -319,8 +314,18 @@ class Scripts extends Activity with Refreshable with RadioGroup.OnCheckedChangeL
           startActivity(intent)
         case R.id.reload => script.reload()
         case R.id.postToBazaar =>
-          if(Preferences.bazaarUsername == "" || Preferences.bazaarPassword == "") {
-            showDialog(credentialsDialog)
+          if(script.reload()) {
+            scriptToPost = Some(script)
+            if(Preferences.bazaarUsername == "" || Preferences.bazaarPassword == "")
+              showDialog(credentialsDialog)
+            else
+              postToBazaar()
+          } else {
+            new AlertDialog.Builder(this)
+            .setMessage(getString(R.string.script_reload_error))
+            .setPositiveButton(getString(R.string.ok), null)
+            .show()
+
           }
         case R.id.delete =>
           new AlertDialog.Builder(this)
@@ -345,6 +350,11 @@ class Scripts extends Activity with Refreshable with RadioGroup.OnCheckedChangeL
     case credentialsDialog =>
       val dialog = new Dialog(this)
       dialog.setContentView(R.layout.bazaar_credentials)
+      val message = dialog.findViewById(R.id.message).asInstanceOf[TextView]
+      if(Preferences.bazaarUsername != "" || Preferences.bazaarPassword != "")
+        message.setText(getString(R.string.bazaar_credentials_invalid))
+      else
+        message.setText(getString(R.string.bazaar_credentials))
       val username = dialog.findViewById(R.id.username).asInstanceOf[EditText]
       val password = dialog.findViewById(R.id.username).asInstanceOf[EditText]
       def clearValues() {
@@ -357,6 +367,7 @@ class Scripts extends Activity with Refreshable with RadioGroup.OnCheckedChangeL
             Preferences.bazaarUsername = username.getText.toString
             Preferences.bazaarPassword = password.getText.toString
             dialog.dismiss()
+            postToBazaar()
           } else {
             dialog.show()
           }
@@ -365,10 +376,30 @@ class Scripts extends Activity with Refreshable with RadioGroup.OnCheckedChangeL
       dialog.findViewById(R.id.cancel).asInstanceOf[Button].setOnClickListener(new View.OnClickListener {
         def onClick(v:View) = {
           clearValues()
+          scriptToPost = None
           dialog.dismiss()
         }
       })
       dialog
+  }
+
+  private var scriptToPost:Option[Script] = None
+
+  private def postToBazaar() = scriptToPost.foreach { script =>
+    val dialog = new AlertDialog.Builder(this)
+    dialog.setPositiveButton(getString(R.string.ok), null)
+    try {
+      BazaarProvider.post(script)
+      scriptToPost = None
+      dialog.setMessage(getString(R.string.script_posted))
+      .show()
+    } catch {
+      case e@dispatch.StatusCode(401, _) => showDialog(credentialsDialog)
+      case _ =>
+        scriptToPost = None
+        dialog.setMessage(getString(R.string.script_posting_error))
+        dialog.show()
+    }
   }
 
 }
