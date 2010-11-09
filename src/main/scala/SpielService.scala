@@ -23,7 +23,7 @@ class SpielService extends AccessibilityService {
     //Debug.startMethodTracing("spiel")
     Preferences(this)
     if(Preferences.sendBacktraces)
-      ExceptionHandler.register(this, "http://stacktrace.spielproject.info/index.php")
+      ExceptionHandler.register(this, "http://stacktrace.spielproject.info/")
     TTS(this)
     Handler(this)
     Scripter(this)
