@@ -203,7 +203,11 @@ object StateReactor {
 
   onRingerModeChanged { (mode) =>
     Log.d("spiel", "Ringer mode changed: "+mode)
-    ringerOn = mode != "silent"
+    ringerOn = mode == "normal"
+    if(ringerOn)
+      TTS.speak(service.getString(R.string.ringer_on), false)
+    else
+      TTS.speak(service.getString(R.string.ringer_off), false)
   }
 
   // Note screen state, silencing notification speech if desired and speaking "Locked."
