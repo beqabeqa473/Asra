@@ -662,13 +662,14 @@ class BazaarProvider extends ContentProvider with AbstractProvider {
 
   override def insert(u:Uri, values:ContentValues) = {
     val parameters = collection.mutable.Map[String, String]()
-    parameters("package") = values.getAsString("pkg")
     parameters("code") = values.getAsString("code")
+    parameters("changes") = values.getAsString("changes")
+    Log.d("spielcheck", "Parameters: "+http+": "+apiRoot)
     http((
-      apiRoot / "script" << parameters as(Preferences.bazaarUsername, Preferences.bazaarPassword)
-    ) ># { response =>
-      /// xxx
+      apiRoot / "script" / values.getAsString("package") << parameters as (Preferences.bazaarUsername, Preferences.bazaarPassword)
+    ) >~ { response =>
     })
+    Log.d("spielcheck", "Here")
     null
   }
 
@@ -737,10 +738,11 @@ object BazaarProvider {
     }
   }
 
-  def post(script:Script) {
+  def post(script:Script, changes:String) {
     val values = new ContentValues()
     values.put("package", script.pkg)
     values.put("code", script.code)
+    values.put("changes", changes)
     context.getContentResolver.insert(BazaarProvider.uri, values)
   }
 

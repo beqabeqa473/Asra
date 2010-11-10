@@ -92,6 +92,7 @@
   <string name="bazaar_username_label">Username</string>
   <string name="bazaar_password_label">Password</string>
   <string name="script_reload_error">This script is invalid. Please fix any errors reported in the logs and try again.</string>
+  <string name="changes_label">Changes (optional):</string>
   <string name="script_posted">Your script was posted successfully. Thank you for your contribution.</string>
   <string name="script_posting_error">There was a temporary network error posting your script. Please try again later.</string>
 

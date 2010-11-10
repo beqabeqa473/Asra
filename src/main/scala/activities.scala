@@ -319,13 +319,12 @@ class Scripts extends Activity with Refreshable with RadioGroup.OnCheckedChangeL
             if(Preferences.bazaarUsername == "" || Preferences.bazaarPassword == "")
               showDialog(credentialsDialog)
             else
-              postToBazaar()
+              showDialog(postDialog)
           } else {
             new AlertDialog.Builder(this)
             .setMessage(getString(R.string.script_reload_error))
             .setPositiveButton(getString(R.string.ok), null)
             .show()
-
           }
         case R.id.delete =>
           new AlertDialog.Builder(this)
@@ -345,61 +344,94 @@ class Scripts extends Activity with Refreshable with RadioGroup.OnCheckedChangeL
   }
 
   private val credentialsDialog = 1
+  private val postDialog = 2
 
-  override protected def onCreateDialog(dialogType:Int) = dialogType match {
-    case credentialsDialog =>
-      val dialog = new Dialog(this)
-      dialog.setContentView(R.layout.bazaar_credentials)
-      val message = dialog.findViewById(R.id.message).asInstanceOf[TextView]
-      if(Preferences.bazaarUsername != "" || Preferences.bazaarPassword != "")
-        message.setText(getString(R.string.bazaar_credentials_invalid))
-      else
-        message.setText(getString(R.string.bazaar_credentials))
-      val username = dialog.findViewById(R.id.username).asInstanceOf[EditText]
-      val password = dialog.findViewById(R.id.username).asInstanceOf[EditText]
-      def clearValues() {
-        username.setText("")
-        password.setText("")
-      }
-      dialog.findViewById(R.id.ok).asInstanceOf[Button].setOnClickListener(new View.OnClickListener {
-        def onClick(v:View) {
-          if(username.getText.toString != "" && password.getText.toString != "") {
-            Preferences.bazaarUsername = username.getText.toString
-            Preferences.bazaarPassword = password.getText.toString
+  override protected def onCreateDialog(dialogType:Int):Dialog = {
+    val dialog = new Dialog(this)
+    dialogType match {
+      // TODO: Why can't I just match against literals without getting an "unreachable code"?
+      case v if(v == credentialsDialog) =>
+        val dialog = new Dialog(this)
+        dialog.setContentView(R.layout.bazaar_credentials)
+        val message = dialog.findViewById(R.id.message).asInstanceOf[TextView]
+        if(Preferences.bazaarUsername != "" || Preferences.bazaarPassword != "")
+          message.setText(getString(R.string.bazaar_credentials_invalid))
+        else
+          message.setText(getString(R.string.bazaar_credentials))
+        val username = dialog.findViewById(R.id.username).asInstanceOf[EditText]
+        username.setText(Preferences.bazaarUsername)
+        val password = dialog.findViewById(R.id.password).asInstanceOf[EditText]
+        password.setText(Preferences.bazaarPassword)
+        def clearValues() {
+          username.setText("")
+          password.setText("")
+        }
+        dialog.findViewById(R.id.ok).asInstanceOf[Button].setOnClickListener(new View.OnClickListener {
+          def onClick(v:View) {
+            if(username.getText.toString != "" && password.getText.toString != "") {
+              Preferences.bazaarUsername = username.getText.toString
+              Preferences.bazaarPassword = password.getText.toString
+              dialog.dismiss()
+              postToBazaar()
+            } else {
+              dialog.show()
+            }
+          }
+        })
+        dialog.findViewById(R.id.cancel).asInstanceOf[Button].setOnClickListener(new View.OnClickListener {
+          def onClick(v:View) {
+            clearValues()
+            scriptToPost = None
+            dialog.dismiss()
+          }
+        })
+      case v if(v == postDialog) =>
+        dialog.setContentView(R.layout.post_script)
+        val changesField = dialog.findViewById(R.id.changes).asInstanceOf[EditText]
+        changesField.setText(scriptChanges)
+        def clearValues() {
+          changesField.setText("")
+        }
+        dialog.findViewById(R.id.ok).asInstanceOf[Button].setOnClickListener(new View.OnClickListener {
+          def onClick(v:View) {
+            scriptChanges = changesField.getText.toString
             dialog.dismiss()
             postToBazaar()
-          } else {
-            dialog.show()
           }
-        }
-      })
-      dialog.findViewById(R.id.cancel).asInstanceOf[Button].setOnClickListener(new View.OnClickListener {
-        def onClick(v:View) = {
-          clearValues()
-          scriptToPost = None
-          dialog.dismiss()
-        }
-      })
-      dialog
+        })
+        dialog.findViewById(R.id.cancel).asInstanceOf[Button].setOnClickListener(new View.OnClickListener {
+          def onClick(v:View) = {
+            clearValues()
+            scriptToPost = None
+            scriptChanges = ""
+            dialog.dismiss()
+          }
+        })
+    }
+    dialog
   }
 
   private var scriptToPost:Option[Script] = None
+  private var scriptChanges = ""
 
   private def postToBazaar() = scriptToPost.foreach { script =>
     val dialog = new AlertDialog.Builder(this)
     dialog.setPositiveButton(getString(R.string.ok), null)
-    try {
-      BazaarProvider.post(script)
+    //try {
+      BazaarProvider.post(script, scriptChanges)
       scriptToPost = None
+      scriptChanges = ""
       dialog.setMessage(getString(R.string.script_posted))
-      .show()
-    } catch {
-      case e@dispatch.StatusCode(401, _) => showDialog(credentialsDialog)
-      case _ =>
+      dialog.show()
+    /*} catch {
+      case e@dispatch.StatusCode(401, _) =>
+        Log.d("spielcheck", "Credentials error.")
+        showDialog(credentialsDialog)
+      case e =>
         scriptToPost = None
         dialog.setMessage(getString(R.string.script_posting_error))
         dialog.show()
-    }
+    }*/
   }
 
 }
