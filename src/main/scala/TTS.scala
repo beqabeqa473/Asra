@@ -169,6 +169,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   def speak(text:String, flush:Boolean) {
     if(!SpielService.enabled) return
+    Log.d("spiel", "Speaking "+text+": "+flush)
     val mode = if(flush) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD
     //if(flush) stop
     if(text.length == 0)
@@ -188,13 +189,10 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   */
 
   def speak(list:List[String], flush:Boolean):Unit = if(list != Nil) {
-    if(flush) {
-      stop
-      // Let queue empty before adding new items. Avoids jumbled speech.
-      Thread.sleep(40)
-    }
-    speak(list.head, flush)
-    list.tail.foreach { str => speak(str, false) }
+    speak(list.reduceLeft[String] { (acc, v) => 
+      val text = if(v == "") "blank" else v
+      acc+": "+text
+    }, flush)
   }
 
   /**
