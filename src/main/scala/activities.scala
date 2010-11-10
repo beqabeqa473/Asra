@@ -417,13 +417,13 @@ class Scripts extends Activity with Refreshable with RadioGroup.OnCheckedChangeL
   private def postToBazaar() = scriptToPost.foreach { script =>
     val dialog = new AlertDialog.Builder(this)
     dialog.setPositiveButton(getString(R.string.ok), null)
-    //try {
+    try {
       BazaarProvider.post(script, scriptChanges)
       scriptToPost = None
       scriptChanges = ""
       dialog.setMessage(getString(R.string.script_posted))
       dialog.show()
-    /*} catch {
+    } catch {
       case e@dispatch.StatusCode(401, _) =>
         Log.d("spielcheck", "Credentials error.")
         showDialog(credentialsDialog)
@@ -431,7 +431,7 @@ class Scripts extends Activity with Refreshable with RadioGroup.OnCheckedChangeL
         scriptToPost = None
         dialog.setMessage(getString(R.string.script_posting_error))
         dialog.show()
-    }*/
+    }
   }
 
 }
