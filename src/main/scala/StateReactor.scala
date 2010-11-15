@@ -18,7 +18,7 @@ import scripting._
 object StateReactor {
   import StateObserver._
 
-  private[spiel] var ringerOn:Boolean = false
+  private[spiel] var ringerOn:Option[Boolean] = None
 
   private var service:SpielService = null
 
@@ -31,7 +31,6 @@ object StateReactor {
   def apply(svc:SpielService) {
     service = svc
     audioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
-    ringerOn = audioManager.getRingerMode != AudioManager.RINGER_MODE_SILENT
   }
 
   // Check Bazaar for new scripts on app installation.
@@ -198,16 +197,18 @@ object StateReactor {
 
   // Note ringer state, silencing spoken notifications if desired.
 
-  def ringerOn_? = ringerOn
+  def ringerOn_? = ringerOn.getOrElse(true)
   def ringerOff_? = !ringerOn_?
 
   onRingerModeChanged { (mode) =>
-    Log.d("spiel", "Ringer mode changed: "+mode)
-    ringerOn = mode == "normal"
-    if(ringerOn)
-      TTS.speak(service.getString(R.string.ringer_on), false)
-    else
-      TTS.speak(service.getString(R.string.ringer_off), false)
+    val shouldSpeak = ringerOn != None
+    val v = mode == "normal"
+    ringerOn = Some(v)
+    if(shouldSpeak)
+      if(v)
+        TTS.speak(service.getString(R.string.ringer_on), false)
+      else
+        TTS.speak(service.getString(R.string.ringer_off), false)
   }
 
   // Note screen state, silencing notification speech if desired and speaking "Locked."
