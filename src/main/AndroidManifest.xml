@@ -13,7 +13,7 @@
   <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
-  <application android:label="Spiel">
+  <application android:label="Spiel"   android:icon="@drawable/empty">
 
     <service android:name=".SpielService">
       <intent-filter>
