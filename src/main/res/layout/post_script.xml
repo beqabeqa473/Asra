@@ -7,7 +7,7 @@
   android:stretchColumns="1">
   <TableRow>
     <TextView android:text="@string/changes_label"/>
-    <EditText android:id="@+id/changes" android:contentDescription="@+string/changes_label"/>
+    <EditText android:id="@+id/changes" android:contentDescription="@+string/changes_label" android:capitalize="sentences"/>
   </TableRow>
   <TableRow>
     <Button android:id="@+id/ok" android:text="@string/ok"/>
