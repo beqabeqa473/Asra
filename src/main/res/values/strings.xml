@@ -4,6 +4,7 @@
 
   <!-- Initial welcome message-->
   <string name="welcomeMsg">Welcome to Spiel!</string>
+  <string name="enable_spiel">Please enable Spiel before continuing.</string>
 
   <!-- On/off and other alerts -->
   <string name="spielOn">Spiel on.</string>

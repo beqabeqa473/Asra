@@ -32,6 +32,7 @@ class SpielService extends AccessibilityService {
     StateReactor(this)
     Triggers(this)
     TelephonyListener(this)
+    SpielService.initialized = true
     SpielService.enabled = true
   }
 
@@ -42,6 +43,7 @@ class SpielService extends AccessibilityService {
     TTS.shutdown
     Scripter.onDestroy
     //Debug.stopMethodTracing
+    SpielService.initialized = false
     SpielService.enabled = false
   }
 
@@ -91,6 +93,8 @@ class SpielService extends AccessibilityService {
 }
 
 object SpielService {
+
+  var initialized = false
 
   var enabled = false
 

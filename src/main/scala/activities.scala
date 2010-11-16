@@ -26,23 +26,36 @@ import triggers.Triggers
 class Spiel extends TabActivity {
   override def onCreate(bundle:Bundle) {
     super.onCreate(bundle)
-    val host = getTabHost
+    if(!SpielService.initialized) {
+      new AlertDialog.Builder(this)
+      .setMessage(getString(R.string.enable_spiel))
+      .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener {
+        def onClick(i:DialogInterface, what:Int) {
+          finish()
+          val intent = new Intent
+          intent.setClassName("com.android.settings", "com.android.settings.AccessibilitySettings")
+          startActivity(intent)
+        }
+      })
+      .show()
+    } else {
+      val host = getTabHost
 
-    host.addTab(host.newTabSpec("preferences")
-      .setIndicator(getString(R.string.preferences))
-      .setContent(new Intent(this, classOf[PreferencesActivity]))
-    )
+      host.addTab(host.newTabSpec("preferences")
+        .setIndicator(getString(R.string.preferences))
+        .setContent(new Intent(this, classOf[PreferencesActivity]))
+      )
 
-    host.addTab(host.newTabSpec("scripts")
-      .setIndicator(getString(R.string.scripts))
-      .setContent(new Intent(this, classOf[Scripts]))
-    )
+      host.addTab(host.newTabSpec("scripts")
+        .setIndicator(getString(R.string.scripts))
+        .setContent(new Intent(this, classOf[Scripts]))
+      )
 
-    host.addTab(host.newTabSpec("events")
-      .setIndicator(getString(R.string.events))
-      .setContent(new Intent(this, classOf[Events]))
-    )
-
+      host.addTab(host.newTabSpec("events")
+        .setIndicator(getString(R.string.events))
+        .setContent(new Intent(this, classOf[Events]))
+      )
+    }
   }
 }
 
