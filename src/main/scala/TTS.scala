@@ -55,7 +55,8 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   }
 
   def defaultsEnforced_? = {
-    if(VERSION.SDK_INT >= 8) defaultsEnforcedV8_? else false
+    if(tts == null) true
+    else if(VERSION.SDK_INT >= 8) defaultsEnforcedV8_? else false
   }
 
   private def defaultsEnforcedV8_? = tts.areDefaultsEnforced()
