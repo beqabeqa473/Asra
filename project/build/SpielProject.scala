@@ -2,9 +2,7 @@ import sbt._
 import Process._
 import java.io.File
 
-import org.clapper.sbtplugins.MarkdownPlugin
-
-class SpielProject(info: ProjectInfo) extends AndroidProject(info) with MarkdownPlugin with MarketPublish {
+class SpielProject(info: ProjectInfo) extends AndroidProject(info) with MarketPublish {
 
   val scanDirectories = mainAssetsPath/"scripts" :: Nil
 
@@ -42,16 +40,6 @@ class SpielProject(info: ProjectInfo) extends AndroidProject(info) with Markdown
     }
     FileUtilities.clean(outputDirectoryName/"org", log)
     None
-  }
-
-  override def cleanLibAction = super.cleanAction dependsOn(markdownCleanLibAction)
-  override def updateAction = super.updateAction dependsOn(markdownUpdateAction)
-
-  val manualMD = "src" / "doc" / "manual.md"
-  val manualHTML = "target" / "manual.html"
-  lazy val htmlDocs = fileTask(manualMD from manualHTML) {
-    markdown(manualMD, manualHTML, log)
-    Some("")
   }
 
   val keyalias = "spiel"
