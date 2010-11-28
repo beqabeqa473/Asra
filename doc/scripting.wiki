@@ -200,6 +200,28 @@ forClass("android.widget.Button" {
 
 Here we do several things. As previously described, we intercept events of the given type from the package specified by the filename and the class specified in the script. In the function, we check the <b>currentItemIndex</b> property of the buttons, speaking a string for each which assumedly corresponds to some inaccessible label text. We then specify that the next handler should not interrupt speech and return false, stating that processing should continue. Processing then continues, eventually reaching the default button handler which speaks the string "Button". Because we have explicitly asked that the next handler not interrupt speech, our existing speech is allowed to continue and "Button" is queued. Had we not called <b>nextShouldNotInterrupt()</b>, the string "Button" would have interrupted our attempts to speak more accessible text, and our script would seem to have no effect.
 
+<h3>Other Functions and Properties</h3>
+
+Several additional functions and properties are available to help craft custom scripts tailored to specific versions of Android and Spiel.
+
+<h4>log()</h4>
+
+Logging is an incredibly useful debugging tool. Sometimes it is helpful to know the exact class or content of a variable at runtime, or to determine if a given conditional path is triggered at the correct time. The <b>log()</b> function helps with this by inserting a string into Spiel's logcat output, prefixed by the package name of the currently-executing script. For instance, calling the function like so:
+
+<pre>
+log("Here.")
+</pre>
+
+from a handler in the script for the package <b>com.acme.android</b> will place the message "Here." into your device logs, prefixed by "com.acme.android".
+
+<h4>SPIEL_API_VERSION</h4>
+
+Spiel's scripting API will likely change over time, introducing new functions or changing the ways in which older ones work. As such, it will likely make sense to check its API version to determine whether or not a given block of code will run. This can be accomplished by checking the value of <b>SPIEL_API_VERSION</b>. This value, currently <b>1</b>, will be incremented whenever an API change is made.
+
+<h4>ANDROID_PLATFORM_VERSION</h4>
+
+It is likely that Android's behavior will change over time, with new accessibility added and previously-working accessibility broken. As such, it may become necessary to check the Android platform version in Spiel scripts, conditionally handling events or introducing new code paths based on the currently-running version. This can be checked via the <b>ANDROID_PLATFORM_VERSION</b> property, which corresponds to the SDK version of Android running on the user's device.
+
 <h3>Viewing Events</h3>
 
 While knowing how to script is one thing, knowing which events to intercept (or indeed, if any are available to intercept) is another matter entirely. Fortunately, Spiel offers several convenience features to make scripting easier. To enable these, navigate to Spiel's preferences, select <b>Scripting and debugging</b>, then enable <b>Display most recent accessibility events</b>.
