@@ -148,5 +148,7 @@
   <string name="apostrophe">apostrophe</string>
   <string name="semiColon">semi colon</string>
   <string name="colon">colon</string>
+  <string name="dash">dash</string>
+  <string name="plus">plus</string>
 
 </resources>
