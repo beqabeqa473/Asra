@@ -75,13 +75,19 @@ object StateObserver {
 
   def onApplicationAdded(h:(Intent) => Unit) = applicationAddedHandlers ::= h
 
-  def applicationAdded(i:Intent) = applicationAddedHandlers.foreach { f => f(i) }
+  def applicationAdded(i:Intent) = {
+    if(!i.getBooleanExtra(Intent.EXTRA_REPLACING, false))
+      applicationAddedHandlers.foreach { f => f(i) }
+  }
 
   private var applicationRemovedHandlers = List[(Intent) => Unit]()
 
   def onApplicationRemoved(h:(Intent) => Unit) = applicationRemovedHandlers ::= h
 
-  def applicationRemoved(i:Intent) = applicationRemovedHandlers.foreach { f => f(i) }
+  def applicationRemoved(i:Intent) = {
+    if(!i.getBooleanExtra(Intent.EXTRA_REPLACING, false))
+      applicationRemovedHandlers.foreach { f => f(i) }
+  }
 
   private var callAnsweredHandlers = List[() => Unit]()
 
