@@ -10,7 +10,7 @@
   <string name="spielOn">Spiel activado.</string>
   <string name="spielOff">Spiel desactivado.</string>
   <string name="screenOffLocked">Pantalla apagada. Bloqueada.</string>
-  <string name="screenOnLocked">Pantalla encendida. Bloqueada.</string>
+  <string name="screenOnLocked">%1$s. Pantalla encendida. Bloqueada.</string>
   <string name="ringer_off">Ringer off.</string>
   <string name="ringer_on">Ringer on.</string>
 

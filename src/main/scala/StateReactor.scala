@@ -1,5 +1,8 @@
 package info.spielproject.spiel
 
+import java.text.DateFormat
+import java.util.Calendar
+
 import actors.Actor._
 
 import android.content.{BroadcastReceiver, ContentUris, Context, Intent, IntentFilter}
@@ -227,7 +230,10 @@ object StateReactor {
   onScreenOn { () =>
     if(!screenOn) {
       screenOn = true
-      TTS.speak(service.getString(R.string.screenOnLocked), false) 
+      val formatter = DateFormat.getTimeInstance(DateFormat.SHORT)
+      val time = Calendar.getInstance.getTime
+      val timeStr = formatter.format(time)
+      TTS.speak(service.getString(R.string.screenOnLocked, timeStr), false)
     }
   }
 
