@@ -150,7 +150,8 @@ object Handler extends Actor {
   */
 
   def handle(event:AccessibilityEvent) = {
-    this ! Item(event, System.currentTimeMillis+timeout)
+    if(event.getPackageName != null && event.getClassName != null)
+      this ! Item(event, System.currentTimeMillis+timeout)
   }
 
   // This gets fun. First we receive the message passed to an actor, 
