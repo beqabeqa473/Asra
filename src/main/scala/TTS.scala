@@ -129,18 +129,13 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   def shutdown = tts.shutdown
 
-  private var currentRepeatedSpeech:Option[String] = None
-
-  def onUtteranceCompleted(id:String) = {
-    currentRepeatedSpeech = None
-    repeatedSpeech.get(id) match {
-      case Some(v) =>
-        actor {
-          Thread.sleep(v._1*1000)
-          performRepeatedSpeech(id)
-        }
-      case None =>
-    }
+  def onUtteranceCompleted(id:String) = repeatedSpeech.get(id) match {
+    case Some(v) =>
+      actor {
+        Thread.sleep(v._1*1000)
+        performRepeatedSpeech(id)
+      }
+    case None =>
   }
 
   private val managedPunctuations = Map(
@@ -217,7 +212,6 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     if(!SpielService.enabled) return
     Log.d("spiel", "Stopping speech")
     tts.stop
-    currentRepeatedSpeech.foreach(onUtteranceCompleted(_))
   }
 
   private def speakWithUtteranceID(text:String, uid:String) {
@@ -238,9 +232,8 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
    * @return ID used to stop repeated speech
   */
 
-  def speakEvery(seconds:Int, text:String, id:String = "") = {
-    val key = if(id == "") random.nextInt.toString else id
-    currentRepeatedSpeech = Some(key)
+  def speakEvery(seconds:Int, text:String) = {
+    val key = random.nextInt.toString
     repeatedSpeech(key) = (seconds, text)
     performRepeatedSpeech(key)
     key
