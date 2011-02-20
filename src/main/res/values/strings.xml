@@ -150,5 +150,6 @@
   <string name="colon">colon</string>
   <string name="dash">dash</string>
   <string name="plus">plus</string>
+  <string name="newline">Newline</string>
 
 </resources>

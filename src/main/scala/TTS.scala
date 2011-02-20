@@ -161,7 +161,8 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     ";" -> R.string.semiColon,
     ":" -> R.string.colon,
     "-" -> R.string.dash,
-    "+" -> R.string.plus
+    "+" -> R.string.plus,
+    "\n" -> R.string.newline
   )
 
   /**
