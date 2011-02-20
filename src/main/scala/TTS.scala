@@ -129,13 +129,11 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   def shutdown = tts.shutdown
 
-  def onUtteranceCompleted(id:String) = repeatedSpeech.get(id) match {
-    case Some(v) =>
-      actor {
-        Thread.sleep(v._1*1000)
-        performRepeatedSpeech(id)
-      }
-    case None =>
+  def onUtteranceCompleted(id:String) = repeatedSpeech.get(id).foreach { v =>
+    actor {
+      Thread.sleep(v._1*1000)
+      performRepeatedSpeech(id)
+    }
   }
 
   private val managedPunctuations = Map(
