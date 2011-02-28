@@ -17,7 +17,7 @@
 
     <service android:name=".SpielService">
       <intent-filter>
-        <action android:name="android.accessibilityservice.AccessibilityService" />
+        <action android:name="android.accessibilityservice.AccessibilityService"/>
         <category android:name="android.accessibilityservice.category.FEEDBACK_SPOKEN"/>
       </intent-filter>
     </service>
