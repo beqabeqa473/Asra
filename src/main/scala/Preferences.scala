@@ -183,6 +183,9 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
       case "onProximityNear" => ProximityNear(onProximityNear)
       case "onShakingStarted" => ShakingStarted(onShakingStarted)
       case "viewRecentEvents" if(!viewRecentEvents) => handlers.EventReviewQueue.clear()
+      case "voicemailAlerts" =>
+        if(voicemailAlerts) StateReactor.startVoicemailAlerts()
+        else StateReactor.stopVoicemailAlerts()
       case _ =>
     }
   }

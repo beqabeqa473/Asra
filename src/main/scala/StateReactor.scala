@@ -189,12 +189,24 @@ object StateReactor {
 
   private var voicemailIndicator:Option[String] = None
 
+  private var messageWaiting = false
+
   onMessageWaiting { () =>
-    if(Preferences.voicemailAlerts)
+    messageWaiting = true
+    startVoicemailAlerts()
+  }
+
+  def startVoicemailAlerts() {
+    if(messageWaiting && Preferences.voicemailAlerts)
       voicemailIndicator = Some(TTS.speakEvery(180, "New voicemail"))
   }
 
   onMessageNoLongerWaiting { () =>
+    messageWaiting = false
+    stopVoicemailAlerts()
+  }
+
+  def stopVoicemailAlerts() {
     voicemailIndicator.foreach { i => TTS.stopRepeatedSpeech(i) }
   }
 
