@@ -4,15 +4,15 @@
 
   <!-- Initial welcome message-->
   <string name="welcomeMsg">Vítá vás Spiel</string>
-  <string name="enable_spiel">Please enable Spiel before continuing.</string>
+  <string name="enable_spiel">Před pokračováním prosím povolte Spiel.</string>
 
   <!-- On/off and other alerts -->
   <string name="spielOn">Spiel zapnutý.</string>
   <string name="spielOff">Spiel vypnutý.</string>
   <string name="screenOffLocked">Displej vypnutý. Zamknuto.</string>
   <string name="screenOnLocked">Displej zapnutý. Zamknuto.</string>
-  <string name="ringer_off">Ringer off.</string>
-  <string name="ringer_on">Ringer on.</string>
+  <string name="ringer_off">Vyzvánění vypnuto.</string>
+  <string name="ringer_on">Vyzvánění zapnuto.</string>
 
   <!-- View names and actions -->
   <string name="alert">Upozornìní! %1$s</string>
@@ -22,7 +22,7 @@
   <string name="editText">% 1 $ s: upravit text</string>
   <string name="emptyList">prázdný seznam</string>
   <string name="image">%1$s: obrázek</string>
-  <string name="listItem">%1$s: %2$s of %3$s</string>
+  <string name="listItem">%1$s: %2$s z %3$s</string>
   <string name="menu">menu</string>
   <string name="notChecked">nezakrtnuto</string>
   <string name="password">%1$s: heslo</string>
@@ -88,14 +88,14 @@
   <string name="reload">Znovu zavést</string>
   <string name="postToBazaar">Pøidat na bazar</string>
 
-  <string name="bazaar_credentials">Please enter your Spiel Bazaar credentials below.</string>
-  <string name="bazaar_credentials_invalid">Your username and/or password are invalid. Please re-enter them below and try again.</string>
-  <string name="bazaar_username_label">Username</string>
-  <string name="bazaar_password_label">Password</string>
-  <string name="changes_label">Changes (optional):</string>
-  <string name="script_reload_error">This script is invalid. Please fix any errors reported in the logs and try again.</string>
-  <string name="script_posted">Your script was posted successfully. Thank you for your contribution.</string>
-  <string name="script_posting_error">There was a temporary network error posting your script. Please try again later.</string>
+  <string name="bazaar_credentials">Níže prosím zadejte své Spiel bazar údaje.</string>
+  <string name="bazaar_credentials_invalid">Vaše uživatelské jméno nebo heslo je neplatné. Prosím, níže jej zadejte znovu a akci opakujte.</string>
+  <string name="bazaar_username_label">Uživatelské jméno</string>
+  <string name="bazaar_password_label">Heslo</string>
+  <string name="changes_label">Změny (volitelné):</string>
+  <string name="script_reload_error">Tento skript je neplatný. Prosím, opravte případné chyby zaznamenané v protokolech a zkuste to znovu.</string>
+  <string name="script_posted">Váš skript byl úspěšně odeslán. Děkujeme za vaši spolupráci.</string>
+  <string name="script_posting_error">Během odesílání skriptu došlo k dočasné chybě sítě. Prosím, opakujte akci později.</string>
 
   <string name="confirmDelete">Jste si jisti, e chcete smazat skript pro balíèek %1$s?</string>
   <string name="scriptCopied">Skript zkopírován do %1$s.</string>
