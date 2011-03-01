@@ -1,8 +1,5 @@
 package info.spielproject.spiel
 
-import java.text.DateFormat
-import java.util.Calendar
-
 import actors.Actor._
 
 import android.content.{BroadcastReceiver, ContentUris, Context, Intent, IntentFilter}
@@ -10,6 +7,7 @@ import android.media.AudioManager
 import android.net.Uri
 import android.os.Build.VERSION
 import android.os.Environment
+import android.text.format.{DateFormat, DateUtils}
 import android.util.Log
 
 import scripting._
@@ -242,10 +240,11 @@ object StateReactor {
   onScreenOn { () =>
     if(!screenOn) {
       screenOn = true
-      val formatter = DateFormat.getTimeInstance(DateFormat.SHORT)
-      val time = Calendar.getInstance.getTime
-      val timeStr = formatter.format(time)
-      TTS.speak(service.getString(R.string.screenOnLocked, timeStr), false)
+      var timeFlags = DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_CAP_NOON_MIDNIGHT
+      if(DateFormat.is24HourFormat(service))
+        timeFlags |= DateUtils.FORMAT_24HOUR
+      val time = DateUtils.formatDateTime(service, System.currentTimeMillis, timeFlags)
+      TTS.speak(service.getString(R.string.screenOnLocked, time), false)
     }
   }
 
