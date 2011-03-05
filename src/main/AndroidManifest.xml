@@ -48,7 +48,7 @@
       </intent-filter>
     </activity>
 
-    <provider android:name=".StatusProvider" android:authorities="info.spielproject.spiel.providers.StatusProvider"  />
+    <provider android:name=".StatusProvider" android:authorities="info.spielproject.spiel.providers.StatusProvider"/>
 
     <provider android:name=".scripting.Provider" android:authorities="info.spielproject.spiel.scripting.Provider"/>
 
