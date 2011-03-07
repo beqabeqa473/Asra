@@ -46,17 +46,38 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
     editor.commit()
   }
 
+  private def resetFloatPreference(name:String) = {
+    val editor = prefs.edit()
+    editor.putFloat("rateScale", 1)
+    editor.commit()
+    1f
+  }
+
   /**
    * Indicates the desired rate scale.
   */
 
-  def rateScale = prefs.getString("rateScale", "1").toFloat
+  def rateScale = {
+    try {
+      prefs.getFloat("rateScale", 1)
+    } catch {
+      case _ =>
+        resetFloatPreference("rateScale")
+    }
+  }
 
   /**
    * Indicates the desired pitch scale.
   */
 
-  def pitchScale = prefs.getString("pitchScale", "1").toFloat
+  def pitchScale = {
+    try {
+      prefs.getFloat("pitchScale", 1)
+    } catch {
+      case _ =>
+        resetFloatPreference("pitchScale")
+    }
+  }
 
   /**
    * Indicates whether character echo is enabled.
