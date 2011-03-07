@@ -24,7 +24,11 @@ class SpielService extends AccessibilityService {
     Preferences(this)
     if(Preferences.sendBacktraces)
       ExceptionHandler.register(this, "http://stacktrace.spielproject.info/")
-    TTS(this)
+    try {
+      TTS(this)
+    } catch {
+      case e:VerifyError => // We've almost certainly handled this, so ignore.
+    }
     Handler(this)
     Scripter(this)
     BazaarProvider(this)
