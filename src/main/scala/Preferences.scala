@@ -48,7 +48,7 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
   private def resetFloatPreference(name:String) = {
     val editor = prefs.edit()
-    editor.putFloat("rateScale", 1)
+    editor.putString("rateScale", "1")
     editor.commit()
     1f
   }
@@ -59,7 +59,7 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
   def rateScale = {
     try {
-      prefs.getFloat("rateScale", 1)
+      prefs.getString("rateScale", "1").toFloat
     } catch {
       case _ =>
         resetFloatPreference("rateScale")
@@ -72,7 +72,7 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
   def pitchScale = {
     try {
-      prefs.getFloat("pitchScale", 1)
+      prefs.getString("pitchScale", "1").toFloat
     } catch {
       case _ =>
         resetFloatPreference("pitchScale")
