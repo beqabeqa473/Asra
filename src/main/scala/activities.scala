@@ -492,8 +492,10 @@ class Events extends ListActivity with Refreshable {
     new MenuInflater(this).inflate(R.menu.events_context, menu)
   }
 
-  override def onContextItemSelected(item:MenuItem) = {
-    val event = EventReviewQueue(item.getMenuInfo.asInstanceOf[AdapterView.AdapterContextMenuInfo].position)
+  override def onContextItemSelected(item:MenuItem):Boolean = {
+    val position = item.getMenuInfo.asInstanceOf[AdapterView.AdapterContextMenuInfo].position
+    if(!EventReviewQueue.isDefinedAt(position)) return true
+    val event = EventReviewQueue(position)
     item.getItemId match {
       case R.id.createTemplate =>
         val filename = Scripter.createTemplateFor(event)
