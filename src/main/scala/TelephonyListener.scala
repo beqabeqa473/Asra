@@ -51,7 +51,7 @@ object TelephonyListener extends PhoneStateListener {
     var name = ""
     val cursor = if(number != null && number != "") {
       name = number
-      Some(cursorFor(uri))
+      Option(cursorFor(uri))
     } else {
       name = "Unknown"
       None
