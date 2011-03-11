@@ -136,7 +136,7 @@ object Handler extends Actor {
   }
 
   // How long to wait before processing a given AccessibilityEvent.
-  private val timeout = 50
+  private val timeout = 10
 
   // Record an event and the time that event is to be presented. This helps 
   // in instances where we receive lots of events and don't necessarily want 
@@ -203,7 +203,7 @@ object Handler extends Actor {
           actWithLookahead(i2)
         else {
           process(i.event)
-          actWithLookahead(i2.copy(presentationTime = System.currentTimeMillis+timeout))
+          actWithLookahead(i2)
         }
     }
   }
