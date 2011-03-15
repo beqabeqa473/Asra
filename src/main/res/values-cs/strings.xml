@@ -3,7 +3,7 @@
 <resources>
 
   <!-- Initial welcome message-->
-  <string name="welcomeMsg">Vítá vás Spiel.</string>
+  <string name="welcomeMsg">Vítá vás Spiel</string>
   <string name="enable_spiel">Před pokračováním prosím povolte Spiel.</string>
 
   <!-- On/off and other alerts -->
@@ -52,7 +52,7 @@
 
   <string name="alertsTitle">Upozornění</string>
   <string name="talkingCallerIDTitle">Hlasová identifikace volajícího</string>
-  <string name="talkingCallerIDSummary">Opakovaně oznamuje podrobnosti o volajícím u příchozích hovorù</string>
+  <string name="talkingCallerIDSummary">Opakovaně oznamuje podrobnosti o volajícím u příchozích hovorů</string>
   <string name="voicemailAlertsTitle">Upozornění na hlasovou poštu</string>
   <string name="voicemailAlertsSummary">Opakovaně oznamuje dostupnost nové hlasové pošty</string>
 
@@ -65,13 +65,13 @@
   <string name="onShakeTitle">Na třesení</string>
   <string name="onShakeSummary">Nastavit provedení akce, když je přístrojem třeseno</string>
   <string name="onProximityNearTitle">Na blízkost okolí</string>
-  <string name="onProximityNearSummary">Nastavit provedení akce, kdy je něco v blízkosti senzoru přiblížení</string>
+  <string name="onProximityNearSummary">Nastavit provedení akce, když je něco v blízkosti senzoru přiblížení</string>
 
   <string name="scriptingDebuggingTitle">Skriptování a ladění</string>
   <string name="sendBacktracesTitle">Odeslat report, když Spiel havaruje</string>
-  <string name="sendBacktracesSummary">Automaticky odesílat anonimní zprávy o chybě vývojáři, kdikoli Spiel havaruje (vyžaduje restart)</string>
+  <string name="sendBacktracesSummary">Automaticky odesílat anonimní zprávy o chybě vývojáři, kdykoli Spiel havaruje (vyžaduje restart)</string>
   <string name="viewRecentEventsTitle">Zobrazit nejnovější události přístupnosti</string>
-  <string name="viewRecentEventsSummary">Zobrazuje poslední události přístupnosti, včetně přidaných funkcí pro vývojáře skriptù</string>
+  <string name="viewRecentEventsSummary">Zobrazuje poslední události přístupnosti, včetně přidaných funkcí pro vývojáře skriptů</string>
 
   <string name="events">Události</string>
   <string name="noEvents">žádné události k dispozici. Povolte prosím nejprve \ "Zobrazit dostupnost nejnovějších událostí \" v \ "Skriptování a ladění \" menu. Pokud jste tak učinili a stále se nezobrazují, stiskněte tlačítko Menu a vyberte \ "Aktualizovat \".</string>
