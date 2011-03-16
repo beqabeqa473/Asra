@@ -168,7 +168,7 @@ object Handler extends Actor {
 
   import AccessibilityEvent._
 
-  private def actWithLookahead(i:Item):Unit = {
+  private def actWithLookahead(i:Item) {
 
     // Sometimes we want to discard events--if someone is scrolling through 
     // a list too quickly for us to speak, for instance. In those instances, 
