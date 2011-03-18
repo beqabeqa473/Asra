@@ -393,10 +393,11 @@ class Handler(pkg:String, cls:String) {
 
   protected def utterancesFor(e:AccessibilityEvent, addBlank:Boolean = true) = {
     var rv = List[String]()
-    if(e.isChecked && !e.getText.contains(service.getString(R.string.checked))) rv ::= service.getString(R.string.checked)
-    if(e.getText.size == 0 && e.getContentDescription == null && addBlank)
+    val text = Option(e.getText.toList).getOrElse(Nil)
+    if(e.isChecked && !text.contains(service.getString(R.string.checked))) rv ::= service.getString(R.string.checked)
+    if(text.size == 0 && e.getContentDescription == null && addBlank)
       rv ::= ""
-    rv :::= e.getText.filter(_ != null).map(_.toString).toList
+    rv :::= text.filter(_ != null).map(_.toString)
     if(e.getContentDescription != null) rv ::= e.getContentDescription.toString
     rv
   }
