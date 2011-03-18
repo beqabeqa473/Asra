@@ -9,8 +9,7 @@
   <!-- On/off and other alerts -->
   <string name="spielOn">Spiel zapnutý.</string>
   <string name="spielOff">Spiel vypnutý.</string>
-  <string name="screenOffLocked">Displej vypnutý. Zamknuto.</string>
-  <string name="screenOnLocked">Displej zapnutý. Zamknuto.</string>
+  <string name="screenOff">Displej vypnutý.</string>
   <string name="ringer_off">Vyzvánění vypnuto.</string>
   <string name="ringer_on">Vyzvánění zapnuto.</string>
 

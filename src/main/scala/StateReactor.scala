@@ -232,7 +232,7 @@ object StateReactor {
 
   onScreenOff { () =>
     if(screenOn) {
-      TTS.speak(service.getString(R.string.screenOffLocked), false)
+      TTS.speak(service.getString(R.string.screenOff), false)
       screenOn = false
     }
   }
@@ -244,8 +244,13 @@ object StateReactor {
       if(DateFormat.is24HourFormat(service))
         timeFlags |= DateUtils.FORMAT_24HOUR
       val time = DateUtils.formatDateTime(service, System.currentTimeMillis, timeFlags)
-      TTS.speak(service.getString(R.string.screenOnLocked, time), false)
+      TTS.speak(time, false)
     }
+  }
+
+  onUnlocked { () => 
+    TTS.speak(service.getString(R.string.unlocked), false)
+    handlers.Handler.nextShouldNotInterrupt
   }
 
 }

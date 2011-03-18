@@ -38,9 +38,11 @@ object StateObserver {
 
     registerReceiver((c, i) => mediaUnmounted(i.getData), Intent.ACTION_MEDIA_UNMOUNTED :: Nil, Some("file"))
 
-    registerReceiver((c, i) => screenOff , Intent.ACTION_SCREEN_OFF :: Nil)
+    registerReceiver((c, i) => screenOff, Intent.ACTION_SCREEN_OFF :: Nil)
 
     registerReceiver((c, i) => screenOn, Intent.ACTION_SCREEN_ON :: Nil)
+
+    registerReceiver((c, i) => unlocked, Intent.ACTION_USER_PRESENT :: Nil)
 
     registerReceiver((c, i) => applicationAdded(i), Intent.ACTION_PACKAGE_ADDED :: Nil, Some("package"))
 
@@ -410,6 +412,29 @@ object StateObserver {
   */
 
   def removeScreenOn(h:() => Unit) = screenOnHandlers = screenOnHandlers.filterNot(_ == h)
+
+  private var unlockedHandlers = List[() => Unit]()
+
+  /**
+   * Register handler to be run when device unlocks.
+  */
+
+  def onUnlocked(h:() => Unit) = {
+    unlockedHandlers ::= h
+    h
+  }
+
+  /**
+   * Run registered handlers when device unlocks.
+  */
+
+  def unlocked() = unlockedHandlers.foreach { f => f() }
+
+  /**
+   * Remove handler from being run when device unlocks.
+  */
+
+  def removeUnlocked(h:() => Unit) = unlockedHandlers = unlockedHandlers.filterNot(_ == h)
 
   private var shakingStartedHandlers = List[() => Unit]()
 
