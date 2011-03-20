@@ -1,7 +1,8 @@
 package info.spielproject.spiel
 
 import android.accessibilityservice._
-import android.content.Intent
+import android.app.{Notification, NotificationManager, PendingIntent}
+import android.content.{Context, Intent}
 import android.os.Debug
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
@@ -16,6 +17,10 @@ import triggers.Triggers
 */
 
 class SpielService extends AccessibilityService {
+
+  private var notificationManager:NotificationManager = null
+
+  private var notification:Notification = null
 
   override def onCreate() {
     super.onCreate()
@@ -36,6 +41,10 @@ class SpielService extends AccessibilityService {
     StateReactor(this)
     Triggers(this)
     TelephonyListener(this)
+    notificationManager = getSystemService(Context.NOTIFICATION_SERVICE).asInstanceOf[NotificationManager]
+    notification = new Notification(R.drawable.empty, getString(R.string.appName), 0)
+    notification.setLatestEventInfo(this, getString(R.string.appName), null, PendingIntent.getActivity(this, 0, new Intent(this, classOf[activities.Spiel]), 0))
+    startForeground(1, notification)
     SpielService.initialized = true
     SpielService.enabled = true
   }
@@ -47,6 +56,7 @@ class SpielService extends AccessibilityService {
     TTS.shutdown
     Scripter.onDestroy
     //Debug.stopMethodTracing
+    notificationManager.cancelAll
     SpielService.initialized = false
     SpielService.enabled = false
   }

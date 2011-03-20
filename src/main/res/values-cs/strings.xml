@@ -4,7 +4,6 @@
 
   <!-- Initial welcome message-->
   <string name="welcomeMsg">Vítá vás Spiel</string>
-  <string name="enable_spiel">Před pokračováním prosím povolte Spiel.</string>
 
   <!-- On/off and other alerts -->
   <string name="spielOn">Spiel zapnutý.</string>

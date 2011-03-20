@@ -3,6 +3,7 @@
   package="info.spielproject.spiel"
   android:versionCode="2"
   android:versionName="0.9.0RC2">
+
   <uses-sdk android:minSdkVersion="4"/>
   <uses-feature android:name="android.hardware.telephony" android:required="false"/>
   <uses-permission android:name="android.permission.BLUETOOTH"/>
@@ -13,7 +14,7 @@
   <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
-  <application android:label="Spiel"   android:icon="@drawable/empty">
+  <application android:label="@string/appName"   android:icon="@drawable/empty">
 
     <service android:name=".SpielService">
       <intent-filter>
@@ -22,12 +23,7 @@
       </intent-filter>
     </service>
 
-    <activity android:name=".activities.Spiel">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN"></action>
-        <category android:name="android.intent.category.LAUNCHER"></category>
-      </intent-filter>
-    </activity>>
+    <activity android:name=".activities.Spiel"/>
 
     <activity android:name=".activities.PreferencesActivity">
       <intent-filter>    
