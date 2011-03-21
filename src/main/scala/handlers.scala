@@ -561,6 +561,13 @@ class Handlers {
     }
   }
 
+  class TextView extends Handler("android.widget.TextView") {
+    onViewFocused { e:AccessibilityEvent =>
+      speak(utterancesFor(e, true))
+      true
+    }
+  }
+
   /**
    * Default catch-all handler which catches unresolved <code>AccessibilityEvent</code>s.
   */
@@ -586,8 +593,10 @@ class Handlers {
       if(e.isFullScreen || (e.getItemCount == 0 && e.getCurrentItemIndex == -1))
         true
       else {
-        //if(utterancesFor(e).length > 0)
-          speak(utterancesFor(e))
+        var utterances = utterancesFor(e)
+        if(utterances == Nil || utterances == List(""))
+          utterances = e.getClassName.toString.split("\\.").last :: Nil
+        speak(utterances)
         true
       }
     }
