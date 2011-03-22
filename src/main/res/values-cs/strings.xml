@@ -18,7 +18,7 @@
   <string name="button">%1$s: tlačítko</string>
   <string name="checkbox">%1$s: zaškrtávací políčko</string>
   <string name="checked">zaškrtnuto</string>
-  <string name="editText">%1$s: upravit text</string>
+  <string name="editText">upravit text</string>
   <string name="emptyList">prázdný seznam</string>
   <string name="image">%1$s: obrázek</string>
   <string name="listItem">%1$s: %2$s z %3$s</string>

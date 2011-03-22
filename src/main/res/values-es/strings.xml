@@ -17,7 +17,7 @@
   <string name="button">botón de %1$s</string>
   <string name="checkbox">%1$s: casilla de verificación</string>
   <string name="checked">verificado</string>
-  <string name="editText">%1$s: editar texto</string>
+  <string name="editText">editar texto</string>
   <string name="emptyList">lista vacía</string>
   <string name="image">imagen de %1$s</string>
   <string name="listItem">1$s: %2$s de %3$s</string>

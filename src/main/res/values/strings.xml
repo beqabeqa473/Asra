@@ -19,7 +19,7 @@
   <string name="button">%1$s: button</string>
   <string name="checkbox">%1$s: checkbox</string>
   <string name="checked">checked</string>
-  <string name="editText">%1$s: edit text</string>
+  <string name="editText">edit text</string>
   <string name="emptyList">empty list</string>
   <string name="image">%1$s: image</string>
   <string name="listItem">%1$s: %2$s of %3$s</string>
