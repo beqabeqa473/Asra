@@ -38,6 +38,11 @@
       android:title="@string/echoByWordTitle"/>
 
     <CheckBoxPreference
+      android:key="speakNotificationsWhenScreenOff"
+      android:defaultValue="true"
+      android:title="@string/speakNotificationsWhenScreenOffTitle"/>
+
+    <CheckBoxPreference
       android:key="useBluetoothSCO"
       android:defaultValue="false"
       android:title="@string/useBluetoothSCOTitle"
@@ -76,20 +81,6 @@
       android:defaultValue="true"
       android:title="@string/voicemailAlertsTitle"
       android:summary="@string/voicemailAlertsSummary"/>
-
-  </PreferenceScreen>
-
-  <PreferenceScreen android:title="@string/notificationsTitle">
-
-    <CheckBoxPreference
-      android:key="speakNotificationsWhenScreenOff"
-      android:defaultValue="true"
-      android:title="@string/speakNotificationsWhenScreenOffTitle"/>
-
-    <CheckBoxPreference
-      android:key="repeatedSpeechWhenRingerOff"
-      android:defaultValue="false"
-      android:title="@string/repeatedSpeechWhenRingerOffTitle"/>
 
   </PreferenceScreen>
 

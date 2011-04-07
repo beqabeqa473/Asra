@@ -245,7 +245,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   def stopRepeatedSpeech(key:String) = repeatedSpeech -= key
 
   private def performRepeatedSpeech(key:String):Unit = repeatedSpeech.get(key) match {
-    case Some(v) if(Preferences.repeatedSpeechWhenRingerOff == false && StateReactor.ringerOff_?) => actor {
+    case Some(v) if(!shouldSpeakNotification && StateReactor.ringerOff_?) => actor {
       Thread.sleep(v._1*1000)
       performRepeatedSpeech(key)
     }

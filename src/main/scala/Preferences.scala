@@ -121,12 +121,6 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
   def speakNotificationsWhenScreenOff = prefs.getBoolean("speakNotificationsWhenScreenOff", true)
 
-  /**
-   * Indicates whether repeated speech alerts occur when the ringer is off.
-  */
-
-  def repeatedSpeechWhenRingerOff = prefs.getBoolean("repeatedSpeechWhenRingerOff", false)
-
   private def triggerPreference(trigger:String, default:String = "") = prefs.getString(trigger, default) match {
     case "" => None
     case str => Some(Triggers.actions(str))
