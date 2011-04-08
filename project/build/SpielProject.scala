@@ -10,7 +10,7 @@ class SpielProject(info: ProjectInfo) extends AndroidProject(info) with MarketPu
 
   val stacktrace = "com.nullwire" % "trace" % "latest" from "http://android-remote-stacktrace.googlecode.com/files/trace.jar"
 
-  val rhino = "rhino" % "js" % "1.7R2" from "http://spielproject.info/attachments/download/3/js.jar"
+  val rhino = "rhino" % "js" % "1.7R2" from "http://spielproject.info/files/js-1.7R2.jar"
 
   val databinder = "databinder" at "http://databinder.net/repo/"
   val dispatchLiftJson = "net.databinder" %% "dispatch-lift-json" % "0.7.8"
