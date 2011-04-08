@@ -6,14 +6,15 @@ class SpielProject(info: ProjectInfo) extends AndroidProject(info) with MarketPu
 
   val scanDirectories = mainAssetsPath/"scripts" :: Nil
 
-  override def androidPlatformName = "android-8"
-
-  val stacktrace = "com.nullwire" % "trace" % "latest" from "http://android-remote-stacktrace.googlecode.com/files/trace.jar"
-
-  val rhino = "rhino" % "js" % "1.7R2" from "http://spielproject.info/files/js-1.7R2.jar"
+  override def androidPlatformName = "android-10"
 
   val databinder = "databinder" at "http://databinder.net/repo/"
-  val dispatchLiftJson = "net.databinder" %% "dispatch-lift-json" % "0.7.8"
+
+  override val libraryDependencies = Set(
+    "com.nullwire" % "trace" % "latest" from "http://android-remote-stacktrace.googlecode.com/files/trace.jar",
+    "rhino" % "js" % "1.7R2" from "http://spielproject.info/files/js-1.7R2.jar",
+    "net.databinder" %% "dispatch-lift-json" % "0.7.8"
+  )++super.libraryDependencies
 
   override def proguardOption = """
     -keep class info.spielproject.spiel.** { *; }
