@@ -40,6 +40,7 @@
   <string name="pitchScaleSummary">Faktor, kterým mohou být nastaveny základní hodnoty výšky</string>
   <string name="echoByCharTitle">Odezva po znacích</string>
   <string name="echoByWordTitle">Odezva po slovech</string>
+  <string name="speakNotificationsWhenScreenOffTitle">Hlásit oznámení i při vypnutém displeji</string>
   <string name="useBluetoothSCOTitle">Použití Bluetooth SCO</string>
   <string name="useBluetoothSCOSummary">Přesměrování zvuku hovoru do Bluetooth SCO sluchátek (experimentální!)</string>
   <string name="managePunctuationSpeechTitle">správa interpunkčních znamének</string>
@@ -54,10 +55,6 @@
   <string name="talkingCallerIDSummary">Opakovaně oznamuje podrobnosti o volajícím u příchozích hovorů</string>
   <string name="voicemailAlertsTitle">Upozornění na hlasovou poštu</string>
   <string name="voicemailAlertsSummary">Opakovaně oznamuje dostupnost nové hlasové pošty</string>
-
-  <string name="notificationsTitle">Oznámení</string>
-  <string name="speakNotificationsWhenScreenOffTitle">Hlásit oznámení i při vypnutém displeji</string>
-  <string name="repeatedSpeechWhenRingerOffTitle">Při vypnutém vyzvánění opakovaně ohlašovat ID volajícího, oznámení o hlasové poště atd</string>
 
   <string name="triggersTitle">Triggers</string>
   <string name="triggersSummary">Nastavení akcí pro spuštění v reakci na fyzické události</string>

@@ -39,6 +39,7 @@
   <string name="pitchScaleSummary">Factor por el cual se ajusta el tono predeterminado</string>
   <string name="echoByCharTitle">Pronunciar caracteres</string>
   <string name="echoByWordTitle">Pronunciar palabras</string>
+  <string name="speakNotificationsWhenScreenOffTitle">Anunciar notificaciones aunque la pantalla esté bloqueada</string>
   <string name="useBluetoothSCOTitle">Usar Bluetooth SCO</string>
   <string name="useBluetoothSCOSummary">Enviar sonido que no corresponde a llamadas al auricular Bluetooth SCO (experimental!)</string>
   <string name="managePunctuationSpeechTitle">Gestionar la pronunciación de puntuación</string>
@@ -53,10 +54,6 @@
   <string name="talkingCallerIDSummary">Repetir detalles del identificador para llamadas entrantes</string>
   <string name="voicemailAlertsTitle">Alertas de correo de voz</string>
   <string name="voicemailAlertsSummary">Repetir la disponibilidad de Nuevas llamadas en el buzón</string>
-
-  <string name="notificationsTitle">Notificaciones</string>
-  <string name="speakNotificationsWhenScreenOffTitle">Anunciar notificaciones aunque la pantalla esté bloqueada</string>
-  <string name="repeatedSpeechWhenRingerOffTitle">Repetir avisos del identificador, buzón, etc, cuando el timbre está desactivado</string>
 
   <string name="triggersTitle">Activadores</string>
   <string name="triggersSummary">Configurar acciones en respuesta a eventos físicos</string>
