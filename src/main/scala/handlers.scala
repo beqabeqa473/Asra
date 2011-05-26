@@ -439,7 +439,7 @@ trait GenericButtonHandler extends Handler {
     if(text == "")
       speak(Handler.service.getString(R.string.button).toString)
     else
-      speak(Handler.service.getString(R.string.button, text))
+      speak(Handler.service.getString(R.string.labeledButton, text))
     true
   }
 }
