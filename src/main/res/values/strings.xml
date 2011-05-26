@@ -16,12 +16,14 @@
 
   <!-- View names and actions -->
   <string name="alert">Alert! %1$s</string>
-  <string name="button">%1$s: button</string>
+  <string name="button">button</string>
+  <string name="labeledButton">%1$s: button</string>
   <string name="checkbox">%1$s: checkbox</string>
   <string name="checked">checked</string>
   <string name="editText">edit text</string>
   <string name="emptyList">empty list</string>
-  <string name="image">%1$s: image</string>
+    <string name="image">image</string>
+  <string name="labeledImage">%1$s: image</string>
   <string name="listItem">%1$s: %2$s of %3$s</string>
   <string name="menu">menu</string>
   <string name="notChecked">not checked</string>

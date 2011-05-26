@@ -435,7 +435,11 @@ class Handler(pkg:String, cls:String) {
 
 trait GenericButtonHandler extends Handler {
   onViewFocused { e:AccessibilityEvent =>
-    speak(Handler.service.getString(R.string.button, utterancesFor(e, false).mkString(": ")))
+    val text = utterancesFor(e, false).mkString(": ")
+    if(text == "")
+      speak(Handler.service.getString(R.string.button).toString)
+    else
+      speak(Handler.service.getString(R.string.button, text))
     true
   }
 }
@@ -499,7 +503,11 @@ class Handlers {
 
   class ImageView extends Handler("android.widget.ImageView") {
     onViewFocused { e:AccessibilityEvent =>
-      speak(Handler.service.getString(R.string.image, utterancesFor(e, false).mkString(": ")))
+      val text = utterancesFor(e, false).mkString(": ")
+      if(text == "")
+        speak(Handler.service.getText(R.string.image).toString)
+      else
+        speak(Handler.service.getString(R.string.labeledImage, text))
       true
     }
   }
