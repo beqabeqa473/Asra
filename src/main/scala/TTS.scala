@@ -4,6 +4,7 @@ import actors.Actor._
 import collection.JavaConversions._
 
 import android.content.Context
+import android.media.AudioManager
 import android.os.Build.VERSION
 import android.os.Environment
 import android.speech.tts.TextToSpeech
@@ -13,11 +14,13 @@ import android.util.Log
  * Singleton facade around TTS functionality.
 */
 
-object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceCompletedListener {
+object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceCompletedListener with AudioManager.OnAudioFocusChangeListener {
 
   private var tts:TextToSpeech = null
 
   private var context:Context = null
+
+  private var audioManager:Option[AudioManager] = None
 
   /**
    * Initialize TTS based on specified <code>Context</code>.
@@ -25,6 +28,8 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   def apply(c:Context) {
     context = c
+    if(VERSION.SDK_INT >= 8)
+      audioManager = Some(context.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager])
     init()
   }
 
@@ -129,10 +134,19 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   def shutdown = tts.shutdown
 
-  def onUtteranceCompleted(id:String) = repeatedSpeech.get(id).foreach { v =>
-    actor {
-      Thread.sleep(v._1*1000)
-      performRepeatedSpeech(id)
+  private def abandonFocus() {
+    audioManager.foreach(_.abandonAudioFocus(this))
+  }
+
+  def onUtteranceCompleted(id:String) {
+    audioManager.foreach { a => 
+      if(!tts.isSpeaking) abandonFocus()
+    }
+    repeatedSpeech.get(id).foreach { v =>
+      actor {
+        Thread.sleep(v._1*1000)
+        performRepeatedSpeech(id)
+      }
     }
   }
 
@@ -165,6 +179,12 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     "\n" -> R.string.newline
   )
 
+  private def requestAudioFocus() {
+    audioManager.foreach { a =>
+      a.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
+    }
+  }
+
   /**
    * Speaks the specified text, optionally flushing current speech.
   */
@@ -174,16 +194,19 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     Log.d("spiel", "Speaking "+text+": "+flush)
     val mode = if(flush) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD
     //if(flush) stop
+    audioManager.foreach { a => requestAudioFocus() }
+    val params = new java.util.HashMap[String, String]()
+    params.put("utteranceId", "speech") // TODO: Why won't Scala see Engine?
     if(text.length == 0)
-      tts.speak(context.getString(R.string.blank), mode, null)
+      tts.speak(context.getString(R.string.blank), mode, params)
     else if(text.length == 1 && text >= "A" && text <= "Z") {
       pitch = 1.5f
-      tts.speak(context.getString(R.string.cap, text), mode, null)
+      tts.speak(context.getString(R.string.cap, text), mode, params)
       pitch = 1
     } else if(text.length == 1 && Preferences.managePunctuationSpeech && managedPunctuations.get(text) != None)
-      tts.speak(context.getString(managedPunctuations(text)), mode, null)
+      tts.speak(context.getString(managedPunctuations(text)), mode, params)
     else
-      tts.speak(text, mode, null)
+      tts.speak(text, mode, params)
   }
 
   /**
@@ -218,7 +241,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     Log.d("spiel", "Speaking: "+text)
     val params = new java.util.HashMap[String, String]()
     params.put("utteranceId", uid) // TODO: Why won't Scala see Engine?
-    tts.speak(text, TextToSpeech.QUEUE_FLUSH, params).toString
+    tts.speak(text, TextToSpeech.QUEUE_FLUSH, params)
   }
 
   private var repeatedSpeech = collection.mutable.Map[String, Tuple2[Int, String]]()
@@ -320,5 +343,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     if(shouldSpeakNotification)
       speak(text, false)
   }
+
+  def onAudioFocusChange(f:Int) { }
 
 }
