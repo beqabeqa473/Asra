@@ -1,3 +1,5 @@
+<title>Scripting</title>
+
 <h1>Scripting</h1>
 
 The greatest challenge in writing a manual about Spiel's scripting system is that there isn't much that is truly unique to document. The language is JavaScript with [https://developer.mozilla.org/en/Scripting_Java|convenience features for accessing Java]. The accessibility API used is mostly Android's [http://developer.android.com/reference/android/view/accessibility/AccessibilityEvent.html|AccessibilityEvent], and Spiel's only contribution is a bit of glue to attach functions to specific events. As such, learning how to write scripts isn't a matter of learning a few functions, but rather of understanding the API with which Spiel (and ultimately your scripts) interface.
@@ -29,7 +31,7 @@ Widgets, or "views" in Android parlance, are created in classes. When an event o
 
 For instance, the class <b>android.view.Button</b> describes a button. If you receive a focus event with this as the class name, then it might make sense to speak the button's associated text or content description followed by the word "button". This is, in fact, Spiel's own hard-coded behavior for any events originating from <b>android.view.Button</b>.
 
-Android apps are contained in a single package. An event's <b>packageName</b> property indicates the package in which the view which generated it was created.
+Android apps are contained in a single package. An event's <b>packageName</b> property indicates the package in which the view that generated it was created.
 
 The <b>packageName</b> property is useful in that it allows for scripts to provide different behaviors for views in specific applications that differ from the default. Say, for instance, that Acme Computer, Inc. releases an Android app with lots of unlabeled buttons, placing it in the package <b>com.acme.android</b>. By intercepting <b>TYPE_VIEW_FOCUSED</b> events with a <b>className</b> of <b>android.widget.Button</b> and a <b>packageName</b> of <b>com.acme.android</b>, scripts can provide spoken feedback for only these buttons, not being called for buttons in any packages other than <b>com.acme.android</b>.
 
@@ -79,7 +81,9 @@ It is also necessary to specify which events from a given class and package are 
   *  onViewTextChanged
   *  onWindowStateChanged
 
-Each of these events is the name of a Javascript function which accepts the event as its argument. Since arguments are optional in Javascript, if the event is not needed in the script which handles it, then the function can be declared with an empty argument list. These functions are declared in the Javascript object passed to the <b>forClass</b> function demonstrated above.
+Each of these events is the name of a Javascript function which accepts the event as its first argument, and the activity name as its second. Since arguments are optional in Javascript, if the event or activity is not needed, then the function can be declared with a truncated argument list. These functions are declared in the Javascript object passed to the <b>forClass</b> function demonstrated above.
+
+Spiel introduces a special handler, <b>byDefault</b>. This is a catch-all for events which don't yet exist but may be added in future Android versions. It is also a convenient handler for default behavior that transcends event types.
 
 Multiple handlers can be associated with a single package and/or class. As such, these functions need to indicate if they provide all handling necessary for a given event, or if processing should continue further. They do so by returning <b>true</b> to indicate that handling should stop, or <b>false</b> if it should continue.
 
@@ -237,11 +241,23 @@ This variable contains the human-readable name for the current version of Spiel.
 
 It is likely that Android's behavior will change over time, with new accessibility added and previously-working accessibility broken. As such, it may become necessary to check the Android platform version in Spiel scripts, conditionally handling events or introducing new code paths based on the currently-running version. This can be checked via the <b>ANDROID_PLATFORM_VERSION</b> property, which corresponds to the SDK version of Android running on the user's device.
 
-<h3>Viewing Events</h3>
+<h3>Script Locations</h3>
+
+Spiel checks for scripts in a number of locations, each with a very specific purpose. If a script read later in the loading process defines a handler with the same package and class name as one encountered earlier, that handler will override the one defined earlier. Handlers are read from the following locations:
+
+  *  The assets directory in the Spiel package. This is only used to define a few core scripts whose contents should never be changed or overridden.
+  *  Spiel's internal scripts directory. Here reside various scripts received from others via the Spiel Bazaar.
+  *  The Spiel scripts directory on your SD card, typically <b>/spiel/scripts</b>. Here is where your own scripts should be developed before being shared with others via the Spiel Bazaar.
+
+The main point to keep in mind is that scripts you develop or copy will always override those provided by others, or by Spiel itself. This provides you as the user with a great deal of power, but as any comic book fan knows, with great power comes great responsibility. Be aware of the scripts located on your SD card, and be sure that they don't redefine core functions, or other handlers you may not wish to be replaced.
+
+<h3>Viewing and Scripting Events</h3>
 
 While knowing how to script is one thing, knowing which events to intercept (or indeed, if any are available to intercept) is another matter entirely. Fortunately, Spiel offers several convenience features to make scripting easier. To enable these, navigate to Spiel's preferences, select <b>Scripting and debugging</b>, then enable <b>Display most recent accessibility events</b>.
 
 When this is done, a tab labeled <b>Events</b> starts populating with the 50 most recently-generated accessibility events. This makes it fairly easy to determine whether a given action is raising an event and, if so, whether that event includes properties that might be used to script it.
+
+By long-pressing an event from this list, you are presented with the option to output a script template to intercept it. The template is saved to the SD card in the scripts directory. By default, the script merely passes the event on for further handling. However, all of the event's properties are left as a comment in the script to help determine what to match. Note that this support is only intended for quick prototyping. If you use it to output several templates for a single event type, it is best to merge the handlers into a single <b>forClass()</b> block.
 
 Events are also sent to the device log. By using the Android SDK and running the following command:
 
@@ -251,23 +267,11 @@ adb logcat
 
 you'll receive a great deal of information on the events that apps are generating.
 
-(Note: Soon there will be a feature that produces a script template for the most recent accessibility event, but such a feature doesn't exist yet.)
-
-<h3>Script Locations</h3>
-
-Spiel checks for scripts in a number of locations, each with a very specific purpose. If a script read later in the loading process defines a handler with the same package and class name as one encountered earlier, that handler will override the one defined earlier. Handlers are read from the following locations:
-
-  *  The assets directory in the Spiel package. This is only used to define a few core scripts whose contents should never be changed or overridden.
-  *  Spiel's internal scripts directory. Here reside various scripts received from others via the Spiel Bazaar.
-  *  The Spiel scripts directory on your SD card, typically /spiel/scripts. Here is where your own scripts should be developed before being shared with others via the Spiel Bazaar.
-
-The main point to keep in mind is that scripts you develop or copy will always override those provided by others, or by Spiel itself. This provides you as the user with a great deal of power, but as any comic book fan knows, with great power comes great responsibility. Be aware of the scripts located on your SD card, and be sure that they don't redefine core functions, or other handlers you may not wish to be replaced.
-
 <h2>Practical Examples</h2>
 
 Contrivances are one thing, but actual examples are usually quite helpful. Below are annotated scripts from Spiel, along with explanations of the problems they solve.
 
-Note that all of these scripts are available on the Bazaar, and should be made available to any devices running the apps they augment. While these instructions invite you to place the code on your SD card, this is only for experimentation purposes and isn't needed should you want the features they offer.
+Note that all of these scripts are available on the Bazaar, and should be made available to any devices running the apps they augment. While these instructions invite you to place the code on your SD card, this is only for experimental purposes and isn't needed should you want the features they offer.
 
 <h3>Simple: Launcher on 2.1 and Below</h3>
 
