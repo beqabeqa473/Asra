@@ -214,9 +214,24 @@ log("Here.")
 
 from a handler in the script for the package <b>com.acme.android</b> will place the message "Here." into your device logs, prefixed by "com.acme.android".
 
-<h4>SPIEL_API_VERSION</h4>
+<h4>SPIEL_VERSION_CODE</h4>
 
-Spiel's scripting API will likely change over time, introducing new functions or changing the ways in which older ones work. As such, it will likely make sense to check its API version to determine whether or not a given block of code will run. This can be accomplished by checking the value of <b>SPIEL_API_VERSION</b>. This value, currently <b>1</b>, will be incremented whenever an API change is made.
+It is likely that newer versions of Spiel will introduce new constructs. As such, it may be necessary to code scripts that behave differently based on which version of Spiel is running them.
+
+<b>SPIEL_VERSION_CODE</b> contains an integer value that corresponds to a given Spiel version, and will be incremented for each new release. At present, the following values are supported:
+
+<table>
+  <th>
+    <td>Spiel version</td><td>Code</td>
+  </th>
+  <tr>
+    <td>1.0.0</td><td>3</td>
+  </tr>
+</table>
+
+<h4>SPIEL_VERSION_NAME</h4>
+
+This variable contains the human-readable name for the current version of Spiel. Note that this is only provided for display purposes. Any version-dependent logic should use <b>SPIEL_VERSION_CODE</b> instead.
 
 <h4>ANDROID_PLATFORM_VERSION</h4>
 

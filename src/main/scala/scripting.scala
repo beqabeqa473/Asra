@@ -7,6 +7,7 @@ import java.lang.Integer
 import handlers.PrettyAccessibilityEvent
 
 import android.content.{BroadcastReceiver, ContentValues, Context => AContext, Intent}
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.os.Environment
 import android.os.Build.VERSION
@@ -268,7 +269,11 @@ object Scripter {
     ScriptableObject.putProperty(myScope, "TTS", wrappedTTS)
 
     myScope.put("ANDROID_PLATFORM_VERSION", myScope, VERSION.SDK_INT)
-    myScope.put("SPIEL_API_VERSION", myScope, 1)
+
+    val pm = svc.getPackageManager.asInstanceOf[PackageManager]
+    val pi = pm.getPackageInfo(svc.getPackageName(), 0)
+    myScope.put("SPIEL_VERSION_NAME", myScope, pi.versionName)
+    myScope.put("SPIEL_VERSION_CODE", myScope, pi.versionCode)
 
     val spielDir = new File(Environment.getExternalStorageDirectory, "spiel")
     if(!spielDir.isDirectory) spielDir.mkdir
