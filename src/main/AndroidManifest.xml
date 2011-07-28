@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" 
   package="info.spielproject.spiel"
-  android:versionCode="2"
-  android:versionName="0.9.0RC2">
+  android:versionCode="3"
+  android:versionName="1.0.0">
 
   <uses-sdk android:minSdkVersion="4"/>
   <uses-feature android:name="android.hardware.telephony" android:required="false"/>
