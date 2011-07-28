@@ -51,14 +51,15 @@ class Spiel extends TabActivity {
 
 class PreferencesActivity extends PreferenceActivity {
 
-  override def onResume() {
-    super.onResume()
+  override def onCreate(bundle:Bundle) {
+    super.onCreate(bundle)
     val intent = getIntent
     setIntent(intent)
-    if(intent.getStringExtra("package") == null)
+    Option(intent.getStringExtra("package")).map { pkg =>
+      setPreferenceScreen(scriptPreferencesFor(pkg))
+    }.getOrElse {
       initGlobalPreferences()
-    else
-      setPreferenceScreen(scriptPreferencesFor(intent.getStringExtra("package")))
+    }
   }
 
   private def initGlobalPreferences() {
