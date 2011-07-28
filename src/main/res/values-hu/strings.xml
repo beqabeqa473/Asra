@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+<!-- Initial welcome message-->
+<string name="welcomeMsg">üdvözli a Spiel!</string>
+
+<!-- On/off and other alerts -->
+<string name="spielOn">Spiel Bekapcsolva</string>
+<string name="spielOff">Spiel kikapcsolva</string>
+<string name="ringer_off">csengetés kikapcsolva</string>
+<string name="ringer_on">csengetés bekapcsolva</string>
+
+<!-- View names and actions -->
+<string name="alert">figyelem! %1$s</string>
+<string name="button">%1$s: gomb </string>
+<string name="checkbox">%1$s: jelölőnégyzet</string>
+<string name="checked">bejelölve</string>
+<string name="editText">%1$s: szerkezhető mezo</string>
+<string name="emptyList">üres lista</string>
+<string name="image">%1$s: kép</string>
+<string name="listItem">%1$s: %2$s per %3$s</string>
+<string name="menu">menü</string>
+<string name="notChecked">kijelölve</string>
+<string name="password">jelszó</string>
+<string name="radioButton">választó gomb</string>
+<string name="searchText">%1$s: keresési mező</string>
+<string name="tab">%1$s: tab</string>
+
+<!-- Preferences -->
+<string name="preferences">beállítások</string>
+
+<string name="speechTitle">beszéd</string>
+<string name="speechEngineTitle">beszéd szintetizátor</string>
+<string name="rateScaleTitle">sebesség arány</string>
+<string name="rateScaleSummary">a sebesség arányát szabályozza</string>
+<string name="pitchScaleTitle">hangmagasság arány</string>
+
+
+
+
+
+
+
+
+<!-- Script context menu -->
+
+
+
+
+<!-- Menu items -->
+
+<!-- Dialog buttons -->
+
+<!-- Action names and related -->
+
+
+<!-- Punctuation and other speech-related strings -->
+
+
+</resources>

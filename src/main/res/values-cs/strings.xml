@@ -1,147 +1,154 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <resources>
+<string name="appName">Spiel</string>
 
-  <!-- Initial welcome message-->
-  <string name="welcomeMsg">Vítá vás Spiel</string>
+<!-- Initial welcome message-->
+<string name="welcomeMsg">Vítá vás Spiel!</string>
 
-  <!-- On/off and other alerts -->
-  <string name="spielOn">Spiel zapnutý.</string>
-  <string name="spielOff">Spiel vypnutý.</string>
-  <string name="screenOff">Displej vypnutý.</string>
-  <string name="unlocked">Odemknuto.</string>
-  <string name="ringer_off">Vyzvánění vypnuto.</string>
-  <string name="ringer_on">Vyzvánění zapnuto.</string>
+<!-- On/off and other alerts -->
+<string name="spielOn">Spiel zapnutý.</string>
+<string name="spielOff">Spiel vypnutý.</string>
+<string name="screenOff">Displej vypnutý.</string>
+<string name="unlocked">Odemknuto.</string>
+<string name="ringer_off">Vyzvánění vypnuto.</string>
+<string name="ringer_on">Vyzvánění zapnuto.</string>
 
-  <!-- View names and actions -->
-  <string name="alert">Upozornění! %1$s</string>
-  <string name="button">%1$s: tlačítko</string>
-  <string name="checkbox">%1$s: zaškrtávací políčko</string>
-  <string name="checked">zaškrtnuto</string>
-  <string name="editText">upravit text</string>
-  <string name="emptyList">prázdný seznam</string>
-  <string name="image">%1$s: obrázek</string>
-  <string name="listItem">%1$s: %2$s z %3$s</string>
-  <string name="menu">menu</string>
-  <string name="notChecked">nezaškrtnuto</string>
-  <string name="password">%1$s: heslo</string>
-  <string name="radioButton">%1$s: přepínač</string>
-  <string name="searchText">%1$s: vyhledat text</string>
-  <string name="tab">%1$s: záložka</string>
+<!-- View names and actions -->
+<string name="alert">Upozornění! %1$s</string>
+<string name="button">%1$s: tlačítko</string>
+<string name="labeledButton">%1$s: tlačítko</string>
+<string name="checkbox">%1$s: zaškrtávací políčko</string>
+<string name="checked">zaškrtnuto</string>
+<string name="editText">% 1 $ s: upravit text</string>
+<string name="emptyList">prázdný seznam</string>
+<string name="image">%1$s: obrázek</string>
+<string name="labeledImage">%1$s: obrázek</string>
+<string name="listItem">%1$s: %2$s z %3$s</string>
+<string name="menu">menu</string>
+<string name="notChecked">nezaškrtnuto</string>
+<string name="password">%1$s: heslo</string>
+<string name="radioButton">%1$s: přepínač</string>
+<string name="searchText">% 1 $ s: vyhledat text</string>
+<string name="tab">%1$s: záložka</string>
 
-  <!-- Preferences -->
-  <string name="preferences">Možnosti</string>
+<!-- Preferences -->
+<string name="preferences">Možnosti</string>
 
-  <string name="speechTitle">řeč</string>
-  <string name="speechEngineTitle">Nástroj řeči</string>
-  <string name="rateScaleTitle">Rychlost</string>
-  <string name="rateScaleSummary">Faktor, kterým mohou být nastaveny základní hodnoty rychlosti</string>
-  <string name="pitchScaleTitle">Výška</string>
-  <string name="pitchScaleSummary">Faktor, kterým mohou být nastaveny základní hodnoty výšky</string>
-  <string name="echoByCharTitle">Odezva po znacích</string>
-  <string name="echoByWordTitle">Odezva po slovech</string>
-  <string name="speakNotificationsWhenScreenOffTitle">Hlásit oznámení i při vypnutém displeji</string>
-  <string name="useBluetoothSCOTitle">Použití Bluetooth SCO</string>
-  <string name="useBluetoothSCOSummary">Přesměrování zvuku hovoru do Bluetooth SCO sluchátek (experimentální!)</string>
-  <string name="managePunctuationSpeechTitle">správa interpunkčních znamének</string>
-  <string name="managePunctuationSpeechSummary">Přiřaďte Spielu výslovnost nedefinovaných interpunkčních znamének</string>
-  <string name="increaseInCallVolumeTitle">Zvýšení hlasitosti v hovoru</string>
-  <string name="increaseInCallVolumeSummary">Použít vyšší hlasitost řeči během hovoru</string>
-  <string name="textToSpeechTitle">Nastavení Text to Speech</string>
-  <string name="textToSpeechSummary">Nastavit rozšířené vlastnosti systému TTS</string>
+<string name="speechTitle">řeč</string>
+<string name="speechEngineTitle">Nástroj řeči</string>
+<string name="rateScaleTitle">Rychlost</string>
+<string name="rateScaleSummary">Faktor, kterým mohou být nastaveny základní hodnoty rychlosti</string>
+<string name="pitchScaleTitle">Výška</string>
+<string name="pitchScaleSummary">Faktor, kterým mohou být nastaveny základní hodnoty výšky</string>
+<string name="echoByCharTitle">Odezva po znacích</string>
+<string name="echoByWordTitle">Odezva po slovech</string>
+<string name="speakNotificationsWhenScreenOffTitle">Hlásit oznámení i při vypnutém displeji</string>
+<string name="useBluetoothSCOTitle">Použít Bluetooth SCO</string>
+<string name="useBluetoothSCOSummary">Přesměrování zvuku hovoru do Bluetooth SCO sluchátek (experimentální!)</string>
+<string name="managePunctuationSpeechTitle">Řídit vyslovování interpunkčních znamének</string>
+<string name="managePunctuationSpeechSummary">Přiřadit Spielu výslovnost nedefinovaných interpunkčních znamének</string>
+<string name="increaseInCallVolumeTitle">Zvýšit hlasitost v hovoru</string>
+<string name="increaseInCallVolumeSummary">Použít vyšší hlasitost řeči během hovoru</string>
+<string name="textToSpeechTitle">Nastavení převodu textu na řeč</string>
+<string name="textToSpeechSummary">Nastavit rozšířené vlastnosti systému TTS</string>
 
-  <string name="alertsTitle">Upozornění</string>
-  <string name="talkingCallerIDTitle">Hlasová identifikace volajícího</string>
-  <string name="talkingCallerIDSummary">Opakovaně oznamuje podrobnosti o volajícím u příchozích hovorů</string>
-  <string name="voicemailAlertsTitle">Upozornění na hlasovou poštu</string>
-  <string name="voicemailAlertsSummary">Opakovaně oznamuje dostupnost nové hlasové pošty</string>
+<string name="alertsTitle">Upozornění</string>
+<string name="talkingCallerIDTitle">Hlasová identifikace volajícího</string>
+<string name="talkingCallerIDSummary">Opakovaně oznamovat podrobnosti o volajícím u příchozích hovorů</string>
+<string name="voicemailAlertsTitle">Upozornění na hlasovou poštu</string>
+<string name="voicemailAlertsSummary">Opakovaně oznamovat dostupnost nové hlasové pošty</string>
 
-  <string name="triggersTitle">Triggers</string>
-  <string name="triggersSummary">Nastavení akcí pro spuštění v reakci na fyzické události</string>
-  <string name="onShakeTitle">Na třesení</string>
-  <string name="onShakeSummary">Nastavit provedení akce, když je přístrojem třeseno</string>
-  <string name="onProximityNearTitle">Na blízkost okolí</string>
-  <string name="onProximityNearSummary">Nastavit provedení akce, když je něco v blízkosti senzoru přiblížení</string>
+<string name="triggersTitle">Triggers</string>
+<string name="triggersSummary">Nastavení spouštěných akcí v reakci na fyzické události</string>
+<string name="onShakeTitle">Na třesení</string>
+<string name="onShakeSummary">Nastavit provedení akce, když je přístrojem třeseno</string>
+<string name="onProximityNearTitle">Na přiblížení</string>
+<string name="onProximityNearSummary">Nastavit provedení akce, když je něco v blízkosti senzoru přiblížení</string>
 
-  <string name="scriptingDebuggingTitle">Skriptování a ladění</string>
-  <string name="sendBacktracesTitle">Odeslat report, když Spiel havaruje</string>
-  <string name="sendBacktracesSummary">Automaticky odesílat anonimní zprávy o chybě vývojáři, kdykoli Spiel havaruje (vyžaduje restart)</string>
-  <string name="viewRecentEventsTitle">Zobrazit nejnovější události přístupnosti</string>
-  <string name="viewRecentEventsSummary">Zobrazuje poslední události přístupnosti, včetně přidaných funkcí pro vývojáře skriptů</string>
+<string name="scriptingDebuggingTitle">Skriptování a ladění</string>
+<string name="sendBacktracesTitle">Odeslat report, když Spiel havaruje</string>
+<string name="sendBacktracesSummary">Automaticky odesílat anonimní zprávy o chybě vývojáři, kdykoli Spiel havaruje (vyžaduje restart)</string>
+<string name="viewRecentEventsTitle">Zobrazit nejnovější události přístupnosti</string>
+<string name="viewRecentEventsSummary">Zobrazuje nejnovější události přístupnosti, včetně přidaných funkcí pro vývojáře skriptů</string>
 
-  <string name="events">Události</string>
-  <string name="noEvents">žádné události k dispozici. Povolte prosím nejprve \ "Zobrazit dostupnost nejnovějších událostí \" v \ "Skriptování a ladění \" menu. Pokud jste tak učinili a stále se nezobrazují, stiskněte tlačítko Menu a vyberte \ "Aktualizovat \".</string>
-  <string name="createScriptTemplate">Vytvořit šablonu skriptu</string>
+<string name="events">Události</string>
+<string name="noEvents">žádné události k dispozici. Povolte prosím nejprve \ "Zobrazit dostupnost nejnovějších událostí \" v menu \ "Skriptování a ladění \". Pokud jste tak učinili a události se stále nezobrazují, stiskněte tlačítko Menu a zvolte \ "Obnovit \".</string>
+<string name="createScriptTemplate">Vytvořit šablonu skriptu</string>
 
-  <string name="scripts">Skripty</string>
+<string name="scripts">Skripty</string>
 
-  <string name="system">Systém</string>
-  <string name="user">Uživatel</string>
+<string name="system">Systém</string>
+<string name="user">Uživatel</string>
 
-  <!-- Script context menu -->
-  <string name="delete">Smazat</string>
-  <string name="copyToExternalStorage">Kopírovat na externí úložiště</string>
-  <string name="reload">Znovu zavést</string>
-  <string name="postToBazaar">Přidat na bazar</string>
+<!-- Script context menu -->
+<string name="delete">Smazat</string>
+<string name="copyToExternalStorage">Kopírovat na externí úložiště</string>
+<string name="reload">Znovu zavést</string>
+<string name="postToBazaar">Odeslat na bazar</string>
 
-  <string name="bazaar_credentials">Níže prosím zadejte své Spiel bazar údaje.</string>
-  <string name="bazaar_credentials_invalid">Vaše uživatelské jméno nebo heslo je neplatné. Prosím, níže jej zadejte znovu a akci opakujte.</string>
-  <string name="bazaar_username_label">Uživatelské jméno</string>
-  <string name="bazaar_password_label">Heslo</string>
-  <string name="changes_label">Změny (volitelné):</string>
-  <string name="script_reload_error">Tento skript je neplatný. Prosím, opravte případné chyby zaznamenané v protokolech a zkuste to znovu.</string>
-  <string name="script_posted">Váš skript byl úspěšně odeslán. Děkujeme za vaši spolupráci.</string>
-  <string name="script_posting_error">Během odesílání skriptu došlo k dočasné chybě sítě. Prosím, opakujte akci později.</string>
+<string name="bazaar_credentials">Níže prosím zadejte své Spiel bazar údaje.</string>
+<string name="bazaar_credentials_invalid">Vaše uživatelské jméno nebo heslo je neplatné. Prosím, níže jej zadejte znovu a akci opakujte.</string>
+<string name="bazaar_username_label">Uživatelské jméno</string>
+<string name="bazaar_password_label">Heslo</string>
+<string name="script_reload_error">Tento skript je neplatný. Prosím, opravte případné chyby zaznamenané v protokolech a zkuste to znovu.</string>
+<string name="changes_label">Změny (volitelné):</string>
+<string name="script_posted">Váš skript byl úspěšně odeslán. Děkujeme za spolupráci.</string>
+<string name="script_posting_error">Během odesílání skriptu došlo k dočasné chybě sítě. Prosím, opakujte akci později.</string>
 
-  <string name="confirmDelete">Jste si jisti, že chcete smazat skript pro balíček %1$s?</string>
-  <string name="scriptCopied">Skript zkopírován do %1$s.</string>
+<string name="confirmDelete">Jste si jisti, že chcete smazat skript pro balíček %1$s?</string>
+<string name="scriptCopied">Skript zkopírován do %1$s.</string>
 
-  <string name="newOrUpdatedScripts">Nové nebo aktualizované skripty jsou k dispozici. Prosím, vyberte, který si přejete nainstalovat.</string>
-  <string name="selectAll">Označit vše</string>
-  <string name="deselectAll">Odoznačit vše</string>
-  <string name="install">Instalovat</string>
+<string name="newOrUpdatedScripts">Nové nebo aktualizované skripty jsou k dispozici. Prosím, vyberte ty, které si přejete nainstalovat.</string>
+<string name="selectAll">Označit vše</string>
+<string name="deselectAll">Odoznačit vše</string>
+<string name="install">Instalovat</string>
 
-  <!-- Menu items -->
-  <string name="refresh">Aktualizovat</string>
+<!-- Menu items -->
+<string name="refresh">Obnovit</string>
 
-  <!-- Dialog buttons -->
-  <string name="cancel">Zrušit</string>
-  <string name="yes">Ano</string>
-  <string name="no">Ne</string>
+<!-- Dialog buttons -->
+<string name="ok">OK</string>
+<string name="cancel">Zrušit</string>
+<string name="yes">Ano</string>
+<string name="no">Ne</string>
 
-  <!-- Action names and related -->
+<!-- Action names and related -->
 
-  <string name="createScriptTemplateAction">Vytvořit šablonu skriptu pro poslední událost přístupnosti</string>
-  <string name="templateCreated">šablona vytvořena v %1$s.</string>
-  <string name="stopSpeech">Zastavit mluvení</string>
-  <string name="toggleSpiel">Určuje, zda je Spiel povolen</string>
+<string name="createScriptTemplateAction">Vytvořit šablonu skriptu pro nejnovější událost přístupnosti</string>
+<string name="templateCreated">šablona vytvořena v %1$s.</string>
+<string name="stopSpeech">Zastavit mluvení</string>
+<string name="toggleSpiel">Určuje, zda je Spiel povolen</string>
 
-  <!-- Punctuation and other speech-related strings -->
+<!-- Punctuation and other speech-related strings -->
 
-  <string name="blank">Prázdný</string>
-  <string name="cap">velké %1$s</string>
-  <string name="exclamation">vykřičník</string>
-  <string name="at">zavináč</string>
-  <string name="pound">libra</string>
-  <string name="dollar">dolar</string>
-  <string name="percent">procent</string>
-  <string name="caret">stříška</string>
-  <string name="ampersand">ampersand</string>
-  <string name="asterisk">hvězdička</string>
-  <string name="leftParen">levá závorka</string>
-  <string name="rightParen">pravá závorka</string>
-  <string name="underscore">podtržení</string>
-  <string name="space">mezera</string>
-  <string name="period">tečka</string>
-  <string name="comma">čárka</string>
-  <string name="lessThan">menší než</string>
-  <string name="greaterThan">větší než</string>
-  <string name="slash">lomeno</string>
-  <string name="backslash">obrácené lomítko</string>
-  <string name="questionMark">otazník</string>
-  <string name="quote">uvozovky</string>
-  <string name="apostrophe">apostrof</string>
-  <string name="semiColon">středník</string>
-  <string name="colon">dvojtečka</string>
+<string name="blank">Prázdný</string>
+<string name="cap">velké %1$s</string>
+<string name="exclamation">vykřičník</string>
+<string name="at">zavináč</string>
+<string name="pound">libra</string>
+<string name="dollar">dolar</string>
+<string name="percent">procent</string>
+<string name="caret">stříška</string>
+<string name="ampersand">ampersand</string>
+<string name="asterisk">hvězdička</string>
+<string name="leftParen">levá závorka</string>
+<string name="rightParen">pravá závorka</string>
+<string name="underscore">podtržení</string>
+<string name="space">mezera</string>
+<string name="period">tečka</string>
+<string name="comma">čárka</string>
+<string name="lessThan">menší než</string>
+<string name="greaterThan">větší než</string>
+<string name="slash">lomeno</string>
+<string name="backslash">obrácené lomítko</string>
+<string name="questionMark">otazník</string>
+<string name="quote">uvozovky</string>
+<string name="apostrophe">apostrof</string>
+<string name="semiColon">středník</string>
+<string name="colon">dvojtečka</string>
+<string name="dash">pomlčka</string>
+<string name="plus">plus</string>
+<string name="newline">Nový řádek</string>
 
 </resources>

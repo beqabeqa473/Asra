@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+<!-- Initial welcome message-->
+<string name="welcomeMsg">Välkommen till Spiel!</string>
+
+<!-- On/off and other alerts -->
+<string name="spielOn">Spiel på</string>
+<string name="spielOff">Spiel av</string>
+<string name="ringer_off">Ringer av</string>
+<string name="ringer_on">Ringer på</string>
+
+<!-- View names and actions -->
+<string name="alert">Varning! %1$s</string>
+<string name="button">%1$s: knapp</string>
+<string name="checkbox">%1$s: kryssruta</string>
+<string name="checked">kryssad</string>
+<string name="emptyList">tom lista</string>
+<string name="image">%1$s: bild</string>
+<string name="menu">meny</string>
+<string name="notChecked">ej kryssad</string>
+<string name="password">%1$s: lösenord</string>
+<string name="radioButton">%1$s: radioknapp</string>
+<string name="searchText">%1$s: sök text</string>
+<string name="tab">%1$s: flik</string>
+
+<!-- Preferences -->
+<string name="preferences">Inställningar</string>
+
+<string name="speechTitle">Tal</string>
+<string name="speechEngineTitle">Talsyntes</string>
+<string name="rateScaleTitle">Hastighet</string>
+<string name="echoByCharTitle">Eko efter tecken</string>
+<string name="echoByWordTitle">Eko efter ord</string>
+<string name="useBluetoothSCOTitle">Använd Bluetooth SCO</string>
+<string name="managePunctuationSpeechTitle">Hantera interpunktionsuppläsning</string>
+<string name="speakNotificationsWhenScreenOffTitle">Läs notifieringar även när skärmen är avstängd</string>
+<string name="textToSpeechTitle">Text till talinställningar</string>
+
+<string name="alertsTitle">Varningar</string>
+
+<string name="onShakeTitle">Vid skakning</string>
+
+<string name="sendBacktracesSummary">Skicka automatiskt anonyma felrapporter till utvecklaren när Spiel kraschar (kräver omstart)</string>
+
+<string name="events">Händelser</string>
+
+<string name="scripts">Scripts</string>
+
+<string name="system">System</string>
+<string name="user">Användare</string>
+
+<!-- Script context menu -->
+<string name="delete">Radera</string>
+<string name="copyToExternalStorage">Kopiera till extern lagring</string>
+<string name="reload">Ladda om</string>
+
+<string name="bazaar_credentials_invalid">Ditt användarnamn och/eller lösenord är fel. Vänligen ange dem på nytt nedan och försök igen.</string>
+<string name="bazaar_username_label">Användarnamn</string>
+<string name="bazaar_password_label">Lösenord</string>
+<string name="script_reload_error">Detta script är felaktigt. Vänligen korrigera några fel rapporterade i loggarna och försök igen</string>
+
+<string name="confirmDelete">Är du säker på att du vill ta bort scriptet för paketet %1$s?</string>
+<string name="scriptCopied">Scriptet kopierat till %1$s.</string>
+
+<string name="newOrUpdatedScripts">Nya uppdaterade scripts är tillgängliga. Vänligen välj vilket du önskar installera.</string>
+<string name="selectAll">Välj alla</string>
+<string name="install">Installera</string>
+
+<!-- Menu items -->
+<string name="refresh">Uppdatera</string>
+
+<!-- Dialog buttons -->
+<string name="ok">OK</string>
+<string name="cancel">Avbryt</string>
+<string name="yes">Ja</string>
+<string name="no">Nej</string>
+
+<!-- Action names and related -->
+
+
+<!-- Punctuation and other speech-related strings -->
+
+<string name="blank">blank</string>
+<string name="cap">stor</string>
+<string name="exclamation">utropstecken</string>
+<string name="at">snabela</string>
+<string name="pound">pund</string>
+<string name="dollar">dollar</string>
+<string name="percent">procent</string>
+<string name="ampersand">och</string>
+<string name="asterisk">stjärna</string>
+<string name="leftParen">vänsterparentes</string>
+<string name="rightParen">högerparentes</string>
+<string name="underscore">understräck</string>
+<string name="space">mellanslag</string>
+<string name="period">punkt</string>
+<string name="comma">komma</string>
+<string name="lessThan">mindre än</string>
+<string name="greaterThan">större än</string>
+<string name="slash">snedsträck</string>
+<string name="backslash">bakåtsnedsträck</string>
+<string name="questionMark">frågetecken</string>
+<string name="quote">citationstecken</string>
+<string name="apostrophe">apostrof</string>
+<string name="semiColon">semikolon</string>
+<string name="colon">kolon</string>
+<string name="dash">bindesträck</string>
+<string name="plus">plus</string>
+<string name="newline">ny rad</string>
+
+</resources>

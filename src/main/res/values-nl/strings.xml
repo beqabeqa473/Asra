@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+<!-- Initial welcome message-->
+<string name="welcomeMsg">Welkom bij Spiel!</string>
+
+<!-- On/off and other alerts -->
+<string name="spielOn">Spiel aan</string>
+<string name="spielOff">Spiel uit</string>
+<string name="ringer_off">Beltoon uit.</string>
+<string name="ringer_on">Beltoon aan.</string>
+
+<!-- View names and actions -->
+<string name="alert">Waarschuwing!</string>
+<string name="button">Knop</string>
+<string name="checked">Geselecteerd</string>
+<string name="emptyList">Lege lijst</string>
+<string name="image">Afbeelding</string>
+<string name="menu">Menu</string>
+<string name="notChecked">Niet geselecteerd</string>
+<string name="password">Wachtwoord</string>
+
+<!-- Preferences -->
+
+<string name="speechTitle">Spraak</string>
+
+
+
+
+
+
+<string name="scripts">Scripts</string>
+
+<string name="system">Systeem</string>
+<string name="user">Gebruiker</string>
+
+<!-- Script context menu -->
+<string name="delete">Verwijder</string>
+
+
+
+<string name="selectAll">Selecteer alles</string>
+<string name="deselectAll">Deselecteer alles</string>
+<string name="install">Installeer</string>
+
+<!-- Menu items -->
+
+<!-- Dialog buttons -->
+
+<!-- Action names and related -->
+
+
+<!-- Punctuation and other speech-related strings -->
+
+
+</resources>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+<!-- Initial welcome message-->
+<string name="welcomeMsg">A jaɓɓaama e Spiel!</string>
+
+<!-- On/off and other alerts -->
+<string name="spielOn">Spiel hurmii.</string>
+<string name="spielOff">Spiel Dartiima.</string>
+<string name="ringer_off">Horɓirde ñifii.</string>
+<string name="ringer_on">Holɓirde huɓɓii.</string>
+
+<!-- View names and actions -->
+<string name="alert">Reento! %1$s</string>
+<string name="button">%1$s: ƴiire</string>
+<string name="checkbox">%1$s: bakanel labo</string>
+<string name="checked">labaaɗo</string>
+<string name="editText">%1$s: taƴto binndol</string>
+<string name="emptyList">doggol ɓolol</string>
+<string name="image">%1$s: natal</string>
+<string name="listItem">%1$s: %2$s nder %3$s</string>
+<string name="menu">dosol</string>
+<string name="notChecked">labaaka</string>
+<string name="password">%1$s: finnde</string>
+<string name="radioButton">%1$s: ñiire labo</string>
+<string name="searchText">%1$s: yiylo binndol</string>
+<string name="tab">%1$s: tabbere</string>
+
+<!-- Preferences -->
+<string name="preferences">Cuɓoraaɗe</string>
+
+<string name="speechTitle">Wowlaandu</string>
+<string name="speechEngineTitle">Motoor Wowlaandu</string>
+<string name="rateScaleTitle">Daawirgal cookol</string>
+
+
+
+
+
+
+
+
+<!-- Script context menu -->
+
+
+
+
+<!-- Menu items -->
+
+<!-- Dialog buttons -->
+
+<!-- Action names and related -->
+
+
+<!-- Punctuation and other speech-related strings -->
+
+
+</resources>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+<!-- Initial welcome message-->
+<string name="welcomeMsg">Вас вітає Спіл!</string>
+
+<!-- On/off and other alerts -->
+<string name="spielOn">Спіл увімкнено</string>
+<string name="spielOff">Спіл виключено</string>
+
+<!-- View names and actions -->
+<string name="menu">Меню</string>
+<string name="notChecked">не перевірено</string>
+<string name="password">пароль</string>
+<string name="radioButton">радіоКнопка</string>
+<string name="searchText">шукатиТекст</string>
+<string name="tab">Вкладка</string>
+
+<!-- Preferences -->
+<string name="preferences">Налаштування</string>
+
+<string name="speechTitle">Розмовляюча програма</string>
+<string name="speechEngineTitle">Голосовий модуль</string>
+<string name="textToSpeechTitle">Настройки голосових модулів</string>
+
+
+
+
+
+
+
+
+<!-- Script context menu -->
+
+
+
+
+<!-- Menu items -->
+
+<!-- Dialog buttons -->
+
+<!-- Action names and related -->
+
+
+<!-- Punctuation and other speech-related strings -->
+
+
+</resources>
