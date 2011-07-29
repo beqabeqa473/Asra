@@ -230,6 +230,7 @@ It is likely that newer versions of Spiel will introduce new constructs. As such
   </th>
   <tr>
     <td>1.0.0</td><td>3</td>
+    <td>1.0.1</td><td>4</td>
   </tr>
 </table>
 
