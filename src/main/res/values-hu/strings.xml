@@ -8,22 +8,26 @@
 <!-- On/off and other alerts -->
 <string name="spielOn">Spiel Bekapcsolva</string>
 <string name="spielOff">Spiel kikapcsolva</string>
-<string name="ringer_off">csengetés kikapcsolva</string>
-<string name="ringer_on">csengetés bekapcsolva</string>
+<string name="screenOff">kijelző zárolva</string>
+<string name="unlocked">feloldva</string>
+<string name="ringer_off">csengo kikapcsolva</string>
+<string name="ringer_on">csengo bekapcsolva</string>
 
 <!-- View names and actions -->
 <string name="alert">figyelem! %1$s</string>
-<string name="button">%1$s: gomb </string>
+<string name="button">gomb</string>
+<string name="labeledButton">gomb</string>
 <string name="checkbox">%1$s: jelölőnégyzet</string>
 <string name="checked">bejelölve</string>
 <string name="editText">%1$s: szerkezhető mezo</string>
 <string name="emptyList">üres lista</string>
 <string name="image">%1$s: kép</string>
+<string name="labeledImage">%1$s: Kép</string>
 <string name="listItem">%1$s: %2$s per %3$s</string>
 <string name="menu">menü</string>
 <string name="notChecked">kijelölve</string>
-<string name="password">jelszó</string>
-<string name="radioButton">választó gomb</string>
+<string name="password">%1$s: Jelszó</string>
+<string name="radioButton">%1$s: választó gomb</string>
 <string name="searchText">%1$s: keresési mező</string>
 <string name="tab">%1$s: tab</string>
 
@@ -35,9 +39,24 @@
 <string name="rateScaleTitle">sebesség arány</string>
 <string name="rateScaleSummary">a sebesség arányát szabályozza</string>
 <string name="pitchScaleTitle">hangmagasság arány</string>
+<string name="echoByCharTitle">karakterek kiejtése</string>
+<string name="echoByWordTitle">szavak kiejtése</string>
+<string name="useBluetoothSCOTitle">Bluetooth SCO használata</string>
+<string name="useBluetoothSCOSummary">híváson kívüli audio átírányítása bluetooth  SCO ezközőkre</string>
+<string name="managePunctuationSpeechTitle">Hangsúly beszéd szabályozása</string>
+<string name="managePunctuationSpeechSummary">néhány küldötte írásjelekete a Spiel fog kezelni</string>
+<string name="increaseInCallVolumeTitle">hjívási hangero erősítése</string>
+<string name="textToSpeechTitle">beszéd motor beállítások</string>
+<string name="textToSpeechSummary">rendszer-terjedelmu beszédmotor tulajdonságok beállítása</string>
 
+<string name="alertsTitle">figyelmeztetések</string>
+<string name="talkingCallerIDTitle">beszélő hívófél-azonosító</string>
+<string name="talkingCallerIDSummary">ismétli a hívófél-azonosító információt bejővő hívásokkor</string>
+<string name="voicemailAlertsTitle">hangposta figyelmeztetések</string>
 
-
+<string name="triggersTitle">triggerek</string>
+<string name="triggersSummary">fizikai eseményekhez intézkedéseket lehet vállalni</string>
+<string name="onShakeTitle">rázáskor</string>
 
 
 
