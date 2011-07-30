@@ -14,7 +14,7 @@
 
   <!-- View names and actions -->
   <string name="alert">¡Alerta! %1$s</string>
-  <string name="button">botón de %1$s</string>
+  <string name="button">botón</string>
   <string name="checkbox">%1$s: casilla de verificación</string>
   <string name="checked">verificado</string>
   <string name="editText">editar texto</string>

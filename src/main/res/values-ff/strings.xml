@@ -13,7 +13,7 @@
 
 <!-- View names and actions -->
 <string name="alert">Reento! %1$s</string>
-<string name="button">%1$s: ƴiire</string>
+<string name="button">ƴiire</string>
 <string name="checkbox">%1$s: bakanel labo</string>
 <string name="checked">labaaɗo</string>
 <string name="editText">%1$s: taƴto binndol</string>
