@@ -8,12 +8,14 @@
 <!-- On/off and other alerts -->
 <string name="spielOn">Spiel på</string>
 <string name="spielOff">Spiel av</string>
+<string name="screenOff">Skärm släckt.</string>
+<string name="unlocked">Upplåst.</string>
 <string name="ringer_off">Ringer av</string>
 <string name="ringer_on">Ringer på</string>
 
 <!-- View names and actions -->
 <string name="alert">Varning! %1$s</string>
-<string name="button">%1$s: knapp</string>
+<string name="button">knapp</string>
 <string name="checkbox">%1$s: kryssruta</string>
 <string name="checked">kryssad</string>
 <string name="emptyList">tom lista</string>
@@ -31,16 +33,21 @@
 <string name="speechTitle">Tal</string>
 <string name="speechEngineTitle">Talsyntes</string>
 <string name="rateScaleTitle">Hastighet</string>
-<string name="echoByCharTitle">Eko efter tecken</string>
-<string name="echoByWordTitle">Eko efter ord</string>
+<string name="pitchScaleTitle">Tonläge.</string>
+<string name="echoByCharTitle">Skriveko Tecken</string>
+<string name="echoByWordTitle">Skriveko Ord</string>
+<string name="speakNotificationsWhenScreenOffTitle">Läs notifieringar även när skärmen är avstängd</string>
 <string name="useBluetoothSCOTitle">Använd Bluetooth SCO</string>
 <string name="managePunctuationSpeechTitle">Hantera interpunktionsuppläsning</string>
-<string name="speakNotificationsWhenScreenOffTitle">Läs notifieringar även när skärmen är avstängd</string>
+<string name="increaseInCallVolumeTitle">Öka inkommande samtalsvolym</string>
+<string name="increaseInCallVolumeSummary">Använd högre volym under pågående samtal</string>
 <string name="textToSpeechTitle">Text till talinställningar</string>
 
 <string name="alertsTitle">Varningar</string>
+<string name="voicemailAlertsTitle">Notiser för rösteddelanden</string>
 
 <string name="onShakeTitle">Vid skakning</string>
+<string name="onShakeSummary">Knyta en funktion som utförs när enheten skakas</string>
 
 <string name="sendBacktracesSummary">Skicka automatiskt anonyma felrapporter till utvecklaren när Spiel kraschar (kräver omstart)</string>
 
