@@ -2,145 +2,150 @@
 
 <resources>
 
-  <!-- Initial welcome message-->
-  <string name="welcomeMsg">Bienvenido a Spiel!</string>
+<!-- Initial welcome message-->
+<string name="welcomeMsg">Bienvenido a Spiel!</string>
 
-  <!-- On/off and other alerts -->
-  <string name="spielOn">Spiel activado.</string>
-  <string name="spielOff">Spiel desactivado.</string>
-  <string name="screenOff">Pantalla apagada.</string>
-  <string name="ringer_off">Ringer off.</string>
-  <string name="ringer_on">Ringer on.</string>
+<!-- On/off and other alerts -->
+<string name="spielOn">Spiel activado.</string>
+<string name="spielOff">Spiel desactivado.</string>
+<string name="screenOff">Pantalla apagada</string>
+<string name="unlocked">Desbloqueado</string>
+<string name="ringer_off">Timbre apagado</string>
+<string name="ringer_on">Timbre encendido</string>
 
-  <!-- View names and actions -->
-  <string name="alert">¡Alerta! %1$s</string>
-  <string name="button">botón</string>
-  <string name="checkbox">%1$s: casilla de verificación</string>
-  <string name="checked">verificado</string>
-  <string name="editText">editar texto</string>
-  <string name="emptyList">lista vacía</string>
-  <string name="image">imagen de %1$s</string>
-  <string name="listItem">1$s: %2$s de %3$s</string>
-  <string name="menu">menú</string>
-  <string name="notChecked">no verificado</string>
-  <string name="password">%1$s: contraseña</string>
-  <string name="radioButton">%1$s: botón radio</string>
-  <string name="searchText">%1$s: buscar en el texto</string>
-  <string name="tab">Pestaña %1$s</string>
+<!-- View names and actions -->
+<string name="alert">¡Alerta! %1$s</string>
+<string name="button">botón de %1$s</string>
+<string name="labeledButton">%1$s botón</string>
+<string name="checkbox">%1$s: casilla de verificación</string>
+<string name="checked">verificado</string>
+<string name="editText">%1$s: editar texto</string>
+<string name="emptyList">lista vacía</string>
+<string name="image">imagen de %1$s</string>
+<string name="listItem">%1$s: %2$s de %3$s</string>
+<string name="menu">menú</string>
+<string name="notChecked">no verificado</string>
+<string name="password">%1$s: contraseña</string>
+<string name="radioButton">%1$s: botón radio</string>
+<string name="searchText">%1$s: buscar en el texto</string>
+<string name="tab">Pestaña %1$s</string>
 
-  <!-- Preferences -->
-  <string name="preferences">Preferencias</string>
+<!-- Preferences -->
+<string name="preferences">Preferencias</string>
 
-  <string name="speechTitle">Voz</string>
-  <string name="speechEngineTitle">Motor del sintetizador de voz</string>
-  <string name="rateScaleTitle">Escala de velocidad</string>
-  <string name="rateScaleSummary">Factor por el cual se ajusta la velocidad predeterminada</string>
-  <string name="pitchScaleTitle">Escala de tono del sintetizador</string>
-  <string name="pitchScaleSummary">Factor por el cual se ajusta el tono predeterminado</string>
-  <string name="echoByCharTitle">Pronunciar caracteres</string>
-  <string name="echoByWordTitle">Pronunciar palabras</string>
-  <string name="speakNotificationsWhenScreenOffTitle">Anunciar notificaciones aunque la pantalla esté bloqueada</string>
-  <string name="useBluetoothSCOTitle">Usar Bluetooth SCO</string>
-  <string name="useBluetoothSCOSummary">Enviar sonido que no corresponde a llamadas al auricular Bluetooth SCO (experimental!)</string>
-  <string name="managePunctuationSpeechTitle">Gestionar la pronunciación de puntuación</string>
-  <string name="managePunctuationSpeechSummary">Delegar a Spiel la pronunciación de ciertos signos de puntuación no gestionados</string>
-  <string name="increaseInCallVolumeTitle">Aumentar volumen de llamadas</string>
-  <string name="increaseInCallVolumeSummary">Aumentar volumen del sintetizador durante llamadas</string>
-  <string name="textToSpeechTitle">Ajustes texto a voz</string>
-  <string name="textToSpeechSummary">Ajustar propriedades  texto a voz del sistema</string>
+<string name="speechTitle">Voz</string>
+<string name="speechEngineTitle">Motor del sintetizador de voz</string>
+<string name="rateScaleTitle">Escala de velocidad</string>
+<string name="rateScaleSummary">Factor por el cual se ajusta la velocidad predeterminada</string>
+<string name="pitchScaleTitle">Escala de tono del sintetizador</string>
+<string name="pitchScaleSummary">Factor por el cual se ajusta el tono predeterminado</string>
+<string name="echoByCharTitle">Pronunciar caracteres</string>
+<string name="echoByWordTitle">Pronunciar palabras</string>
+<string name="speakNotificationsWhenScreenOffTitle">Anunciar notificaciones aunque la pantalla esté bloqueada</string>
+<string name="useBluetoothSCOTitle">Usar Bluetooth SCO</string>
+<string name="useBluetoothSCOSummary">Enviar sonido que no corresponde a llamadas al auricular Bluetooth SCO (experimental!)</string>
+<string name="managePunctuationSpeechTitle">Gestionar la pronunciación de puntuación</string>
+<string name="managePunctuationSpeechSummary">Delegar a Spiel la pronunciación de ciertos signos de puntuación no gestionados</string>
+<string name="increaseInCallVolumeTitle">Aumentar volumen de llamadas</string>
+<string name="increaseInCallVolumeSummary">Aumentar volumen del sintetizador durante llamadas</string>
+<string name="textToSpeechTitle">Ajustes texto a voz</string>
+<string name="textToSpeechSummary">Ajustar propriedades  texto a voz del sistema</string>
 
-  <string name="alertsTitle">Alertas</string>
-  <string name="talkingCallerIDTitle">Identificador de llamadas parlante</string>
-  <string name="talkingCallerIDSummary">Repetir detalles del identificador para llamadas entrantes</string>
-  <string name="voicemailAlertsTitle">Alertas de correo de voz</string>
-  <string name="voicemailAlertsSummary">Repetir la disponibilidad de Nuevas llamadas en el buzón</string>
+<string name="alertsTitle">Alertas</string>
+<string name="talkingCallerIDTitle">Identificador de llamadas parlante</string>
+<string name="talkingCallerIDSummary">Repetir detalles del identificador para llamadas entrantes</string>
+<string name="voicemailAlertsTitle">Alertas de correo de voz</string>
+<string name="voicemailAlertsSummary">Repetir la disponibilidad de Nuevas llamadas en el buzón</string>
 
-  <string name="triggersTitle">Activadores</string>
-  <string name="triggersSummary">Configurar acciones en respuesta a eventos físicos</string>
-  <string name="onShakeTitle">al agitar</string>
-  <string name="onShakeSummary">Configurar una accion a realizar cuando el dispositivo es agitado</string>
-  <string name="onProximityNearTitle">Al acercarse</string>
-  <string name="onProximityNearSummary">Configurar una acción a realizar cuando el sensor de proximidad determina que algo está cerca</string>
+<string name="triggersTitle">Activadores</string>
+<string name="triggersSummary">Configurar acciones en respuesta a eventos físicos</string>
+<string name="onShakeTitle">al agitar</string>
+<string name="onShakeSummary">Configurar una accion a realizar cuando el dispositivo es agitado</string>
+<string name="onProximityNearTitle">Al acercarse</string>
+<string name="onProximityNearSummary">Configurar una acción a realizar cuando el sensor de proximidad determina que algo está cerca</string>
 
-  <string name="scriptingDebuggingTitle">Escritura de script y depuración</string>
-  <string name="sendBacktracesTitle">Enviar trazas cuando Spiel falla</string>
-  <string name="sendBacktracesSummary">Enviar informe de error automática y anonímamente al desarrollador cada vez que Spiel falle (se necesita reiniciar).</string>
-  <string name="viewRecentEventsTitle">Visualizar últimos eventos de accesibilidad</string>
-  <string name="viewRecentEventsSummary">Mostrar últimos eventos de accesibilidad con funcionalidad adicional para desarrolladores de script</string>
+<string name="scriptingDebuggingTitle">Escritura de script y depuración</string>
+<string name="sendBacktracesTitle">Enviar trazas cuando Spiel falla</string>
+<string name="sendBacktracesSummary">Enviar informe de error automática y anonímamente al desarrollador cada vez que Spiel falle (se necesita reiniciar).</string>
+<string name="viewRecentEventsTitle">Visualizar últimos eventos de accesibilidad</string>
+<string name="viewRecentEventsSummary">Mostrar últimos eventos de accesibilidad con funcionalidad adicional para desarrolladores de script</string>
 
-  <string name="events">Eventos</string>
-  <string name="noEvents">No hay eventos disponibles. Favor de habilitar "Visualizar últimos eventos de accesibilidad" en el Menú "Escritura de script y depuración". Si tras hacer esto no se muestra ninguno, presionar Menú, luego seleccionar "Actualizar pantalla".</string>
-  <string name="createScriptTemplate">Crear plantilla de script</string>
+<string name="events">Eventos</string>
+<string name="noEvents">No hay eventos disponibles. Favor de habilitar "Visualizar últimos eventos de accesibilidad" en el Menú "Escritura de script y depuración". Si tras hacer esto no se muestra ninguno, presionar Menú, luego seleccionar "Actualizar pantalla".</string>
+<string name="createScriptTemplate">Crear plantilla de script</string>
 
-  <string name="scripts">Script</string>
+<string name="scripts">Script</string>
 
-  <string name="system">Sistema</string>
-  <string name="user">Usuario</string>
+<string name="system">Sistema</string>
+<string name="user">Usuario</string>
 
-  <!-- Script context menu -->
-  <string name="delete">Eliminar</string>
-  <string name="copyToExternalStorage">Copiar a almacenamiento externo</string>
-  <string name="reload">Reiniciar</string>
-  <string name="postToBazaar">Publicar en bazaar</string>
+<!-- Script context menu -->
+<string name="delete">Eliminar</string>
+<string name="copyToExternalStorage">Copiar a almacenamiento externo</string>
+<string name="reload">Reiniciar</string>
+<string name="postToBazaar">Publicar en bazaar</string>
 
-  <string name="bazaar_credentials">Please enter your Spiel Bazaar credentials below.</string>
-  <string name="bazaar_credentials_invalid">Your username and/or password are invalid. Please re-enter them below and try again.</string>
-  <string name="bazaar_username_label">Username</string>
-  <string name="bazaar_password_label">Password</string>
-  <string name="script_reload_error">This script is invalid. Please fix any errors reported in the logs and try again.</string>
-  <string name="changes_label">Changes (optional):</string>
-  <string name="script_posted">Your script was posted successfully. Thank you for your contribution.</string>
-  <string name="script_posting_error">There was a temporary network error posting your script. Please try again later.</string>
+<string name="bazaar_credentials">Please enter your Spiel Bazaar credentials below.</string>
+<string name="bazaar_credentials_invalid">Your username and/or password are invalid. Please re-enter them below and try again.</string>
+<string name="bazaar_username_label">Username</string>
+<string name="bazaar_password_label">Password</string>
+<string name="script_reload_error">This script is invalid. Please fix any errors reported in the logs and try again.</string>
+<string name="changes_label">Changes (optional):</string>
+<string name="script_posted">Your script was posted successfully. Thank you for your contribution.</string>
+<string name="script_posting_error">There was a temporary network error posting your script. Please try again later.</string>
 
-  <string name="confirmDelete">¿Está seguro que desea eliminar el script de package %1$s?</string>
-  <string name="scriptCopied">Script copiado a %1$s.</string>
+<string name="confirmDelete">¿Está seguro que desea eliminar el script de package %1$s?</string>
+<string name="scriptCopied">Script copiado a %1$s.</string>
 
-  <string name="newOrUpdatedScripts">Hay nuevos o actualizados script. Favor de escoger los que desea instalar.</string>
-  <string name="selectAll">Seleccionar todo</string>
-  <string name="deselectAll">Seleccionar ninguno</string>
-  <string name="install">Instalar</string>
+<string name="newOrUpdatedScripts">Hay nuevos o actualizados script. Favor de escoger los que desea instalar.</string>
+<string name="selectAll">Seleccionar todo</string>
+<string name="deselectAll">Seleccionar ninguno</string>
+<string name="install">Instalar</string>
 
-  <!-- Menu items -->
-  <string name="refresh">Actualizar pantalla</string>
+<!-- Menu items -->
+<string name="refresh">Actualizar pantalla</string>
 
-  <!-- Dialog buttons -->
-  <string name="ok">Aceptar</string>
-  <string name="cancel">Cancelar</string>
-  <string name="yes">Sí</string>
+<!-- Dialog buttons -->
+<string name="ok">Aceptar</string>
+<string name="cancel">Cancelar</string>
+<string name="yes">Sí</string>
+<string name="no">No</string>
 
-  <!-- Action names and related -->
+<!-- Action names and related -->
 
-  <string name="createScriptTemplateAction">Crear  plantilla de script para el último evento de accesibilidad</string>
-  <string name="templateCreated">Plantilla creada en %1$s.</string>
-  <string name="stopSpeech">Parar el sintetizador</string>
-  <string name="toggleSpiel">Conmutar entre activación y desactivación de Spiel</string>
+<string name="createScriptTemplateAction">Crear  plantilla de script para el último evento de accesibilidad</string>
+<string name="templateCreated">Plantilla creada en %1$s.</string>
+<string name="stopSpeech">Parar el sintetizador</string>
+<string name="toggleSpiel">Conmutar entre activación y desactivación de Spiel</string>
 
-  <!-- Punctuation and other speech-related strings -->
+<!-- Punctuation and other speech-related strings -->
 
-  <string name="blank">en blanco</string>
-  <string name="cap">%1$s mayús</string>
-  <string name="exclamation">admiración</string>
-  <string name="at">arroba</string>
-  <string name="pound">número</string>
-  <string name="dollar">dólar</string>
-  <string name="percent">porciento</string>
-  <string name="caret">acento circunflejo</string>
-  <string name="ampersand">y</string>
-  <string name="asterisk">asterisco</string>
-  <string name="leftParen">abre paréntesis</string>
-  <string name="rightParen">cierra paréntesis</string>
-  <string name="underscore">guión bajo</string>
-  <string name="space">espacio</string>
-  <string name="period">punto</string>
-  <string name="comma">coma</string>
-  <string name="lessThan">menor que</string>
-  <string name="greaterThan">mayor que</string>
-  <string name="slash">barra</string>
-  <string name="backslash">contrabarra</string>
-  <string name="questionMark">interrogación</string>
-  <string name="quote">comillas</string>
-  <string name="apostrophe">apóstrofo</string>
-  <string name="semiColon">punto y coma</string>
-  <string name="colon">dos puntos</string>
+<string name="blank">en blanco</string>
+<string name="cap">%1$s mayús</string>
+<string name="exclamation">admiración</string>
+<string name="at">arroba</string>
+<string name="pound">número</string>
+<string name="dollar">dólar</string>
+<string name="percent">porciento</string>
+<string name="caret">acento circunflejo</string>
+<string name="ampersand">y</string>
+<string name="asterisk">asterisco</string>
+<string name="leftParen">abre paréntesis</string>
+<string name="rightParen">cierra paréntesis</string>
+<string name="underscore">guión bajo</string>
+<string name="space">espacio</string>
+<string name="period">punto</string>
+<string name="comma">coma</string>
+<string name="lessThan">menor que</string>
+<string name="greaterThan">mayor que</string>
+<string name="slash">barra</string>
+<string name="backslash">contrabarra</string>
+<string name="questionMark">interrogación</string>
+<string name="quote">comillas</string>
+<string name="apostrophe">apóstrofo</string>
+<string name="semiColon">punto y coma</string>
+<string name="colon">dos puntos</string>
+<string name="plus">Mas</string>
+<string name="newline">Linea Nueva</string>
 
 </resources>
