@@ -512,10 +512,6 @@ class Handlers {
     }
   }
 
-  class LatestItemView extends Handler("com.android.server.status.LatestItemView") {
-    onNotificationStateChanged { e:AccessibilityEvent => true }
-  }
-
   class ListView extends Handler("android.widget.ListView") {
     onViewSelected { e:AccessibilityEvent =>
       if(e.getCurrentItemIndex >= 0)
