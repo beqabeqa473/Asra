@@ -577,7 +577,7 @@ class Handlers {
 
   class TextView extends Handler("android.widget.TextView") {
     onViewFocused { e:AccessibilityEvent =>
-      speak(utterancesFor(e, true))
+      speak(utterancesFor(e, false))
       true
     }
   }
@@ -604,15 +604,11 @@ class Handlers {
 
     onViewFocused { e:AccessibilityEvent =>
       //Log.d("spiel", "onViewFocused")
-      if(e.isFullScreen || (e.getItemCount == 0 && e.getCurrentItemIndex == -1))
-        true
-      else {
-        var utterances = utterancesFor(e)
-        if(utterances == Nil || utterances == List(""))
-          utterances = e.getClassName.toString.split("\\.").last :: Nil
-        speak(utterances)
-        true
-      }
+      var utterances = utterancesFor(e, false)
+      if(utterances == Nil || utterances == List(""))
+        utterances = e.getClassName.toString.split("\\.").last :: Nil
+      speak(utterances)
+      true
     }
 
     onViewLongClicked { e:AccessibilityEvent =>
@@ -622,9 +618,16 @@ class Handlers {
 
     onViewSelected { e:AccessibilityEvent =>
       //Log.d("spiel", "onViewSelected")
-      if(e.getCurrentItemIndex >= 0 && utterancesFor(e).length > 0)
-        speak(utterancesFor(e))
-      else if(e.getCurrentItemIndex == -1 && e.getItemCount == 0)
+      val utterances = utterancesFor(e)
+      if(utterances.length > 0) {
+        if(e.getCurrentItemIndex == -1)
+          if(e.getItemCount == 1)
+            speak(Handler.service.getString(R.string.item, utterances.mkString(" ")))
+          else
+            speak(Handler.service.getString(R.string.items, utterances.mkString(" "), e.getItemCount.toString))
+        else
+          speak(utterances)
+      } else
         speak(Handler.service.getString(R.string.emptyList))
       true
     }

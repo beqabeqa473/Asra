@@ -22,7 +22,9 @@
   <string name="checked">checked</string>
   <string name="editText">edit text</string>
   <string name="emptyList">empty list</string>
-    <string name="image">image</string>
+  <string name="item">%1$s: 1 item</string>
+  <string name="items">%1$s: %2$s items</string>
+  <string name="image">image</string>
   <string name="labeledImage">%1$s: image</string>
   <string name="listItem">%1$s: %2$s of %3$s</string>
   <string name="menu">menu</string>
