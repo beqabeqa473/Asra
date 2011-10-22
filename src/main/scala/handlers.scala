@@ -398,7 +398,8 @@ class Handler(pkg:String, cls:String) {
     if(text.size == 0 && e.getContentDescription == null && addBlank)
       rv ::= ""
     rv :::= text.filter(_ != null).map(_.toString)
-    if(e.getContentDescription != null) rv ::= e.getContentDescription.toString
+    if(e.getContentDescription != null && e.getContentDescription != "")
+      rv ::= e.getContentDescription.toString
     rv
   }
 
@@ -489,7 +490,7 @@ class Handlers {
     onViewFocused { e:AccessibilityEvent =>
       if(e.getCurrentItemIndex != -1) {
         if(e.isPassword)
-          speak(Handler.service.getString(R.string.password, utterancesFor(e).mkString(": ")))
+          speak(Handler.service.getString(R.string.password))
         else {
           speak(utterancesFor(e, true), false)
           speak(Handler.service.getString(R.string.editText), false)
@@ -573,7 +574,7 @@ class Handlers {
 
   class TextView extends Handler("android.widget.TextView") {
     onViewFocused { e:AccessibilityEvent =>
-      speak(utterancesFor(e, false))
+      speak(utterancesFor(e, true))
       true
     }
   }
@@ -601,7 +602,7 @@ class Handlers {
     onViewFocused { e:AccessibilityEvent =>
       //Log.d("spiel", "onViewFocused")
       var utterances = utterancesFor(e, false)
-      if(utterances == Nil || utterances == List(""))
+      if(utterances == Nil || utterances.isEmpty)
         utterances = e.getClassName.toString.split("\\.").last :: Nil
       speak(utterances)
       true
@@ -671,7 +672,7 @@ class Handlers {
 
     byDefault { e:AccessibilityEvent =>
       //Log.d("spiel", "Unhandled event: "+e.toString)
-      speak(utterancesFor(e))
+      //speak(utterancesFor(e))
       true
     }
 
