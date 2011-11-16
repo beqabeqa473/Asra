@@ -29,7 +29,7 @@
   <string name="listItem">%1$s: %2$s of %3$s</string>
   <string name="menu">menu</string>
   <string name="notChecked">not checked</string>
-  <string name="password">%1$s: password</string>
+  <string name="password">password</string>
   <string name="radioButton">%1$s: radio button</string>
   <string name="searchText">%1$s: search text</string>
   <string name="tab">%1$s: tab</string>
