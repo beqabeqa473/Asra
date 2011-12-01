@@ -187,11 +187,9 @@ object Handler extends Actor {
     }
 
     // We've been handed an old event and have waited until its presentation 
-    // time. Now let's see if there is another event available. We wait for 
-    // a short interval and, if we receive a new event, we determine if it 
-    // can replace the old event and continue. If we have no new events and 
-    // time out, then we simply present what we last received.
-    reactWithin(timeout) {
+    // time. Now let's see if there is another event available. If so then 
+    // process it. If not, catch the next and repeat.
+    reactWithin(0) {
       case actors.TIMEOUT =>
         process(i.event)
         act

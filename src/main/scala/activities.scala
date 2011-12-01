@@ -348,11 +348,11 @@ class Scripts extends TypedActivity with Refreshable with RadioGroup.OnCheckedCh
   private val postDialog = 2
 
   override protected def onCreateDialog(dialogType:Int):Dialog = {
-    val dialog = new Dialog(this)
+    val dialog = new Dialog(this) with TypedDialog
     dialogType match {
       // TODO: Why can't I just match against literals without getting an "unreachable code"?
       case v if(v == credentialsDialog) =>
-        val dialog = new Dialog(this)
+        Log.d("spielcheck", "Creating credentials dialog.")
         dialog.setContentView(R.layout.bazaar_credentials)
         val message = dialog.findView(TR.message)
         if(Preferences.bazaarUsername != "" || Preferences.bazaarPassword != "")
@@ -374,9 +374,8 @@ class Scripts extends TypedActivity with Refreshable with RadioGroup.OnCheckedCh
               Preferences.bazaarPassword = password.getText.toString
               dialog.dismiss()
               postToBazaar()
-            } else {
+            } else
               dialog.show()
-            }
           }
         })
         dialog.findView(TR.cancel).setOnClickListener(new View.OnClickListener {
@@ -427,6 +426,7 @@ class Scripts extends TypedActivity with Refreshable with RadioGroup.OnCheckedCh
     } catch {
       case e@dispatch.StatusCode(401, _) =>
         Log.d("spielcheck", "Credentials error.")
+        Preferences.bazaarPassword = ""
         showDialog(credentialsDialog)
       case e =>
         scriptToPost = None

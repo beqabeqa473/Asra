@@ -3,6 +3,7 @@ package info.spielproject.spiel
 import actors.Actor._
 import collection.JavaConversions._
 
+import android.app.Service
 import android.content.Context
 import android.media.AudioManager
 import android.os.Build.VERSION
@@ -18,18 +19,18 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   private var tts:TextToSpeech = null
 
-  private var context:Context = null
+  private var service:Service = null
 
   private var audioManager:Option[AudioManager] = None
 
   /**
-   * Initialize TTS based on specified <code>Context</code>.
+   * Initialize TTS based on specified <code>Service</code>.
   */
 
-  def apply(c:Context) {
-    context = c
+  def apply(s:Service) {
+    service = s
     if(VERSION.SDK_INT >= 8)
-      audioManager = Some(context.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager])
+      audioManager = Some(service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager])
     init()
   }
 
@@ -38,12 +39,14 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   */
 
   def init() = {
-    tts = new TextToSpeech(context, this)
+    tts = new TextToSpeech(service, this)
   }
 
   private var welcomed = false
 
   def onInit(status:Int) {
+    if(status == TextToSpeech.ERROR)
+      return service.stopSelf()
     tts.setLanguage(java.util.Locale.getDefault)
     if(Environment.getExternalStorageState == Environment.MEDIA_MOUNTED)
       engine = Preferences.speechEngine
@@ -54,7 +57,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     this.pitch = Preferences.pitchScale
     tts.addEarcon("tick", "info.spielproject.spiel", R.raw.tick)
     if(!welcomed) {
-      speak(context.getString(R.string.welcomeMsg), true)
+      speak(service.getString(R.string.welcomeMsg), true)
       welcomed = true
     }
   }
@@ -198,13 +201,13 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     val params = new java.util.HashMap[String, String]()
     params.put("utteranceId", "speech") // TODO: Why won't Scala see Engine?
     if(text.length == 0)
-      tts.speak(context.getString(R.string.blank), mode, params)
+      tts.speak(service.getString(R.string.blank), mode, params)
     else if(text.length == 1 && text >= "A" && text <= "Z") {
       pitch = 1.5f
-      tts.speak(context.getString(R.string.cap, text), mode, params)
+      tts.speak(service.getString(R.string.cap, text), mode, params)
       pitch = 1
     } else if(text.length == 1 && Preferences.managePunctuationSpeech && managedPunctuations.get(text) != None)
-      tts.speak(context.getString(managedPunctuations(text)), mode, params)
+      tts.speak(service.getString(managedPunctuations(text)), mode, params)
     else
       tts.speak(text, mode, params)
   }
@@ -241,6 +244,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     Log.d("spiel", "Speaking: "+text)
     val params = new java.util.HashMap[String, String]()
     params.put("utteranceId", uid) // TODO: Why won't Scala see Engine?
+    requestAudioFocus()
     tts.speak(text, TextToSpeech.QUEUE_FLUSH, params)
   }
 
