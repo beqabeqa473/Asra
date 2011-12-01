@@ -395,10 +395,14 @@ object Scripter {
     val handler = "on"+Handler.dispatchers(event.e.getEventType).capitalize
     val code = "forClass(\""+event.e.getClassName+"\", {\n  "+handler+": function(e, activity) {\n    // "+event.toString+"\n    return false\n  }\n})\n"
     val file = new File(scriptsDir, event.e.getPackageName+".js")
-    val writer = new FileWriter(file, true)
-    writer.write(code)
-    writer.close()
-    scriptsDir+"/"+file.getName
+    try {
+      val writer = new FileWriter(file, true)
+      writer.write(code)
+      writer.close()
+      Some(scriptsDir+"/"+file.getName)
+    } catch {
+      case _ => None
+    }
   }
 
 }

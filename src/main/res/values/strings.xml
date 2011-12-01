@@ -119,6 +119,7 @@
 
   <string name="createScriptTemplateAction">Create a script template for the most recent accessibility event</string>
   <string name="templateCreated">Template created in %1$s.</string>
+  <string name="templateCreationError">There was an error creating the script template.</string>
   <string name="stopSpeech">Stop speech</string>
   <string name="toggleSpiel">Toggle whether or not Spiel is enabled</string>
 

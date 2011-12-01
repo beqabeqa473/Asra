@@ -487,10 +487,14 @@ class Events extends ListActivity with Refreshable {
     item.getItemId match {
       case R.id.createTemplate =>
         val filename = Scripter.createTemplateFor(event)
-        new AlertDialog.Builder(this)
-        .setMessage(getString(R.string.templateCreated, filename))
-        .setPositiveButton(getString(R.string.ok), null)
-        .show()
+        val dialog = new AlertDialog.Builder(this)
+        filename.map { fn =>
+          dialog.setMessage(getString(R.string.templateCreated, fn))
+        }.getOrElse {
+          dialog.setMessage(getString(R.string.templateCreationError))
+        }
+        dialog.setPositiveButton(getString(R.string.ok), null)
+        dialog.show()
     }
     true
   }
