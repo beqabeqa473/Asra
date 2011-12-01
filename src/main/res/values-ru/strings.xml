@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+<!-- Initial welcome message-->
+<string name="welcomeMsg">Привет!</string>
+
+<!-- On/off and other alerts -->
+<string name="spielOn">Spiel включен.</string>
+<string name="spielOff">Spiel выключен.</string>
+<string name="unlocked">Разблокирована.</string>
+
+<!-- View names and actions -->
+<string name="button">кнопка</string>
+<string name="labeledButton">%1$s: кнопка</string>
+<string name="checkbox">%1$s: флажок</string>
+<string name="checked">отмечено</string>
+<string name="emptyList">пустой список</string>
+<string name="image">Изображение</string>
+<string name="labeledImage">%1$s: изображение</string>
+<string name="listItem">%1$s: %2$s из %3$s</string>
+<string name="menu">меню</string>
+<string name="notChecked">не отмечено</string>
+<string name="password">%1$s: пароль</string>
+<string name="radioButton">%1$s: радиокнопка</string>
+<string name="searchText">%1$s: поиск текста</string>
+<string name="tab">%1$s: вкладка</string>
+
+<!-- Preferences -->
+<string name="preferences">Настройки</string>
+
+<string name="speechTitle">Реч</string>
+<string name="speechEngineTitle">Речевой модуль</string>
+<string name="speakNotificationsWhenScreenOffTitle">Озвучивать уведомления, даже когда экран выключен</string>
+<string name="managePunctuationSpeechTitle">Пунктуация</string>
+
+<string name="alertsTitle">Уведомления</string>
+
+
+
+<string name="events">События</string>
+<string name="createScriptTemplate">Создать шаблон скрипта</string>
+
+<string name="scripts">Скрипты</string>
+
+<string name="system">Система</string>
+<string name="user">Пользователь</string>
+
+<!-- Script context menu -->
+<string name="delete">Удалить</string>
+
+<string name="bazaar_username_label">Имя пользователя</string>
+<string name="bazaar_password_label">Пароль</string>
+
+
+
+<!-- Menu items -->
+
+<!-- Dialog buttons -->
+<string name="cancel">Отмена</string>
+<string name="yes">Да</string>
+<string name="no">Нет</string>
+
+<!-- Action names and related -->
+
+<string name="stopSpeech">Остановка речи</string>
+
+<!-- Punctuation and other speech-related strings -->
+
+<string name="blank">Пусто</string>
+<string name="exclamation">Восклицательный знак</string>
+<string name="at">Собака</string>
+<string name="pound">ФУНТ</string>
+<string name="dollar">Доллар</string>
+<string name="percent">процент</string>
+<string name="ampersand">амперсанд</string>
+<string name="asterisk">Звёздочка</string>
+<string name="leftParen">Левая скобка</string>
+<string name="rightParen">Правая скобка</string>
+<string name="underscore">подчеркивание</string>
+<string name="space">пробел</string>
+<string name="period">точка</string>
+<string name="comma">запятая</string>
+<string name="lessThan">меньше</string>
+<string name="greaterThan">больше</string>
+<string name="slash">слэш\</string>
+<string name="backslash">бэкслэш</string>
+<string name="questionMark">вопросительный знак</string>
+<string name="quote">кавычка</string>
+<string name="apostrophe">апостроф</string>
+<string name="semiColon">точка с запятой</string>
+<string name="colon">двоеточие</string>
+<string name="dash">минус</string>
+<string name="plus">плюс</string>
+
+</resources>

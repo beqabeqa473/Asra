@@ -10,8 +10,8 @@
 <string name="spielOff">Spiel kikapcsolva</string>
 <string name="screenOff">kijelző zárolva</string>
 <string name="unlocked">feloldva</string>
-<string name="ringer_off">csengo kikapcsolva</string>
-<string name="ringer_on">csengo bekapcsolva</string>
+<string name="ringer_off">csengő kikapcsolva</string>
+<string name="ringer_on">csengő bekapcsolva</string>
 
 <!-- View names and actions -->
 <string name="alert">figyelem! %1$s</string>
@@ -19,10 +19,10 @@
 <string name="labeledButton">gomb</string>
 <string name="checkbox">%1$s: jelölőnégyzet</string>
 <string name="checked">bejelölve</string>
-<string name="editText">%1$s: szerkezhető mezo</string>
+<string name="editText">szerkeszthető mező</string>
 <string name="emptyList">üres lista</string>
-<string name="image">%1$s: kép</string>
-<string name="labeledImage">%1$s: Kép</string>
+<string name="image">kép</string>
+<string name="labeledImage">Kép</string>
 <string name="listItem">%1$s: %2$s per %3$s</string>
 <string name="menu">menü</string>
 <string name="notChecked">kijelölve</string>
@@ -39,42 +39,115 @@
 <string name="rateScaleTitle">sebesség arány</string>
 <string name="rateScaleSummary">a sebesség arányát szabályozza</string>
 <string name="pitchScaleTitle">hangmagasság arány</string>
+<string name="pitchScaleSummary">a beszéd magasság arányát szabályozza</string>
 <string name="echoByCharTitle">karakterek kiejtése</string>
 <string name="echoByWordTitle">szavak kiejtése</string>
+<string name="speakNotificationsWhenScreenOffTitle">értesítések  kimondása képernyő zárolás után is</string>
 <string name="useBluetoothSCOTitle">Bluetooth SCO használata</string>
 <string name="useBluetoothSCOSummary">híváson kívüli audio átírányítása bluetooth  SCO ezközőkre</string>
 <string name="managePunctuationSpeechTitle">Hangsúly beszéd szabályozása</string>
-<string name="managePunctuationSpeechSummary">néhány küldötte írásjelekete a Spiel fog kezelni</string>
-<string name="increaseInCallVolumeTitle">hjívási hangero erősítése</string>
-<string name="textToSpeechTitle">beszéd motor beállítások</string>
-<string name="textToSpeechSummary">rendszer-terjedelmu beszédmotor tulajdonságok beállítása</string>
+<string name="managePunctuationSpeechSummary">néhány küldötte írásjelet a Spiel fog kezelni</string>
+<string name="increaseInCallVolumeTitle">hjívási hangerő erősítése</string>
+<string name="increaseInCallVolumeSummary">hangosabb hangerő használata hívások alatt</string>
+<string name="textToSpeechTitle">beszéd szintetizátor beállításai</string>
+<string name="textToSpeechSummary">rendszer-terjedelmü szintetizátor tulajdonságainak beállítása</string>
 
 <string name="alertsTitle">figyelmeztetések</string>
 <string name="talkingCallerIDTitle">beszélő hívófél-azonosító</string>
 <string name="talkingCallerIDSummary">ismétli a hívófél-azonosító információt bejővő hívásokkor</string>
 <string name="voicemailAlertsTitle">hangposta figyelmeztetések</string>
+<string name="voicemailAlertsSummary">új hangposta ismételt figyelmeztetése</string>
 
 <string name="triggersTitle">triggerek</string>
 <string name="triggersSummary">fizikai eseményekhez intézkedéseket lehet vállalni</string>
 <string name="onShakeTitle">rázáskor</string>
+<string name="onShakeSummary">művelet, mikor az eszköz rázva van</string>
+<string name="onProximityNearTitle">közelségkor</string>
+<string name="onProximityNearSummary">művelet beállítása, mikor a közelségi szenzor érzélkeli, hogy valami közel van</string>
 
+<string name="scriptingDebuggingTitle">szkriptek és hibakeresés</string>
+<string name="sendBacktracesTitle">visszajővő adatok elküldése, amikor a spiel lefagy</string>
+<string name="sendBacktracesSummary">Automatikus névtelen hibajelentések elküldése a fejlesztőnek, ha a Spiel lefagy (újraindítást igényel)</string>
+<string name="viewRecentEventsTitle">Legfrisebb hozzáférhetőségi események megtekintése</string>
+<string name="viewRecentEventsSummary">Megjeleníti a legújabb hozzáférhetőségi eseményeket, script fejlesztőknek hasznos információval</string>
 
+<string name="events">Események</string>
+<string name="noEvents">Nincs megjelenthető esemény. Kérjük, engedélyezze a \"legfrissebb hozzáférhetőség események megtekintése"\ a \"Scripting és hibakeresés"\ menü alatt. Ha ezt megtette, és semmi sem megjeleníthető, nyomja meg a Menü gombot, majd válassza a \"Frissítés"\ opciót.</string>
+<string name="createScriptTemplate">Szkript sablon készítése</string>
 
+<string name="scripts">Szkriptek</string>
 
+<string name="system">Rendszer</string>
+<string name="user">Használó</string>
 
 <!-- Script context menu -->
+<string name="delete">Törlés</string>
+<string name="copyToExternalStorage">Másolás külső eszközre</string>
+<string name="reload">Újratöltés</string>
+<string name="postToBazaar">Elküldés a Bazárra</string>
 
+<string name="bazaar_credentials">írja be a Spiel bazaar hitelesítő adatait</string>
+<string name="bazaar_credentials_invalid">A megadott felhasználónév és / vagy jelszó érvénytelen. Kérjük adja meg újra ezeket, és próbálja meg újra.</string>
+<string name="bazaar_username_label">Felhasználónév</string>
+<string name="bazaar_password_label">Jelszó</string>
+<string name="script_reload_error">Ez a szkript érvénytelen. A naplóban rögzitett  híbákat ellenőrizze, majd ez alapján javítsa ki.</string>
+<string name="changes_label">Változások (nem szükséges):</string>
+<string name="script_posted">A szkriptje sikeresen fel lett töltve. Köszönjük hozzájárulását.</string>
+<string name="script_posting_error">Ideiglenes hálózati hiba történt a feltöltés közben. Kérjük, próbálja újra később.</string>
 
+<string name="confirmDelete">Biztosan törölni szeretné a %1$s szkriptjeit?</string>
+<string name="scriptCopied">Szkript másolva a %1$sre</string>
 
+<string name="newOrUpdatedScripts">Új vagy frissített scriptek állnak rendelkezésre. Kérjük, válassza ki a kivántakat a telepítéshez</string>
+<string name="selectAll">Összes kiválasztása</string>
+<string name="deselectAll">Összes végrehagyása</string>
+<string name="install">Telepítés</string>
 
 <!-- Menu items -->
+<string name="refresh">újra ellenőrzés</string>
 
 <!-- Dialog buttons -->
+<string name="ok">ok</string>
+<string name="cancel">mégsem</string>
+<string name="yes">igen</string>
+<string name="no">nem</string>
 
 <!-- Action names and related -->
 
+<string name="createScriptTemplateAction">Szkript sablon készítése a legfrissebb hozzáférhetőségi eseményhez</string>
+<string name="templateCreated">a sablon a %1$s ben elkészült</string>
+<string name="stopSpeech">beszéd elnémítása</string>
+<string name="toggleSpiel">A spiel engedélyezésének állítása</string>
 
 <!-- Punctuation and other speech-related strings -->
 
+<string name="blank">üres</string>
+<string name="cap">kap %1$s</string>
+<string name="exclamation">felkíáltó jel</string>
+<string name="at">kukac</string>
+<string name="pound">szám</string>
+<string name="dollar">dollár</string>
+<string name="percent">százalék</string>
+<string name="caret">felfelé nyíl</string>
+<string name="ampersand">és</string>
+<string name="asterisk">csillag</string>
+<string name="leftParen">balzárójel</string>
+<string name="rightParen">jobbzárójel</string>
+<string name="underscore">aláhúzás</string>
+<string name="space">szóköz</string>
+<string name="period">pont</string>
+<string name="comma">vessző</string>
+<string name="lessThan">kisebb</string>
+<string name="greaterThan">nagyobb</string>
+<string name="slash">per</string>
+<string name="backslash">fordított per</string>
+<string name="questionMark">kérdőjel</string>
+<string name="quote">idézőjel</string>
+<string name="apostrophe">aposztróf</string>
+<string name="semiColon">pontosvessző</string>
+<string name="colon">kettőspont</string>
+<string name="dash">mínusz</string>
+<string name="plus">plusz</string>
+<string name="newline">újsor</string>
 
 </resources>
