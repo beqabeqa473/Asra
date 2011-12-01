@@ -60,6 +60,12 @@
       android:title="@string/increaseInCallVolumeTitle"
       android:summary="@string/increaseInCallVolumeSummary"/>
 
+    <CheckBoxPreference
+      android:key="duckNonSpeechAudio"
+      android:defaultValue="true"
+      android:title="@string/duckNonSpeechAudioTitle"
+      android:summary="@string/duckNonSpeechAudioSummary"/>
+
     <Preference
       android:key="textToSpeechSettings"
       android:title="@string/textToSpeechTitle"

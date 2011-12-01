@@ -52,6 +52,8 @@
   <string name="managePunctuationSpeechSummary">Delegate speaking of some unhandled punctuation to Spiel</string>
   <string name="increaseInCallVolumeTitle">Increase in-call volume</string>
   <string name="increaseInCallVolumeSummary">Use louder volume for speech during calls</string>
+  <string name="duckNonSpeechAudioTitle">Duck non-speech audio</string>
+  <string name="duckNonSpeechAudioSummary">Lower volume of music, games, etc. while speaking</string>
   <string name="textToSpeechTitle">Text to Speech settings</string>
   <string name="textToSpeechSummary">Set system-wide TTS properties</string>
 

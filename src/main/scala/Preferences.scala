@@ -121,6 +121,12 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
   def speakNotificationsWhenScreenOff = prefs.getBoolean("speakNotificationsWhenScreenOff", true)
 
+  /*
+   * Duck non-speech audio while speaking.
+  */
+
+  def duckNonSpeechAudio = prefs.getBoolean("duckNonSpeechAudio", true)
+
   private def triggerPreference(trigger:String, default:String = "") = prefs.getString(trigger, default) match {
     case "" => None
     case str => Some(Triggers.actions(str))

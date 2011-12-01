@@ -183,9 +183,10 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   )
 
   private def requestAudioFocus() {
-    audioManager.foreach { a =>
-      a.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
-    }
+    if(Preferences.duckNonSpeechAudio)
+      audioManager.foreach { a =>
+        a.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
+      }
   }
 
   /**
