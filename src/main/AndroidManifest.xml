@@ -16,19 +16,24 @@
 
   <application android:label="@string/appName"   android:icon="@drawable/empty">
 
-    <service android:name=".SpielService">
+    <service android:name=".SpielService" android:settingsActivity=".activities.Spiel">
+
       <intent-filter>
         <action android:name="android.accessibilityservice.AccessibilityService"/>
         <category android:name="android.accessibilityservice.category.FEEDBACK_SPOKEN"/>
       </intent-filter>
+
+      <meta-data android:name="android.accessibilityservice"
+        android:resource="@xml/accessibilityservice"/>
+
     </service>
 
     <activity android:name=".activities.Spiel"/>
 
     <activity android:name=".activities.PreferencesActivity">
       <intent-filter>    
-        <action android:name="android.intent.action.MAIN" />    
-        <category android:name="android.accessibilityservice.SERVICE_SETTINGS" />    
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.accessibilityservice.SERVICE_SETTINGS"/>
       </intent-filter>
     </activity>
 
