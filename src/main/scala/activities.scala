@@ -523,7 +523,10 @@ class ScriptInstaller extends TypedActivity with AdapterView.OnItemClickListener
       )
     )
     scriptsList.setOnItemClickListener(this)
-    scriptsList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE)
+    // Pre-ICS compatibility: CHOICE_MODE_MULTIPLE moved from ListView to AbsListView
+    import android.widget.AbsListView._
+    import android.widget.ListView._
+    scriptsList.setChoiceMode(CHOICE_MODE_MULTIPLE)
 
     def selectAll() {
       var seen:List[String] = Nil

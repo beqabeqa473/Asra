@@ -6,7 +6,7 @@ version := "1.0.1"
 
 scalaVersion := "2.8.1"
 
-platformName in Android := "android-10"
+platformName in Android := "android-14"
 
 AndroidProject.androidSettings
 
