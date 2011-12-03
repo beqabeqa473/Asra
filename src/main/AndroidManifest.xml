@@ -4,7 +4,7 @@
   android:versionCode="4"
   android:versionName="1.0.1">
 
-  <uses-sdk android:minSdkVersion="4"/>
+  <uses-sdk android:minSdkVersion="5"/>
   <uses-feature android:name="android.hardware.telephony" android:required="false"/>
   <uses-permission android:name="android.permission.BLUETOOTH"/>
   <uses-permission android:name="android.permission.GET_TASKS"/>
