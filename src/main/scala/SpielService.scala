@@ -4,6 +4,7 @@ import android.accessibilityservice._
 import android.app.{Notification, NotificationManager, PendingIntent}
 import android.content.{Context, Intent}
 import android.os.Debug
+import android.os.Build.VERSION
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import com.nullwire.trace.ExceptionHandler
@@ -98,10 +99,16 @@ class SpielService extends AccessibilityService {
       e.setRemovedCount(event.getRemovedCount())
       e.getText().clear()
       e.getText().addAll(event.getText());
-      e
+      if(VERSION.SDK_INT >= 14)
+        cloneV14(event, e)
+      else e
     }
 
     Handler.handle(clone)
+  }
+
+  private def cloneV14(old:AccessibilityEvent, e:AccessibilityEvent) = {
+    e
   }
 
 }

@@ -9,6 +9,7 @@ import android.app.{ActivityManager, Service}
 import android.content.Context
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
+import AccessibilityEvent._
 import collection.JavaConversions._
 import collection.mutable.Map
 
@@ -110,15 +111,15 @@ object Handler extends Actor {
     myNextShouldNotInterrupt = true
   }
 
-  private[spiel] var service:SpielService = null
+  private[handlers] var context:Context = null
 
   /**
-   * Initialize handlers for the given <code>SpielService</code>.
+   * Initialize handlers for the given <code>Context</code>.
   */
 
-  def apply(s:SpielService) {
+  def apply(c:Context) {
     start
-    service = s
+    context = c
     // By iterating through the members of this class, we can add handlers 
     // without manual registration.
     val h = new Handlers
@@ -165,8 +166,6 @@ object Handler extends Actor {
       if(delay > 0) Thread.sleep(delay)
       actWithLookahead(i)
   }
-
-  import AccessibilityEvent._
 
   private def actWithLookahead(i:Item) {
 
@@ -247,16 +246,14 @@ object Handler extends Actor {
       case None => true
     }
 
-    // First let's check if there's an event for this exact package and 
+    // First let's check if there's a handler for this exact package and 
     // class. If one was cached above then dispatch ends here.
-    if(continue) {
+    if(continue)
       continue = dispatchTo(e.getPackageName.toString, e.getClassName.toString)
-    }
 
     // Now check for just the class name.
-    if(continue) {
+    if(continue)
       continue = dispatchTo("", e.getClassName.toString)
-    }
 
     // Now we check superclasses. Basically, if a given class is a subclass 
     // of a widget for which we already have a Handler (I.e. a subclass of 
@@ -266,11 +263,11 @@ object Handler extends Actor {
     // need to do it.
     try {
       if(continue) {
-        val testClass = service.getClassLoader.loadClass(e.getClassName.toString)
+        val testClass = context.getClassLoader.loadClass(e.getClassName.toString)
         handlers.foreach { v =>
           if(v._1._2 != "" && continue) {
             try {
-              val testClass2 = service.getClassLoader.loadClass(v._1._2)
+              val testClass2 = context.getClassLoader.loadClass(v._1._2)
               if(
                 testClass2.isAssignableFrom(testClass) && 
                 (v._1._1 == "" || e.getPackageName == v._1._1)
@@ -285,6 +282,7 @@ object Handler extends Actor {
     } catch {
       case _ =>
     }
+
     // Now dispatch to the default, catch-all handler.
     if(continue) dispatchTo("", "")
 
@@ -299,11 +297,18 @@ object Handler extends Actor {
 
   val dispatchers = Map(
     TYPE_NOTIFICATION_STATE_CHANGED -> "notificationStateChanged",
+    TYPE_TOUCH_EXPLORATION_GESTURE_END -> "touchExplorationGestureEnd",
+    TYPE_TOUCH_EXPLORATION_GESTURE_START -> "touchExplorationGestureStart",
     TYPE_VIEW_CLICKED -> "viewClicked",
     TYPE_VIEW_FOCUSED -> "viewFocused",
+    TYPE_VIEW_HOVER_ENTER -> "viewHoverEnter",
+    TYPE_VIEW_HOVER_EXIT -> "viewHoverExit",
     TYPE_VIEW_LONG_CLICKED -> "viewLongClicked",
+    TYPE_VIEW_SCROLLED -> "viewScrolled",
     TYPE_VIEW_SELECTED -> "viewSelected",
     TYPE_VIEW_TEXT_CHANGED -> "viewTextChanged",
+    TYPE_VIEW_TEXT_SELECTION_CHANGED -> "viewTextSelectionChanged",
+    TYPE_WINDOW_CONTENT_CHANGED -> "windowContentChanged",
     TYPE_WINDOW_STATE_CHANGED -> "windowStateChanged"
   )
 
@@ -312,7 +317,7 @@ object Handler extends Actor {
   */
 
   def currentActivity = {
-    val manager = service.getSystemService(Context.ACTIVITY_SERVICE).asInstanceOf[ActivityManager]
+    val manager = context.getSystemService(Context.ACTIVITY_SERVICE).asInstanceOf[ActivityManager]
     val tasks = manager.getRunningTasks(1)
     if(!tasks.isEmpty)
       tasks.head.topActivity.getClassName
@@ -365,19 +370,33 @@ class Handler(pkg:String, cls:String) {
 
   // Register <code>Callback</code> instances for the various <code>AccessibilityEvent</code> types.
 
-  protected def onNotificationStateChanged(c:Callback) = dispatches("notificationStateChanged") = c
+  protected def onNotificationStateChanged(c:Callback) = dispatches(dispatchers(TYPE_NOTIFICATION_STATE_CHANGED)) = c
 
-  protected def onViewClicked(c:Callback) = dispatches("viewClicked") = c
+  protected def onTouchExplorationGestureEnd(c:Callback) = dispatches(dispatchers(TYPE_TOUCH_EXPLORATION_GESTURE_END)) = c
 
-  protected def onViewFocused(c:Callback) = dispatches("viewFocused") = c
+  protected def onTouchExplorationGestureStart(c:Callback) = dispatches(dispatchers(TYPE_TOUCH_EXPLORATION_GESTURE_START)) = c
 
-  protected def onViewLongClicked(c:Callback) = dispatches("viewLongClicked") = c
+  protected def onViewClicked(c:Callback) = dispatches(dispatchers(TYPE_VIEW_CLICKED)) = c
 
-  protected def onViewSelected(c:Callback) = dispatches("viewSelected") = c
+  protected def onViewFocused(c:Callback) = dispatches(dispatchers(TYPE_VIEW_FOCUSED)) = c
 
-  protected def onViewTextChanged(c:Callback) = dispatches("viewTextChanged") = c
+  protected def onViewHoverEnter(c:Callback) = dispatches(dispatchers(TYPE_VIEW_HOVER_ENTER)) = c
 
-  protected def onWindowStateChanged(c:Callback) = dispatches("windowStateChanged") = c
+  protected def onViewHoverExit(c:Callback) = dispatches(dispatchers(TYPE_VIEW_HOVER_EXIT)) = c
+
+  protected def onViewLongClicked(c:Callback) = dispatches(dispatchers(TYPE_VIEW_LONG_CLICKED)) = c
+
+  protected def onViewScrolled(c:Callback) = dispatches(dispatchers(TYPE_VIEW_SCROLLED)) = c
+
+  protected def onViewSelected(c:Callback) = dispatches(dispatchers(TYPE_VIEW_SELECTED)) = c
+
+  protected def onViewTextChanged(c:Callback) = dispatches(dispatchers(TYPE_VIEW_TEXT_CHANGED)) = c
+
+  protected def onViewTextSelectionChanged(c:Callback) = dispatches(dispatchers(TYPE_VIEW_TEXT_SELECTION_CHANGED)) = c
+
+  protected def onWindowContentChanged(c:Callback) = dispatches(dispatchers(TYPE_WINDOW_CONTENT_CHANGED)) = c
+
+  protected def onWindowStateChanged(c:Callback) = dispatches(dispatchers(TYPE_WINDOW_STATE_CHANGED)) = c
 
   // Called if no other events match.
 
@@ -392,7 +411,7 @@ class Handler(pkg:String, cls:String) {
   protected def utterancesFor(e:AccessibilityEvent, addBlank:Boolean = true) = {
     var rv = List[String]()
     val text = Option(e.getText.toList).getOrElse(Nil)
-    if(e.isChecked && !text.contains(service.getString(R.string.checked))) rv ::= service.getString(R.string.checked)
+    if(e.isChecked && !text.contains(context.getString(R.string.checked))) rv ::= context.getString(R.string.checked)
     if(text.size == 0 && e.getContentDescription == null && addBlank)
       rv ::= ""
     rv :::= text.filter(_ != null).map(_.toString)
@@ -409,15 +428,9 @@ class Handler(pkg:String, cls:String) {
 
   def apply(e:AccessibilityEvent):Boolean = {
 
-    def dispatchTo(callback:String):Boolean = dispatches.get(callback) match {
-      case Some(h) => h(e)
-      case None => false
-    }
+    def dispatchTo(callback:String):Boolean = dispatches.get(callback).map(_(e)).getOrElse(false)
 
-    val fallback = dispatchers.get(e.getEventType) match {
-      case Some(d) => dispatchTo(d)
-      case None => false
-    }
+    val fallback = dispatchers.get(e.getEventType).map(dispatchTo(_)).getOrElse(false)
 
     if(!fallback)
       dispatchTo("default")
@@ -436,9 +449,9 @@ trait GenericButtonHandler extends Handler {
   onViewFocused { e:AccessibilityEvent =>
     val text = utterancesFor(e, false).mkString(": ")
     if(text == "")
-      speak(Handler.service.getString(R.string.button).toString)
+      speak(Handler.context.getString(R.string.button).toString)
     else
-      speak(Handler.service.getString(R.string.labeledButton, text))
+      speak(Handler.context.getString(R.string.labeledButton, text))
     true
   }
 }
@@ -452,7 +465,7 @@ class Handlers {
 
   class AlertDialog extends Handler("android.app.AlertDialog") {
     onWindowStateChanged { e:AccessibilityEvent =>
-      speak(Handler.service.getString(R.string.alert, utterancesFor(e).mkString(": ")), true)
+      speak(Handler.context.getString(R.string.alert, utterancesFor(e).mkString(": ")), true)
       nextShouldNotInterrupt
       true
     }
@@ -463,14 +476,14 @@ class Handlers {
   class CheckBox extends Handler("android.widget.CheckBox") {
     onViewClicked { e:AccessibilityEvent =>
       if(e.isChecked)
-        speak(Handler.service.getString(R.string.checked))
+        speak(Handler.context.getString(R.string.checked))
       else
-        speak(Handler.service.getString(R.string.notChecked))
+        speak(Handler.context.getString(R.string.notChecked))
       true
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(Handler.service.getString(R.string.checkbox, utterancesFor(e, false).mkString(": ")))
+      speak(Handler.context.getString(R.string.checkbox, utterancesFor(e, false).mkString(": ")))
       true
     }
 
@@ -488,10 +501,10 @@ class Handlers {
     onViewFocused { e:AccessibilityEvent =>
       if(e.getCurrentItemIndex != -1) {
         if(e.isPassword)
-          speak(Handler.service.getString(R.string.password))
+          speak(Handler.context.getString(R.string.password))
         else {
           speak(utterancesFor(e, true), false)
-          speak(Handler.service.getString(R.string.editText), false)
+          speak(Handler.context.getString(R.string.editText), false)
         }
       }
       true
@@ -504,9 +517,9 @@ class Handlers {
     onViewFocused { e:AccessibilityEvent =>
       val text = utterancesFor(e, false).mkString(": ")
       if(text == "")
-        speak(Handler.service.getText(R.string.image).toString)
+        speak(Handler.context.getText(R.string.image).toString)
       else
-        speak(Handler.service.getString(R.string.labeledImage, text))
+        speak(Handler.context.getString(R.string.labeledImage, text))
       true
     }
   }
@@ -514,7 +527,7 @@ class Handlers {
   class ListView extends Handler("android.widget.ListView") {
     onViewSelected { e:AccessibilityEvent =>
       if(e.getCurrentItemIndex >= 0)
-        speak(Handler.service.getString(R.string.listItem, utterancesFor(e).mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
+        speak(Handler.context.getString(R.string.listItem, utterancesFor(e).mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
       true
     }
   }
@@ -528,7 +541,7 @@ class Handlers {
 
     onWindowStateChanged { e:AccessibilityEvent =>
       if(e.getCurrentItemIndex == -1) {
-        speak(Handler.service.getString(R.string.menu), true)
+        speak(Handler.context.getString(R.string.menu), true)
         nextShouldNotInterrupt
       }
       true
@@ -540,14 +553,14 @@ class Handlers {
 
     onViewClicked { e:AccessibilityEvent =>
       if(e.isChecked)
-        speak(Handler.service.getString(R.string.checked))
+        speak(Handler.context.getString(R.string.checked))
       else
-        speak(Handler.service.getString(R.string.notChecked))
+        speak(Handler.context.getString(R.string.notChecked))
       true
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(Handler.service.getString(R.string.radioButton, utterancesFor(e).mkString(": ")))
+      speak(Handler.context.getString(R.string.radioButton, utterancesFor(e).mkString(": ")))
       true
     }
 
@@ -555,7 +568,7 @@ class Handlers {
 
   class SearchBox extends Handler("android.app.SearchDialog$SearchAutoComplete") {
     onViewFocused { e:AccessibilityEvent =>
-      speak(Handler.service.getString(R.string.searchText, utterancesFor(e).mkString(": ")), false)
+      speak(Handler.context.getString(R.string.searchText, utterancesFor(e).mkString(": ")), false)
       true
     }
   }
@@ -563,7 +576,7 @@ class Handlers {
   class Tab extends Handler("android.widget.RelativeLayout") {
     onViewFocused { e:AccessibilityEvent =>
       if(e.getText.size > 0) {
-        speak(Handler.service.getString(R.string.tab, utterancesFor(e).mkString(": ")), true)
+        speak(Handler.context.getString(R.string.tab, utterancesFor(e).mkString(": ")), true)
         nextShouldNotInterrupt
       }
       true
@@ -617,13 +630,13 @@ class Handlers {
       if(utterances.length > 0) {
         if(e.getCurrentItemIndex == -1)
           if(e.getItemCount == 1)
-            speak(Handler.service.getString(R.string.item, utterances.mkString(" ")))
+            speak(Handler.context.getString(R.string.item, utterances.mkString(" ")))
           else
-            speak(Handler.service.getString(R.string.items, utterances.mkString(" "), e.getItemCount.toString))
+            speak(Handler.context.getString(R.string.items, utterances.mkString(" "), e.getItemCount.toString))
         else
           speak(utterances)
       } else
-        speak(Handler.service.getString(R.string.emptyList))
+        speak(Handler.context.getString(R.string.emptyList))
       true
     }
 
