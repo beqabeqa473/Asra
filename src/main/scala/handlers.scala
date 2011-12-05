@@ -585,7 +585,8 @@ class Handlers {
 
   class TextView extends Handler("android.widget.TextView") {
     onViewFocused { e:AccessibilityEvent =>
-      speak(utterancesFor(e, true))
+      if(e.getCurrentItemIndex != -1)
+        speak(utterancesFor(e, true))
       true
     }
   }
@@ -619,7 +620,6 @@ class Handlers {
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      //Log.d("spiel", "onViewFocused")
       var utterances = utterancesFor(e, false)
       if(utterances == Nil || utterances.isEmpty)
         utterances = e.getClassName.toString.split("\\.").last :: Nil
