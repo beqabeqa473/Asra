@@ -105,7 +105,7 @@ object Handler extends Actor {
    * to be the case.
   */
 
-  def nextShouldNotInterrupt = {
+  def nextShouldNotInterrupt() {
     Log.d("spiel", "Next accessibility event should not interrupt speech.")
     nextShouldNotInterruptCalled = true
     myNextShouldNotInterrupt = true
@@ -355,7 +355,7 @@ class Handler(pkg:String, cls:String) {
    * Indicates that the next <code>AccessibilityEvent</code> should not interrupt speech.
   */
 
-  def nextShouldNotInterrupt = Handler.nextShouldNotInterrupt
+  def nextShouldNotInterrupt() = Handler.nextShouldNotInterrupt()
 
   // Convenience method for converting functions to callbacks.
 
@@ -466,7 +466,7 @@ class Handlers {
   class AlertDialog extends Handler("android.app.AlertDialog") {
     onWindowStateChanged { e:AccessibilityEvent =>
       speak(Handler.context.getString(R.string.alert, utterancesFor(e).mkString(": ")), true)
-      nextShouldNotInterrupt
+      nextShouldNotInterrupt()
       true
     }
   }
@@ -492,7 +492,7 @@ class Handlers {
   class Dialog extends Handler("android.app.Dialog") {
     onWindowStateChanged { e:AccessibilityEvent =>
       speak(utterancesFor(e), true)
-      nextShouldNotInterrupt
+      nextShouldNotInterrupt()
       true
     }
   }
@@ -542,7 +542,7 @@ class Handlers {
     onWindowStateChanged { e:AccessibilityEvent =>
       if(e.getCurrentItemIndex == -1) {
         speak(Handler.context.getString(R.string.menu), true)
-        nextShouldNotInterrupt
+        nextShouldNotInterrupt()
       }
       true
     }
@@ -577,7 +577,7 @@ class Handlers {
     onViewFocused { e:AccessibilityEvent =>
       if(e.getText.size > 0) {
         speak(Handler.context.getString(R.string.tab, utterancesFor(e).mkString(": ")), true)
-        nextShouldNotInterrupt
+        nextShouldNotInterrupt()
       }
       true
     }
@@ -600,7 +600,7 @@ class Handlers {
     onNotificationStateChanged { e:AccessibilityEvent =>
       //Log.d("spiel", "onNotificationStateChanged")
       if(e.getText.size > 0) {
-        nextShouldNotInterrupt
+        nextShouldNotInterrupt()
         speakNotification(utterancesFor(e))
       }
       true
@@ -641,7 +641,12 @@ class Handlers {
     }
 
     onViewScrolled { e:AccessibilityEvent =>
-      false
+      val utterances = utterancesFor(e, false)
+      if(!utterances.isEmpty) {
+        speak(utterancesFor(e))
+        nextShouldNotInterrupt()
+      }
+      true
     }
 
     onViewSelected { e:AccessibilityEvent =>
@@ -704,7 +709,7 @@ class Handlers {
         true
       else {
         speak(utterancesFor(e), true)
-        nextShouldNotInterrupt
+        nextShouldNotInterrupt()
         true
       }
     }
