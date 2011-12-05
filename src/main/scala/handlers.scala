@@ -605,6 +605,14 @@ class Handlers {
       true
     }
 
+    onTouchExplorationGestureEnd { e:AccessibilityEvent =>
+      false
+    }
+
+    onTouchExplorationGestureStart { e:AccessibilityEvent =>
+      false
+    }
+
     onViewClicked { e:AccessibilityEvent =>
       //Log.d("spiel", "onViewClicked")
       true
@@ -619,9 +627,21 @@ class Handlers {
       true
     }
 
+    onViewHoverEnter { e:AccessibilityEvent =>
+      false
+    }
+
+    onViewHoverExit { e:AccessibilityEvent =>
+      false
+    }
+
     onViewLongClicked { e:AccessibilityEvent =>
       //Log.d("spiel", "onViewLongClicked")
       true
+    }
+
+    onViewScrolled { e:AccessibilityEvent =>
+      false
     }
 
     onViewSelected { e:AccessibilityEvent =>
@@ -665,6 +685,14 @@ class Handlers {
           speak(utterancesFor(e), false)
       }
       true
+    }
+
+    onViewTextSelectionChanged { e:AccessibilityEvent =>
+      false
+    }
+
+    onWindowContentChanged { e:AccessibilityEvent =>
+      false
     }
 
     onWindowStateChanged { e:AccessibilityEvent =>
