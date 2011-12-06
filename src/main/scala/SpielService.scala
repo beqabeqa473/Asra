@@ -98,17 +98,13 @@ class SpielService extends AccessibilityService {
       e.setPassword(event.isPassword())
       e.setRemovedCount(event.getRemovedCount())
       e.getText().clear()
-      e.getText().addAll(event.getText());
-      if(VERSION.SDK_INT >= 14)
-        cloneV14(event, e)
-      else e
+      e.getText().addAll(event.getText())
+      e
     }
 
-    Handler.handle(clone)
-  }
+    def cloneV14 = AccessibilityEvent.obtain(event)
 
-  private def cloneV14(old:AccessibilityEvent, e:AccessibilityEvent) = {
-    e
+    Handler.handle(if(VERSION.SDK_INT < 14) clone else cloneV14)
   }
 
 }
