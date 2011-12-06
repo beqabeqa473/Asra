@@ -4,14 +4,13 @@ package handlers
 import actors.Actor
 import Actor._
 import collection.JavaConversions._
+import collection.mutable.Map
 
 import android.app.{ActivityManager, Service}
 import android.content.Context
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import AccessibilityEvent._
-import collection.JavaConversions._
-import collection.mutable.Map
 
 /**
  * Represents code that is called when a specific <code>AccessibilityEvent</code> is received.
@@ -693,7 +692,17 @@ class Handlers {
     }
 
     onViewTextSelectionChanged { e:AccessibilityEvent =>
-      false
+      val text = e.getSource.getText
+      val from = if(e.getFromIndex == text.length) e.getFromIndex-1 else e.getFromIndex
+      val to = if(e.getToIndex == 0)
+        1
+      else if(e.getToIndex < text.length)
+        e.getToIndex+1
+      else
+        e.getToIndex
+      val selection = text.subSequence(from, to)
+      speak(selection.toString, true)
+      true
     }
 
     onWindowContentChanged { e:AccessibilityEvent =>
