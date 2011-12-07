@@ -655,8 +655,10 @@ class Handlers {
         if(e.getCurrentItemIndex == -1)
           if(e.getItemCount == 1)
             speak(Handler.context.getString(R.string.item, utterances.mkString(" ")))
-          else
+          else if(e.getItemCount >= 0)
             speak(Handler.context.getString(R.string.items, utterances.mkString(" "), e.getItemCount.toString))
+          else
+            speak(utterances)
         else
           speak(utterances)
       } else
