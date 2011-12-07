@@ -695,14 +695,15 @@ class Handlers {
 
     onViewTextSelectionChanged { e:AccessibilityEvent =>
       Option(e.getSource).map(_.getText).foreach { text =>
-        val from = if(e.getFromIndex == text.length) e.getFromIndex-1 else e.getFromIndex
+        val txt = if(e.isPassword) "*"*e.getItemCount else text
+        val from = if(e.getFromIndex == txt.length) e.getFromIndex-1 else e.getFromIndex
         val to = if(e.getToIndex == 0)
           1
-        else if(e.getToIndex < text.length)
+        else if(e.getToIndex < txt.length)
           e.getToIndex+1
         else
           e.getToIndex
-        val selection = text.subSequence(from, to)
+        val selection = txt.subSequence(from, to)
         speak(selection.toString, true)
       }
       true
