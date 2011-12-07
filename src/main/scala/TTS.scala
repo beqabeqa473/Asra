@@ -29,8 +29,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   def apply(s:Service) {
     service = s
-    if(VERSION.SDK_INT >= 8)
-      audioManager = Some(service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager])
+    audioManager = Some(service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager])
     init()
   }
 
@@ -64,24 +63,14 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   def defaultsEnforced_? = {
     if(tts == null) true
-    else if(VERSION.SDK_INT >= 8) defaultsEnforcedV8_? else false
+    else tts.areDefaultsEnforced()
   }
-
-  private def defaultsEnforcedV8_? = tts.areDefaultsEnforced()
 
   /**
    * @return default engine, or empty string if unknown
   */
 
-  def defaultEngine = {
-    Log.d("spiel", "Delegating defaultEngine() for API level "+VERSION.SDK_INT)
-    if(VERSION.SDK_INT >= 8) defaultEngineV8 else ""
-  }
-
-  private def defaultEngineV8 = {
-    Log.d("spiel", "defaultEngineV8")
-    tts.getDefaultEngine
-  }
+  def defaultEngine = tts.getDefaultEngine
 
   /**
    * @return desired speech engine
@@ -93,14 +82,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
    * Set desired speech engine
   */
 
-  def engine_=(e:String) = {
-    Log.d("spiel", "Delegating setEngine() for API level "+VERSION.SDK_INT)
-    if(VERSION.SDK_INT >= 8)
-      setEngineV8(e)
-  }
-
-  private def setEngineV8(e:String) {
-    Log.d("spiel", "TTS.setEngineV8("+e+")")
+  def engine_=(e:String) {
     if(tts.setEngineByPackageName(e) != TextToSpeech.SUCCESS) {
       tts.setEngineByPackageName(defaultEngine)
       Log.d("spiel", "Error setting speech engine. Reverting to "+defaultEngine)

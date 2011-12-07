@@ -141,7 +141,7 @@ object StateReactor {
     }
   }
 
-  private def startBluetoothSco() = if(VERSION.SDK_INT >= 8 && !audioManager.isBluetoothA2dpOn && Preferences.useBluetoothSCO) {
+  private def startBluetoothSco() = if(!audioManager.isBluetoothA2dpOn && Preferences.useBluetoothSCO) {
     new btReceiver
   }
 

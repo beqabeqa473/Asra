@@ -67,15 +67,7 @@ class PreferencesActivity extends PreferenceActivity {
     addPreferencesFromResource(R.xml.preferences)
 
     val enginesPreference = findPreference("speechEngine").asInstanceOf[ListPreference]
-    if(VERSION.SDK_INT < 8) {
-      enginesPreference.setEnabled(false)
-      enginesPreference.setShouldDisableView(true)
-      enginesPreference.setSelectable(false)
-      val bluetoothPreference = findPreference("useBluetoothSCO")
-      bluetoothPreference.setEnabled(false)
-      bluetoothPreference.setShouldDisableView(true)
-      bluetoothPreference.setSelectable(false)
-    } else if(!TTS.defaultsEnforced_?) {
+    if(!TTS.defaultsEnforced_?) {
       val intent = new Intent("android.intent.action.START_TTS_ENGINE")
       val pm = getPackageManager
       val engines = pm.queryIntentActivities(intent, 0).map { engine =>
