@@ -305,7 +305,6 @@ class Scripts extends TypedActivity with Refreshable with RadioGroup.OnCheckedCh
           val intent = new Intent(this, classOf[PreferencesActivity])
           intent.putExtra("package", script.pkg)
           startActivity(intent)
-        case R.id.reload => script.reload()
         case R.id.postToBazaar =>
           if(script.reload()) {
             scriptToPost = Some(script)

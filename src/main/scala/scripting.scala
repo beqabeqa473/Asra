@@ -9,7 +9,7 @@ import handlers.PrettyAccessibilityEvent
 import android.content.{BroadcastReceiver, ContentValues, Context => AContext, Intent}
 import android.content.pm.PackageManager
 import android.database.Cursor
-import android.os.Environment
+import android.os.{Environment, FileObserver}
 import android.os.Build.VERSION
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
@@ -175,7 +175,6 @@ class Script(
     }.getOrElse("")
   }
 
-
   def writeToExternalStorage() = {
     val file = new File(Environment.getExternalStorageDirectory+"/spiel/scripts/"+pkg+".js")
     val writer = new FileWriter(file, false)
@@ -228,6 +227,15 @@ object Script {
 
 }
 
+class Observer(context:AContext, path:String) extends FileObserver(path) {
+  import FileObserver._
+  def onEvent(event:Int, path:String) = event match {
+    case CREATE | MODIFY | MOVED_TO => (new Script(context, path, false)).reload()
+    case DELETE | MOVED_FROM =>
+    case _ =>
+  }
+}
+
 /**
  * Singleton granting convenient access to the Rhino scripting subsystem.
 */
@@ -246,13 +254,15 @@ object Scripter {
 
   def scriptsDir = _scriptsDir
 
-  private[scripting] var service:SpielService = null
+  private[scripting] var service:AContext = null
+
+  private var observer:Observer = null
 
   /**
-   * Initialize the scripting subsystem based on the specified service.
+   * Initialize the scripting subsystem based on the specified Context.
   */
 
-  def apply(svc:SpielService)  {
+  def apply(svc:AContext) {
     service = svc
     myCx = Context.enter
     myCx.setOptimizationLevel(-1)
@@ -279,6 +289,8 @@ object Scripter {
     if(!spielDir.isDirectory) spielDir.mkdir
     _scriptsDir = new File(spielDir, "scripts")
     if(!scriptsDir.isDirectory) scriptsDir.mkdir
+    observer = new Observer(service, scriptsDir.getPath)
+    observer.startWatching()
 
     new Script(service, "scripts/api.js", true).run()
 
@@ -305,7 +317,8 @@ object Scripter {
   }
 
   def onDestroy = {
-    Context.exit
+    Context.exit()
+    observer.stopWatching()
   }
 
   def userScripts = {
