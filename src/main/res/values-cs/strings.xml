@@ -84,7 +84,6 @@
 <!-- Script context menu -->
 <string name="delete">Smazat</string>
 <string name="copyToExternalStorage">Kopírovat na externí úložiště</string>
-<string name="reload">Znovu zavést</string>
 <string name="postToBazaar">Odeslat na bazar</string>
 
 <string name="bazaar_credentials">Níže prosím zadejte své Spiel bazar údaje.</string>

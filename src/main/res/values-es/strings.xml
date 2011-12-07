@@ -82,7 +82,6 @@
 <!-- Script context menu -->
 <string name="delete">Eliminar</string>
 <string name="copyToExternalStorage">Copiar a almacenamiento externo</string>
-<string name="reload">Reiniciar</string>
 <string name="postToBazaar">Publicar en bazaar</string>
 
 <string name="bazaar_credentials">Please enter your Spiel Bazaar credentials below.</string>

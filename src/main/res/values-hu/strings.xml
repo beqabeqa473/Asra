@@ -83,7 +83,6 @@
 <!-- Script context menu -->
 <string name="delete">Törlés</string>
 <string name="copyToExternalStorage">Másolás külső eszközre</string>
-<string name="reload">Újratöltés</string>
 <string name="postToBazaar">Elküldés a Bazárra</string>
 
 <string name="bazaar_credentials">írja be a Spiel bazaar hitelesítő adatait</string>

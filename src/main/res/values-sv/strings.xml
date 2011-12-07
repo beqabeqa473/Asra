@@ -61,7 +61,6 @@
 <!-- Script context menu -->
 <string name="delete">Radera</string>
 <string name="copyToExternalStorage">Kopiera till extern lagring</string>
-<string name="reload">Ladda om</string>
 
 <string name="bazaar_credentials_invalid">Ditt användarnamn och/eller lösenord är fel. Vänligen ange dem på nytt nedan och försök igen.</string>
 <string name="bazaar_username_label">Användarnamn</string>
