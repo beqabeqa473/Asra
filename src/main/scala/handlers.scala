@@ -650,7 +650,7 @@ class Handlers {
 
     onViewSelected { e:AccessibilityEvent =>
       //Log.d("spiel", "onViewSelected")
-      val utterances = utterancesFor(e)
+      val utterances = utterancesFor(e, false)
       if(utterances.length > 0) {
         if(e.getCurrentItemIndex == -1)
           if(e.getItemCount == 1)
