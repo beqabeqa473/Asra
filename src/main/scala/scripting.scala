@@ -686,12 +686,10 @@ class BazaarProvider extends ContentProvider with AbstractProvider {
     val parameters = collection.mutable.Map[String, String]()
     parameters("code") = values.getAsString("code")
     parameters("changes") = values.getAsString("changes")
-    Log.d("spielcheck", "Parameters: "+http+": "+apiRoot)
     http((
       apiRoot / "script" / values.getAsString("package") << parameters as (Preferences.bazaarUsername, Preferences.bazaarPassword)
     ) >~ { response =>
     })
-    Log.d("spielcheck", "Here")
     null
   }
 
@@ -728,7 +726,7 @@ object BazaarProvider {
     val installedPackages = pm.getInstalledPackages(0).map { i => i.packageName }
     val userPackages = Scripter.userScripts.map(_.pkg)
     val packages = installedPackages.filterNot(userPackages.contains(_))
-    val where = packages.reduceLeft[String] { (acc, n) =>
+    val where = packages.foldLeft("") { (acc, n) =>
       acc+","+(context.getContentResolver.query(
         Provider.uri, Provider.columns.projection, "pkg = ?", List(n).toArray, null
       ) match {
