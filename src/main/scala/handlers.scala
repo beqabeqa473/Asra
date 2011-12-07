@@ -613,10 +613,7 @@ class Handlers {
       false
     }
 
-    onViewClicked { e:AccessibilityEvent =>
-      //Log.d("spiel", "onViewClicked")
-      true
-    }
+    onViewClicked { e:AccessibilityEvent => true }
 
     onViewFocused { e:AccessibilityEvent =>
       var utterances = utterancesFor(e, false)
@@ -634,10 +631,7 @@ class Handlers {
       false
     }
 
-    onViewLongClicked { e:AccessibilityEvent =>
-      //Log.d("spiel", "onViewLongClicked")
-      true
-    }
+    onViewLongClicked { e:AccessibilityEvent => true }
 
     onViewScrolled { e:AccessibilityEvent =>
       val utterances = utterancesFor(e, false)
@@ -649,7 +643,6 @@ class Handlers {
     }
 
     onViewSelected { e:AccessibilityEvent =>
-      //Log.d("spiel", "onViewSelected")
       val utterances = utterancesFor(e, false)
       if(utterances.length > 0) {
         if(e.getCurrentItemIndex == -1)
@@ -667,7 +660,6 @@ class Handlers {
     }
 
     onViewTextChanged { e:AccessibilityEvent =>
-      //Log.d("spiel", "onViewTextChanged")
       if(e.getAddedCount > 0 || e.getRemovedCount > 0) {
         if(e.isPassword)
           TTS.speakCharacter("*")
@@ -716,7 +708,6 @@ class Handlers {
     }
 
     onWindowStateChanged { e:AccessibilityEvent =>
-      //Log.d("spiel", "onWindowStateChanged")
       // Needed because menus send their contents as a non-fullscreen 
       // onWindowStateChanged event and we don't want to read an entire menu 
       // when it focuses.
