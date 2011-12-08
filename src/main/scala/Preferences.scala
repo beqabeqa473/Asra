@@ -95,7 +95,7 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
    * Indicates whether punctuation speech is to be managed by Spiel.
   */
 
-  def managePunctuationSpeech = prefs.getBoolean("managePunctuationSpeech", false)
+  def managePunctuationSpeech = prefs.getBoolean("managePunctuationSpeech", true)
 
   /**
    * Indicates whether in-call volume of speech is to be increased.

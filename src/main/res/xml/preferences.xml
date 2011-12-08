@@ -50,7 +50,7 @@
 
     <CheckBoxPreference
       android:key="managePunctuationSpeech"
-      android:defaultValue="false"
+      android:defaultValue="true"
       android:title="@string/managePunctuationSpeechTitle"
       android:summary="@string/managePunctuationSpeechSummary"/>
 
