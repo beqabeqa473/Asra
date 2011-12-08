@@ -685,6 +685,9 @@ class Handlers {
       true
     }
 
+    private var oldSelectionFrom:Option[Int] = None
+    private var oldSelectionTo:Option[Int] = None
+
     onViewTextSelectionChanged { e:AccessibilityEvent =>
       Option(e.getSource).map(_.getText).foreach { text =>
         val txt = if(e.isPassword) Some("*"*e.getItemCount) else Option(text)
@@ -695,9 +698,39 @@ class Handlers {
           else if(e.getToIndex < t.length)
             e.getToIndex+1
           else
-            e.getToIndex
-          val selection = t.subSequence(from, to)
-          speak(selection.toString, true)
+            e.getToIndex-1
+          val width = to-from
+          if(from >= 0 && to >= 0) {
+            val selection = t.subSequence(from, to)
+            (for(
+              osf <- oldSelectionFrom;
+              ost <- oldSelectionTo;
+              distance = List(
+                math.abs(osf-from),
+                math.abs(osf-to),
+                math.abs(ost-from),
+                math.abs(ost-to)
+              ).min if(distance > 1)
+            ) yield {
+              val interval = (if(ost < from) text.subSequence(ost, from) else text.subSequence(to, osf)).toString
+              if(interval.contains("\n")) {
+                val ending = t.subSequence(from, t.length).toString
+                val nextNewLine = if(ending.indexOf("\n") == -1) t.length else from+ending.indexOf("\n")
+                val start = t.subSequence(0, from).toString.reverse
+                val previousNewLine = if(start.indexOf("\n") == -1) from-start.length else from-start.indexOf("\n")
+                speak(t.subSequence(previousNewLine, nextNewLine).toString, true)
+                true
+              } else {
+                speak(selection.toString, true)
+                false
+              }
+            }).getOrElse(speak(selection.toString, true))
+            oldSelectionFrom = Some(from)
+            oldSelectionTo = Some(to)
+          } else if(from == -1 || to == -1) {
+            oldSelectionFrom = None
+            oldSelectionTo = None
+          }
         }
       }
       true
