@@ -415,7 +415,11 @@ class Handler(pkg:String, cls:String) {
       rv ::= ""
     rv :::= text.filter(_ != null).map(_.toString)
     if(e.getContentDescription != null && e.getContentDescription != "")
-      rv ::= e.getContentDescription.toString
+      rv match {
+        case hd :: Nil if(hd == e.getContentDescription) =>
+        case _ =>
+          rv ::= e.getContentDescription.toString
+        }
     rv
   }
 
