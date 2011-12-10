@@ -21,7 +21,8 @@ keyalias in Android := "spiel"
 libraryDependencies := Seq(
   "com.nullwire" % "trace" % "latest" from "http://android-remote-stacktrace.googlecode.com/files/trace.jar",
   "rhino" % "js" % "1.7R2" from "http://android-scripting.googlecode.com/hg/rhino/rhino1_7R2.jar",
-  "net.databinder" %% "dispatch-lift-json" % "0.7.8"
+  "net.databinder" %% "dispatch-lift-json" % "0.7.8",
+  "org.ccil.cowan.tagsoup" % "tagsoup" % "1.2.1"
 )
 
 proguardOption in Android := """

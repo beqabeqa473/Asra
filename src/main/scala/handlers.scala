@@ -590,6 +590,12 @@ class Handlers {
     }
   }
 
+  class WebView extends Handler("android.webkit.WebView") {
+    byDefault { e:AccessibilityEvent =>
+      true
+    }
+  }
+
   /**
    * Default catch-all handler which catches unresolved <code>AccessibilityEvent</code>s.
   */
