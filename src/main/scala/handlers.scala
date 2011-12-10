@@ -260,17 +260,25 @@ object Handler extends Actor {
     // Surround this in a try block to catch the various exceptions that can 
     // bubble up. While this is a heavy step, previous caching minimizes the 
     // need to do it.
-    try {
-      if(continue) {
-        val testClass = context.getClassLoader.loadClass(e.getClassName.toString)
+    if(continue) {
+      def test(originator:Class[_], target:Class[_]) =
+        target.isAssignableFrom(originator)
+      val originator = try {
+        Some(context.getClassLoader.loadClass(e.getClassName.toString))
+      } catch {
+        case _ => try {
+          val c = context.createPackageContext(e.getPackageName.toString, Context.CONTEXT_INCLUDE_CODE|Context.CONTEXT_IGNORE_SECURITY)
+          Some(Class.forName(e.getClassName.toString, true, c.getClassLoader))
+        } catch {
+          case _ => None
+        }
+      }
+      originator.foreach { o =>
         handlers.foreach { v =>
           if(v._1._2 != "" && continue) {
             try {
-              val testClass2 = context.getClassLoader.loadClass(v._1._2)
-              if(
-                testClass2.isAssignableFrom(testClass) && 
-                (v._1._1 == "" || e.getPackageName == v._1._1)
-              )
+              val target = context.getClassLoader.loadClass(v._1._2)
+              if(test(o, target))
                 continue = continue && dispatchTo(v._1._1, v._1._2)
             } catch {
               case _ =>
@@ -278,8 +286,6 @@ object Handler extends Actor {
           }
         }
       }
-    } catch {
-      case _ =>
     }
 
     // Now dispatch to the default, catch-all handler.
