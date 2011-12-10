@@ -601,7 +601,19 @@ class Handlers {
   }
 
   class WebView extends Handler("android.webkit.WebView") {
-    byDefault { e:AccessibilityEvent =>
+
+    def textFor(x:xml.Node) =
+      x.descendant.map(_.text).mkString(" ")
+
+    onViewSelected { e:AccessibilityEvent =>
+      val x = Option(e.getText.map(v => if(v == null) "<span/>" else v)
+      .mkString).map { t =>
+        if(t == "")
+          <span/>
+        else
+          utils.HtmlParser(t.replace("&nbsp;", " "))
+      }.getOrElse(<span/>)
+      speak(textFor(x))
       true
     }
   }
