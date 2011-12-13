@@ -104,10 +104,11 @@ object Handler extends Actor {
    * to be the case.
   */
 
-  def nextShouldNotInterrupt() {
+  def nextShouldNotInterrupt() = {
     Log.d("spiel", "Next accessibility event should not interrupt speech.")
     nextShouldNotInterruptCalled = true
     myNextShouldNotInterrupt = true
+    true
   }
 
   private[handlers] var context:Context = null
@@ -349,12 +350,29 @@ class Handler(pkg:String, cls:String) {
 
   // Convenience functions for calling TTS, used from scripting subsystem.
 
-  def speak(text:String, interrupt:Boolean):Unit = TTS.speak(text, interrupt)
-  def speak(text:String):Unit = TTS.speak(text, !myNextShouldNotInterrupt)
-  def speak(list:List[String], interrupt:Boolean):Unit = TTS.speak(list, interrupt)
-  def speak(list:List[String]):Unit = TTS.speak(list, !myNextShouldNotInterrupt)
-  def speakNotification(text:String) = TTS.speakNotification(text)
-  def speakNotification(text:List[String]) = TTS.speakNotification(text)
+  def speak(text:String, interrupt:Boolean) = {
+    TTS.speak(text, interrupt)
+    true
+  }
+
+  def speak(text:String):Boolean = speak(text, !myNextShouldNotInterrupt)
+
+  def speak(list:List[String], interrupt:Boolean) = {
+    TTS.speak(list, interrupt)
+    true
+  }
+
+  def speak(list:List[String]):Boolean = speak(list, !myNextShouldNotInterrupt)
+
+  def speakNotification(text:String) = {
+    TTS.speakNotification(text)
+    true
+  }
+
+  def speakNotification(text:List[String]) = {
+    TTS.speakNotification(text)
+    true
+  }
 
   /**
    * Indicates that the next <code>AccessibilityEvent</code> should not interrupt speech.
@@ -461,7 +479,6 @@ trait GenericButtonHandler extends Handler {
       speak(Handler.context.getString(R.string.button).toString)
     else
       speak(Handler.context.getString(R.string.labeledButton, text))
-    true
   }
 }
 
@@ -476,7 +493,6 @@ class Handlers {
     onWindowStateChanged { e:AccessibilityEvent =>
       speak(Handler.context.getString(R.string.alert, utterancesFor(e).mkString(": ")), true)
       nextShouldNotInterrupt()
-      true
     }
   }
 
@@ -488,12 +504,10 @@ class Handlers {
         speak(Handler.context.getString(R.string.checked))
       else
         speak(Handler.context.getString(R.string.notChecked))
-      true
     }
 
     onViewFocused { e:AccessibilityEvent =>
       speak(Handler.context.getString(R.string.checkbox, utterancesFor(e, false).mkString(": ")))
-      true
     }
 
   }
@@ -502,7 +516,6 @@ class Handlers {
     onWindowStateChanged { e:AccessibilityEvent =>
       speak(utterancesFor(e), true)
       nextShouldNotInterrupt()
-      true
     }
   }
 
@@ -529,7 +542,6 @@ class Handlers {
         speak(Handler.context.getText(R.string.image).toString)
       else
         speak(Handler.context.getString(R.string.labeledImage, text))
-      true
     }
   }
 
@@ -545,7 +557,6 @@ class Handlers {
 
     onViewSelected { e:AccessibilityEvent =>
       speak(utterancesFor(e))
-      true
     }
 
     onWindowStateChanged { e:AccessibilityEvent =>
@@ -565,12 +576,10 @@ class Handlers {
         speak(Handler.context.getString(R.string.checked))
       else
         speak(Handler.context.getString(R.string.notChecked))
-      true
     }
 
     onViewFocused { e:AccessibilityEvent =>
       speak(Handler.context.getString(R.string.radioButton, utterancesFor(e).mkString(": ")))
-      true
     }
 
   }
@@ -578,7 +587,6 @@ class Handlers {
   class SearchBox extends Handler("android.app.SearchDialog$SearchAutoComplete") {
     onViewFocused { e:AccessibilityEvent =>
       speak(Handler.context.getString(R.string.searchText, utterancesFor(e).mkString(": ")), false)
-      true
     }
   }
 
@@ -614,7 +622,6 @@ class Handlers {
           utils.HtmlParser(t.replace("&nbsp;", " "))
       }.getOrElse(<span/>)
       speak(textFor(x))
-      true
     }
   }
 
@@ -625,7 +632,6 @@ class Handlers {
   class Default extends Handler {
 
     onNotificationStateChanged { e:AccessibilityEvent =>
-      //Log.d("spiel", "onNotificationStateChanged")
       val utterances = utterancesFor(e, false)
       if(!utterances.isEmpty) {
         nextShouldNotInterrupt()
@@ -649,7 +655,6 @@ class Handlers {
       if(utterances == Nil || utterances.isEmpty)
         utterances = e.getClassName.toString.split("\\.").last :: Nil
       speak(utterances)
-      true
     }
 
     onViewHoverEnter { e:AccessibilityEvent =>
@@ -685,7 +690,6 @@ class Handlers {
           speak(utterances)
       } else
         speak(Handler.context.getString(R.string.emptyList))
-      true
     }
 
     onViewTextChanged { e:AccessibilityEvent =>
@@ -748,7 +752,6 @@ class Handlers {
                 val start = t.subSequence(0, from).toString.reverse
                 val previousNewLine = if(start.indexOf("\n") == -1) from-start.length else from-start.indexOf("\n")
                 speak(t.subSequence(previousNewLine, nextNewLine).toString, true)
-                true
               } else {
                 speak(selection.toString, true)
                 false
@@ -778,7 +781,6 @@ class Handlers {
       else {
         speak(utterancesFor(e), true)
         nextShouldNotInterrupt()
-        true
       }
     }
 

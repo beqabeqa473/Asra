@@ -5,18 +5,22 @@ function speak(str, shouldInterrupt) {
     TTS.speak(str, shouldInterrupt)
   else
     TTS.speak(str, !Handler.nextShouldNotInterrupt())
+  return true
 }
 
 function speakNotification(str) {
   TTS.speakNotification(str)
+  return true
 }
 
 function nextShouldNotInterrupt() {
   Handler.nextShouldNotInterrupt()
+  return true
 }
 
 function tick() {
   TTS.tick()
+  return true
 }
 
 function forClass(cls, scr) {
