@@ -592,8 +592,9 @@ class Handlers {
 
   class Tab extends Handler("android.widget.RelativeLayout") {
     onViewFocused { e:AccessibilityEvent =>
-      if(e.getText.size > 0) {
-        speak(Handler.context.getString(R.string.tab, utterancesFor(e).mkString(": ")), true)
+      val utterances = utterancesFor(e)
+      if(utterances.size > 0) {
+        speak(Handler.context.getString(R.string.tab, utterances.mkString(": ")), true)
         nextShouldNotInterrupt()
       }
       true
