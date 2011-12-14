@@ -24,10 +24,10 @@ import handlers.{Callback, Handler}
 
 class RhinoCallback(f:Function) extends Callback {
   def apply(e:AccessibilityEvent):Boolean = {
-    Context.enter
     var args = new Array[Object](2)
     args(0) = e
     args(1) = Handler.currentActivity
+    Context.enter(Scripter.context)
     try {
       Scripter.scope.put("__pkg__", Scripter.scope, e.getPackageName)
       Context.toBoolean(f.call(Scripter.context, Scripter.scope, Scripter.scope, args))
@@ -38,6 +38,7 @@ class RhinoCallback(f:Function) extends Callback {
         false
     } finally {
       Scripter.scope.put("__pkg__", Scripter.scope, null)
+      Context.exit()
     }
   }
 }
@@ -92,6 +93,7 @@ class Script(
   def run() = {
     Log.d("spiel", "Running "+pkg)
     uninstall()
+    Context.enter(Scripter.context)
     Scripter.scope.put("__pkg__", Scripter.scope, pkg)
     Scripter.script = Some(this)
     try {
@@ -103,6 +105,7 @@ class Script(
     }finally {
       Scripter.scope.put("__pkg__", Scripter.scope, null)
       Scripter.script = None
+      Context.exit()
     }
     successfullyRan
   }
@@ -300,7 +303,6 @@ object Scripter {
     }
 
     val cursor = service.getContentResolver.query(Provider.uri, Provider.columns.projection, null, null, null)
-    Log.d("spielscript", "Beginning run.")
     cursor.moveToFirst()
     while(!cursor.isAfterLast) {
       val s = new Script(service, cursor)
@@ -313,6 +315,7 @@ object Scripter {
 
     userScripts.foreach(_.run())
 
+    Context.exit()
     true
   }
 
