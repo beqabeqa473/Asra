@@ -156,4 +156,8 @@
   <string name="plus">plus</string>
   <string name="newline">Newline</string>
 
+  <!-- Command mode -->
+  <string name="commandModeUnavailable">Command mode is unavailable in this version of Android.</string>
+  <string name="review">Review</string>
+
 </resources>

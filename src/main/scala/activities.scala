@@ -13,6 +13,9 @@ import android.util.Log
 import android.view.{ContextMenu, Menu, MenuInflater, MenuItem, View, ViewGroup}
 import android.view.accessibility.AccessibilityEvent
 import android.widget.{AdapterView, ArrayAdapter, ListView, RadioGroup, TabHost}
+import com.google.marvin.widget.TouchGestureControlOverlay
+import TouchGestureControlOverlay._
+
 
 import handlers._
 import scripting._
@@ -583,6 +586,79 @@ class ScriptInstaller extends TypedActivity with AdapterView.OnItemClickListener
       }
     } else
       TTS.speak(getString(R.string.notChecked), true)
+  }
+
+}
+
+class CommandHandler extends Activity {
+
+  class Listener extends GestureListener {
+
+    def onGestureStart(g:Gesture) = g match {
+      case _ =>
+    }
+
+    def onGestureChange(g:Gesture) = g match {
+      case _ =>
+    }
+
+    def onGestureFinish(g:Gesture) = g match {
+      case Gesture.UPLEFT => upLeft()
+      case Gesture.UP => up()
+      case Gesture.UPRIGHT => upRight()
+      case Gesture.LEFT => left()
+      case Gesture.CENTER => center()
+      case Gesture.RIGHT => right()
+      case Gesture.DOWNLEFT => downLeft()
+      case Gesture.DOWN => down()
+      case Gesture.DOWNRIGHT => downRight()
+    }
+
+  }
+
+  override def onCreate(bundle:Bundle) {
+    super.onCreate(bundle)
+    setContentView(new TouchGestureControlOverlay(this, new Listener))
+    if(VERSION.SDK_INT < 14)
+      new AlertDialog.Builder(this)
+      .setMessage(getString(R.string.commandModeUnavailable))
+      .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener {
+        def onClick(i:DialogInterface, what:Int) = finish()
+      })
+      .show()
+    else
+      reviewMode()
+  }
+
+  private def reviewMode() {
+    TTS.speak(getString(R.string.review), true)
+  }
+
+  private def upLeft() {
+  }
+
+  private def up() {
+  }
+
+  private def upRight() {
+  }
+
+  private def left() {
+  }
+
+  private def center() {
+  }
+
+  private def right() {
+  }
+
+  private def downLeft() {
+  }
+
+  private def down() {
+  }
+
+  private def downRight() {
   }
 
 }
