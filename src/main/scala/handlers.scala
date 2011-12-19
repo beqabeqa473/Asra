@@ -549,6 +549,8 @@ class Handlers {
     onViewSelected { e:AccessibilityEvent =>
       if(e.getCurrentItemIndex >= 0)
         speak(Handler.context.getString(R.string.listItem, utterancesFor(e).mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
+      else if(e.getItemCount == 0)
+        speak(Handler.context.getString(R.string.emptyList))
       true
     }
   }
@@ -584,20 +586,21 @@ class Handlers {
 
   }
 
-  class SearchBox extends Handler("android.app.SearchDialog$SearchAutoComplete") {
-    onViewFocused { e:AccessibilityEvent =>
-      speak(Handler.context.getString(R.string.searchText, utterancesFor(e).mkString(": ")), false)
-    }
-  }
-
-  class Tab extends Handler("android.widget.RelativeLayout") {
+  class RelativeLayout extends Handler("android.widget.RelativeLayout") {
     onViewFocused { e:AccessibilityEvent =>
       val utterances = utterancesFor(e)
       if(utterances.size > 0) {
-        speak(Handler.context.getString(R.string.tab, utterances.mkString(": ")), true)
+        //speak(Handler.context.getString(R.string.tab, utterances.mkString(": ")), true)
+        speak(utterances.mkString(": "), true)
         nextShouldNotInterrupt()
       }
       true
+    }
+  }
+
+  class SearchBox extends Handler("android.app.SearchDialog$SearchAutoComplete") {
+    onViewFocused { e:AccessibilityEvent =>
+      speak(Handler.context.getString(R.string.searchText, utterancesFor(e).mkString(": ")), false)
     }
   }
 
@@ -690,7 +693,7 @@ class Handlers {
         else
           speak(utterances)
       } else
-        speak(Handler.context.getString(R.string.emptyList))
+        speak("")
     }
 
     onViewTextChanged { e:AccessibilityEvent =>
