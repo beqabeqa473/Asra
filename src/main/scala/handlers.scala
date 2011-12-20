@@ -1,8 +1,6 @@
 package info.spielproject.spiel
 package handlers
 
-import actors.Actor
-import Actor._
 import collection.JavaConversions._
 import collection.mutable.Map
 
@@ -79,7 +77,7 @@ object EventReviewQueue extends collection.mutable.Queue[PrettyAccessibilityEven
  * Companion for <code>Handler</code> class.
 */
 
-object Handler extends Actor {
+object Handler {
 
   // Maps (packageName, className) tuples to specific Handler instances.
   private var handlers = Map[(String, String), Handler]()
@@ -118,7 +116,6 @@ object Handler extends Actor {
   */
 
   def apply(c:Context) {
-    start
     context = c
     // By iterating through the members of this class, we can add handlers 
     // without manual registration.
@@ -133,80 +130,9 @@ object Handler extends Actor {
   }
 
   def onDestroy {
-    exit
   }
 
-  // How long to wait before processing a given AccessibilityEvent.
-  private val timeout = 10
-
-  // Record an event and the time that event is to be presented. This helps 
-  // in instances where we receive lots of events and don't necessarily want 
-  // to process every single one.
-
-  private case class Item(event:AccessibilityEvent, presentationTime:Long)
-
-  /**
-   * Handle a given <code>AccessibilityEvent</code> by delegating to an 
-   * actor on another thread.
-  */
-
-  def handle(event:AccessibilityEvent) = {
-    if(event.getPackageName != null && event.getClassName != null)
-      this ! Item(event, System.currentTimeMillis+timeout)
-  }
-
-  // This gets fun. First we receive the message passed to an actor, 
-  // immediately passing it off to another method.
-
-  def act = react {
-    case i:Item =>
-      // How long should we wait before presenting this event?
-      val delay = i.presentationTime-System.currentTimeMillis
-      // If we must delay then do so.
-      if(delay > 0) Thread.sleep(delay)
-      actWithLookahead(i)
-  }
-
-  private def actWithLookahead(i:Item) {
-
-    // Sometimes we want to discard events--if someone is scrolling through 
-    // a list too quickly for us to speak, for instance. In those instances, 
-    // we want to throw away earlier events in favor of those representing 
-    // the latest item to which you've scrolled. It's a complex boolean 
-    // expression which I won't document in comments should it need to change later.
-    def shouldDiscardOld(newEvent:AccessibilityEvent, oldEvent:AccessibilityEvent) = {
-      (
-        oldEvent.getEventType == TYPE_NOTIFICATION_STATE_CHANGED &&
-        newEvent.getEventType == TYPE_NOTIFICATION_STATE_CHANGED &&
-        oldEvent.getText == newEvent.getText
-      ) || (
-        oldEvent.getEventType != TYPE_NOTIFICATION_STATE_CHANGED &&
-        newEvent.getEventType == oldEvent.getEventType
-      )
-    }
-
-    // We've been handed an old event and have waited until its presentation 
-    // time. Now let's see if there is another event available. If so then 
-    // process it. If not, catch the next and repeat.
-    reactWithin(0) {
-      case actors.TIMEOUT =>
-        process(i.event)
-        act
-      case i2:Item =>
-        // Do we need to delay before handling this item? If so, do.
-        val delay = i2.presentationTime-System.currentTimeMillis
-        if(delay > 0) Thread.sleep(delay)
-        if(shouldDiscardOld(i2.event, i.event))
-          actWithLookahead(i2)
-        else {
-          process(i.event)
-          actWithLookahead(i2)
-        }
-    }
-  }
-
-  // Process an AccessibilityEvent, sending it to Handlers for presentation.
-  private def process(e:AccessibilityEvent) {
+  def process(e:AccessibilityEvent) {
     if(Preferences.viewRecentEvents) {
       EventReviewQueue(new PrettyAccessibilityEvent(e))
       Log.d("spiel", "Event "+e.toString+"; Activity: "+currentActivity)

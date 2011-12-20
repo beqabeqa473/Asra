@@ -75,36 +75,8 @@ class SpielService extends AccessibilityService {
   override def onInterrupt = TTS.stop
 
   override def onAccessibilityEvent(event:AccessibilityEvent) {
-
     if(!SpielService.enabled) return
-
-    // Clone an AccessibilityEvent since the system recycles them 
-    // aggressively, sometimes before we're done with them.
-    def clone = {
-      val e = AccessibilityEvent.obtain
-      e.setAddedCount(event.getAddedCount())
-      e.setBeforeText(event.getBeforeText())
-      e.setChecked(event.isChecked())
-      e.setClassName(event.getClassName())
-      e.setContentDescription(event.getContentDescription())
-      e.setCurrentItemIndex(event.getCurrentItemIndex())
-      e.setEventTime(event.getEventTime())
-      e.setEventType(event.getEventType())
-      e.setFromIndex(event.getFromIndex())
-      e.setFullScreen(event.isFullScreen())
-      e.setItemCount(event.getItemCount())
-      e.setPackageName(event.getPackageName())
-      e.setParcelableData(event.getParcelableData())
-      e.setPassword(event.isPassword())
-      e.setRemovedCount(event.getRemovedCount())
-      e.getText().clear()
-      e.getText().addAll(event.getText())
-      e
-    }
-
-    def cloneV14 = AccessibilityEvent.obtain(event)
-
-    Handler.handle(if(VERSION.SDK_INT < 14) clone else cloneV14)
+    Handler.process(event)
   }
 
 }

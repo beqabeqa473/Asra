@@ -10,12 +10,11 @@ import android.os.Build.VERSION
 import android.os.Bundle
 import android.preference.{CheckBoxPreference, ListPreference, Preference, PreferenceActivity, PreferenceCategory, PreferenceScreen}
 import android.util.Log
-import android.view.{ContextMenu, Menu, MenuInflater, MenuItem, View, ViewGroup}
+import android.view.{ContextMenu, KeyEvent, Menu, MenuInflater, MenuItem, View, ViewGroup}
 import android.view.accessibility.AccessibilityEvent
 import android.widget.{AdapterView, ArrayAdapter, ListView, RadioGroup, TabHost}
 import com.google.marvin.widget.TouchGestureControlOverlay
 import TouchGestureControlOverlay._
-
 
 import handlers._
 import scripting._
@@ -659,6 +658,17 @@ class CommandHandler extends Activity {
   }
 
   private def downRight() {
+  }
+
+  override def onKeyDown(keyCode:Int, event:KeyEvent) = {
+    keyCode match {
+      case KeyEvent.KEYCODE_DPAD_UP => up()
+      case KeyEvent.KEYCODE_DPAD_DOWN => down()
+      case KeyEvent.KEYCODE_DPAD_LEFT => left()
+      case KeyEvent.KEYCODE_DPAD_RIGHT => right()
+      case _ =>
+    }
+    super.onKeyDown(keyCode, event)
   }
 
 }
