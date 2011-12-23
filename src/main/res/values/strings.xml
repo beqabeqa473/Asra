@@ -160,4 +160,7 @@
   <string name="commandModeUnavailable">Command mode is unavailable in this version of Android.</string>
   <string name="review">Review</string>
 
+  <!-- String returned when an unknown number calls. -->
+  <string name="unknown">Unknown</string>
+
 </resources>

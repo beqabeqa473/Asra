@@ -28,15 +28,18 @@ object TelephonyListener extends PhoneStateListener {
   // Resolve the number to a contact where possible.
 
   private def resolve(number:String) = {
-    val uri= Uri.withAppendedPath(Contacts.Phones.CONTENT_FILTER_URL, Uri.encode(number))
-    val cursor = context.getContentResolver.query(uri, null, null, null, null)
-    var name = number
-    if(cursor.getCount > 0) {
-      while(cursor.moveToNext) {
-        name = cursor.getString(cursor.getColumnIndex(Contacts.PeopleColumns.DISPLAY_NAME))
+    if(number != null && number != "") {
+      val uri= Uri.withAppendedPath(Contacts.Phones.CONTENT_FILTER_URL, Uri.encode(number))
+      val cursor = context.getContentResolver.query(uri, null, null, null, null)
+      var name = number
+      if(cursor.getCount > 0) {
+        while(cursor.moveToNext) {
+          name = cursor.getString(cursor.getColumnIndex(Contacts.PeopleColumns.DISPLAY_NAME))
+        }
       }
-    }
-    name
+      name
+    } else
+      context.getString(R.string.unknown)
   }
 
   override def onCallStateChanged(state:Int, number:String) = state match {
