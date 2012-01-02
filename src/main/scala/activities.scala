@@ -11,7 +11,7 @@ import android.os.Bundle
 import android.preference.{CheckBoxPreference, ListPreference, Preference, PreferenceActivity, PreferenceCategory, PreferenceScreen}
 import android.util.Log
 import android.view.{ContextMenu, KeyEvent, Menu, MenuInflater, MenuItem, View, ViewGroup}
-import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.{AccessibilityEvent, AccessibilityNodeInfo}
 import android.widget.{AdapterView, ArrayAdapter, ListView, RadioGroup, TabHost}
 import com.google.marvin.widget.TouchGestureControlOverlay
 import TouchGestureControlOverlay._
@@ -615,7 +615,11 @@ class CommandHandler extends Activity {
 
   }
 
+  private var currentNode:AccessibilityNodeInfo = null
+
   override def onCreate(bundle:Bundle) {
+    if(VERSION.SDK_INT >= 14)
+      currentNode = handlers.Handler.lastEvent.getSource
     super.onCreate(bundle)
     setContentView(new TouchGestureControlOverlay(this, new Listener))
     if(VERSION.SDK_INT < 14)
@@ -631,6 +635,7 @@ class CommandHandler extends Activity {
 
   private def reviewMode() {
     TTS.speak(getString(R.string.review), true)
+    Log.d("spielcheck", "Current: "+currentNode)
   }
 
   private def upLeft() {

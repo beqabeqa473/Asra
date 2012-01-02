@@ -132,7 +132,11 @@ object Handler {
   def onDestroy {
   }
 
+  private var _lastEvent:AccessibilityEvent = null
+  def lastEvent = _lastEvent
+
   def process(e:AccessibilityEvent) {
+    _lastEvent = e
     if(Preferences.viewRecentEvents) {
       EventReviewQueue(new PrettyAccessibilityEvent(e))
       Log.d("spiel", "Event "+e.toString+"; Activity: "+currentActivity)

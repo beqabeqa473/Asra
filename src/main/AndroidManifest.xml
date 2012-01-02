@@ -49,12 +49,12 @@
       </intent-filter>
     </activity>
 
-    <activity android:name=".activities.CommandHandler">
+    <!--<activity android:name=".activities.CommandHandler">
         <intent-filter>
             <action android:name="android.intent.action.SEARCH_LONG_PRESS"/>
             <category android:name="android.intent.category.DEFAULT"/>
         </intent-filter>
-    </activity>
+    </activity>-->
 
     <provider android:name=".StatusProvider" android:authorities="info.spielproject.spiel.providers.StatusProvider"/>
 
