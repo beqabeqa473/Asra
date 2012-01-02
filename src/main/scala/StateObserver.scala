@@ -51,9 +51,9 @@ object StateObserver {
     registerReceiver({ (c, i) =>
       val extra = i.getIntExtra(AudioManager.EXTRA_RINGER_MODE, AudioManager.RINGER_MODE_NORMAL)
       val mode = extra match {
-        case AudioManager.RINGER_MODE_NORMAL => "normal"
         case AudioManager.RINGER_MODE_SILENT => "silent"
         case AudioManager.RINGER_MODE_VIBRATE => "vibrate"
+        case _ => "normal"
       }
       ringerModeChanged(mode)
     }, AudioManager.RINGER_MODE_CHANGED_ACTION :: Nil)
