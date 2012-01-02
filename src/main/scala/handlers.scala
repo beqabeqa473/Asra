@@ -136,6 +136,11 @@ object Handler {
   def lastEvent = _lastEvent
 
   def process(e:AccessibilityEvent) {
+
+    // First, do a sanity check.
+    if(e == null || e.getPackageName == null || e.getClassName == null)
+      return
+
     _lastEvent = e
     if(Preferences.viewRecentEvents) {
       EventReviewQueue(new PrettyAccessibilityEvent(e))
@@ -176,7 +181,7 @@ object Handler {
       case None => true
     }
 
-    // First let's check if there's a handler for this exact package and 
+    // Next let's check if there's a handler for this exact package and 
     // class. If one was cached above then dispatch ends here.
     if(continue)
       continue = dispatchTo(e.getPackageName.toString, e.getClassName.toString)
