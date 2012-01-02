@@ -2,7 +2,7 @@ import AndroidKeys._
 
 name := "Spiel"
 
-version := "1.1.1"
+version := "1.1.2"
 
 scalaVersion := "2.8.1"
 
