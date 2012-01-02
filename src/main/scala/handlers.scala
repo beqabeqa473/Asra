@@ -136,11 +136,6 @@ object Handler {
   def lastEvent = _lastEvent
 
   def process(e:AccessibilityEvent) {
-
-    // First, do a sanity check.
-    if(e == null || e.getPackageName == null || e.getClassName == null)
-      return
-
     _lastEvent = e
     if(Preferences.viewRecentEvents) {
       EventReviewQueue(new PrettyAccessibilityEvent(e))

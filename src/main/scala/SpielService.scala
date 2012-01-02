@@ -76,7 +76,30 @@ class SpielService extends AccessibilityService {
 
   override def onAccessibilityEvent(event:AccessibilityEvent) {
     if(!SpielService.enabled) return
-    Handler.process(event)
+
+    def clone = {
+      val e = AccessibilityEvent.obtain
+      e.setAddedCount(event.getAddedCount())
+      e.setBeforeText(event.getBeforeText())
+      e.setChecked(event.isChecked())
+      e.setClassName(event.getClassName())
+      e.setContentDescription(event.getContentDescription())
+      e.setCurrentItemIndex(event.getCurrentItemIndex())
+      e.setEventTime(event.getEventTime())
+      e.setEventType(event.getEventType())
+      e.setFromIndex(event.getFromIndex())
+      e.setFullScreen(event.isFullScreen())
+      e.setItemCount(event.getItemCount())
+      e.setPackageName(event.getPackageName())
+      e.setParcelableData(event.getParcelableData())
+      e.setPassword(event.isPassword())
+      e.setRemovedCount(event.getRemovedCount())
+      e.getText().clear()
+      e.getText().addAll(event.getText())
+      e
+    }
+
+    Handler.process(if(VERSION.SDK_INT < 9) clone else event)
   }
 
 }
