@@ -320,7 +320,6 @@ object Scripter {
   }
 
   def onDestroy = {
-    Context.exit()
     observer.stopWatching()
   }
 
