@@ -187,25 +187,20 @@ object StateReactor {
 
   private var voicemailIndicator:Option[String] = None
 
-  private var messageWaiting = false
-
-  onMessageWaiting { () =>
-    messageWaiting = true
-    startVoicemailAlerts()
-  }
+  onMessageWaiting { () => startVoicemailAlerts() }
 
   def startVoicemailAlerts() {
-    if(messageWaiting && Preferences.voicemailAlerts)
-      voicemailIndicator = Some(TTS.speakEvery(180, "New voicemail"))
+    if(Preferences.voicemailAlerts)
+      voicemailIndicator.getOrElse {
+        voicemailIndicator = Some(TTS.speakEvery(180, "New voicemail"))
+      }
   }
 
-  onMessageNoLongerWaiting { () =>
-    messageWaiting = false
-    stopVoicemailAlerts()
-  }
+  onMessageNoLongerWaiting { () => stopVoicemailAlerts() }
 
   def stopVoicemailAlerts() {
     voicemailIndicator.foreach { i => TTS.stopRepeatedSpeech(i) }
+    voicemailIndicator = None
   }
 
   // Note ringer state, silencing spoken notifications if desired.
