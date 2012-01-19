@@ -52,8 +52,6 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     else
       engine = "com.svox.pico"
     tts.setOnUtteranceCompletedListener(this)
-    this.rate = Preferences.rateScale
-    this.pitch = Preferences.pitchScale
     tts.addEarcon("tick", "info.spielproject.spiel", R.raw.tick)
     if(!welcomed) {
       speak(service.getString(R.string.welcomeMsg), true)

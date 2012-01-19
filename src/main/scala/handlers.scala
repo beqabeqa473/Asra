@@ -7,7 +7,7 @@ import collection.mutable.Map
 import android.app.{ActivityManager, Service}
 import android.content.Context
 import android.util.Log
-import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.{AccessibilityEvent, AccessibilityNodeInfo}
 import AccessibilityEvent._
 
 /**
@@ -29,7 +29,7 @@ abstract class Callback {
  * Represents a callback that is written in native Scala code.
 */
 
-class NativeCallback(f:AccessibilityEvent => Boolean) extends Callback{
+class NativeCallback(f:AccessibilityEvent => Boolean) extends Callback {
   def apply(e:AccessibilityEvent) = f(e)
 }
 
@@ -135,22 +135,38 @@ object Handler {
   private var _lastEvent:AccessibilityEvent = null
   def lastEvent = _lastEvent
 
-  def process(e:AccessibilityEvent) {
+  private var lastEnteredSource:AccessibilityNodeInfo = null
+
+  def process(e:AccessibilityEvent, eventType:Option[Int] = None) {
 
     if(e == null || e.getClassName == null || e.getPackageName == null)
       return
 
+    /*if(eventType == None && e.getEventType == TYPE_VIEW_HOVER_ENTER) {
+      Log.d("spielcheck", "Entering")
+      if(e.getSource == lastEnteredSource) {
+        Log.d("spielcheck", "Dupe")
+        return
+      }
+      lastEnteredSource = e.getSource
+    } else if(eventType == None) {
+      Log.d("spielcheck", "Clearing.")
+      lastEnteredSource = null
+    }*/
+
     _lastEvent = e
-    if(Preferences.viewRecentEvents) {
+    if(eventType == None /*&& Preferences.viewRecentEvents*/) {
       EventReviewQueue(new PrettyAccessibilityEvent(e))
       Log.d("spiel", "Event "+e.toString+"; Activity: "+currentActivity)
     }
 
     nextShouldNotInterruptCalled = false
 
+    val eType = eventType.getOrElse(e.getEventType)
+
     // If echo-by-word is enabled and we've just received a non-text-change, 
     // speak the buffered characters.
-    if(e.getEventType != TYPE_VIEW_TEXT_CHANGED && Preferences.echoByWord)
+    if(eType != TYPE_VIEW_TEXT_CHANGED && Preferences.echoByWord)
       TTS.speakCharBuffer()
 
     // Now we engage in the complex process of dispatching events. This 
@@ -165,7 +181,7 @@ object Handler {
     def dispatchTo(pkg:String, cls:String):Boolean = handlers.get(pkg -> cls) match {
       case Some(h) =>
         if(alreadyCalled.contains(h)) {
-          Log.d("spiel", "Already called this handler, skipping.")
+          Log.d("spiel", "Already called "+h.getClass.getName+", skipping.")
           true
         } else {
           Log.d("spiel", "Dispatching to "+pkg+":"+cls)
@@ -173,9 +189,11 @@ object Handler {
           // If we don't already have a handler for this exact package and 
           // class, then associate the one we're calling with it. This 
           // allows for similar AccessibilityEvents to skip several dispatch steps
-          if(handlers.get((e.getPackageName.toString, e.getClassName.toString)) == None)
+          if(handlers.get((e.getPackageName.toString, e.getClassName.toString)) == None) {
+            Log.d("spiel", "Caching "+h.getClass.getName+" for "+e.getPackageName+"/"+e.getClassName)
             handlers(e.getPackageName.toString -> e.getClassName.toString) = h
-          !h(e)
+          }
+          !h(e, eType)
         }
       case None => true
     }
@@ -387,11 +405,13 @@ class Handler(pkg:String, cls:String) {
    * @return <code>true</code> if processing should stop, <code>false</code> otherwise.
   */
 
-  def apply(e:AccessibilityEvent):Boolean = {
+  def apply(e:AccessibilityEvent, eventType:Int):Boolean = {
 
     def dispatchTo(callback:String):Boolean = dispatches.get(callback).map(_(e)).getOrElse(false)
 
-    val fallback = dispatchers.get(e.getEventType).map(dispatchTo(_)).getOrElse(false)
+    val fallback = dispatchers.get(eventType).map(dispatchTo(_)).getOrElse(false)
+
+    Log.d("spiel", "Processing as "+dispatchers.get(eventType)+", "+fallback)
 
     if(!fallback)
       dispatchTo("default")
@@ -479,6 +499,10 @@ class Handlers {
     }
   }
 
+  class LinearLayout extends Handler("android.widget.LinearLayout") {
+    onViewHoverEnter { e:AccessibilityEvent => true }
+  }
+
   class ListView extends Handler("android.widget.ListView") {
     onViewSelected { e:AccessibilityEvent =>
       if(e.getCurrentItemIndex >= 0)
@@ -540,8 +564,7 @@ class Handlers {
 
   class TextView extends Handler("android.widget.TextView") {
     onViewFocused { e:AccessibilityEvent =>
-      if(e.getCurrentItemIndex != -1)
-        speak(utterancesFor(e, true))
+      speak(utterancesFor(e, true))
       true
     }
   }
@@ -596,11 +619,12 @@ class Handlers {
     }
 
     onViewHoverEnter { e:AccessibilityEvent =>
-      false
+      Handler.process(e, Some(TYPE_VIEW_FOCUSED))
+      true
     }
 
     onViewHoverExit { e:AccessibilityEvent =>
-      false
+      true
     }
 
     onViewLongClicked { e:AccessibilityEvent => true }

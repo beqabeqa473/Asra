@@ -25,7 +25,6 @@ class SpielService extends AccessibilityService {
 
   override def onCreate() {
     super.onCreate()
-    Log.d("spiel", "onCreate")
     //Debug.startMethodTracing("spiel")
     Preferences(this)
     if(Preferences.sendBacktraces)
@@ -52,7 +51,6 @@ class SpielService extends AccessibilityService {
 
   override def onDestroy() {
     super.onDestroy
-    Log.d("spiel", "onDestroy")
     Handler.onDestroy
     TTS.shutdown
     Scripter.onDestroy
@@ -63,7 +61,6 @@ class SpielService extends AccessibilityService {
   }
 
   override protected def onServiceConnected {
-    Log.d("spiel", "onServiceConnected")
     val info = new AccessibilityServiceInfo()
     import AccessibilityServiceInfo._
     info.feedbackType = FEEDBACK_SPOKEN
