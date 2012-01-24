@@ -392,14 +392,26 @@ class Handler(pkg:String, cls:String) {
   }
 
   private def guessLabelFor(e:AccessibilityEvent) = {
-    Option(e.getSource).flatMap(v => Option(v.getParent)).flatMap { parent =>
-      val children = for(i <- 0.to(parent.getChildCount-1))
-        yield(parent.getChild(i))
-      Log.d("spielcheck", "Children: "+children)
-      val index = children.indexOf(e.getSource)
-      if(index > 0) {
-        children.take(index).reverse.filter(_.getText != null).headOption.map(_.getText.toString)
-      } else None
+
+    def rootOf(n:AccessibilityNodeInfo):AccessibilityNodeInfo = n.getParent match {
+      case null => n
+      case v => rootOf(v)
+    }
+
+    def leavesOf(n:AccessibilityNodeInfo):List[AccessibilityNodeInfo] = n.getChildCount match {
+      case 0 => List(n)
+      case v =>
+        (for(i <- 0 to v-1)
+          yield(leavesOf(n.getChild(i)))
+        ).toList.flatten
+    }
+
+    Option(e.getSource).flatMap { source =>
+      val leaves = leavesOf(rootOf(source))
+      val index = leaves.indexOf(e.getSource)
+      if(index > 0)
+        leaves.take(index).reverse.filter(_.getText != null).headOption.map(_.getText.toString)
+      else None
     }
   }
 
