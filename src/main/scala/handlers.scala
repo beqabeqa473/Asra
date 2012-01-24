@@ -6,6 +6,7 @@ import collection.mutable.Map
 
 import android.app.{ActivityManager, Service}
 import android.content.Context
+import android.os.Build.VERSION
 import android.util.Log
 import android.view.accessibility.{AccessibilityEvent, AccessibilityNodeInfo}
 import AccessibilityEvent._
@@ -142,20 +143,8 @@ object Handler {
     if(e == null || e.getClassName == null || e.getPackageName == null)
       return
 
-    /*if(eventType == None && e.getEventType == TYPE_VIEW_HOVER_ENTER) {
-      Log.d("spielcheck", "Entering")
-      if(e.getSource == lastEnteredSource) {
-        Log.d("spielcheck", "Dupe")
-        return
-      }
-      lastEnteredSource = e.getSource
-    } else if(eventType == None) {
-      Log.d("spielcheck", "Clearing.")
-      lastEnteredSource = null
-    }*/
-
     _lastEvent = e
-    if(eventType == None /*&& Preferences.viewRecentEvents*/) {
+    if(eventType == None && Preferences.viewRecentEvents) {
       EventReviewQueue(new PrettyAccessibilityEvent(e))
       Log.d("spiel", "Event "+e.toString+"; Activity: "+currentActivity)
     }
@@ -383,7 +372,7 @@ class Handler(pkg:String, cls:String) {
    * adding a blank utterance.
   */
 
-  protected def utterancesFor(e:AccessibilityEvent, addBlank:Boolean = true) = {
+  protected def utterancesFor(e:AccessibilityEvent, addBlank:Boolean = true, guessLabel:Boolean = false) = {
     var rv = List[String]()
     val text = Option(e.getText.toList).getOrElse(Nil)
     if(e.isChecked && !text.contains(context.getString(R.string.checked))) rv ::= context.getString(R.string.checked)
@@ -396,7 +385,22 @@ class Handler(pkg:String, cls:String) {
         case _ =>
           rv ::= e.getContentDescription.toString
         }
-    rv
+    if(guessLabel && VERSION.SDK_INT >= 14 && e.getContentDescription == null)
+      guessLabelFor(e).map(List(_)).getOrElse(Nil) ::: rv
+    else
+      rv
+  }
+
+  private def guessLabelFor(e:AccessibilityEvent) = {
+    Option(e.getSource).flatMap(v => Option(v.getParent)).flatMap { parent =>
+      val children = for(i <- 0.to(parent.getChildCount-1))
+        yield(parent.getChild(i))
+      Log.d("spielcheck", "Children: "+children)
+      val index = children.indexOf(e.getSource)
+      if(index > 0) {
+        children.take(index).reverse.filter(_.getText != null).headOption.map(_.getText.toString)
+      } else None
+    }
   }
 
   /**
@@ -453,6 +457,7 @@ class Handlers {
   class Button extends Handler("android.widget.Button") with GenericButtonHandler
 
   class CheckBox extends Handler("android.widget.CheckBox") {
+
     onViewClicked { e:AccessibilityEvent =>
       if(e.isChecked)
         speak(Handler.context.getString(R.string.checked))
@@ -461,7 +466,7 @@ class Handlers {
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(Handler.context.getString(R.string.checkbox, utterancesFor(e, false).mkString(": ")))
+      speak(Handler.context.getString(R.string.checkbox, utterancesFor(e, false, true).mkString(": ")))
     }
 
   }
@@ -474,17 +479,17 @@ class Handlers {
   }
 
   class EditText extends Handler("android.widget.EditText") {
+
     onViewFocused { e:AccessibilityEvent =>
-      if(e.getCurrentItemIndex != -1) {
-        if(e.isPassword)
-          speak(Handler.context.getString(R.string.password))
-        else {
-          speak(utterancesFor(e, true), false)
-          speak(Handler.context.getString(R.string.editText), false)
-        }
+      if(e.isPassword)
+        speak(Handler.context.getString(R.string.password))
+      else {
+        speak(utterancesFor(e, true, true), false)
+        speak(Handler.context.getString(R.string.editText), false)
       }
       true
     }
+
   } 
 
   class ImageButton extends Handler("android.widget.ImageButton") with GenericButtonHandler
@@ -539,12 +544,13 @@ class Handlers {
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(Handler.context.getString(R.string.radioButton, utterancesFor(e).mkString(": ")))
+      speak(Handler.context.getString(R.string.radioButton, utterancesFor(e, guessLabel = true).mkString(": ")))
     }
 
   }
 
   class RelativeLayout extends Handler("android.widget.RelativeLayout") {
+
     onViewFocused { e:AccessibilityEvent =>
       val utterances = utterancesFor(e)
       if(utterances.size > 0) {
@@ -554,6 +560,23 @@ class Handlers {
       }
       true
     }
+
+    onViewHoverEnter { e:AccessibilityEvent => true }
+
+  }
+
+  class ScrollView extends Handler("android.widget.ScrollView") {
+
+    onViewHoverEnter { e:AccessibilityEvent => true }
+
+    onViewScrolled { e:AccessibilityEvent =>
+      val maxX:Double = if(e.getMaxScrollX == 0) 1 else e.getMaxScrollX
+      val maxY:Double = if(e.getMaxScrollY == 0) 1 else e.getMaxScrollY
+      val percentage = (((e.getScrollX/maxX)+(e.getScrollY/maxY))*100).toInt
+      val utterances = List(percentage+"%")
+      speak(utterances, true)
+    }
+
   }
 
   class SearchBox extends Handler("android.app.SearchDialog$SearchAutoComplete") {
