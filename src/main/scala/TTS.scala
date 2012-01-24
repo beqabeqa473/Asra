@@ -173,14 +173,15 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
    * Speaks the specified text, optionally flushing current speech.
   */
 
-  def speak(text:String, flush:Boolean) {
+  def speak(text:String, flush:Boolean, utteranceID:Option[String] = None) {
     if(!SpielService.enabled) return
+    if(text.contains("\n"))
+      return speak(text.split("\n").toList, flush)
     Log.d("spiel", "Speaking "+text+": "+flush)
     val mode = if(flush) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD
-    //if(flush) stop
     audioManager.foreach { a => requestAudioFocus() }
     val params = new java.util.HashMap[String, String]()
-    params.put("utteranceId", "speech") // TODO: Why won't Scala see Engine?
+    utteranceID.foreach(params.put("utteranceId", _)) // TODO: Why won't Scala see Engine?
     if(text.length == 0)
       tts.speak(service.getString(R.string.blank), mode, params)
     else if(text.length == 1 && text >= "A" && text <= "Z") {
@@ -197,11 +198,15 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
    * Speaks the specified List of strings, optionally flushing speech.
   */
 
-  def speak(list:List[String], flush:Boolean):Unit = if(list != Nil) {
-    speak(list.reduceLeft[String] { (acc, v) => 
-      val text = if(v == "") "blank" else v
-      acc+": "+text
-    }, flush)
+  def speak(list:List[String], flush:Boolean) {
+    if(flush) stop()
+    list.filterNot(_ == "") match {
+      case Nil =>
+      case hd :: Nil => speak(hd, false)
+      case hd :: tl =>
+        speak(hd, false)
+        speak(tl, false)
+    }
   }
 
   /**
@@ -214,19 +219,10 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
    * Stops speech.
   */
 
-  def stop {
+  def stop() {
     if(!SpielService.enabled) return
     Log.d("spiel", "Stopping speech")
-    tts.stop
-  }
-
-  private def speakWithUtteranceID(text:String, uid:String) {
-    if(!SpielService.enabled) return
-    Log.d("spiel", "Speaking: "+text)
-    val params = new java.util.HashMap[String, String]()
-    params.put("utteranceId", uid) // TODO: Why won't Scala see Engine?
-    requestAudioFocus()
-    tts.speak(text, TextToSpeech.QUEUE_FLUSH, params)
+    tts.stop()
   }
 
   private var repeatedSpeech = collection.mutable.Map[String, Tuple2[Int, String]]()
@@ -257,7 +253,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
       Thread.sleep(v._1*1000)
       performRepeatedSpeech(key)
     }
-    case Some(v) => speakWithUtteranceID(v._2, key)
+    case Some(v) => speak(v._2, true, Some(key))
     case None =>
   }
 
