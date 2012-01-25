@@ -542,6 +542,13 @@ class Handlers {
 
   }
 
+  class ProgressBar extends Handler("android.widget.ProgressBar") {
+    onViewSelected { e:AccessibilityEvent =>
+      val percent = (e.getCurrentItemIndex.toFloat/e.getItemCount*100).toInt
+      speak(percent+"%")
+    }
+  }
+
   class RadioButton extends Handler("android.widget.RadioButton") {
 
     onViewClicked { e:AccessibilityEvent =>
