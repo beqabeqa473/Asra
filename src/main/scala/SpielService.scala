@@ -28,7 +28,7 @@ class SpielService extends AccessibilityService {
     //Debug.startMethodTracing("spiel")
     Preferences(this)
     if(Preferences.sendBacktraces)
-      ExceptionHandler.register(this, "http://stacktrace.spielproject.info/stacktrace")
+      ExceptionHandler.register(this, "http://stacktrace.thewordnerd.info/stacktrace")
     try {
       TTS(this)
     } catch {
