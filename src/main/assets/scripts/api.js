@@ -2,9 +2,9 @@ var __pkg__ = "";
 
 function speak(str, shouldInterrupt) {
   if(shouldInterrupt != undefined)
-    TTS.speak(str, shouldInterrupt)
+    TTS.speak(str, shouldInterrupt, scala.None)
   else
-    TTS.speak(str, !Handler.nextShouldNotInterrupt())
+    TTS.speak(str, !Handler.nextShouldNotInterrupt(), scala.None)
   return true
 }
 
