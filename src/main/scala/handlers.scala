@@ -478,7 +478,7 @@ class Handlers {
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(Handler.context.getString(R.string.checkbox, utterancesFor(e, false, true).mkString(": ")))
+      speak(Handler.context.getString(R.string.checkbox, utterancesFor(e, false).mkString(": ")))
     }
 
   }
@@ -514,10 +514,6 @@ class Handlers {
       else
         speak(Handler.context.getString(R.string.labeledImage, text))
     }
-  }
-
-  class LinearLayout extends Handler("android.widget.LinearLayout") {
-    onViewHoverEnter { e:AccessibilityEvent => true }
   }
 
   class ListView extends Handler("android.widget.ListView") {
@@ -573,13 +569,9 @@ class Handlers {
       true
     }
 
-    onViewHoverEnter { e:AccessibilityEvent => true }
-
   }
 
   class ScrollView extends Handler("android.widget.ScrollView") {
-
-    onViewHoverEnter { e:AccessibilityEvent => true }
 
     onViewScrolled { e:AccessibilityEvent =>
       val maxX:Double = if(e.getMaxScrollX == 0) 1 else e.getMaxScrollX
@@ -601,6 +593,14 @@ class Handlers {
     onViewFocused { e:AccessibilityEvent =>
       speak(utterancesFor(e, true))
       true
+    }
+  }
+
+  class ViewGroup extends Handler("android.view.ViewGroup") {
+    onViewHoverEnter { e:AccessibilityEvent =>
+      Option(e.getSource).map { source=>
+        if(source.getChildCount != 1) true else false
+      }.getOrElse(true)
     }
   }
 
