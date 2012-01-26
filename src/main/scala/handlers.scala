@@ -654,20 +654,23 @@ class Handlers {
     onViewClicked { e:AccessibilityEvent => true }
 
     onViewFocused { e:AccessibilityEvent =>
-      var utterances = utterancesFor(e, false)
-      if(utterances == Nil || utterances.isEmpty)
-        utterances = e.getClassName.toString.split("\\.").last :: Nil
-      speak(utterances)
+      val utterances = utterancesFor(e, false) match {
+        case Nil if(e.getEventType != TYPE_VIEW_HOVER_ENTER) => 
+          e.getClassName.toString.split("\\.").last :: Nil
+        case u => u
+      }
+      if(!utterances.isEmpty)
+        speak(utterances)
+      true
     }
 
     onViewHoverEnter { e:AccessibilityEvent =>
+      TTS.stop()
       Handler.process(e, Some(TYPE_VIEW_FOCUSED))
       true
     }
 
-    onViewHoverExit { e:AccessibilityEvent =>
-      true
-    }
+    onViewHoverExit { e:AccessibilityEvent => true }
 
     onViewLongClicked { e:AccessibilityEvent => true }
 
