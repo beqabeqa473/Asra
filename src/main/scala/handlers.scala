@@ -372,7 +372,7 @@ class Handler(pkg:String, cls:String) {
    * adding a blank utterance.
   */
 
-  protected def utterancesFor(e:AccessibilityEvent, addBlank:Boolean = true, guessLabel:Boolean = false) = {
+  protected def utterancesFor(e:AccessibilityEvent, addBlank:Boolean = true, guessLabelIfTextMissing:Boolean = false, guessLabelIfContentDescriptionMissing:Boolean = false, guessLabelIfTextShorterThan:Option[Int] = None):List[String] = {
     var rv = List[String]()
     val text = Option(e.getText.toList).getOrElse(Nil)
     if(e.isChecked && !text.contains(context.getString(R.string.checked))) rv ::= context.getString(R.string.checked)
@@ -384,11 +384,18 @@ class Handler(pkg:String, cls:String) {
         case hd :: Nil if(hd == e.getContentDescription) =>
         case _ =>
           rv ::= e.getContentDescription.toString
-        }
-    if(guessLabel && VERSION.SDK_INT >= 14 && e.getContentDescription == null)
-      guessLabelFor(e).map(List(_)).getOrElse(Nil) ::: rv
-    else
-      rv
+      }
+    if(VERSION.SDK_INT >= 14) {
+      if(guessLabelIfTextMissing && e.getText.length == 0)
+        rv :::= guessLabelFor(e).map(List(_)).getOrElse(Nil)
+      if(guessLabelIfContentDescriptionMissing && e.getContentDescription == null)
+        rv :::= guessLabelFor(e).map(List(_)).getOrElse(Nil)
+      guessLabelIfTextShorterThan.foreach { v =>
+        if(text.length < v)
+          rv :::= guessLabelFor(e).map(List(_)).getOrElse(Nil)
+      }
+    }
+    rv
   }
 
   private def guessLabelFor(e:AccessibilityEvent) = {
@@ -478,7 +485,7 @@ class Handlers {
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(Handler.context.getString(R.string.checkbox, utterancesFor(e, false).mkString(": ")))
+      speak(Handler.context.getString(R.string.checkbox, utterancesFor(e, false, guessLabelIfTextShorterThan = Some(2)).mkString(": ")))
     }
 
   }
@@ -496,7 +503,7 @@ class Handlers {
       if(e.isPassword)
         speak(Handler.context.getString(R.string.password))
       else {
-        speak(utterancesFor(e, true, true), false)
+        speak(utterancesFor(e, true, guessLabelIfContentDescriptionMissing = true), false)
         speak(Handler.context.getString(R.string.editText), false)
       }
       true
@@ -559,7 +566,7 @@ class Handlers {
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(Handler.context.getString(R.string.radioButton, utterancesFor(e, guessLabel = true).mkString(": ")))
+      speak(Handler.context.getString(R.string.radioButton, utterancesFor(e, guessLabelIfContentDescriptionMissing = true).mkString(": ")))
     }
 
   }
