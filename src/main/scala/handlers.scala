@@ -606,7 +606,12 @@ class Handlers {
   class ViewGroup extends Handler("android.view.ViewGroup") {
     onViewHoverEnter { e:AccessibilityEvent =>
       Option(e.getSource).map { source=>
-        if(source.getChildCount != 1) true else false
+        Log.d("spielcheck", "Event: "+e)
+        Log.d("spielcheck", "Source: "+source)
+        Log.d("spielcheck", source.getChildCount.toString)
+        if(source.getChildCount == 1 || source.isFocusable || source.isClickable || source.isLongClickable)
+          false
+        else true
       }.getOrElse(true)
     }
   }
