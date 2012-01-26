@@ -670,8 +670,18 @@ class Handlers {
     }
 
     onViewHoverEnter { e:AccessibilityEvent =>
-      TTS.stop()
-      Handler.process(e, Some(TYPE_VIEW_FOCUSED))
+      Option(e.getSource).flatMap { source =>
+        Log.d("spiel", "Source: "+source)
+        if(source.isFocusable && !source.isFocused) {
+          Log.d("spiel", "Can focus.")
+          val focused = source.performAction(AccessibilityNodeInfo.ACTION_FOCUS)
+          Log.d("spiel", "Result: "+focused)
+          if(focused) Some(true) else None
+        } else None
+      }.getOrElse {
+        TTS.stop()
+        Handler.process(e, Some(TYPE_VIEW_FOCUSED))
+      }
       true
     }
 
