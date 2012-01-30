@@ -194,6 +194,10 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
       tts.speak(text, mode, params)
   }
 
+  def speak(text:String, flush:Boolean) {
+    speak(text, flush, None)
+  }
+
   /**
    * Speaks the specified List of strings, optionally flushing speech.
   */
