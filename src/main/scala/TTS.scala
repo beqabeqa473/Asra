@@ -122,10 +122,10 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   }
 
   def onUtteranceCompleted(id:String) {
-    audioManager.foreach { a => 
-      if(!tts.isSpeaking) abandonFocus()
-    }
+    if(id == "last")
+      abandonFocus()
     repeatedSpeech.get(id).foreach { v =>
+      abandonFocus()
       actor {
         Thread.sleep(v._1*1000)
         performRepeatedSpeech(id)
@@ -162,7 +162,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     "\n" -> R.string.newline
   )
 
-  private def requestAudioFocus() {
+  private def requestFocus() {
     if(Preferences.duckNonSpeechAudio)
       audioManager.foreach { a =>
         a.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
@@ -179,7 +179,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
       return speak(text.split("\n").toList, flush)
     Log.d("spiel", "Speaking "+text+": "+flush)
     val mode = if(flush) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD
-    audioManager.foreach { a => requestAudioFocus() }
+    requestFocus()
     val params = new java.util.HashMap[String, String]()
     utteranceID.foreach(params.put("utteranceId", _)) // TODO: Why won't Scala see Engine?
     if(text.length == 0)
@@ -206,7 +206,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     if(flush) stop()
     list.filterNot(_ == "") match {
       case Nil =>
-      case hd :: Nil => speak(hd, false)
+      case hd :: Nil => speak(hd, false, Some("last"))
       case hd :: tl =>
         speak(hd, false)
         speak(tl, false)
@@ -226,6 +226,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   def stop() {
     if(!SpielService.enabled) return
     Log.d("spiel", "Stopping speech")
+    abandonFocus()
     tts.stop()
   }
 
