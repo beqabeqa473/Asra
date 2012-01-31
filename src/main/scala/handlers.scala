@@ -398,19 +398,19 @@ class Handler(pkg:String, cls:String) {
     rv
   }
 
+  protected def leavesOf(n:AccessibilityNodeInfo):List[AccessibilityNodeInfo] = n.getChildCount match {
+    case 0 => List(n)
+    case v =>
+      (for(i <- 0 to v-1)
+        yield(leavesOf(n.getChild(i)))
+      ).toList.flatten
+  }
+
   private def guessLabelFor(e:AccessibilityEvent) = {
 
     def rootOf(n:AccessibilityNodeInfo):AccessibilityNodeInfo = n.getParent match {
       case null => n
       case v => rootOf(v)
-    }
-
-    def leavesOf(n:AccessibilityNodeInfo):List[AccessibilityNodeInfo] = n.getChildCount match {
-      case 0 => List(n)
-      case v =>
-        (for(i <- 0 to v-1)
-          yield(leavesOf(n.getChild(i)))
-        ).toList.flatten
     }
 
     Option(e.getSource).flatMap { source =>
@@ -421,6 +421,12 @@ class Handler(pkg:String, cls:String) {
       else None
     }
   }
+
+  protected def interactive_?(source:AccessibilityNodeInfo) =
+    source.isCheckable || source.isClickable || source.isLongClickable || source.isFocusable
+
+  protected def interactables(source:AccessibilityNodeInfo) = 
+    (source :: leavesOf(source)).filter(interactive_?(_))
 
   /**
    * Run a given <code>AccessibilityEvent</code> through this <code>Handler</code>
@@ -524,6 +530,9 @@ class Handlers {
   }
 
   class ListView extends Handler("android.widget.ListView") {
+
+    onViewHoverEnter { e:AccessibilityEvent => true }
+
     onViewSelected { e:AccessibilityEvent =>
       if(e.getCurrentItemIndex >= 0)
         speak(Handler.context.getString(R.string.listItem, utterancesFor(e).mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
@@ -531,6 +540,7 @@ class Handlers {
         speak(Handler.context.getString(R.string.emptyList))
       true
     }
+
   }
 
   class Menu extends Handler("com.android.internal.view.menu.MenuView") {
@@ -615,8 +625,7 @@ class Handlers {
       Option(e.getSource).map { source=>
         Log.d("spielcheck", "Event: "+e)
         Log.d("spielcheck", "Source: "+source)
-        Log.d("spielcheck", source.getChildCount.toString)
-        if(source.getChildCount == 1 || source.isFocusable || source.isClickable || source.isLongClickable)
+        if(source.getChildCount == 1 || interactables(source).size == 1)
           false
         else true
       }.getOrElse(true)
@@ -677,16 +686,13 @@ class Handlers {
     }
 
     onViewHoverEnter { e:AccessibilityEvent =>
-      Option(e.getSource).flatMap { source =>
-        Log.d("spiel", "Source: "+source)
-        if(source.isFocusable && !source.isFocused) {
-          Log.d("spiel", "Can focus.")
-          val focused = source.performAction(AccessibilityNodeInfo.ACTION_FOCUS)
-          Log.d("spiel", "Result: "+focused)
+      TTS.stop()
+      Option(e.getSource).map(interactables(_)).getOrElse(Nil).headOption.flatMap { target =>
+        if(target.isFocusable && !target.isFocused) {
+          val focused = target.performAction(AccessibilityNodeInfo.ACTION_FOCUS)
           if(focused) Some(true) else None
         } else None
       }.getOrElse {
-        TTS.stop()
         Handler.process(e, Some(TYPE_VIEW_FOCUSED))
       }
       true
