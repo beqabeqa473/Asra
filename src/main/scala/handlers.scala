@@ -689,14 +689,7 @@ class Handlers {
 
     onViewHoverEnter { e:AccessibilityEvent =>
       TTS.stop()
-      Option(e.getSource).map(interactables(_)).getOrElse(Nil).headOption.flatMap { target =>
-        if(target.isFocusable && !target.isFocused) {
-          val focused = target.performAction(AccessibilityNodeInfo.ACTION_FOCUS)
-          if(focused) Some(true) else None
-        } else None
-      }.getOrElse {
-        Handler.process(e, Some(TYPE_VIEW_FOCUSED))
-      }
+      Handler.process(e, Some(TYPE_VIEW_FOCUSED))
       true
     }
 
