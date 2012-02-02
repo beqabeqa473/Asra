@@ -780,7 +780,12 @@ class Handlers {
                 math.abs(ost-to)
               ).min if(distance > 1)
             ) yield {
-              val interval = (if(ost < from) text.subSequence(ost, from) else text.subSequence(to, osf)).toString
+              Log.d("spielcheck", "ost: "+ost+"From: "+from+", To: "+to)
+              val interval = (if(ost < from)
+                text.subSequence(ost, from)
+              else
+                text.subSequence(to, osf)
+              ).toString
               if(interval.contains("\n")) {
                 val ending = t.subSequence(from, t.length).toString
                 val nextNewLine = if(ending.indexOf("\n") == -1) t.length else from+ending.indexOf("\n")
