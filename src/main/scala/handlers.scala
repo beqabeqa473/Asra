@@ -625,7 +625,9 @@ class Handlers {
       Option(e.getSource).map { source=>
         Log.d("spielcheck", "Event: "+e)
         Log.d("spielcheck", "Source: "+source)
-        if(source.getChildCount == 1 || interactables(source).size == 1)
+        if(interactables(source).size > 1)
+          true
+        else if(source.getChildCount == 1 || interactables(source).size == 1)
           false
         else true
       }.getOrElse(true)
