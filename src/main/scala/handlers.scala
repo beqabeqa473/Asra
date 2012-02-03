@@ -477,17 +477,25 @@ trait GenericButtonHandler extends Handler {
 
 class Handlers {
 
-  class ActionBarView extends Handler("com.android.internal.widget.ActionBarView") {
-    onViewHoverEnter { e:AccessibilityEvent =>
-      speak("Action bar")
-    }
-  }
+  trait MenuItem {
+    self: Handler =>
 
-  class ActionMenuItemView extends Handler("com.android.internal.widget.ActionBarView") {
     onViewFocused { e:AccessibilityEvent =>
       speak(utterancesFor(e) ::: ("Menu item" :: Nil))
     }
+
+    onViewHoverEnter { e:AccessibilityEvent =>
+      Handler.process(e, Some(TYPE_VIEW_FOCUSED))
+      true
+    }
+
   }
+
+  class ActionBarView extends Handler("com.android.internal.widget.ActionBarView") with MenuItem
+
+  class ActionMenuItemView extends Handler("com.android.internal.widget.ActionBarView") with MenuItem
+
+  class ActionMenuItemView2 extends Handler("com.android.internal.view.menu.ActionMenuItemView") with MenuItem
 
   class AlertDialog extends Handler("android.app.AlertDialog") {
     onWindowStateChanged { e:AccessibilityEvent =>
