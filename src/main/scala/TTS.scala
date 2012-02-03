@@ -326,8 +326,10 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   */
 
   def speakNotification(text:List[String]) {
-    if(shouldSpeakNotification)
+    if(shouldSpeakNotification) {
       speak(text, false)
+      handlers.Handler.nextShouldNotInterrupt
+    }
   }
 
   def onAudioFocusChange(f:Int) { }

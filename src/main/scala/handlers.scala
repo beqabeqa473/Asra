@@ -480,8 +480,12 @@ class Handlers {
   class ActionBarView extends Handler("com.android.internal.widget.ActionBarView") {
     onViewHoverEnter { e:AccessibilityEvent =>
       speak("Action bar")
-      nextShouldNotInterrupt()
-      false
+    }
+  }
+
+  class ActionMenuItemView extends Handler("com.android.internal.widget.ActionBarView") {
+    onViewFocused { e:AccessibilityEvent =>
+      speak(utterancesFor(e) ::: ("Menu item" :: Nil))
     }
   }
 
@@ -638,13 +642,7 @@ class Handlers {
       Option(e.getSource).map { source=>
         Log.d("spielcheck", "Event: "+e)
         Log.d("spielcheck", "Source: "+source)
-        if(
-          source.getClassName == "com.android.internal.widget.ActionBarView" ||
-          source.getClassName == "com.android.internal.view.menu.ActionMenuItemView"
-        ) {
-          Log.d("spielcheck", "Action bar. Presenting.")
-          false
-        } else if(interactables(source).size > 1) {
+        if(interactables(source).size > 1) {
           Log.d("spielcheck", "Source has "+interactables(source).size+" interactables, swallowing.")
           true
         } else if(source.getChildCount == 1 || interactables(source).size == 1) {
