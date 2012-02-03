@@ -315,6 +315,11 @@ class Handler(pkg:String, cls:String) {
     true
   }
 
+  def stopSpeaking() {
+    if(!nextShouldNotInterruptCalled)
+      TTS.stop()
+  }
+
   /**
    * Indicates that the next <code>AccessibilityEvent</code> should not interrupt speech.
   */
@@ -472,6 +477,14 @@ trait GenericButtonHandler extends Handler {
 
 class Handlers {
 
+  class ActionBarView extends Handler("com.android.internal.widget.ActionBarView") {
+    onViewHoverEnter { e:AccessibilityEvent =>
+      speak("Action bar")
+      nextShouldNotInterrupt()
+      false
+    }
+  }
+
   class AlertDialog extends Handler("android.app.AlertDialog") {
     onWindowStateChanged { e:AccessibilityEvent =>
       speak(Handler.context.getString(R.string.alert, utterancesFor(e).mkString(": ")), true)
@@ -625,11 +638,19 @@ class Handlers {
       Option(e.getSource).map { source=>
         Log.d("spielcheck", "Event: "+e)
         Log.d("spielcheck", "Source: "+source)
-        if(interactables(source).size > 1)
-          true
-        else if(source.getChildCount == 1 || interactables(source).size == 1)
+        if(
+          source.getClassName == "com.android.internal.widget.ActionBarView" ||
+          source.getClassName == "com.android.internal.view.menu.ActionMenuItemView"
+        ) {
+          Log.d("spielcheck", "Action bar. Presenting.")
           false
-        else true
+        } else if(interactables(source).size > 1) {
+          Log.d("spielcheck", "Source has "+interactables(source).size+" interactables, swallowing.")
+          true
+        } else if(source.getChildCount == 1 || interactables(source).size == 1) {
+          Log.d("spielcheck", "Source has "+source.getChildCount+" children and "+interactables(source).size+" interactables, presenting.")
+          false
+        } else true
       }.getOrElse(true)
     }
   }
@@ -688,7 +709,7 @@ class Handlers {
     }
 
     onViewHoverEnter { e:AccessibilityEvent =>
-      TTS.stop()
+      stopSpeaking()
       Handler.process(e, Some(TYPE_VIEW_FOCUSED))
       true
     }
