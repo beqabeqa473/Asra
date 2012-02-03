@@ -292,7 +292,7 @@ class Handler(pkg:String, cls:String) {
   // Convenience functions for calling TTS, used from scripting subsystem.
 
   def speak(text:String, interrupt:Boolean) = {
-    TTS.speak(text, interrupt)
+    TTS.speak(text, interrupt, Some("last"))
     true
   }
 

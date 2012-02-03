@@ -315,7 +315,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   def speakNotification(text:String) {
     if(shouldSpeakNotification) {
-      speak(text, false)
+      speak(text, false, Some("last"))
       handlers.Handler.nextShouldNotInterrupt
     }
   }
