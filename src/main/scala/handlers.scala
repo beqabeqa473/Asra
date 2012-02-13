@@ -806,7 +806,7 @@ class Handlers {
               val interval = (if(ost < from)
                 text.subSequence(ost, from)
               else
-                text.subSequence(to, osf)
+                text.subSequence(to, math.min(osf, text.length-1))
               ).toString
               if(interval.contains("\n")) {
                 val ending = t.subSequence(from, t.length).toString
