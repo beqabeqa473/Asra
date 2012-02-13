@@ -214,9 +214,9 @@ object StateReactor {
     ringerOn = Some(v)
     if(shouldSpeak)
       if(v)
-        TTS.speak(service.getString(R.string.ringer_on), false)
+        TTS.speak(service.getString(R.string.ringer_on), false, Some("last"))
       else
-        TTS.speak(service.getString(R.string.ringer_off), false)
+        TTS.speak(service.getString(R.string.ringer_off), false, Some("last"))
   }
 
   // Note screen state, silencing notification speech if desired and speaking "Locked."
@@ -227,7 +227,7 @@ object StateReactor {
 
   onScreenOff { () =>
     if(screenOn) {
-      TTS.speak(service.getString(R.string.screenOff), false)
+      TTS.speak(service.getString(R.string.screenOff), false, Some("last"))
       screenOn = false
     }
   }
@@ -239,12 +239,12 @@ object StateReactor {
       if(DateFormat.is24HourFormat(service))
         timeFlags |= DateUtils.FORMAT_24HOUR
       val time = DateUtils.formatDateTime(service, System.currentTimeMillis, timeFlags)
-      TTS.speak(time, false)
+      TTS.speak(time, false, Some("last"))
     }
   }
 
   onUnlocked { () => 
-    TTS.speak(service.getString(R.string.unlocked), false)
+    TTS.speak(service.getString(R.string.unlocked), false, Some("last"))
     handlers.Handler.nextShouldNotInterrupt
   }
 
