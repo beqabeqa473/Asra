@@ -151,6 +151,12 @@ object ProximityNear extends Trigger {
 
 object ShakingStarted extends Trigger {
 
+  override def apply(a:Option[Action]) {
+    super.apply(a)
+    StateObserver.onScreenOff { () => a.foreach(v => uninstall(v.function)) }
+    StateObserver.onScreenOn { () => install() }
+  }
+
   def install() = action.foreach((a) => StateObserver.onShakingStarted(a.function))
 
   def uninstall(f:() => Unit) = StateObserver.removeShakingStarted(f)
