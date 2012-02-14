@@ -214,9 +214,9 @@ object StateReactor {
     ringerOn = Some(v)
     if(shouldSpeak)
       if(v)
-        TTS.speak(service.getString(R.string.ringer_on), false, Some("last"))
+        TTS.speak(service.getString(R.string.ringerOn), false, Some("last"))
       else
-        TTS.speak(service.getString(R.string.ringer_off), false, Some("last"))
+        TTS.speak(service.getString(R.string.ringerOff), false, Some("last"))
   }
 
   // Note screen state, silencing notification speech if desired and speaking "Locked."

@@ -10,8 +10,8 @@
 <string name="spielOff">Spiel av</string>
 <string name="screenOff">Skärm släckt.</string>
 <string name="unlocked">Upplåst.</string>
-<string name="ringer_off">Ringer av</string>
-<string name="ringer_on">Ringer på</string>
+<string name="ringerOff">Ringer av</string>
+<string name="ringerOn">Ringer på</string>
 
 <!-- View names and actions -->
 <string name="alert">Varning! %1$s</string>

@@ -8,8 +8,8 @@
 <!-- On/off and other alerts -->
 <string name="spielOn">Spiel hurmii.</string>
 <string name="spielOff">Spiel Dartiima.</string>
-<string name="ringer_off">Horɓirde ñifii.</string>
-<string name="ringer_on">Holɓirde huɓɓii.</string>
+<string name="ringerOff">Horɓirde ñifii.</string>
+<string name="ringerOn">Holɓirde huɓɓii.</string>
 
 <!-- View names and actions -->
 <string name="alert">Reento! %1$s</string>

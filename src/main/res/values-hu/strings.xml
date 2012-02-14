@@ -10,8 +10,8 @@
 <string name="spielOff">Spiel kikapcsolva</string>
 <string name="screenOff">kijelző zárolva</string>
 <string name="unlocked">feloldva</string>
-<string name="ringer_off">csengő kikapcsolva</string>
-<string name="ringer_on">csengő bekapcsolva</string>
+<string name="ringerOff">csengő kikapcsolva</string>
+<string name="ringerOn">csengő bekapcsolva</string>
 
 <!-- View names and actions -->
 <string name="alert">figyelem! %1$s</string>

@@ -10,8 +10,8 @@
 <string name="spielOff">Spiel desactivado.</string>
 <string name="screenOff">Pantalla apagada</string>
 <string name="unlocked">Desbloqueado</string>
-<string name="ringer_off">Timbre apagado</string>
-<string name="ringer_on">Timbre encendido</string>
+<string name="ringerOff">Timbre apagado</string>
+<string name="ringerOn">Timbre encendido</string>
 
 <!-- View names and actions -->
 <string name="alert">¡Alerta! %1$s</string>
