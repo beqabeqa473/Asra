@@ -122,7 +122,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   }
 
   def onUtteranceCompleted(id:String) {
-    if(id == "last")
+    if(id == lastUtteranceID)
       abandonFocus()
     repeatedSpeech.get(id).foreach { v =>
       abandonFocus()
@@ -169,11 +169,13 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
       }
   }
 
+  val lastUtteranceID = "last"
+
   /**
    * Speaks the specified text, optionally flushing current speech.
   */
 
-  def speak(text:String, flush:Boolean, utteranceID:Option[String] = None) {
+  def speak(text:String, flush:Boolean, utteranceID:Option[String] = Some(lastUtteranceID)) {
     if(!SpielService.enabled) return
     if(text.contains("\n"))
       return speak(text.split("\n").toList, flush)
@@ -195,7 +197,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   }
 
   def speak(text:String, flush:Boolean) {
-    speak(text, flush, None)
+    speak(text, flush, Some(lastUtteranceID))
   }
 
   /**
@@ -206,9 +208,9 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     if(flush) stop()
     list.filterNot(_ == "") match {
       case Nil =>
-      case hd :: Nil => speak(hd, false, Some("last"))
+      case hd :: Nil => speak(hd, false)
       case hd :: tl =>
-        speak(hd, false)
+        speak(hd, false, None)
         speak(tl, false)
     }
   }
@@ -315,7 +317,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   def speakNotification(text:String) {
     if(shouldSpeakNotification) {
-      speak(text, false, Some("last"))
+      speak(text, false)
       handlers.Handler.nextShouldNotInterrupt
     }
   }
