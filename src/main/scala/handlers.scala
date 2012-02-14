@@ -69,7 +69,7 @@ object EventReviewQueue extends collection.mutable.Queue[PrettyAccessibilityEven
 
   def apply(e:PrettyAccessibilityEvent) = {
     enqueue(e)
-    if(length > 50) drop(length-50)
+    while(length > 50) dequeue()
   }
 
 }
