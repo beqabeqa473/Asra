@@ -14,6 +14,7 @@
   <string name="unlocked">Unlocked.</string>
   <string name="ringerOff">Ringer off.</string>
   <string name="ringerOn">Ringer on.</string>
+  <string name="newVoicemail">New voicemail</string>
 
   <!-- View names and actions -->
   <string name="alert">Alert! %1$s</string>

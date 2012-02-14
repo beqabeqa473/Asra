@@ -192,7 +192,7 @@ object StateReactor {
   def startVoicemailAlerts() {
     if(Preferences.voicemailAlerts)
       voicemailIndicator.getOrElse {
-        voicemailIndicator = Some(TTS.speakEvery(180, "New voicemail"))
+        voicemailIndicator = Some(TTS.speakEvery(180, service.getString(R.string.newVoicemail)))
       }
   }
 
