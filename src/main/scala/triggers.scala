@@ -46,11 +46,11 @@ class Actions {
 
   class ToggleSpiel extends Action("toggleSpiel", Triggers.service.getString(R.string.toggleSpiel), { () =>
     if(SpielService.enabled) {
-      TTS.speak("Spiel off.", true)
+      TTS.speak(Triggers.service.getString(R.string.spielOff), true)
       SpielService.enabled = false
     } else {
+      TTS.speak(Triggers.service.getString(R.string.spielOn), true)
       SpielService.enabled = true
-      TTS.speak("Spiel on.", true)
     }
   })
 

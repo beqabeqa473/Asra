@@ -3,6 +3,8 @@
 <resources>
   <string name="appName">Spiel</string>
   <string name="appDescription">A flexible, scriptable Android screen reader</string>
+  <string name="spielOff">Spiel off</string>
+  <string name="spielOn">Spiel on</string>
 
   <!-- Initial welcome message-->
   <string name="welcomeMsg">Welcome to Spiel!</string>
