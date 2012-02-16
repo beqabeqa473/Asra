@@ -107,7 +107,7 @@ class PreferencesActivity extends PreferenceActivity {
     })
 
     // Set up triggers. First add an action for "None," then concat others.
-    val actions = ("None", "") :: Triggers.actions.map((v) => (v._2.name, v._1)).toList
+    val actions = (getString(R.string.none), "") :: Triggers.actions.map((v) => (v._2.name, v._1)).toList
     val onShake = findPreference("onShakingStarted").asInstanceOf[ListPreference]
     onShake.setEntries(actions.map(_._1).toArray[CharSequence])
     onShake.setEntryValues(actions.map(_._2).toArray[CharSequence])
