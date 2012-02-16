@@ -120,7 +120,7 @@
 
   <!-- Action names and related -->
 
-  <strig name="none">None</string>
+  <string name="none">None</string>
   <string name="createScriptTemplateAction">Create a script template for the most recent accessibility event</string>
   <string name="templateCreated">Template created in %1$s.</string>
   <string name="templateCreationError">There was an error creating the script template.</string>
