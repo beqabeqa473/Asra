@@ -49,8 +49,8 @@ class Actions {
       TTS.speak(Triggers.service.getString(R.string.spielOff), true)
       SpielService.enabled = false
     } else {
-      TTS.speak(Triggers.service.getString(R.string.spielOn), true)
       SpielService.enabled = true
+      TTS.speak(Triggers.service.getString(R.string.spielOn), true)
     }
   })
 
@@ -67,16 +67,14 @@ abstract class Trigger {
   def action = _action
 
   /**
-   * Binds this <code>Tringger</code> to a specified <code>Action</code>. 
+   * Binds this <code>Trigger</code> to a specified <code>Action</code>. 
    * Pass in <code>None</code> to unbind.
   */
 
   def apply(a:Option[Action]) {
     _action.foreach((act) => uninstall(act.function))
     _action = a
-    a.foreach { (act) => 
-      install()
-    }
+    a.foreach { (act) => install() }
   }
 
   /**
@@ -157,8 +155,20 @@ object ShakingStarted extends Trigger {
     StateObserver.onScreenOn { () => install() }
   }
 
-  def install() = action.foreach((a) => StateObserver.onShakingStarted(a.function))
+  private var installed = false
 
-  def uninstall(f:() => Unit) = StateObserver.removeShakingStarted(f)
+  def install() {
+    if(!installed) {
+      action.foreach((a) => StateObserver.onShakingStarted(a.function))
+      installed = true
+    }
+  }
+
+  def uninstall(f:() => Unit) {
+    if(installed) {
+      StateObserver.removeShakingStarted(f)
+      installed = false
+    }
+  }
 
 }
