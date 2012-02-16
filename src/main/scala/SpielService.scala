@@ -82,6 +82,8 @@ object SpielService {
 
   var initialized = false
 
-  var enabled = false
+  private var _enabled = false
+  def enabled = _enabled
+  def enabled_=(e:Boolean) = _enabled = e
 
 }
