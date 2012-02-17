@@ -186,7 +186,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     utteranceID.foreach(params.put("utteranceId", _)) // TODO: Why won't Scala see Engine?
     if(text.length == 0)
       tts.speak(service.getString(R.string.blank), mode, params)
-    else if(text.length == 1 && text >= "A" && text <= "Z") {
+    else if(text.length == 1 && Character.isUpperCase(text(0))) {
       pitch = 1.5f
       tts.speak(service.getString(R.string.cap, text), mode, params)
       pitch = 1
