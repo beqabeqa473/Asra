@@ -159,9 +159,7 @@ object Handler {
       TTS.speakCharBuffer()
 
     // Now we engage in the complex process of dispatching events. This 
-    // happens in several steps, but let's first create a variable to 
-    // indicate whether dispatch should continue.
-    var continue = true 
+    // happens in several steps.
 
     // Store handlers we've called so we don't match them again.
     var alreadyCalled = List[Handler]()
@@ -187,10 +185,9 @@ object Handler {
       case None => true
     }
 
-    // Next let's check if there's a handler for this exact package and 
+    // Let's check if there's a handler for this exact package and 
     // class. If one was cached above then dispatch ends here.
-    if(continue)
-      continue = dispatchTo(e.getPackageName.toString, e.getClassName.toString)
+    var continue = dispatchTo(e.getPackageName.toString, e.getClassName.toString)
 
     // Now check for just the class name.
     if(continue)
