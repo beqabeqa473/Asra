@@ -553,6 +553,14 @@ class Handlers {
 
   class ListView extends Handler("android.widget.ListView") {
 
+    onViewFocused { e:AccessibilityEvent =>
+      if(e.getItemCount != 1)
+        speak(Handler.context.getString(R.string.listWithItems, e.getItemCount.toString))
+      else if(e.getItemCount == 1)
+        speak(Handler.context.getString(R.string.listWithItem))
+      true
+    }
+
     onViewHoverEnter { e:AccessibilityEvent => true }
 
     onViewSelected { e:AccessibilityEvent =>
