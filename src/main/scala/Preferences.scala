@@ -2,6 +2,7 @@ package info.spielproject.spiel
 
 import android.content.{Context, SharedPreferences}
 import android.media.AudioManager
+import android.os.Debug
 import android.preference.PreferenceManager
 import android.util.Log
 
@@ -163,6 +164,12 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
   def viewRecentEvents = prefs.getBoolean("viewRecentEvents", false)
 
   /**
+   * Indicates whether profiling is enabled.
+  */
+
+  def profiling = prefs.getBoolean("profiling", false)
+
+  /**
    * Returns the Bazaar username.
   */
 
@@ -203,6 +210,8 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
         TTS.engine = speechEngine
       case "onProximityNear" => ProximityNear(onProximityNear)
       case "onShakingStarted" => ShakingStarted(onShakingStarted)
+      case "profiling" if(profiling) => Debug.startMethodTracing("spiel")
+      case "profiling" if(!profiling) => Debug.stopMethodTracing()
       case "viewRecentEvents" if(!viewRecentEvents) => handlers.EventReviewQueue.clear()
       case "voicemailAlerts" =>
         if(voicemailAlerts) StateReactor.startVoicemailAlerts()

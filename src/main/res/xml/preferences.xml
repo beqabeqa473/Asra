@@ -123,6 +123,12 @@
       android:title="@string/viewRecentEventsTitle"
       android:summary="@string/viewRecentEventsSummary"/>
 
+    <CheckBoxPreference
+      android:key="profiling"
+      android:defaultValue="false"
+      android:title="@string/profilingTitle"
+      android:summary="@string/profilingSummary"/>
+
   </PreferenceScreen>
 
 </PreferenceScreen>

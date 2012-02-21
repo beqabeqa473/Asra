@@ -25,8 +25,9 @@ class SpielService extends AccessibilityService {
 
   override def onCreate() {
     super.onCreate()
-    //Debug.startMethodTracing("spiel")
     Preferences(this)
+    if(Preferences.profiling)
+      Debug.startMethodTracing("spiel")
     if(Preferences.sendBacktraces)
       ExceptionHandler.register(this, "http://stacktrace.thewordnerd.info/stacktrace")
     try {
@@ -54,7 +55,8 @@ class SpielService extends AccessibilityService {
     Handler.onDestroy
     TTS.shutdown
     Scripter.onDestroy
-    //Debug.stopMethodTracing
+    if(Preferences.profiling)
+      Debug.stopMethodTracing()
     notificationManager.cancelAll
     SpielService.initialized = false
     SpielService.enabled = false
