@@ -183,7 +183,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     val mode = if(flush) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD
     requestFocus()
     val params = new java.util.HashMap[String, String]()
-    utteranceID.foreach(params.put("utteranceId", _)) // TODO: Why won't Scala see Engine?
+    utteranceID.foreach(params.put(tts.Engine.KEY_PARAM_UTTERANCE_ID, _))
     if(text.length == 0)
       tts.speak(service.getString(R.string.blank), mode, params)
     else if(text.length == 1 && Character.isUpperCase(text(0))) {
