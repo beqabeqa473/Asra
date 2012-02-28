@@ -49,7 +49,7 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
   private def resetFloatPreference(name:String) = {
     val editor = prefs.edit()
-    editor.putString("rateScale", "1")
+    editor.putString(name, "1")
     editor.commit()
     1f
   }
