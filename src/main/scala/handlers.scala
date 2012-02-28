@@ -153,11 +153,6 @@ object Handler {
 
     val eType = eventType.getOrElse(e.getEventType)
 
-    // If echo-by-word is enabled and we've just received a non-text-change, 
-    // speak the buffered characters.
-    if(eType != TYPE_VIEW_TEXT_CHANGED && Preferences.echoByWord)
-      TTS.speakCharBuffer()
-
     // Now we engage in the complex process of dispatching events. This 
     // happens in several steps.
 
@@ -757,21 +752,34 @@ class Handlers {
     onViewTextChanged { e:AccessibilityEvent =>
       if(e.getAddedCount > 0 || e.getRemovedCount > 0) {
         if(e.isPassword)
-          TTS.speakCharacter("*")
+          speak("*", true)
         else
           if(e.getAddedCount > 0)
             // We're getting an exception here due to what appear to be 
             // malformed AccessibilityEvents.
             try {
-              TTS.speakCharacter(e.getText.mkString.substring(e.getFromIndex,   e.getFromIndex+e.getAddedCount))
+              val text = e.getText.mkString
+              val str = text.substring(e.getFromIndex,   e.getFromIndex+e.getAddedCount)
+              if(e.getAddedCount == 1) {
+                val ch = str(0)
+                var flush = true
+                if(Preferences.echoByChar) {
+                  speak(str, flush)
+                  flush = false
+                }
+                if(Preferences.echoByWord && !Character.isLetterOrDigit(ch)) {
+                  val word = (text.substring(0, e.getFromIndex)
+                  .reverse.takeWhile(_.isLetterOrDigit).reverse+str).trim
+                  if(word.length > 1)
+                    speak(word, flush)
+                }
+              }
             } catch {
               case e => Log.d("spiel", "Think we have a malformed event. Got "+e.getMessage)
             }
           else if(e.getRemovedCount > 0) {
             val start = e.getFromIndex
             val end = e.getFromIndex+e.getRemovedCount
-            if(Preferences.echoByWord)
-              TTS.clearCharBuffer()
             speak(e.getBeforeText.toString.substring(start, end), true)
           }
         else

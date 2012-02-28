@@ -264,46 +264,6 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     case None =>
   }
 
-  private var charBuffer = ""
-
-  /**
-   * Handle speech for the specified character. Either speak immediately, or 
-   * add to a buffer for speaking later.
-  */
-
-  def speakCharacter(char:String) {
-    if(Preferences.echoByChar)
-      speak(char, true)
-    if(Preferences.echoByWord) {
-      charBuffer += char
-      if(!(char >= "a" && char <= "z") && !(char >= "A" && char <= "Z"))
-        speakCharBuffer()
-    }
-  }
-
-  /**
-   * Clear the buffer of characters to be spoken.
-  */
-
-  def clearCharBuffer() {
-    charBuffer = ""
-  }
-
-  /**
-   * Speak and clear the buffer of characters. Since clearing should always 
-   * happen after speaking, these two operations are done in a single call. 
-   * Should I ever discover cases where this behavior isn't desired, then 
-   * the behavior will be made optional.
-  */
-
-  def speakCharBuffer() {
-    if(charBuffer != "") {
-      speak(charBuffer, true)
-      handlers.Handler.nextShouldNotInterrupt
-    }
-    clearCharBuffer()
-  }
-
   private def shouldSpeakNotification:Boolean = {
     if(StateReactor.ringerOff_?) return false
     if(!Preferences.speakNotificationsWhenScreenOff && StateReactor.screenOff_?) return false
