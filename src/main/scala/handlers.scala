@@ -398,8 +398,10 @@ class Handler(pkg:String, cls:String) {
   protected def leavesOf(n:AccessibilityNodeInfo):List[AccessibilityNodeInfo] = n.getChildCount match {
     case 0 => List(n)
     case v =>
-      (for(i <- 0 to v-1)
-        yield(leavesOf(n.getChild(i)))
+      (for(
+        i <- 0 to v-1;
+        c = n.getChild(i) if(c != null)
+      ) yield(leavesOf(c))
       ).toList.flatten
   }
 
