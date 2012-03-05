@@ -108,7 +108,7 @@ class PreferencesActivity extends PreferenceActivity {
         }
       })
     } else
-      getPreferenceScreen.removePreference(ttsPreference)
+      getPreferenceScreen.getPreference(0).asInstanceOf[PreferenceScreen].removePreference(ttsPreference)
 
     // Set up triggers. First add an action for "None," then concat others.
     val actions = (getString(R.string.none), "") :: Triggers.actions.map((v) => (v._2.name, v._1)).toList
