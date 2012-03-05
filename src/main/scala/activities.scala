@@ -54,24 +54,21 @@ class Spiel extends TabActivity {
 
 class PreferencesActivity extends PreferenceActivity {
 
-  override def onCreate(bundle:Bundle) {
-    super.onCreate(bundle)
+  override def onResume() {
+    super.onResume()
     val intent = getIntent
     setIntent(intent)
     Option(intent.getStringExtra("package")).map { pkg =>
       setPreferenceScreen(scriptPreferencesFor(pkg))
     }.getOrElse {
-      addPreferencesFromResource(R.xml.preferences)
       initGlobalPreferences()
     }
   }
 
-  override def onResume() {
-    super.onResume()
-    initGlobalPreferences()
-  }
-
   private def initGlobalPreferences() {
+    Option(getPreferenceScreen).foreach(_.removeAll())
+    addPreferencesFromResource(R.xml.preferences)
+
     val enginesPreference = findPreference("speechEngine").asInstanceOf[ListPreference]
     if(!TTS.defaultsEnforced_?) {
       val intent = new Intent("android.intent.action.START_TTS_ENGINE")
@@ -86,11 +83,9 @@ class PreferencesActivity extends PreferenceActivity {
     }
 
     def enableOrDisablePreference(p:Preference) {
-      if(TTS.defaultsEnforced_?) {
-        p.setEnabled(false)
-        p.setShouldDisableView(true)
-        p.setSelectable(false)
-      } else {
+      if(TTS.defaultsEnforced_?)
+        getPreferenceScreen.getPreference(0).asInstanceOf[PreferenceScreen].removePreference(p)
+      else {
         p.setEnabled(true)
         p.setShouldDisableView(false)
         p.setSelectable(true)
@@ -112,11 +107,8 @@ class PreferencesActivity extends PreferenceActivity {
           false
         }
       })
-    } else {
-      ttsPreference.setEnabled(false)
-      ttsPreference.setShouldDisableView(true)
-      ttsPreference.setSelectable(false)
-    }
+    } else
+      getPreferenceScreen.removePreference(ttsPreference)
 
     // Set up triggers. First add an action for "None," then concat others.
     val actions = (getString(R.string.none), "") :: Triggers.actions.map((v) => (v._2.name, v._1)).toList
