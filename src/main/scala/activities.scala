@@ -61,6 +61,7 @@ class PreferencesActivity extends PreferenceActivity {
     Option(intent.getStringExtra("package")).map { pkg =>
       setPreferenceScreen(scriptPreferencesFor(pkg))
     }.getOrElse {
+      addPreferencesFromResource(R.xml.preferences)
       initGlobalPreferences()
     }
   }
@@ -71,8 +72,6 @@ class PreferencesActivity extends PreferenceActivity {
   }
 
   private def initGlobalPreferences() {
-    addPreferencesFromResource(R.xml.preferences)
-
     val enginesPreference = findPreference("speechEngine").asInstanceOf[ListPreference]
     if(!TTS.defaultsEnforced_?) {
       val intent = new Intent("android.intent.action.START_TTS_ENGINE")
@@ -133,6 +132,7 @@ class PreferencesActivity extends PreferenceActivity {
       scripts.setEnabled(false)
       scripts.setSelectable(false)
     } else {
+      scripts.removeAll()
       Scripter.preferences.foreach { pkg =>
         scripts.addPreference(scriptPreferencesFor(pkg._1))
       }
