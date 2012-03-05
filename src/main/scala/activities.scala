@@ -104,14 +104,20 @@ class PreferencesActivity extends PreferenceActivity {
 
     // Now set the shortcut to system-wide TTS settings.
     val ttsPreference = findPreference("textToSpeechSettings")
-    ttsPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener {
-      def onPreferenceClick(p:Preference) = {
-        val intent = new Intent
-        intent.setClassName("com.android.settings", "com.android.settings.TextToSpeechSettings")
-        startActivity(intent)
-        false
-      }
-    })
+    if(VERSION.SDK_INT < 14) {
+      ttsPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener {
+        def onPreferenceClick(p:Preference) = {
+          val intent = new Intent
+          intent.setClassName("com.android.settings", "com.android.settings.TextToSpeechSettings")
+          startActivity(intent)
+          false
+        }
+      })
+    } else {
+      ttsPreference.setEnabled(false)
+      ttsPreference.setShouldDisableView(true)
+      ttsPreference.setSelectable(false)
+    }
 
     // Set up triggers. First add an action for "None," then concat others.
     val actions = (getString(R.string.none), "") :: Triggers.actions.map((v) => (v._2.name, v._1)).toList
