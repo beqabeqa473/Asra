@@ -11,7 +11,7 @@
 
     <EditTextPreference
       android:key="rateScale"
-      android:inputType="number|numberDecimal"
+      android:inputType="numberDecimal"
       android:title="@string/rateScaleTitle"
       android:summary="@string/rateScaleSummary"
       android:dialogTitle="@string/rateScaleTitle"
@@ -20,7 +20,7 @@
 
     <EditTextPreference
       android:key="pitchScale"
-      android:inputType="number"
+      android:inputType="numberDecimal"
       android:title="@string/pitchScaleTitle"
       android:summary="@string/pitchScaleSummary"
       android:dialogTitle="@string/pitchScaleTitle"
