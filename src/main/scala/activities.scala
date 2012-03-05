@@ -65,6 +65,11 @@ class PreferencesActivity extends PreferenceActivity {
     }
   }
 
+  override def onResume() {
+    super.onResume()
+    initGlobalPreferences()
+  }
+
   private def initGlobalPreferences() {
     addPreferencesFromResource(R.xml.preferences)
 
@@ -81,19 +86,21 @@ class PreferencesActivity extends PreferenceActivity {
       enginesPreference.setEntryValues(engines.map(_._2).toArray[CharSequence])
     }
 
-    if(TTS.defaultsEnforced_?) {
-      enginesPreference.setEnabled(false)
-      enginesPreference.setShouldDisableView(true)
-      enginesPreference.setSelectable(false)
-      val rateScale = findPreference("rateScale")
-      rateScale.setEnabled(false)
-      rateScale.setShouldDisableView(true)
-      rateScale.setSelectable(false)
-      val pitchScale = findPreference("pitchScale")
-      pitchScale.setEnabled(false)
-      pitchScale.setShouldDisableView(true)
-      pitchScale.setSelectable(false)
+    def enableOrDisablePreference(p:Preference) {
+      if(TTS.defaultsEnforced_?) {
+        p.setEnabled(false)
+        p.setShouldDisableView(true)
+        p.setSelectable(false)
+      } else {
+        p.setEnabled(true)
+        p.setShouldDisableView(false)
+        p.setSelectable(true)
+      }
     }
+
+    enableOrDisablePreference(enginesPreference)
+    enableOrDisablePreference(findPreference("rateScale"))
+    enableOrDisablePreference(findPreference("pitchScale"))
 
     // Now set the shortcut to system-wide TTS settings.
     val ttsPreference = findPreference("textToSpeechSettings")
