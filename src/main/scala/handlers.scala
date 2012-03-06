@@ -762,19 +762,16 @@ class Handlers {
             try {
               val text = e.getText.mkString
               val str = text.substring(e.getFromIndex,   e.getFromIndex+e.getAddedCount)
-              if(e.getAddedCount == 1) {
-                val ch = str(0)
-                var flush = true
-                if(Preferences.echoByChar) {
-                  speak(str, flush)
-                  flush = false
-                }
-                if(Preferences.echoByWord && !Character.isLetterOrDigit(ch)) {
-                  val word = (text.substring(0, e.getFromIndex)
-                  .reverse.takeWhile(_.isLetterOrDigit).reverse+str).trim
-                  if(word.length > 1)
-                    speak(word, flush)
-                }
+              var flush = true
+              if(Preferences.echoByChar) {
+                speak(str, flush)
+                flush = false
+              }
+              if(Preferences.echoByWord && !Character.isLetterOrDigit(str(0))) {
+                val word = (text.substring(0, e.getFromIndex)
+                .reverse.takeWhile(_.isLetterOrDigit).reverse+str).trim
+                if(word.length > 1)
+                  speak(word, flush)
               }
             } catch {
               case e => Log.d("spiel", "Think we have a malformed event. Got "+e.getMessage)
