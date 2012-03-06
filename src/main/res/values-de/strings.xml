@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+  <string name="appName">Spiel</string>
+  <string name="appDescription">Ein flexibler, skriptbarer Android screenreader</string>
+
+  <!-- Initial welcome message-->
+  <string name="welcomeMsg">Willkommen bei Spiel!</string>
+
+  <!-- On/off and other alerts -->
+  <string name="spielOn">Spiel ein.</string>
+  <string name="spielOff">Spiel aus.</string>
+  <string name="screenOff">Bildschirm aus.</string>
+  <string name="unlocked">entsperrt.</string>
+  <string name="ringerOff">Klingelton aus.</string>
+  <string name="ringerOn">Klingelton ein.</string>
+
+  <!-- View names and actions -->
+  <string name="alert">Benachrichtigung! %1$s</string>
+  <string name="button">Schalter</string>
+  <string name="labeledButton">%1$s Schalter</string>
+  <string name="checkbox">%1$s Kontrollfeld</string>
+  <string name="checked">aktiviert</string>
+  <string name="editText">Text bearbeiten</string>
+  <string name="emptyList">leere Liste</string>
+  <string name="item">%1$s: 1 Eintrag</string>
+  <string name="items">%1$s: %2$s Einträge</string>
+  <string name="image">Bild</string>
+  <string name="labeledImage">%1$s: Bild</string>
+  <string name="listItem">%1$s: %2$s von %3$s</string>
+  <string name="listWithItem">Liste mit 1 Eintrag</string>
+  <string name="listWithItems">Liste mit %1$s Einträgen</string>
+  <string name="menu">Menü</string>
+  <string name="notChecked">nicht aktiviert</string>
+  <string name="password">Passwort</string>
+  <string name="radioButton">%1$s Auswahlschalter</string>
+  <string name="searchText">%1$s: Suchbegriff</string>
+  <string name="tab">%1$s Registerkarte</string>
+
+  <!-- Preferences -->
+  <string name="preferences">Einstellungen</string>
+
+  <string name="speechTitle">Sprachausgabe</string>
+  <string name="speechEngineTitle">Sprachausgabe Stimme</string>
+  <string name="rateScaleTitle">Geschwindigkeit</string>
+  <string name="rateScaleSummary">Faktor, um welchen die voreingestellte Geschwindigkeit geändert wird</string>
+  <string name="pitchScaleTitle">Tonhöhe</string>
+  <string name="pitchScaleSummary">Faktor, um welchen die voreingestellte Tonhöhe geändert wird</string>
+  <string name="echoByCharTitle">Tastaturecho Zeichen</string>
+  <string name="echoByWordTitle">Tastaturecho Wörter</string>
+  <string name="speakNotificationsWhenScreenOffTitle">Meldungen auch bei ausgeschaltetem Bildschirm sprechen</string>
+  <string name="useBluetoothSCOTitle">Bluetooth SCO verwenden</string>
+  <string name="useBluetoothSCOSummary">off-call Audiosignale über Bluetooth SCO Kopfhörer ausgeben (experimentell!)</string>
+  <string name="managePunctuationSpeechTitle">Satzzeichenbehandlung</string>
+  <string name="managePunctuationSpeechSummary">Spiel übernimmt die Ausgabe vom Sprachsynthesizer unbehandelter Satzzeichen</string>
+  <string name="increaseInCallVolumeTitle">Lautstärke bei eingehendem Anruf erhöhen</string>
+  <string name="increaseInCallVolumeSummary">Die Sprachausgabe während eines Anrufs lauter stellen</string>
+  <string name="duckNonSpeechAudioTitle">konkurierendes Audio absenken</string>
+  <string name="duckNonSpeechAudioSummary">Geringere Lautstärke für Musik, Spiele etc. während die Sprachausgabe spricht</string>
+  <string name="textToSpeechTitle">Sprachausgabe, Einstellungen</string>
+  <string name="textToSpeechSummary">Systemweite Eigenschaften für die Sprachausgabe festlegen</string>
+
+  <string name="alertsTitle">Hinweise</string>
+  <string name="talkingCallerIDTitle">Anrufer ansagen</string>
+  <string name="talkingCallerIDSummary">Bei eingehenden Anrufen wiederholt Anruferdetails ansagen</string>
+  <string name="voicemailAlertsTitle">Voicemail hinweis</string>
+
+  <string name="voicemailAlertsSummary">Gibt wiederholt die Verfügbarkeit neuer Sprachnachrichten aus</string>
+
+  <string name="triggersTitle">Aktionen</string>
+  <string name="triggersSummary">Aktionen einstellen, die bei bestimmten physikalischen Ereignissen ausgeführt werden</string>
+  <string name="onShakeTitle">Beim Schütteln</string>
+  <string name="onShakeSummary">Aktion festlegen, die ausgeführt wird, sobald das Gerät geschüttelt wird</string>
+  <string name="onProximityNearTitle">Bei Annäherung</string>
+  <string name="onProximityNearSummary">Aktion festlegen, die ausgeführt wird, sobald der Nähe-Ssensor eine Annäherung erkennt</string>
+
+  <string name="scriptingDebuggingTitle">Skripten und Debuggen</string>
+  <string name="sendBacktracesTitle">Problemberichte senden, beim Absturz von Spiel </string>
+  <string name="sendBacktracesSummary">Automatisch anonyme Fehlerberichte an den Entwickler senden, wann immer Spiel abstürzt (macht einen Neustart erforderlich)</string>
+  <string name="viewRecentEventsTitle">Die neuesten accessibility events ansehen</string>
+  <string name="viewRecentEventsSummary">Zeigt die neuesten accessibility events sowie Zusatzfunktionen für Skriptentwickler an</string>
+  <string name="profilingTitle">Profiling</string>
+
+  <string name="profilingSummary">sollte nur zu Entwicklungszwecken aktiviert werden, da hierdurch das Antwortverhalten verschlechtert wird</string>
+
+  <string name="events">Events</string>
+  <string name="noEvents">Keine events verfügbar. Bitte schalten Sie zunächst die Option \"Die neuesten accessibility events ansehen\" im Menü \"Skripten und Debuggen\" ein. Werden nach wie vor keine Events angezeigt, drücken Sie Menü und wählen Sie dann \"Aktualisieren\".</string>
+  <string name="createScriptTemplate">skript-Vorlage erstellen</string>
+
+  <string name="scripts">Skripte</string>
+
+  <string name="system">System</string>
+  <string name="user">Benutzer</string>
+
+  <!-- Script context menu -->
+  <string name="delete">Löschen</string>
+  <string name="copyToExternalStorage">In externen Speicher kopieren</string>
+  <string name="postToBazaar">In Bazaar einstellen</string>
+
+  <string name="bazaar_credentials">Bitte geben Sie nachfolgend Ihren Benutzernamen sowie Ihr Passwort für den Spiel Bazaar ein.</string>
+  <string name="bazaar_credentials_invalid">Ihr Benutzername und/oder das Passwort ist ungültig. Bitte geben Sie nachfolgend beides neu ein und versuchen Sie es erneut.</string>
+  <string name="bazaar_username_label">Benutzername</string>
+  <string name="bazaar_password_label">Passwort</string>
+  <string name="script_reload_error">Dieses Skript ist ungültig. Bitte korrigieren Sie alle Fehler, die in den logs aufgelistet sind, und versuchen Sie es erneut.</string>
+  <string name="changes_label">Änderungen (optional):</string>
+  <string name="script_posted">Ihr Skript wurde erfolgreich  eingestellt. Vielen Dank für Ihren Beitrag.</string>
+  <string name="script_posting_error">Beim Einstellen Ihres Skripts ist ein temporärer Netzwerk-Fehler aufgetreten. Bitte versuchen Sie es später noch einmal.</string>
+
+  <string name="confirmDelete">Sind Sie sicher, dass Sie das Skript für %1$s löschen möchten?</string>
+  <string name="scriptCopied">Skript nach %1$s kopiert.</string>
+
+  <string name="newOrUpdatedScripts">Es sind neue oder aktualisierte Skripte verfügbar. Bitte wählen Sie aus, welche Sie installieren möchten.</string>
+  <string name="selectAll">Alle auswählen</string>
+  <string name="deselectAll">Alle Markierungen löschen</string>
+  <string name="install">Installieren</string>
+
+  <!-- Menu items -->
+  <string name="refresh">Aktualisieren</string>
+
+  <!-- Dialog buttons -->
+  <string name="ok">OK</string>
+  <string name="cancel">Abbrechen</string>
+  <string name="yes">Ja</string>
+  <string name="no">Nein</string>
+
+  <!-- Action names and related -->
+  <string name="none">keine Aktion</string>
+  <string name="createScriptTemplateAction">Skript-Vorlage für das letzte accessibility event erstellen</string>
+  <string name="templateCreated">Vorlage in %1$s erstellt.</string>
+  <string name="templateCreationError">Beim Erstellen der Skript-Vorlage ist ein Fehler aufgetreten.</string>
+  <string name="stopSpeech">Sprache stoppen</string>
+  <string name="toggleSpiel">Spiel ein-/ausschalten</string>
+
+  <!-- Punctuation and other speech-related strings -->
+  <string name="blank">leer</string>
+  <string name="cap">groß %1$s</string>
+  <string name="exclamation">ausrufezeichen</string>
+  <string name="at">klammeraffe</string>
+  <string name="pound">pfund</string>
+  <string name="dollar">dollar</string>
+  <string name="percent">prozent</string>
+  <string name="caret">zirkumflex</string>
+  <string name="ampersand">undzeichen</string>
+  <string name="asterisk">stern</string>
+  <string name="leftParen">klammer auf</string>
+  <string name="rightParen">klammer zu</string>
+  <string name="underscore">unterstrich</string>
+  <string name="space">leerzeichen</string>
+  <string name="period">punkt</string>
+  <string name="comma">komma</string>
+  <string name="lessThan">kleiner</string>
+  <string name="greaterThan">größer</string>
+  <string name="slash">schrägstrich</string>
+  <string name="backslash">bäcksläsh</string>
+  <string name="questionMark">fragezeichen</string>
+  <string name="quote">anführung</string>
+  <string name="apostrophe">apostroph</string>
+  <string name="semiColon">semicolon</string>
+  <string name="colon">doppelpunkt</string>
+  <string name="dash">strich</string>
+  <string name="plus">plus</string>
+  <string name="newline">neue zeile</string>
+
+  <!-- Command mode -->
+  <string name="commandModeUnavailable">Der Befehlsmodus ist in dieser Version von Android nicht verfügbar.</string>
+  <string name="review">Überblick</string>
+
+  <!-- String returned when an unknown number calls. -->
+  <string name="unknown">Unbekannt</string>
+
+</resources>
