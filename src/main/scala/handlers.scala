@@ -641,10 +641,7 @@ class Handlers {
   }
 
   class TextView extends Handler("android.widget.TextView") {
-    onViewFocused { e:AccessibilityEvent =>
-      speak(utterancesFor(e, true))
-      true
-    }
+    onViewFocused { e:AccessibilityEvent => speak(utterancesFor(e, true)) }
   }
 
   class ViewGroup extends Handler("android.view.ViewGroup") {
