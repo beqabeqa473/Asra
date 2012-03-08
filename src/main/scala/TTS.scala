@@ -4,7 +4,7 @@ import actors.Actor._
 import collection.JavaConversions._
 
 import android.app.Service
-import android.content.Context
+import android.content.{Context, Intent}
 import android.media.AudioManager
 import android.os.Build.VERSION
 import android.os.Environment
@@ -37,7 +37,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
    * Initialize or re-initialize TTS.
   */
 
-  def init() = {
+  def init() {
     tts = new TextToSpeech(service, this)
   }
 
@@ -184,7 +184,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     requestFocus()
     val params = new java.util.HashMap[String, String]()
     utteranceID.foreach(params.put(tts.Engine.KEY_PARAM_UTTERANCE_ID, _))
-    if(text.length == 0)
+    val rv = if(text.length == 0)
       tts.speak(service.getString(R.string.blank), mode, params)
     else if(text.length == 1 && Character.isUpperCase(text(0))) {
       pitch = 1.5f
@@ -194,6 +194,12 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
       tts.speak(service.getString(managedPunctuations(text)), mode, params)
     else
       tts.speak(text, mode, params)
+    if(rv == TextToSpeech.ERROR) {
+      val intent = new Intent()
+      intent.setAction(tts.Engine.ACTION_CHECK_TTS_DATA)
+      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      service.startActivity(intent)
+    }
   }
 
   def speak(text:String, flush:Boolean) {
