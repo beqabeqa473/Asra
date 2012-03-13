@@ -613,7 +613,6 @@ class Handlers {
     onViewFocused { e:AccessibilityEvent =>
       val utterances = utterancesFor(e)
       if(utterances.size > 0) {
-        //speak(Handler.context.getString(R.string.tab, utterances.mkString(": ")), true)
         speak(utterances.mkString(": "), true)
         nextShouldNotInterrupt()
       }
@@ -649,13 +648,16 @@ class Handlers {
       Option(e.getSource).map { source=>
         Log.d("spielcheck", "Event: "+e)
         Log.d("spielcheck", "Source: "+source)
+        Log.d("spielcheck", "Children: "+source.getChildCount+", Interactables: "+interactables(source)+", children: "+leavesOf(source))
         if(interactables(source).size > 1) {
           Log.d("spielcheck", "Source has "+interactables(source).size+" interactables, swallowing.")
           true
         } else if(source.getChildCount == 1 || interactables(source).size == 1) {
           Log.d("spielcheck", "Source has "+source.getChildCount+" children and "+interactables(source).size+" interactables, presenting.")
           false
-        } else true
+        } else if(interactables(source).size == 0 && utterancesFor(e, false) != Nil)
+          speak(utterancesFor(e, false))
+        else true
       }.getOrElse(true)
     }
   }
