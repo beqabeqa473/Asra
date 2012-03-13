@@ -622,7 +622,7 @@ class Handlers {
 
   }
 
-  class ScrollView extends Handler("android.widget.ScrollView") {
+  /*class ScrollView extends Handler("android.widget.ScrollView") {
 
     onViewScrolled { e:AccessibilityEvent =>
       val maxX:Double = if(e.getMaxScrollX == 0) 1 else e.getMaxScrollX
@@ -632,7 +632,7 @@ class Handlers {
       speak(utterances, true)
     }
 
-  }
+  }*/
 
   class SearchBox extends Handler("android.app.SearchDialog$SearchAutoComplete") {
     onViewFocused { e:AccessibilityEvent =>
