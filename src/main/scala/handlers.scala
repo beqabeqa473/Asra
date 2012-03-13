@@ -791,16 +791,20 @@ class Handlers {
       Option(e.getSource).map(_.getText).foreach { text =>
         val txt = if(e.isPassword) Some("*"*e.getItemCount) else Option(text)
         txt.map { t =>
-          val from = if(e.getFromIndex == t.length) e.getFromIndex-1 else e.getFromIndex
-          val to = if(e.getToIndex == 0)
-            1
-          else if(e.getToIndex < t.length)
+          //var from = if(e.getFromIndex == t.length) e.getFromIndex-1 else e.getFromIndex
+          var from = e.getFromIndex
+          var to = if(e.getToIndex == e.getFromIndex && e.getToIndex < t.length)
             e.getToIndex+1
           else
-            e.getToIndex-1
+            e.getToIndex
           val width = to-from
           if(from >= 0 && to >= 0) {
-            val selection = t.subSequence(from, to)
+            if(from > to) {
+              val tmp = to
+              to = from
+              from = tmp
+            }
+            val selection = t.subSequence(from, to).toString
             (for(
               osf <- oldSelectionFrom;
               ost <- oldSelectionTo;
@@ -812,11 +816,15 @@ class Handlers {
               ).min if(distance > 1)
             ) yield {
               Log.d("spielcheck", "ost: "+ost+"From: "+from+", To: "+to)
-              val interval = (if(ost < from)
-                text.subSequence(ost, from)
-              else
-                text.subSequence(to, math.min(osf, text.length-1))
-              ).toString
+              val interval = try {
+                (if(ost < from)
+                  text.subSequence(ost, from)
+                else
+                  text.subSequence(to, math.min(osf, text.length-1))
+                ).toString
+              } catch {
+                case _ => selection
+              }
               if(interval.contains("\n")) {
                 val ending = t.subSequence(from, t.length).toString
                 val nextNewLine = if(ending.indexOf("\n") == -1) t.length else from+ending.indexOf("\n")
