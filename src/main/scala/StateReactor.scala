@@ -148,6 +148,7 @@ object StateReactor {
   private var headsetOn = false
 
   onHeadsetStateChanged { (on, bluetooth) =>
+    Log.d("spielcheck", "Headset change: "+on+", "+bluetooth)
     headsetOn = on
     if(Preferences.increaseInCallVolume && inCall) {
       if(on) {
@@ -171,8 +172,8 @@ object StateReactor {
 
   onMediaMounted { path =>
     if(path == Uri.fromFile(Environment.getExternalStorageDirectory)) {
-      Log.d("spielcheck", "Media mounted at "+path)
       TTS.engine = Preferences.speechEngine
+      scripting.Scripter.initExternalScripts()
     }
   }
 

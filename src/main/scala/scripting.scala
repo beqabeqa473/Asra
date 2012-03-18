@@ -287,16 +287,7 @@ object Scripter {
     val pi = pm.getPackageInfo(svc.getPackageName(), 0)
     myScope.put("SPIEL_VERSION_NAME", myScope, pi.versionName)
     myScope.put("SPIEL_VERSION_CODE", myScope, pi.versionCode)
-
-    val spielDir = new File(Environment.getExternalStorageDirectory, "spiel")
-    if(!spielDir.isDirectory) spielDir.mkdir
-    _scriptsDir = new File(spielDir, "scripts")
-    if(!scriptsDir.isDirectory) scriptsDir.mkdir
-    observer = new Observer(service, scriptsDir.getPath)
-    observer.startWatching()
-
     new Script(service, "scripts/api.js", true).run()
-
     val assets = service.getAssets
     for(fn <- assets.list("scripts") if(fn != "api.js")) {
       new Script(service, fn, true).run()
@@ -311,12 +302,21 @@ object Scripter {
     }
     cursor.close()
 
-    // Load scripts from /spiel/scripts folder on SD card.
+    initExternalScripts()
+  }
+
+  def initExternalScripts() {
+    val spielDir = new File(Environment.getExternalStorageDirectory, "spiel")
+    if(!spielDir.isDirectory) spielDir.mkdir
+    _scriptsDir = new File(spielDir, "scripts")
+    if(!scriptsDir.isDirectory) scriptsDir.mkdir
+    observer = new Observer(service, scriptsDir.getPath)
+    observer.startWatching()
+        // Load scripts from /spiel/scripts folder on SD card.
 
     userScripts.foreach(_.run())
 
     Context.exit()
-    true
   }
 
   def onDestroy = {
