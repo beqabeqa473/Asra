@@ -91,6 +91,10 @@ object Handler {
     handlers = handlers.filter(v => v._2 != h)
   }
 
+  def unregisterPackage(pkg:String) = {
+    handlers = handlers.filter(_._1._1 != pkg)
+  }
+
   // Track and report state of whether next AccessibilityEvent should interrupt speech.
   private var myNextShouldNotInterrupt = false
   def shouldNextInterrupt = !myNextShouldNotInterrupt

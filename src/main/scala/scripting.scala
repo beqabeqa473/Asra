@@ -201,6 +201,7 @@ class Script(
 
   def uninstall() {
     handlers.foreach(Handler.unregisterHandler(_))
+    Handler.unregisterPackage(pkg)
     handlers = Nil
     Scripter.unsetStringsFor(pkg)
     Scripter.removePreferencesFor(pkg)
