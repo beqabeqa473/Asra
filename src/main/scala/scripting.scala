@@ -306,6 +306,7 @@ object Scripter {
   }
 
   def initExternalScripts() {
+    Context.enter(Scripter.context)
     val spielDir = new File(Environment.getExternalStorageDirectory, "spiel")
     if(!spielDir.isDirectory) spielDir.mkdir
     _scriptsDir = new File(spielDir, "scripts")
