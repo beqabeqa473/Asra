@@ -5,7 +5,7 @@ import collection.JavaConversions._
 
 import android.app.Service
 import android.content.{Context, Intent}
-import android.media.AudioManager
+import android.media.{AudioManager, SoundPool}
 import android.os.Build.VERSION
 import android.os.Environment
 import android.speech.tts.TextToSpeech
@@ -23,6 +23,10 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   private var audioManager:Option[AudioManager] = None
 
+  private var pool:SoundPool = null
+
+  private var tickID:Int = 0
+
   /**
    * Initialize TTS based on specified <code>Service</code>.
   */
@@ -30,6 +34,8 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   def apply(s:Service) {
     service = s
     audioManager = Some(service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager])
+    pool = new SoundPool(8, AudioManager.STREAM_MUSIC, 0)
+    tickID = pool.load(service, R.raw.tick, 1)
     init()
   }
 
@@ -115,7 +121,10 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
    * Shut down TTS, freeing up resources.
   */
 
-  def shutdown = tts.shutdown
+  def shutdown() {
+    tts.shutdown
+    pool.release()
+  }
 
   private def abandonFocus() {
     audioManager.foreach(_.abandonAudioFocus(this))
@@ -225,7 +234,11 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
    * Play a tick.
   */
 
-  def tick() = tts.playEarcon("tick", 0, null)
+  def tick(pitchScale:Option[Double] = None) {
+    pitchScale.map { s =>
+      pool.play(tickID, 1f, 1f, 0, 0, s.toFloat)
+    }.getOrElse(tts.playEarcon("tick", 0, null))
+  }
 
   /**
    * Stops speech.
@@ -236,6 +249,10 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     Log.d("spiel", "Stopping speech")
     abandonFocus()
     tts.stop()
+  }
+
+  def presentPercentage(percentage:Double) {
+    tick(Some(0.5+percentage/200))
   }
 
   private var repeatedSpeech = collection.mutable.Map[String, Tuple2[Int, String]]()

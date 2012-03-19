@@ -589,7 +589,9 @@ class Handlers {
   class ProgressBar extends Handler("android.widget.ProgressBar") {
     onViewSelected { e:AccessibilityEvent =>
       val percent = (e.getCurrentItemIndex.toFloat/e.getItemCount*100).toInt
-      speak(percent+"%")
+      
+      TTS.presentPercentage(percent)
+      true
     }
   }
 
@@ -626,9 +628,9 @@ class Handlers {
     onViewScrolled { e:AccessibilityEvent =>
       val maxX:Double = if(e.getMaxScrollX == 0) 1 else e.getMaxScrollX
       val maxY:Double = if(e.getMaxScrollY == 0) 1 else e.getMaxScrollY
-      val percentage = (((e.getScrollX/maxX)+(e.getScrollY/maxY))*100).toInt
-      val utterances = List(percentage+"%")
-      speak(utterances, true)
+      val percentage = (((e.getScrollX/maxX)+(e.getScrollY/maxY))*100)
+      TTS.presentPercentage(percentage)
+      true
     }
 
   }*/
