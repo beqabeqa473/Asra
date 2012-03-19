@@ -88,7 +88,7 @@ object Handler {
   */
 
   def unregisterHandler(h:Handler) = {
-    handlers = handlers.filter(v => v._2 != h)
+    handlers = handlers.filter(_._2 != h)
   }
 
   def unregisterPackage(pkg:String) = {
