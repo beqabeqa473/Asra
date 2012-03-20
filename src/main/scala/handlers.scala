@@ -706,7 +706,8 @@ class Handlers {
     }
 
     onTouchExplorationGestureStart { e:AccessibilityEvent =>
-      false
+      stopSpeaking()
+      true
     }
 
     onViewClicked { e:AccessibilityEvent => true }
