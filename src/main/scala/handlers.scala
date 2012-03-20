@@ -311,9 +311,10 @@ class Handler(pkg:String, cls:String) {
     true
   }
 
-  def stopSpeaking() {
+  def stopSpeaking() = {
     if(!nextShouldNotInterruptCalled)
       TTS.stop()
+    true
   }
 
   /**
@@ -705,10 +706,7 @@ class Handlers {
       false
     }
 
-    onTouchExplorationGestureStart { e:AccessibilityEvent =>
-      stopSpeaking()
-      true
-    }
+    onTouchExplorationGestureStart { e:AccessibilityEvent => stopSpeaking() }
 
     onViewClicked { e:AccessibilityEvent => true }
 
