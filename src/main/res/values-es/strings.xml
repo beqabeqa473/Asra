@@ -46,8 +46,6 @@
 <string name="useBluetoothSCOSummary">Enviar sonido que no corresponde a llamadas al auricular Bluetooth SCO (experimental!)</string>
 <string name="managePunctuationSpeechTitle">Gestionar la pronunciación de puntuación</string>
 <string name="managePunctuationSpeechSummary">Delegar a Spiel la pronunciación de ciertos signos de puntuación no gestionados</string>
-<string name="increaseInCallVolumeTitle">Aumentar volumen de llamadas</string>
-<string name="increaseInCallVolumeSummary">Aumentar volumen del sintetizador durante llamadas</string>
 <string name="textToSpeechTitle">Ajustes texto a voz</string>
 <string name="textToSpeechSummary">Ajustar propriedades  texto a voz del sistema</string>
 

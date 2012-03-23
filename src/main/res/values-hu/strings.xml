@@ -47,8 +47,6 @@
 <string name="useBluetoothSCOSummary">híváson kívüli audio átírányítása bluetooth  SCO ezközőkre</string>
 <string name="managePunctuationSpeechTitle">Hangsúly beszéd szabályozása</string>
 <string name="managePunctuationSpeechSummary">néhány küldötte írásjelet a Spiel fog kezelni</string>
-<string name="increaseInCallVolumeTitle">hjívási hangerő erősítése</string>
-<string name="increaseInCallVolumeSummary">hangosabb hangerő használata hívások alatt</string>
 <string name="textToSpeechTitle">beszéd szintetizátor beállításai</string>
 <string name="textToSpeechSummary">rendszer-terjedelmü szintetizátor tulajdonságainak beállítása</string>
 

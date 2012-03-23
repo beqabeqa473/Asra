@@ -1,9 +1,14 @@
 package info.spielproject.spiel
 
+import actors.Actor.actor
+import collection.JavaConversions._
+
+import android.bluetooth.{BluetoothClass, BluetoothDevice}
 import android.content.{BroadcastReceiver, Context, Intent, IntentFilter}
 import android.hardware.{Sensor, SensorEvent, SensorEventListener, SensorManager}
 import android.media.AudioManager
 import android.net.Uri
+import android.os.Build.VERSION
 import android.util.Log
 
 /**
@@ -19,11 +24,17 @@ object StateObserver {
 
   private var sensorManager:SensorManager = null
 
+  private var service:SpielService = null
+
   /**
    * Initialize this <code>StateReactor</code> based off of the specified <code>SpielService</code>.
   */
 
-  def apply(service:SpielService) {
+  def apply(_service:SpielService) {
+
+    service = _service
+
+    val audioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
 
     def registerReceiver(r:(Context, Intent) => Unit, intents:List[String], dataScheme:Option[String] = None) {
       val f = new IntentFilter
@@ -61,10 +72,34 @@ object StateObserver {
     registerReceiver({ (c, i) =>
       val bluetooth = i.getIntExtra("android.bluetooth.headset.extra.STATE", -1)
       val on = i.getIntExtra("state", 0) == 1 || bluetooth == 2
-      // Don't generate a callback if bluetooth is connecting.
-      if(bluetooth != 1)
-        headsetStateChanged(on, bluetooth != -1)
+      if(bluetooth != -1) {
+        if(on) {
+          actor {
+            Thread.sleep(10000)
+            if(!audioManager.isBluetoothA2dpOn)
+              bluetoothSCOHeadsetConnected()
+          }
+        } else {
+          bluetoothSCOHeadsetDisconnected()
+        }
+      }
     }, Intent.ACTION_HEADSET_PLUG :: "android.bluetooth.headset.action.STATE_CHANGED" :: Nil)
+
+    registerReceiver({(c, i) =>
+      val device = i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE).asInstanceOf[BluetoothDevice]
+      device.getBluetoothClass.getDeviceClass match {
+        case BluetoothClass.Device.AUDIO_VIDEO_WEARABLE_HEADSET => actor {
+          Thread.sleep(10000)
+          if(!audioManager.isBluetoothA2dpOn)
+            bluetoothSCOHeadsetConnected()
+        }
+        case _ =>
+      }
+    }, android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED :: Nil)
+
+    registerReceiver({(c, i) =>
+      bluetoothSCOHeadsetDisconnected()
+    }, android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECTED :: Nil)
 
     registerReceiver((c, i) => screenOff() , Intent.ACTION_SCREEN_OFF :: Nil)
 
@@ -89,6 +124,56 @@ object StateObserver {
   def applicationRemoved(i:Intent) = {
     if(!i.getBooleanExtra(Intent.EXTRA_REPLACING, false))
       applicationRemovedHandlers.foreach { f => f(i) }
+  }
+
+  private var bluetoothSCOHeadsetConnectedHandlers = List[() => Unit]()
+
+  /**
+   * Registers handler to be run if a bluetooth SCO headset connects.
+  */
+
+  def onBluetoothSCOHeadsetConnected(h:() => Unit) = {
+    bluetoothSCOHeadsetConnectedHandlers ::= h
+    h
+  }
+
+  /**
+   * Run handlers when bluetooth SCO headset connects.
+  */
+
+  def bluetoothSCOHeadsetConnected() = bluetoothSCOHeadsetConnectedHandlers.foreach { f => f() }
+
+  /**
+   * Removes handler from being run when bluetooth SCO headset connects.
+  */
+
+  def removeBluetoothSCOHeadsetConnected(h:() => Unit) = {
+    bluetoothSCOHeadsetConnectedHandlers = bluetoothSCOHeadsetConnectedHandlers.filterNot(_ == h)
+  }
+
+  private var bluetoothSCOHeadsetDisconnectedHandlers = List[() => Unit]()
+
+  /**
+   * Registers handler to be run if a bluetooth SCO headset disconnects.
+  */
+
+  def onBluetoothSCOHeadsetDisconnected(h:() => Unit) = {
+    bluetoothSCOHeadsetDisconnectedHandlers ::= h
+    h
+  }
+
+  /**
+   * Run handlers when bluetooth SCO headset disconnects.
+  */
+
+  def bluetoothSCOHeadsetDisconnected() = bluetoothSCOHeadsetDisconnectedHandlers.foreach { f => f() }
+
+  /**
+   * Removes handler from being run when bluetooth SCO headset disconnects.
+  */
+
+  def removeBluetoothSCOHeadsetDisconnected(h:() => Unit) = {
+    bluetoothSCOHeadsetDisconnectedHandlers = bluetoothSCOHeadsetDisconnectedHandlers.filterNot(_ == h)
   }
 
   private var callAnsweredHandlers = List[() => Unit]()

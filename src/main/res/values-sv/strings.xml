@@ -39,8 +39,6 @@
 <string name="speakNotificationsWhenScreenOffTitle">Läs notifieringar även när skärmen är avstängd</string>
 <string name="useBluetoothSCOTitle">Använd Bluetooth SCO</string>
 <string name="managePunctuationSpeechTitle">Hantera interpunktionsuppläsning</string>
-<string name="increaseInCallVolumeTitle">Öka inkommande samtalsvolym</string>
-<string name="increaseInCallVolumeSummary">Använd högre volym under pågående samtal</string>
 <string name="textToSpeechTitle">Text till talinställningar</string>
 
 <string name="alertsTitle">Varningar</string>

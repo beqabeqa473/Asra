@@ -55,12 +55,6 @@
       android:summary="@string/managePunctuationSpeechSummary"/>
 
     <CheckBoxPreference
-      android:key="increaseInCallVolume"
-      android:defaultValue="false"
-      android:title="@string/increaseInCallVolumeTitle"
-      android:summary="@string/increaseInCallVolumeSummary"/>
-
-    <CheckBoxPreference
       android:key="duckNonSpeechAudio"
       android:defaultValue="true"
       android:title="@string/duckNonSpeechAudioTitle"

@@ -53,8 +53,6 @@
   <string name="useBluetoothSCOSummary">off-call Audiosignale über Bluetooth SCO Kopfhörer ausgeben (experimentell!)</string>
   <string name="managePunctuationSpeechTitle">Satzzeichenbehandlung</string>
   <string name="managePunctuationSpeechSummary">Spiel übernimmt die Ausgabe vom Sprachsynthesizer unbehandelter Satzzeichen</string>
-  <string name="increaseInCallVolumeTitle">Lautstärke bei eingehendem Anruf erhöhen</string>
-  <string name="increaseInCallVolumeSummary">Die Sprachausgabe während eines Anrufs lauter stellen</string>
   <string name="duckNonSpeechAudioTitle">konkurierendes Audio absenken</string>
   <string name="duckNonSpeechAudioSummary">Geringere Lautstärke für Musik, Spiele etc. während die Sprachausgabe spricht</string>
   <string name="textToSpeechTitle">Sprachausgabe, Einstellungen</string>

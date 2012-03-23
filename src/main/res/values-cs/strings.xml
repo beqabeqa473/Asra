@@ -48,8 +48,6 @@
 <string name="useBluetoothSCOSummary">Přesměrování zvuku hovoru do Bluetooth SCO sluchátek (experimentální!)</string>
 <string name="managePunctuationSpeechTitle">Řídit vyslovování interpunkčních znamének</string>
 <string name="managePunctuationSpeechSummary">Přiřadit Spielu výslovnost nedefinovaných interpunkčních znamének</string>
-<string name="increaseInCallVolumeTitle">Zvýšit hlasitost v hovoru</string>
-<string name="increaseInCallVolumeSummary">Použít vyšší hlasitost řeči během hovoru</string>
 <string name="textToSpeechTitle">Nastavení převodu textu na řeč</string>
 <string name="textToSpeechSummary">Nastavit rozšířené vlastnosti systému TTS</string>
 

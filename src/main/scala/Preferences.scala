@@ -99,12 +99,6 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
   def managePunctuationSpeech = prefs.getBoolean("managePunctuationSpeech", true)
 
   /**
-   * Indicates whether in-call volume of speech is to be increased.
-  */
-
-  def increaseInCallVolume = prefs.getBoolean("increaseInCallVolume", false)
-
-  /**
    * Indicates whether the talking caller ID is enabled.
   */
 
