@@ -303,22 +303,18 @@ object Scripter {
     }
     cursor.close()
 
+    Context.exit()
     initExternalScripts()
   }
 
   def initExternalScripts() {
-    Context.enter(Scripter.context)
     val spielDir = new File(Environment.getExternalStorageDirectory, "spiel")
     if(!spielDir.isDirectory) spielDir.mkdir
     _scriptsDir = new File(spielDir, "scripts")
     if(!scriptsDir.isDirectory) scriptsDir.mkdir
     observer = new Observer(service, scriptsDir.getPath)
     observer.startWatching()
-        // Load scripts from /spiel/scripts folder on SD card.
-
     userScripts.foreach(_.run())
-
-    Context.exit()
   }
 
   def onDestroy = {
