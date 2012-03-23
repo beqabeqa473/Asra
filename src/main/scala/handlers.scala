@@ -555,13 +555,7 @@ class Handlers {
 
   class ListView extends Handler("android.widget.ListView") {
 
-    onViewFocused { e:AccessibilityEvent =>
-      if(e.getItemCount != 1)
-        speak(Handler.context.getString(R.string.listWithItems, e.getItemCount.toString))
-      else if(e.getItemCount == 1)
-        speak(Handler.context.getString(R.string.listWithItem))
-      true
-    }
+    onViewFocused { e:AccessibilityEvent => true }
 
     onViewHoverEnter { e:AccessibilityEvent => true }
 
@@ -615,6 +609,10 @@ class Handlers {
 
   }
 
+  class RatingBar extends Handler("android.widget.RatingBar") {
+    onViewSelected { e:AccessibilityEvent => true }
+  }
+
   class RelativeLayout extends Handler("android.widget.RelativeLayout") {
 
     onViewFocused { e:AccessibilityEvent =>
@@ -628,17 +626,13 @@ class Handlers {
 
   }
 
-  /*class ScrollView extends Handler("android.widget.ScrollView") {
+  class ScrollView extends Handler("android.widget.ScrollView") {
 
-    onViewScrolled { e:AccessibilityEvent =>
-      val maxX:Double = if(e.getMaxScrollX == 0) 1 else e.getMaxScrollX
-      val maxY:Double = if(e.getMaxScrollY == 0) 1 else e.getMaxScrollY
-      val percentage = (((e.getScrollX/maxX)+(e.getScrollY/maxY))*100)
-      TTS.presentPercentage(percentage)
-      true
-    }
+    onViewFocused { e:AccessibilityEvent => true }
 
-  }*/
+    onViewHoverEnter { e:AccessibilityEvent => true }
+
+  }
 
   class SearchBox extends Handler("android.app.SearchDialog$SearchAutoComplete") {
     onViewFocused { e:AccessibilityEvent =>
