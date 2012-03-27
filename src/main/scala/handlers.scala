@@ -544,9 +544,10 @@ class Handlers {
   class EditText extends Handler("android.widget.EditText") {
 
     onViewFocused { e:AccessibilityEvent =>
-      if(e.isPassword)
+      if(e.isPassword) {
         speak(Handler.context.getString(R.string.password))
-      else {
+        speak(Handler.context.getString(R.string.editText), false)
+      } else {
         speak(utterancesFor(e, true, guessLabelIfContentDescriptionMissing = true), false)
         speak(Handler.context.getString(R.string.editText), false)
       }
