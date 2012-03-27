@@ -219,7 +219,8 @@ object Handler {
               if(test(o, target))
                 continue = continue && dispatchTo(v._1._1, v._1._2)
             } catch {
-              case _ =>
+              case e:ClassNotFoundException =>
+              case e => Log.e("spielcheck", "Error dispatching to handler:", e)
             }
           }
         }
@@ -378,8 +379,11 @@ class Handler(pkg:String, cls:String) {
     var rv = List[String]()
     val text = Option(e.getText.toList).getOrElse(Nil)
     if(e.isChecked && !text.contains(context.getString(R.string.checked))) rv ::= context.getString(R.string.checked)
-    if(text.size == 0 && e.getContentDescription == null && addBlank)
+    var blankAdded = false
+    if(text.size == 0 && e.getContentDescription == null && addBlank) {
+      blankAdded = true
       rv ::= ""
+    }
     rv :::= text.filter(_ != null).map(_.toString)
     if(e.getContentDescription != null && e.getContentDescription != "")
       rv match {
@@ -387,14 +391,24 @@ class Handler(pkg:String, cls:String) {
         case _ =>
           rv ::= e.getContentDescription.toString
       }
+    def removeBlank() = if(blankAdded) rv = rv.tail
     if(VERSION.SDK_INT >= 14) {
       if(guessLabelIfTextMissing && e.getText.length == 0)
-        rv :::= guessLabelFor(e).map(List(_)).getOrElse(Nil)
-      if(guessLabelIfContentDescriptionMissing && e.getContentDescription == null)
-        rv :::= guessLabelFor(e).map(List(_)).getOrElse(Nil)
-      guessLabelIfTextShorterThan.foreach { v =>
+        rv :::= guessLabelFor(e).map { v =>
+          removeBlank()
+          List(v)
+        }.getOrElse(Nil)
+      else if(guessLabelIfContentDescriptionMissing && e.getContentDescription == null)
+        rv :::= guessLabelFor(e).map { v =>
+          removeBlank()
+          List(v)
+        }.getOrElse(Nil)
+      else guessLabelIfTextShorterThan.foreach { v =>
         if(text.length < v)
-          rv :::= guessLabelFor(e).map(List(_)).getOrElse(Nil)
+          rv :::= guessLabelFor(e).map { v =>
+            removeBlank()
+            List(v)
+          }.getOrElse(Nil)
       }
     }
     rv
@@ -674,8 +688,9 @@ class Handlers {
         if(t == "")
           <span/>
         else
-          utils.HtmlParser(t.replace("&nbsp;", " "))
+          utils.HtmlParser(t.replace("&nbsp;", " ").replace("&amp;", " "))
       }.getOrElse(<span/>)
+      Log.d("spielcheck", "XML: "+x)
       speak(textFor(x))
     }
 
