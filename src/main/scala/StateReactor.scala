@@ -99,8 +99,6 @@ object StateReactor {
 
   private class btReceiver extends BroadcastReceiver {
 
-    Log.d("spielcheck", "Here: "+audioManager.isBluetoothScoAvailableOffCall)
-
     if(audioManager.isBluetoothScoAvailableOffCall) {
       val f = new IntentFilter
       f.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_CHANGED)
@@ -130,11 +128,11 @@ object StateReactor {
       } else if(state == AudioManager.SCO_AUDIO_STATE_ERROR) {
         Log.d("spielcheck", "Error")
         cleanup()
+      } else if(usingSco && wasConnected && state == AudioManager.SCO_AUDIO_STATE_DISCONNECTED) {
+        audioManager.startBluetoothSco()
       } else if(wasConnected) {
-        Log.d("spielcheck", "Something else1")
         cleanup()
-      } else
-        Log.d("spielcheck", "Something else2")
+      }
     }
 
   }
