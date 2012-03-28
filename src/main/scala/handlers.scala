@@ -144,6 +144,9 @@ object Handler {
 
   def process(e:AccessibilityEvent, eventType:Option[Int] = None) {
 
+    if(!StateReactor.screenOn_? && e.getEventType != TYPE_NOTIFICATION_STATE_CHANGED)
+      return
+
     if(e == null || e.getClassName == null || e.getPackageName == null)
       return
 
