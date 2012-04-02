@@ -127,7 +127,13 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   }
 
   private def abandonFocus() {
-    audioManager.foreach(_.abandonAudioFocus(this))
+    audioManager.foreach { a =>
+      actor {
+        Thread.sleep(200)
+        if(!tts.isSpeaking)
+          a.abandonAudioFocus(this)
+      }
+    }
   }
 
   def onUtteranceCompleted(id:String) {
