@@ -381,7 +381,11 @@ class Handler(pkg:String, cls:String) {
   protected def utterancesFor(e:AccessibilityEvent, addBlank:Boolean = true, guessLabelIfTextMissing:Boolean = false, guessLabelIfContentDescriptionMissing:Boolean = false, guessLabelIfTextShorterThan:Option[Int] = None):List[String] = {
     var rv = List[String]()
     val text = Option(e.getText.toList).getOrElse(Nil)
-    if(e.isChecked && !text.contains(context.getString(R.string.checked))) rv ::= context.getString(R.string.checked)
+    if(
+      e.isChecked &&
+      List(R.string.checked, R.string.selected).map(context.getString(_)).map(!text.contains(_)).toSet == Set(false)
+    )
+      rv ::= context.getString(R.string.checked)
     var blankAdded = false
     if(text.size == 0 && e.getContentDescription == null && addBlank) {
       blankAdded = true
