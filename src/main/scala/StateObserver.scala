@@ -89,7 +89,7 @@ object StateObserver {
       val device = i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE).asInstanceOf[BluetoothDevice]
       device.getBluetoothClass.getDeviceClass match {
         case BluetoothClass.Device.AUDIO_VIDEO_WEARABLE_HEADSET => actor {
-          Thread.sleep(10000)
+          Thread.sleep(5000)
           if(!audioManager.isBluetoothA2dpOn)
             bluetoothSCOHeadsetConnected()
         }
