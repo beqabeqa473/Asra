@@ -109,11 +109,15 @@ object StateReactor {
 
     private var wasConnected = false
 
-    def cleanup() {
-      if(!inCall) audioManager.setMode(AudioManager.MODE_NORMAL)
-      audioManager.stopBluetoothSco()
+    private def cleanupVars() {
       usingSco = false
       wasConnected = false
+    }
+
+    private def cleanup() {
+      if(!inCall) audioManager.setMode(AudioManager.MODE_NORMAL)
+      audioManager.stopBluetoothSco()
+      cleanupVars()
       service.unregisterReceiver(this)
     }
 
@@ -127,8 +131,9 @@ object StateReactor {
         wasConnected = true
       } else if(state == AudioManager.SCO_AUDIO_STATE_ERROR) {
         Log.d("spielcheck", "Error")
-        cleanup()
+        cleanupVars()
       } else if(usingSco && wasConnected && state == AudioManager.SCO_AUDIO_STATE_DISCONNECTED) {
+        cleanup()
         audioManager.startBluetoothSco()
       } else if(wasConnected) {
         cleanup()
