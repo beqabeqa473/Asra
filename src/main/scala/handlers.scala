@@ -829,7 +829,13 @@ class Handlers {
               to = from
               from = tmp
             }
-            val selection = t.subSequence(from, to).toString
+            val selection = try {
+              t.subSequence(from, to).toString
+            } catch {
+              case e =>
+              Log.d("spiel", "Error determining selection", e)
+                ""
+            }
             (for(
               osf <- oldSelectionFrom;
               ost <- oldSelectionTo;
