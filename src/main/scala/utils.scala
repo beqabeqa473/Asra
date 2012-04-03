@@ -1,48 +1,27 @@
 package info.spielproject.spiel
 package utils
 
+import android.util.Log
 
 object HtmlParser {
 
-  import xml._
-  import factory._
-  import parsing._
+  import xml.XML
+  import java.io.{ByteArrayInputStream, ByteArrayOutputStream, OutputStreamWriter}
+  import org.ccil.cowan.tagsoup._
+  import org.xml.sax.InputSource
 
-  import org.ccil.cowan.tagsoup.jaxp.SAXFactoryImpl
-
-  trait HTMLFactoryAdapter extends FactoryAdapter {
-
-    val emptyElements = Set("area", "base", "br", "col", "hr", "img", "input", "link", "meta", "param")
-
-    def nodeContainsText(localName: String) = !(emptyElements contains localName)
+  def apply(html:String) = {
+    val parser = new Parser()
+    parser.setProperty(Parser.schemaProperty, new HTMLSchema())
+    val input = new InputSource(new ByteArrayInputStream(html.getBytes))
+    val output = new ByteArrayOutputStream()
+    val writer = new OutputStreamWriter(output)
+    val xmlWriter = new XMLWriter(writer)
+    xmlWriter.setOutputProperty(XMLWriter.OMIT_XML_DECLARATION, "yes")
+    parser.setContentHandler(xmlWriter)
+    parser.parse(input)
+    Log.d("spielcheck", "HTML: "+html)
+    XML.loadString(new String(output.toByteArray))
   }
-
-  class TagSoupFactoryAdapter extends HTMLFactoryAdapter with NodeFactory[Elem] {
-
-    protected def create(pre: String, label: String, attrs: MetaData, scpe: NamespaceBinding, children: Seq[Node]): Elem =
-      Elem( pre, label, attrs, scpe, children :_* )
-
-    def createNode(pre: String, label: String, attrs: MetaData, scpe: NamespaceBinding, children: List[Node] ): Elem =
-      Elem( pre, label, attrs, scpe, children:_* )
-
-    def createText(text: String) = Text(text)
-
-    def createProcInstr(target: String, data: String) = makeProcInstr(target, data)
-
-    def loadXML(source : InputSource) : Node = {
-      val reader = getReader()
-      reader.setContentHandler(this)
-      scopeStack.push(TopScope)
-      reader.parse(source)
-      scopeStack.pop
-      rootElem
-    }
-
-    private val parserFactory = new SAXFactoryImpl
-    parserFactory.setNamespaceAware(true)
-    def getReader() = parserFactory.newSAXParser().getXMLReader()
-  }
-
-  def apply(str:String) = new TagSoupFactoryAdapter().loadString(str)
 
 }

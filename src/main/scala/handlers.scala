@@ -696,7 +696,7 @@ class Handlers {
         if(t == "")
           <span/>
         else
-          utils.HtmlParser(t.replace("&nbsp;", " ").replace("&amp;", " "))
+          utils.HtmlParser(t)
       }.getOrElse(<span/>)
       Log.d("spielcheck", "XML: "+x)
       speak(textFor(x))
