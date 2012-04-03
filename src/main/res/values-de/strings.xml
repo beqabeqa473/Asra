@@ -28,8 +28,6 @@
   <string name="image">Bild</string>
   <string name="labeledImage">%1$s: Bild</string>
   <string name="listItem">%1$s: %2$s von %3$s</string>
-  <string name="listWithItem">Liste mit 1 Eintrag</string>
-  <string name="listWithItems">Liste mit %1$s Einträgen</string>
   <string name="menu">Menü</string>
   <string name="notChecked">nicht aktiviert</string>
   <string name="password">Passwort</string>
