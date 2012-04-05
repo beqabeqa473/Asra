@@ -838,7 +838,7 @@ class Handlers {
           else
             e.getToIndex
           val width = to-from
-          if(from >= 0 && to >= 0) {
+          if(from >= 0 && to >= 0 && e.getSource.isFocused) {
             if(from > to) {
               val tmp = to
               to = from
