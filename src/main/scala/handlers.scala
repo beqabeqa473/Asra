@@ -695,7 +695,7 @@ class Handlers {
       def recurse(nodes:List[xml.Node]):List[String] = nodes match {
         case Nil => Nil
         case hd :: tl if(name(hd) == "a") =>
-          hd.text :: Handler.context.getString(R.string.link) :: recurse(tl.tail)
+          hd.text :: Handler.context.getString(R.string.link) :: Nil
         case hd :: tl if(hd.descendant.size == 0) =>
           Log.d("spielcheck", "Hd: "+hd.text)
           hd.text :: recurse(tl)
