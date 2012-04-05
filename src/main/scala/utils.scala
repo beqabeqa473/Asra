@@ -20,8 +20,8 @@ object HtmlParser {
     xmlWriter.setOutputProperty(XMLWriter.OMIT_XML_DECLARATION, "yes")
     parser.setContentHandler(xmlWriter)
     parser.parse(input)
-    Log.d("spielcheck", "HTML: "+html)
-    XML.loadString(new String(output.toByteArray))
+    val x = XML.loadString(new String(output.toByteArray))
+    x
   }
 
 }
