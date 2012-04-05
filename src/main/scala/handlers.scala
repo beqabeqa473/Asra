@@ -620,9 +620,9 @@ class Handlers {
 
     onViewClicked { e:AccessibilityEvent =>
       if(e.isChecked)
-        speak(Handler.context.getString(R.string.checked))
+        speak(Handler.context.getString(R.string.selected))
       else
-        speak(Handler.context.getString(R.string.notChecked))
+        speak(Handler.context.getString(R.string.notSelected))
     }
 
     onViewFocused { e:AccessibilityEvent =>
