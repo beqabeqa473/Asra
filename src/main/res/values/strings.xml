@@ -28,6 +28,7 @@
   <string name="items">%1$s: %2$s items</string>
   <string name="image">image</string>
   <string name="labeledImage">%1$s: image</string>
+  <string name="link">link</string>
   <string name="listItem">%1$s: %2$s of %3$s</string>
   <string name="menu">menu</string>
   <string name="notChecked">not checked</string>

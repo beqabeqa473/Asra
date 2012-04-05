@@ -687,8 +687,23 @@ class Handlers {
 
   class WebView extends Handler("android.webkit.WebView") {
 
-    def textFor(x:xml.Node) =
-      x.descendant.filter(_.descendant.size == 0).map(_.text).mkString(" ")
+    private def utterancesFor(x:xml.Node):List[String] = {
+
+      def name(n:xml.Node):String =
+        n.nameToString(new StringBuilder()).toString
+
+      def recurse(nodes:List[xml.Node]):List[String] = nodes match {
+        case Nil => Nil
+        case hd :: tl if(name(hd) == "a") =>
+          hd.text :: Handler.context.getString(R.string.link) :: recurse(tl.tail)
+        case hd :: tl if(hd.descendant.size == 0) =>
+          Log.d("spielcheck", "Hd: "+hd.text)
+          hd.text :: recurse(tl)
+        case hd :: tl => recurse(tl)
+      }
+
+      recurse(x.descendant)
+    }
 
     onViewSelected { e:AccessibilityEvent =>
       val x = Option(e.getText.map(v => if(v == null) "<span/>" else v)
@@ -699,7 +714,7 @@ class Handlers {
           utils.HtmlParser(t)
       }.getOrElse(<span/>)
       Log.d("spielcheck", "XML: "+x)
-      speak(textFor(x))
+      speak(utterancesFor(x))
     }
 
   }
