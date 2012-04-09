@@ -667,6 +667,12 @@ class Handlers {
   }
 
   class ViewGroup extends Handler("android.view.ViewGroup") {
+
+    onViewFocused { e:AccessibilityEvent =>
+      Log.d("spielcheck", "Utterances: "+utterancesFor(e, true))
+      speak(utterancesFor(e))
+    }
+
     onViewHoverEnter { e:AccessibilityEvent =>
       Option(e.getSource).map { source=>
         Log.d("spielcheck", "Event: "+e)
@@ -683,6 +689,7 @@ class Handlers {
         else true
       }.getOrElse(true)
     }
+
   }
 
   class WebView extends Handler("android.webkit.WebView") {
