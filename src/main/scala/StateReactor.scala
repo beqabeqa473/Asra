@@ -63,6 +63,8 @@ object StateReactor {
   var callerIDRepeaterID = ""
 
   onCallRinging { number =>
+    if(usingSco)
+      btReceiver.foreach(_.connect())
     if(Preferences.talkingCallerID)
       callerIDRepeaterID = TTS.speakEvery(3, number)
   }
@@ -90,24 +92,29 @@ object StateReactor {
       actor {
         // Wait until dialer sets audio mode so we can alter it for SCO reconnection.
         Thread.sleep(1000)
-        startBluetoothSCO()
+        btReceiver.foreach(_.connect())
       }
     }
   }
 
   private var usingSco = false
 
-  private class btReceiver extends BroadcastReceiver {
-
-    if(audioManager.isBluetoothScoAvailableOffCall) {
-      val f = new IntentFilter
-      f.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_CHANGED)
-      f.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED)
-      service.registerReceiver(this, f)
-      audioManager.startBluetoothSco()
-    }
+  private class BTReceiver extends BroadcastReceiver {
 
     private var wasConnected = false
+
+    connect()
+
+    def connect() {
+      cleanupState()
+      if(audioManager.isBluetoothScoAvailableOffCall) {
+        val f = new IntentFilter
+        f.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_CHANGED)
+        f.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED)
+        service.registerReceiver(this, f)
+        audioManager.startBluetoothSco()
+      }
+    }
 
     private def cleanupState() {
       usingSco = false
@@ -140,11 +147,33 @@ object StateReactor {
       }
     }
 
+    def disconnect() {
+      audioManager.stopBluetoothSco()
+      cleanup()
+    }
+
   }
 
-  def startBluetoothSCO() = if(Preferences.useBluetoothSCO) new btReceiver()
+  private var btReceiver:Option[BTReceiver] = None
+
+  private def startBluetoothSCO() {
+    if(Preferences.useBluetoothSCO) {
+      val r = new BTReceiver()
+      r.connect()
+      btReceiver = Some(r)
+    }
+  }
+
+  private def stopBluetoothSCO() {
+    btReceiver.foreach { r =>
+      r.disconnect()
+      btReceiver = None
+    }
+  }
 
   onBluetoothSCOHeadsetConnected { () => startBluetoothSCO() }
+
+  onBluetoothSCOHeadsetDisconnected { () => stopBluetoothSCO() }
 
   onMediaMounted { path =>
     if(path == Uri.fromFile(Environment.getExternalStorageDirectory)) {
