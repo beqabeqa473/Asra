@@ -703,7 +703,7 @@ class Handlers {
         case Nil => Nil
         case hd :: tl if(name(hd) == "a") =>
           hd.text :: Handler.context.getString(R.string.link) :: Nil
-        case hd :: tl if(hd.descendant.size == 0) =>
+        case hd :: tl if(hd.descendant.size == 0 && hd.text != "") =>
           Log.d("spielcheck", "Hd: "+hd.text)
           hd.text :: recurse(tl)
         case hd :: tl => recurse(tl)
