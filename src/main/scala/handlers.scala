@@ -146,13 +146,13 @@ object Handler {
 
   private var lastEnteredSource:AccessibilityNodeInfo = null
 
-  def process(e:AccessibilityEvent, eventType:Option[Int] = None) {
+  def process(e:AccessibilityEvent, eventType:Option[Int] = None):Boolean = {
 
     if(!StateReactor.screenOn_? && e.getEventType != TYPE_NOTIFICATION_STATE_CHANGED)
-      return
+      return true
 
     if(e == null || e.getClassName == null || e.getPackageName == null)
-      return
+      return true
 
     _lastEvent = e
     if(eventType == None && Preferences.viewRecentEvents) {
@@ -240,6 +240,7 @@ object Handler {
     if(!nextShouldNotInterruptCalled)
       myNextShouldNotInterrupt = false
 
+    true
   }
 
   /**
@@ -518,7 +519,6 @@ class Handlers {
     onViewHoverEnter { e:AccessibilityEvent =>
       shortVibration()
       Handler.process(e, Some(TYPE_VIEW_FOCUSED))
-      true
     }
 
   }
@@ -777,7 +777,6 @@ class Handlers {
       shortVibration()
       stopSpeaking()
       Handler.process(e, Some(TYPE_VIEW_FOCUSED))
-      true
     }
 
     onViewHoverExit { e:AccessibilityEvent => shortVibration() }
