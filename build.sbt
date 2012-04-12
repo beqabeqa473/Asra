@@ -1,18 +1,22 @@
 import AndroidKeys._
 
-name := "Spiel"
-
-version := "1.2.0"
-
-scalaVersion := "2.8.1"
-
-platformName in Android := "android-15"
-
 AndroidProject.androidSettings
+
+AndroidManifestGenerator.settings
 
 TypedResources.settings
 
 AndroidMarketPublish.settings
+
+name := "Spiel"
+
+version := "2.0.0"
+
+versionCode := 9
+
+scalaVersion := "2.8.1"
+
+platformName in Android := "android-15"
 
 keystorePath in Android := Path.userHome / ".keystore" / "spiel.keystore"
 
