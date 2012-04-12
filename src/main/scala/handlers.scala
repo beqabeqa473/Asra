@@ -7,6 +7,7 @@ import collection.mutable.Map
 import android.app.{ActivityManager, Service}
 import android.content.Context
 import android.os.Build.VERSION
+import android.os.Vibrator
 import android.util.Log
 import android.view.accessibility.{AccessibilityEvent, AccessibilityNodeInfo}
 import AccessibilityEvent._
@@ -116,6 +117,8 @@ object Handler {
 
   private[handlers] var context:Context = null
 
+  private var vibrator:Vibrator = null
+
   /**
    * Initialize handlers for the given <code>Context</code>.
   */
@@ -132,6 +135,7 @@ object Handler {
           cons.newInstance(h)
       } catch { case _ => }
     }
+    vibrator = c.getSystemService(Context.VIBRATOR_SERVICE).asInstanceOf[Vibrator]
   }
 
   def onDestroy {
@@ -321,6 +325,13 @@ class Handler(pkg:String, cls:String) {
     true
   }
 
+  def vibrate(millis:Long) = {
+    vibrator.vibrate(millis)
+    true
+  }
+
+  def shortVibration() = vibrate(15)
+
   /**
    * Indicates that the next <code>AccessibilityEvent</code> should not interrupt speech.
   */
@@ -505,6 +516,7 @@ class Handlers {
     }
 
     onViewHoverEnter { e:AccessibilityEvent =>
+      shortVibration()
       Handler.process(e, Some(TYPE_VIEW_FOCUSED))
       true
     }
@@ -579,7 +591,7 @@ class Handlers {
 
     onViewFocused { e:AccessibilityEvent => true }
 
-    onViewHoverEnter { e:AccessibilityEvent => true }
+    onViewHoverEnter { e:AccessibilityEvent => shortVibration() }
 
     onViewSelected { e:AccessibilityEvent =>
       if(e.getCurrentItemIndex >= 0)
@@ -652,7 +664,7 @@ class Handlers {
 
     onViewFocused { e:AccessibilityEvent => true }
 
-    onViewHoverEnter { e:AccessibilityEvent => true }
+    onViewHoverEnter { e:AccessibilityEvent => shortVibration() }
 
   }
 
@@ -674,6 +686,7 @@ class Handlers {
     }
 
     onViewHoverEnter { e:AccessibilityEvent =>
+      shortVibration()
       Option(e.getSource).map { source=>
         Log.d("spielcheck", "Event: "+e)
         Log.d("spielcheck", "Source: "+source)
@@ -761,12 +774,13 @@ class Handlers {
     }
 
     onViewHoverEnter { e:AccessibilityEvent =>
+      shortVibration()
       stopSpeaking()
       Handler.process(e, Some(TYPE_VIEW_FOCUSED))
       true
     }
 
-    onViewHoverExit { e:AccessibilityEvent => true }
+    onViewHoverExit { e:AccessibilityEvent => shortVibration() }
 
     onViewLongClicked { e:AccessibilityEvent => true }
 
