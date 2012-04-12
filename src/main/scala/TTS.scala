@@ -25,7 +25,9 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   private var pool:SoundPool = null
 
-  private var tickID:Int = 0
+  object Sounds extends Enumeration {
+    var tick = 0
+  }
 
   /**
    * Initialize TTS based on specified <code>Service</code>.
@@ -35,7 +37,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     service = s
     audioManager = Some(service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager])
     pool = new SoundPool(8, AudioManager.STREAM_MUSIC, 0)
-    tickID = pool.load(service, R.raw.tick, 1)
+    Sounds.tick = pool.load(service, R.raw.tick, 1)
     init()
   }
 
@@ -236,13 +238,17 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     }
   }
 
+  def play(id:Int, pitch:Double = 1d) {
+    pool.play(id, 1f, 1f, 0, 0, pitch.toFloat)
+  }
+
   /**
    * Play a tick.
   */
 
   def tick(pitchScale:Option[Double] = None) {
     pitchScale.map { s =>
-      pool.play(tickID, 1f, 1f, 0, 0, s.toFloat)
+      play(Sounds.tick, s)
     }.getOrElse(tts.playEarcon("tick", 0, null))
   }
 
