@@ -851,7 +851,7 @@ class Handlers {
             speak(e.getBeforeText.toString.substring(start, end), true)
           }
         else
-          speak(utterancesFor(e), false)
+          speak(utterancesFor(e), true)
       }
       true
     }
