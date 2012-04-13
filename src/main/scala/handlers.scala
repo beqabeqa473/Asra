@@ -395,9 +395,12 @@ class Handler(pkg:String, cls:String) {
    * adding a blank utterance.
   */
 
-  protected def utterancesFor(e:AccessibilityEvent, addBlank:Boolean = true, guessLabelIfTextMissing:Boolean = false, guessLabelIfContentDescriptionMissing:Boolean = false, guessLabelIfTextShorterThan:Option[Int] = None):List[String] = {
+  protected def utterancesFor(e:AccessibilityEvent, addBlank:Boolean = true, stripBlanks:Boolean = false, guessLabelIfTextMissing:Boolean = false, guessLabelIfContentDescriptionMissing:Boolean = false, guessLabelIfTextShorterThan:Option[Int] = None):List[String] = {
     var rv = List[String]()
-    val text = Option(e.getText.toList).getOrElse(Nil)
+    val txt = Option(e.getText).map(_.toList).getOrElse(Nil).filterNot(_ == null).map(_.toString).mkString.split("\n").toList
+    val text = if(stripBlanks)
+      txt.filterNot(_.trim.length == 0)
+    else txt
     if(
       e.isChecked &&
       List(R.string.checked, R.string.selected).map(context.getString(_)).map(!text.contains(_)).toSet == Set(false)
@@ -408,7 +411,7 @@ class Handler(pkg:String, cls:String) {
       blankAdded = true
       rv ::= ""
     }
-    rv :::= text.filter(_ != null).map(_.toString)
+    rv :::= text
     if(e.getContentDescription != null && e.getContentDescription != "")
       rv match {
         case hd :: Nil if(hd == e.getContentDescription) =>
@@ -533,7 +536,7 @@ class Handlers {
 
   class AlertDialog extends Handler("android.app.AlertDialog") {
     onWindowStateChanged { e:AccessibilityEvent =>
-      speak(Handler.context.getString(R.string.alert, utterancesFor(e).mkString(": ")), true)
+      speak(Handler.context.getString(R.string.alert, utterancesFor(e, stripBlanks=true).mkString(": ")), true)
       nextShouldNotInterrupt()
     }
   }
@@ -682,12 +685,12 @@ class Handlers {
   }
 
   class TextView extends Handler("android.widget.TextView") {
-    onViewFocused { e:AccessibilityEvent => speak(utterancesFor(e)) }
+    onViewFocused { e:AccessibilityEvent => speak(utterancesFor(e, stripBlanks=true)) }
   }
 
   class ViewGroup extends Handler("android.view.ViewGroup") {
 
-    onViewFocused { e:AccessibilityEvent => speak(utterancesFor(e)) }
+    onViewFocused { e:AccessibilityEvent => speak(utterancesFor(e, stripBlanks=true)) }
 
     onViewHoverEnter { e:AccessibilityEvent =>
       Option(e.getSource).map { source=>
@@ -778,7 +781,7 @@ class Handlers {
     onViewClicked { e:AccessibilityEvent => true }
 
     onViewFocused { e:AccessibilityEvent =>
-      val utterances = utterancesFor(e, addBlank=false) match {
+      val utterances = utterancesFor(e, addBlank=false, stripBlanks=true) match {
         case Nil if(e.getEventType != TYPE_VIEW_HOVER_ENTER) => 
           e.getClassName.toString.split("\\.").last :: Nil
         case u => u
