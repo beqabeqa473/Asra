@@ -171,7 +171,7 @@ object Handler {
     var alreadyCalled = List[Handler]()
 
     // Call the specified handler, setting state appropriately.
-    def dispatchTo(pkg:String, cls:String):Boolean = handlers.get(pkg -> cls) match {
+    def dispatchTo(pkg:String, cls:String, shouldCache:Boolean=true):Boolean = handlers.get(pkg -> cls) match {
       case Some(h) =>
         if(alreadyCalled.contains(h)) {
           Log.d("spiel", "Already called "+h.getClass.getName+", skipping.")
@@ -182,7 +182,7 @@ object Handler {
           // If we don't already have a handler for this exact package and 
           // class, then associate the one we're calling with it. This 
           // allows for similar AccessibilityEvents to skip several dispatch steps
-          if(handlers.get((e.getPackageName.toString, e.getClassName.toString)) == None) {
+          if(shouldCache && handlers.get((e.getPackageName.toString, e.getClassName.toString)) == None) {
             Log.d("spiel", "Caching "+h.getClass.getName+" for "+e.getPackageName+"/"+e.getClassName)
             handlers(e.getPackageName.toString -> e.getClassName.toString) = h
           }
@@ -194,7 +194,7 @@ object Handler {
     // First, run the Always handler and ignore its return value. This 
     // mandates certain behavior types for all events but prevents those 
     // actions from blocking others.
-    dispatchTo("", "*")
+    dispatchTo("", "*", shouldCache=false)
 
     // Let's check if there's a handler for this exact package and 
     // class. If one was cached above then dispatch ends here.
