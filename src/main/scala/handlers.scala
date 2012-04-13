@@ -397,7 +397,7 @@ class Handler(pkg:String, cls:String) {
 
   protected def utterancesFor(e:AccessibilityEvent, addBlank:Boolean = true, stripBlanks:Boolean = false, guessLabelIfTextMissing:Boolean = false, guessLabelIfContentDescriptionMissing:Boolean = false, guessLabelIfTextShorterThan:Option[Int] = None):List[String] = {
     var rv = List[String]()
-    val txt = Option(e.getText).map(_.toList).getOrElse(Nil).filterNot(_ == null).map(_.toString).mkString.split("\n").toList
+    val txt = Option(e.getText).map(_.toList).getOrElse(Nil).filterNot(_ == null).map(_.toString).mkString("\n").split("\n").toList
     val text = if(stripBlanks)
       txt.filterNot(_.trim.length == 0)
     else txt
@@ -521,7 +521,7 @@ class Handlers {
     self: Handler =>
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(utterancesFor(e) ::: ("Menu item" :: Nil))
+      speak(utterancesFor(e, stripBlanks=true) ::: ("Menu item" :: Nil))
     }
 
     onViewHoverEnter { e:AccessibilityEvent => Handler.process(e, Some(TYPE_VIEW_FOCUSED)) }
@@ -690,7 +690,7 @@ class Handlers {
 
   class ViewGroup extends Handler("android.view.ViewGroup") {
 
-    onViewFocused { e:AccessibilityEvent => speak(utterancesFor(e, stripBlanks=true)) }
+    onViewFocused { e:AccessibilityEvent => speak(utterancesFor(e, addBlank=false, stripBlanks=true)) }
 
     onViewHoverEnter { e:AccessibilityEvent =>
       Option(e.getSource).map { source=>
@@ -703,8 +703,8 @@ class Handlers {
         } else if(source.getChildCount == 1 || interactables(source).size == 1) {
           Log.d("spielcheck", "Source has "+source.getChildCount+" children and "+interactables(source).size+" interactables, presenting.")
           false
-        } else if(interactables(source).size == 0 && utterancesFor(e, addBlank=false) != Nil)
-          speak(utterancesFor(e, addBlank=false))
+        } else if(interactables(source).size == 0 && utterancesFor(e, addBlank=false, stripBlanks=true) != Nil)
+          speak(utterancesFor(e, addBlank=false, stripBlanks=true))
         else true
       }.getOrElse(true)
     }
@@ -797,7 +797,7 @@ class Handlers {
     onViewLongClicked { e:AccessibilityEvent => true }
 
     onViewScrolled { e:AccessibilityEvent =>
-      val utterances = utterancesFor(e, addBlank=false)
+      val utterances = utterancesFor(e, addBlank=false, stripBlanks=true)
       if(!utterances.isEmpty) {
         speak(utterances)
         nextShouldNotInterrupt()
