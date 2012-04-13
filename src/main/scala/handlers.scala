@@ -772,9 +772,7 @@ class Handlers {
       true
     }
 
-    onTouchExplorationGestureEnd { e:AccessibilityEvent =>
-      false
-    }
+    onTouchExplorationGestureEnd { e:AccessibilityEvent => true }
 
     onTouchExplorationGestureStart { e:AccessibilityEvent => stopSpeaking() }
 
