@@ -589,7 +589,12 @@ class Handlers {
 
   class ListView extends Handler("android.widget.ListView") {
 
-    onViewFocused { e:AccessibilityEvent => true }
+    onViewFocused { e:AccessibilityEvent =>
+      val utterances = utterancesFor(e)
+      if(utterances != Nil)
+        speak(Handler.context.getString(R.string.listItem, e.getText.get(0), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
+      true
+    }
 
     onViewHoverEnter { e:AccessibilityEvent => shortVibration() }
 
