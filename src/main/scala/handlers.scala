@@ -499,7 +499,7 @@ class Handler(pkg:String, cls:String) {
 
 trait GenericButtonHandler extends Handler {
   onViewFocused { e:AccessibilityEvent =>
-    val text = utterancesFor(e, false).mkString(": ")
+    val text = utterancesFor(e, addBlank=false).mkString(": ")
     if(text == "")
       speak(Handler.context.getString(R.string.button).toString)
     else
@@ -550,7 +550,7 @@ class Handlers {
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(Handler.context.getString(R.string.checkbox, utterancesFor(e, false, guessLabelIfTextShorterThan = Some(2)).mkString(": ")))
+      speak(Handler.context.getString(R.string.checkbox, utterancesFor(e, addBlank=false, guessLabelIfTextShorterThan = Some(2)).mkString(": ")))
     }
 
   }
@@ -569,7 +569,7 @@ class Handlers {
         speak(Handler.context.getString(R.string.password))
         speak(Handler.context.getString(R.string.editText), false)
       } else {
-        speak(utterancesFor(e, true, guessLabelIfContentDescriptionMissing = true), false)
+        speak(utterancesFor(e, addBlank=true, guessLabelIfContentDescriptionMissing = true), false)
         speak(Handler.context.getString(R.string.editText), false)
       }
       true
@@ -581,7 +581,7 @@ class Handlers {
 
   class ImageView extends Handler("android.widget.ImageView") {
     onViewFocused { e:AccessibilityEvent =>
-      val text = utterancesFor(e, false).mkString(": ")
+      val text = utterancesFor(e, addBlank=false).mkString(": ")
       if(text == "")
         speak(Handler.context.getText(R.string.image).toString)
       else
@@ -682,15 +682,12 @@ class Handlers {
   }
 
   class TextView extends Handler("android.widget.TextView") {
-    onViewFocused { e:AccessibilityEvent => speak(utterancesFor(e, true)) }
+    onViewFocused { e:AccessibilityEvent => speak(utterancesFor(e)) }
   }
 
   class ViewGroup extends Handler("android.view.ViewGroup") {
 
-    onViewFocused { e:AccessibilityEvent =>
-      Log.d("spielcheck", "Utterances: "+utterancesFor(e, true))
-      speak(utterancesFor(e))
-    }
+    onViewFocused { e:AccessibilityEvent => speak(utterancesFor(e)) }
 
     onViewHoverEnter { e:AccessibilityEvent =>
       Option(e.getSource).map { source=>
@@ -703,8 +700,8 @@ class Handlers {
         } else if(source.getChildCount == 1 || interactables(source).size == 1) {
           Log.d("spielcheck", "Source has "+source.getChildCount+" children and "+interactables(source).size+" interactables, presenting.")
           false
-        } else if(interactables(source).size == 0 && utterancesFor(e, false) != Nil)
-          speak(utterancesFor(e, false))
+        } else if(interactables(source).size == 0 && utterancesFor(e, addBlank=false) != Nil)
+          speak(utterancesFor(e, addBlank=false))
         else true
       }.getOrElse(true)
     }
@@ -764,7 +761,7 @@ class Handlers {
   class Default extends Handler {
 
     onNotificationStateChanged { e:AccessibilityEvent =>
-      val utterances = utterancesFor(e, false)
+      val utterances = utterancesFor(e, addBlank=false)
       if(!utterances.isEmpty) {
         nextShouldNotInterrupt()
         speakNotification(utterances)
@@ -781,7 +778,7 @@ class Handlers {
     onViewClicked { e:AccessibilityEvent => true }
 
     onViewFocused { e:AccessibilityEvent =>
-      val utterances = utterancesFor(e, false) match {
+      val utterances = utterancesFor(e, addBlank=false) match {
         case Nil if(e.getEventType != TYPE_VIEW_HOVER_ENTER) => 
           e.getClassName.toString.split("\\.").last :: Nil
         case u => u
@@ -799,7 +796,7 @@ class Handlers {
     onViewLongClicked { e:AccessibilityEvent => true }
 
     onViewScrolled { e:AccessibilityEvent =>
-      val utterances = utterancesFor(e, false)
+      val utterances = utterancesFor(e, addBlank=false)
       if(!utterances.isEmpty) {
         speak(utterancesFor(e))
         nextShouldNotInterrupt()
@@ -808,7 +805,7 @@ class Handlers {
     }
 
     onViewSelected { e:AccessibilityEvent =>
-      val utterances = utterancesFor(e, false)
+      val utterances = utterancesFor(e, addBlank=false)
       if(utterances.length > 0) {
         if(e.getCurrentItemIndex == -1)
           if(e.getItemCount == 1)
