@@ -191,6 +191,11 @@ object Handler {
       case None => true
     }
 
+    // First, run the Always handler and ignore its return value. This 
+    // mandates certain behavior types for all events but prevents those 
+    // actions from blocking others.
+    dispatchTo("", "*")
+
     // Let's check if there's a handler for this exact package and 
     // class. If one was cached above then dispatch ends here.
     var continue = dispatchTo(e.getPackageName.toString, e.getClassName.toString)
@@ -516,10 +521,7 @@ class Handlers {
       speak(utterancesFor(e) ::: ("Menu item" :: Nil))
     }
 
-    onViewHoverEnter { e:AccessibilityEvent =>
-      shortVibration()
-      Handler.process(e, Some(TYPE_VIEW_FOCUSED))
-    }
+    onViewHoverEnter { e:AccessibilityEvent => Handler.process(e, Some(TYPE_VIEW_FOCUSED)) }
 
   }
 
@@ -592,11 +594,13 @@ class Handlers {
     onViewFocused { e:AccessibilityEvent =>
       val utterances = utterancesFor(e)
       if(utterances != Nil)
-        speak(Handler.context.getString(R.string.listItem, e.getText.get(0), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
-      true
+        if(e.getText.size == 1)
+          speak(Handler.context.getString(R.string.listItem, e.getText.get(0), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
+        else
+          false
+      else
+        false
     }
-
-    onViewHoverEnter { e:AccessibilityEvent => shortVibration() }
 
     onViewSelected { e:AccessibilityEvent =>
       if(e.getCurrentItemIndex >= 0)
@@ -669,8 +673,6 @@ class Handlers {
 
     onViewFocused { e:AccessibilityEvent => true }
 
-    onViewHoverEnter { e:AccessibilityEvent => shortVibration() }
-
   }
 
   class SearchBox extends Handler("android.app.SearchDialog$SearchAutoComplete") {
@@ -691,7 +693,6 @@ class Handlers {
     }
 
     onViewHoverEnter { e:AccessibilityEvent =>
-      shortVibration()
       Option(e.getSource).map { source=>
         Log.d("spielcheck", "Event: "+e)
         Log.d("spielcheck", "Source: "+source)
@@ -745,6 +746,18 @@ class Handlers {
   }
 
   /**
+   * This handler is always called, and cannot prevent others from running.
+  */
+
+  class Always extends Handler("*") {
+
+    onViewHoverEnter { e:AccessibilityEvent => shortVibration() }
+
+    onViewHoverExit { e:AccessibilityEvent => shortVibration() }
+
+  }
+
+  /**
    * Default catch-all handler which catches unresolved <code>AccessibilityEvent</code>s.
   */
 
@@ -779,12 +792,9 @@ class Handlers {
     }
 
     onViewHoverEnter { e:AccessibilityEvent =>
-      shortVibration()
       stopSpeaking()
       Handler.process(e, Some(TYPE_VIEW_FOCUSED))
     }
-
-    onViewHoverExit { e:AccessibilityEvent => shortVibration() }
 
     onViewLongClicked { e:AccessibilityEvent => true }
 
