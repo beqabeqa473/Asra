@@ -799,7 +799,7 @@ class Handlers {
     onViewScrolled { e:AccessibilityEvent =>
       val utterances = utterancesFor(e, addBlank=false)
       if(!utterances.isEmpty) {
-        speak(utterancesFor(e))
+        speak(utterances)
         nextShouldNotInterrupt()
       }
       true
