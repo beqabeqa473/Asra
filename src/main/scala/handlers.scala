@@ -764,7 +764,7 @@ class Handlers {
   class Default extends Handler {
 
     onNotificationStateChanged { e:AccessibilityEvent =>
-      val utterances = utterancesFor(e, addBlank=false)
+      val utterances = utterancesFor(e, addBlank=false, stripBlanks=true)
       if(!utterances.isEmpty) {
         nextShouldNotInterrupt()
         speakNotification(utterances)
