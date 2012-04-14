@@ -690,7 +690,7 @@ class Handlers {
 
   class ViewGroup extends Handler("android.view.ViewGroup") {
 
-    onViewFocused { e:AccessibilityEvent => speak(utterancesFor(e, addBlank=false, stripBlanks=true)) }
+    onViewFocused { e:AccessibilityEvent => speak(utterancesFor(e, stripBlanks=true)) }
 
     onViewHoverEnter { e:AccessibilityEvent =>
       Option(e.getSource).map { source=>
@@ -751,7 +751,10 @@ class Handlers {
 
   class Always extends Handler("*") {
 
-    onViewHoverEnter { e:AccessibilityEvent => shortVibration() }
+    onViewHoverEnter { e:AccessibilityEvent =>
+      stopSpeaking()
+      shortVibration()
+    }
 
     onViewHoverExit { e:AccessibilityEvent => shortVibration() }
 
@@ -789,10 +792,7 @@ class Handlers {
       true
     }
 
-    onViewHoverEnter { e:AccessibilityEvent =>
-      stopSpeaking()
-      Handler.process(e, Some(TYPE_VIEW_FOCUSED))
-    }
+    onViewHoverEnter { e:AccessibilityEvent => Handler.process(e, Some(TYPE_VIEW_FOCUSED)) }
 
     onViewLongClicked { e:AccessibilityEvent => true }
 
