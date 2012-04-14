@@ -62,8 +62,7 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
     try {
       prefs.getString("rateScale", "1").toFloat
     } catch {
-      case _ =>
-        resetFloatPreference("rateScale")
+      case _ => resetFloatPreference("rateScale")
     }
   }
 
@@ -75,8 +74,7 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
     try {
       prefs.getString("pitchScale", "1").toFloat
     } catch {
-      case _ =>
-        resetFloatPreference("pitchScale")
+      case _ => resetFloatPreference("pitchScale")
     }
   }
 
