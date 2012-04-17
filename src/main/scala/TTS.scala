@@ -213,7 +213,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
       tts.speak(text, mode, params)
     if(rv == TextToSpeech.ERROR) {
       val intent = new Intent()
-      intent.setAction(tts.Engine.ACTION_CHECK_TTS_DATA)
+      intent.setAction(tts.Engine.ACTION_INSTALL_TTS_DATA)
       intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
       service.startActivity(intent)
     }
