@@ -659,19 +659,6 @@ class Handlers {
     onViewSelected { e:AccessibilityEvent => true }
   }
 
-  class RelativeLayout extends Handler("android.widget.RelativeLayout") {
-
-    onViewFocused { e:AccessibilityEvent =>
-      val utterances = utterancesFor(e)
-      if(utterances.size > 0) {
-        speak(utterances.mkString(": "), true)
-        nextShouldNotInterrupt()
-      }
-      true
-    }
-
-  }
-
   class ScrollView extends Handler("android.widget.ScrollView") {
 
     onViewFocused { e:AccessibilityEvent => true }
@@ -701,8 +688,12 @@ class Handlers {
           Log.d("spielcheck", "Source has "+interactables(source).size+" interactables, swallowing.")
           true
         } else if(source.getChildCount == 1 || interactables(source).size == 1) {
-          Log.d("spielcheck", "Source has "+source.getChildCount+" children and "+interactables(source).size+" interactables, presenting.")
-          false
+          if(utterancesFor(e, addBlank=false, stripBlanks=true) != Nil)
+            true
+          else {
+            Log.d("spielcheck", "Source has "+source.getChildCount+" children and "+interactables(source).size+" interactables, presenting.")
+            false
+          }
         } else if(interactables(source).size == 0 && utterancesFor(e, addBlank=false, stripBlanks=true) != Nil)
           speak(utterancesFor(e, addBlank=false, stripBlanks=true))
         else true
@@ -720,9 +711,9 @@ class Handlers {
 
       def recurse(nodes:List[xml.Node]):List[String] = nodes match {
         case Nil => Nil
-        case hd :: tl if(name(hd) == "a") =>
+        case hd :: tl if(name(hd) == "a" && hd.text != null) =>
           hd.text :: Handler.context.getString(R.string.link) :: Nil
-        case hd :: tl if(hd.descendant.size == 0 && hd.text != "") =>
+        case hd :: tl if(hd.descendant.size == 0 && hd.text != null && hd.text != "") =>
           Log.d("spielcheck", "Hd: "+hd.text)
           hd.text :: recurse(tl)
         case hd :: tl => recurse(tl)
