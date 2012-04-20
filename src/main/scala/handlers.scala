@@ -3,6 +3,7 @@ package handlers
 
 import collection.JavaConversions._
 import collection.mutable.Map
+import util.control.Breaks._
 
 import android.app.{ActivityManager, Service}
 import android.content.Context
@@ -224,15 +225,18 @@ object Handler {
         }
       }
       originator.foreach { o =>
-        handlers.foreach { v =>
-          if(v._1._1 == "" && v._1._2 != "" && v._1._2 != "*" && continue) {
-            try {
-              val target = context.getClassLoader.loadClass(v._1._2)
-              if(test(o, target))
-                continue = continue && dispatchTo(v._1._1, v._1._2)
-            } catch {
-              case e:ClassNotFoundException =>
-              case e => Log.e("spielcheck", "Error dispatching to handler:", e)
+        breakable {
+          handlers.foreach { v =>
+            if(!continue) break
+            if(v._1._1 == "" && v._1._2 != "" && v._1._2 != "*") {
+              try {
+                val target = context.getClassLoader.loadClass(v._1._2)
+                if(test(o, target))
+                  continue = continue && dispatchTo(v._1._1, v._1._2)
+              } catch {
+                case e:ClassNotFoundException =>
+                case e => Log.e("spielcheck", "Error dispatching to handler:", e)
+              }
             }
           }
         }
