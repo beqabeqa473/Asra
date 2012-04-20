@@ -46,6 +46,10 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   */
 
   def init() {
+    if(tts != null) {
+      tts.shutdown()
+      tts = null
+    }
     tts = new TextToSpeech(service, this)
   }
 
