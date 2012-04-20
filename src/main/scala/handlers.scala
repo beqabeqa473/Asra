@@ -225,7 +225,7 @@ object Handler {
       }
       originator.foreach { o =>
         handlers.foreach { v =>
-          if(v._1._1 == "" && v._1._2 != "" && continue) {
+          if(v._1._1 == "" && v._1._2 != "" && v._1._2 != "*" && continue) {
             try {
               val target = context.getClassLoader.loadClass(v._1._2)
               if(test(o, target))
