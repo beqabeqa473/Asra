@@ -5,10 +5,13 @@ import collection.JavaConversions._
 
 import android.bluetooth.{BluetoothClass, BluetoothDevice}
 import android.content.{BroadcastReceiver, Context, Intent, IntentFilter}
+import android.database.ContentObserver
 import android.hardware.{Sensor, SensorEvent, SensorEventListener, SensorManager}
 import android.media.AudioManager
 import android.net.Uri
 import android.os.Build.VERSION
+import android.os.Handler
+import android.provider.Settings.Secure
 import android.util.Log
 
 /**
@@ -106,6 +109,19 @@ object StateObserver {
     registerReceiver((c, i) => screenOn(), Intent.ACTION_SCREEN_ON :: Nil)
 
     sensorManager = service.getSystemService(Context.SENSOR_SERVICE).asInstanceOf[SensorManager]
+
+    service.getContentResolver.registerContentObserver(Secure.getUriFor(Secure.TTS_DEFAULT_SYNTH), false, new ContentObserver(new Handler) {
+      override def onChange(bySelf:Boolean) = ttsEngineChanged()
+    })
+
+    service.getContentResolver.registerContentObserver(Secure.getUriFor(Secure.TTS_DEFAULT_RATE), false, new ContentObserver(new Handler) {
+      override def onChange(bySelf:Boolean) = ttsRateChanged()
+    })
+
+    service.getContentResolver.registerContentObserver(Secure.getUriFor(Secure.TTS_DEFAULT_PITCH), false, new ContentObserver(new Handler) {
+      override def onChange(bySelf:Boolean) = ttsPitchChanged()
+    })
+
   }
 
   private var applicationAddedHandlers = List[(Intent) => Unit]()
@@ -667,6 +683,81 @@ object StateObserver {
     } else if(!v && proximitySensorEnabled)
       sensorManager.unregisterListener(proximityListener)
     _proximitySensorEnabled = v
+  }
+
+  private var ttsEngineChangedHandlers = List[() => Unit]()
+
+  /**
+   * Registers handler to be run if the TTS engine changes.
+  */
+
+  def onTTSEngineChanged(h:() => Unit) = {
+    ttsEngineChangedHandlers ::= h
+    h
+  }
+
+  /**
+   * Run handlers when TTS engine changes.
+  */
+
+  def ttsEngineChanged() = ttsEngineChangedHandlers.foreach { f => f() }
+
+  /**
+   * Removes handler from being run when TTS engine changes.
+  */
+
+  def removeTTSEngineChanged(h:() => Unit) = {
+    ttsEngineChangedHandlers = ttsEngineChangedHandlers.filterNot(_ == h)
+  }
+
+  private var ttsRateChangedHandlers = List[() => Unit]()
+
+  /**
+   * Registers handler to be run if the TTS rate changes.
+  */
+
+  def onTTSRateChanged(h:() => Unit) = {
+    ttsRateChangedHandlers ::= h
+    h
+  }
+
+  /**
+   * Run handlers when TTS rate changes.
+  */
+
+  def ttsRateChanged() = ttsRateChangedHandlers.foreach { f => f() }
+
+  /**
+   * Removes handler from being run when TTS rate changes.
+  */
+
+  def removeTTSRateChanged(h:() => Unit) = {
+    ttsRateChangedHandlers = ttsRateChangedHandlers.filterNot(_ == h)
+  }
+
+  private var ttsPitchChangedHandlers = List[() => Unit]()
+
+  /**
+   * Registers handler to be run if the TTS pitch changes.
+  */
+
+  def onTTSPitchChanged(h:() => Unit) = {
+    ttsPitchChangedHandlers ::= h
+    h
+  }
+
+  /**
+   * Run handlers when TTS pitch changes.
+  */
+
+  def ttsPitchChanged() = ttsPitchChangedHandlers.foreach { f => f() }
+
+  /**
+   * Removes handler from being run when TTS pitch changes.
+  */
+
+  def removeTTSPitchChanged(h:() => Unit) = {
+    ttsPitchChangedHandlers = ttsPitchChangedHandlers.filterNot(_ == h)
   }
 
 }

@@ -254,4 +254,6 @@ object StateReactor {
     handlers.Handler.nextShouldNotInterrupt
   }
 
+  onTTSEngineChanged { () => TTS.init() }
+
 }
