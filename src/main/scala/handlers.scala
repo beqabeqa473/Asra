@@ -7,6 +7,7 @@ import util.control.Breaks._
 
 import android.app.{ActivityManager, Service}
 import android.content.Context
+import android.graphics.Rect
 import android.os.Build.VERSION
 import android.os.Vibrator
 import android.util.Log
@@ -464,10 +465,21 @@ class Handler(pkg:String, cls:String) {
 
     Option(e.getSource).flatMap { source =>
       val leaves = leavesOf(rootOf(source))
-      val index = leaves.indexOf(e.getSource)
-      if(index > 0)
-        leaves.take(index).reverse.filter(_.getText != null).headOption.map(_.getText.toString)
-      else None
+      val sr = new Rect()
+      source.getBoundsInScreen(sr)
+      val sourceRect = new Rect(0, sr.top, Int.MaxValue, sr.bottom)
+      val rect = new Rect()
+      val row = leaves.filter { v =>
+        v.getBoundsInScreen(rect)
+        rect.intersect(sourceRect)
+      }
+      row.filter(_.getClassName == "android.widget.TextView").headOption.map(_.getText.toString)
+      .orElse {
+        val index = leaves.indexOf(e.getSource)
+        if(index > 0)
+          leaves.take(index).reverse.filter(_.getText != null).headOption.map(_.getText.toString)
+        else None
+      }
     }
   }
 
