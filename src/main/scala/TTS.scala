@@ -190,6 +190,38 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
       }
   }
 
+  private var failures = 0
+
+  def guard(f: => Int) {
+
+    def checkTTSData() {
+      val intent = new Intent()
+      intent.setAction(tts.Engine.ACTION_CHECK_TTS_DATA)
+      intent.setPackage(engine)
+      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      service.startActivity(intent)
+    }
+
+    try {
+      if(f == TextToSpeech.SUCCESS)
+        failures = 0
+      else {
+        failures += 1
+        checkTTSData()
+      }
+    } catch {
+      case e =>
+        failures += 1
+        Log.e("spiel", "TTS error:", e)
+        checkTTSData()
+    } finally {
+      if(failures == 3) {
+        failures = 0
+        init()
+      }
+    }
+  }
+
   val lastUtteranceID = "last"
 
   /**
@@ -205,7 +237,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     requestFocus()
     val params = new java.util.HashMap[String, String]()
     utteranceID.foreach(params.put(tts.Engine.KEY_PARAM_UTTERANCE_ID, _))
-    val rv = if(text.length == 0)
+    guard { if(text.length == 0)
       tts.speak(service.getString(R.string.blank), mode, params)
     else if(text.length == 1 && Character.isUpperCase(text(0))) {
       pitch = 1.5f
@@ -215,12 +247,6 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
       tts.speak(service.getString(managedPunctuations(text)), mode, params)
     else
       tts.speak(text, mode, params)
-    if(rv == TextToSpeech.ERROR) {
-      val intent = new Intent()
-      intent.setAction(tts.Engine.ACTION_CHECK_TTS_DATA)
-      intent.setPackage(engine)
-      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-      service.startActivity(intent)
     }
   }
 
@@ -254,7 +280,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   def tick(pitchScale:Option[Double] = None) {
     pitchScale.map { s =>
       play(Sounds.tick, s)
-    }.getOrElse(tts.playEarcon("tick", 0, null))
+    }.getOrElse(guard { tts.playEarcon("tick", 0, null) })
   }
 
   /**
@@ -265,7 +291,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     if(!SpielService.enabled) return
     Log.d("spiel", "Stopping speech")
     abandonFocus()
-    tts.stop()
+    guard { tts.stop() }
   }
 
   def presentPercentage(percentage:Double) {
