@@ -685,22 +685,17 @@ class Handlers {
 
     onViewHoverEnter { e:AccessibilityEvent =>
       Option(e.getSource).map { source=>
-        Log.d("spielcheck", "Event: "+e)
         Log.d("spielcheck", "Source: "+source)
         Log.d("spielcheck", "Children: "+source.getChildCount+", Interactables: "+interactables(source)+", children: "+leavesOf(source))
-        if(interactables(source).size > 1) {
+        if(utterancesFor(e, addBlank=false, stripBlanks=true) != Nil)
+          true
+        else if(interactables(source).size > 1) {
           Log.d("spielcheck", "Source has "+interactables(source).size+" interactables, swallowing.")
           true
         } else if(source.getChildCount == 1 || interactables(source).size == 1) {
-          if(utterancesFor(e, addBlank=false, stripBlanks=true) != Nil)
-            true
-          else {
-            Log.d("spielcheck", "Source has "+source.getChildCount+" children and "+interactables(source).size+" interactables, presenting.")
-            false
-          }
-        } else if(interactables(source).size == 0 && utterancesFor(e, addBlank=false, stripBlanks=true) != Nil)
-          speak(utterancesFor(e, addBlank=false, stripBlanks=true))
-        else true
+          Log.d("spielcheck", "Source has "+source.getChildCount+" children and "+interactables(source).size+" interactables, presenting.")
+          false
+        } else true
       }.getOrElse(true)
     }
 
