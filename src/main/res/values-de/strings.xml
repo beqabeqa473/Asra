@@ -27,12 +27,15 @@
   <string name="items">%1$s: %2$s Einträge</string>
   <string name="image">Bild</string>
   <string name="labeledImage">%1$s: Bild</string>
+  <string name="link">link</string>
   <string name="listItem">%1$s: %2$s von %3$s</string>
   <string name="menu">Menü</string>
   <string name="notChecked">nicht aktiviert</string>
+  <string name="notSelected">nicht gewählt</string>
   <string name="password">Passwort</string>
   <string name="radioButton">%1$s Auswahlschalter</string>
   <string name="searchText">%1$s: Suchbegriff</string>
+  <string name="selected">gewählt</string>
   <string name="tab">%1$s Registerkarte</string>
 
   <!-- Preferences -->
