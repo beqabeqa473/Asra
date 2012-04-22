@@ -71,15 +71,8 @@ class PreferencesActivity extends PreferenceActivity {
 
     val enginesPreference = findPreference("speechEngine").asInstanceOf[ListPreference]
     if(!TTS.defaultsEnforced_?) {
-      val intent = new Intent("android.intent.action.START_TTS_ENGINE")
-      val pm = getPackageManager
-      val engines = pm.queryIntentActivities(intent, 0).map { engine =>
-        var label = engine.loadLabel(pm).toString()
-        if(label == "") label = engine.activityInfo.name.toString()
-        (label, engine.activityInfo.packageName)
-      }
-      enginesPreference.setEntries(engines.map(_._1).toArray[CharSequence])
-      enginesPreference.setEntryValues(engines.map(_._2).toArray[CharSequence])
+      enginesPreference.setEntries(TTS.engines.map(_._1).toArray[CharSequence])
+      enginesPreference.setEntryValues(TTS.engines.map(_._2).toArray[CharSequence])
     }
 
     def enableOrDisablePreference(p:Preference) {
@@ -98,17 +91,18 @@ class PreferencesActivity extends PreferenceActivity {
 
     // Now set the shortcut to system-wide TTS settings.
     val ttsPreference = findPreference("textToSpeechSettings")
-    if(VERSION.SDK_INT < 14) {
-      ttsPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener {
-        def onPreferenceClick(p:Preference) = {
+    ttsPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener {
+      def onPreferenceClick(p:Preference) = {
+        if(VERSION.SDK_INT < 11) {
           val intent = new Intent
           intent.setClassName("com.android.settings", "com.android.settings.TextToSpeechSettings")
           startActivity(intent)
-          false
+        } else {
+          startPreferencePanel("com.android.settings.tts.TextToSpeechSettings", null, 0, null, null, 0)
         }
-      })
-    } else
-      getPreferenceScreen.getPreference(0).asInstanceOf[PreferenceScreen].removePreference(ttsPreference)
+        false
+      }
+    })
 
     // Set up triggers. First add an action for "None," then concat others.
     val actions = (getString(R.string.none), "") :: Triggers.actions.map((v) => (v._2.name, v._1)).toList

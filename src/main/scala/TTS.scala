@@ -82,6 +82,17 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   def defaultEngine = tts.getDefaultEngine
 
+  def engines = {
+    val pm = service.getPackageManager
+    val intent = new Intent("android.intent.action.START_TTS_ENGINE")
+    pm.queryIntentActivities(intent, 0).map { engine =>
+      var label = engine.loadLabel(pm).toString()
+      if(label == "") label = engine.activityInfo.name.toString()
+      (label, engine.activityInfo.packageName)
+
+    }
+  }
+
   /**
    * @return desired speech engine
   */
