@@ -147,11 +147,21 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     pool.release()
   }
 
+  private def speaking_? = {
+    try {
+      tts.isSpeaking
+    } catch {
+      case e =>
+        Log.e("spiel", "TTS error:", e)
+        false
+    }
+  }
+
   private def abandonFocus() {
     audioManager.foreach { a =>
       actor {
         Thread.sleep(200)
-        if(!tts.isSpeaking)
+        if(!speaking_?)
           a.abandonAudioFocus(this)
       }
     }
