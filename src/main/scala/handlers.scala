@@ -236,7 +236,7 @@ object Handler {
                   continue = continue && dispatchTo(v._1._1, v._1._2)
               } catch {
                 case e:ClassNotFoundException =>
-                case e => Log.e("spiel", "Error dispatching to handler:", e)
+                case e => throw(e)
               }
             }
           }
