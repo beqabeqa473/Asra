@@ -153,6 +153,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
       tts.isSpeaking
     } catch {
       case e =>
+        failures += 1
         Log.e("spiel", "TTS error:", e)
         false
     }
@@ -238,7 +239,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
         failures += 1
         Log.e("spiel", "TTS error:", e)
     } finally {
-      if(failures == 3) {
+      if(failures >= 3) {
         currentEngine = platformEngine
         failures = 0
         checkTTSData()
