@@ -62,7 +62,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     if(Environment.getExternalStorageState == Environment.MEDIA_MOUNTED)
       engine = Preferences.speechEngine
     else
-      engine = "com.svox.pico"
+      engine = platformEngine
     tts.setOnUtteranceCompletedListener(this)
     tts.addEarcon("tick", "info.spielproject.spiel", R.raw.tick)
     if(!welcomed) {
@@ -89,9 +89,13 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
       var label = engine.loadLabel(pm).toString()
       if(label == "") label = engine.activityInfo.name.toString()
       (label, engine.activityInfo.packageName)
-
     }
   }
+
+  def platformEngine =
+    engines.filter(_._2 == "com.google.android.tts").headOption.map(_._2)
+    .orElse(engines.filter(_._2 == "com.svox.pico").headOption.map(_._2))
+    .getOrElse(defaultEngine)
 
   /**
    * @return desired speech engine
@@ -228,6 +232,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     } finally {
       if(failures == 3) {
         failures = 0
+        engine = platformEngine
         init()
       }
     }
