@@ -55,14 +55,14 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   private var welcomed = false
 
+  private var currentEngine = ""
+
   def onInit(status:Int) {
     if(status == TextToSpeech.ERROR)
       return service.stopSelf()
     tts.setLanguage(java.util.Locale.getDefault)
-    if(Environment.getExternalStorageState == Environment.MEDIA_MOUNTED)
-      engine = Preferences.speechEngine
-    else
-      engine = platformEngine
+    if(currentEngine == "") currentEngine = defaultEngine
+    engine = currentEngine
     tts.setOnUtteranceCompletedListener(this)
     tts.addEarcon("tick", "info.spielproject.spiel", R.raw.tick)
     if(!welcomed) {
@@ -111,7 +111,8 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     if(tts.setEngineByPackageName(e) != TextToSpeech.SUCCESS) {
       tts.setEngineByPackageName(defaultEngine)
       Log.d("spiel", "Error setting speech engine. Reverting to "+defaultEngine)
-    }
+    } else
+      currentEngine = e
   }
 
   /**
@@ -230,19 +231,17 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     try {
       if(f == TextToSpeech.SUCCESS)
         failures = 0
-      else {
+      else
         failures += 1
-        checkTTSData()
-      }
     } catch {
       case e =>
         failures += 1
         Log.e("spiel", "TTS error:", e)
-        checkTTSData()
     } finally {
       if(failures == 3) {
+        currentEngine = platformEngine
         failures = 0
-        engine = platformEngine
+        checkTTSData()
         init()
       }
     }
