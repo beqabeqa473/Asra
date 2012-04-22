@@ -309,6 +309,8 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     }.getOrElse(guard { tts.playEarcon("tick", 0, null) })
   }
 
+  def tick():Unit = tick(None)
+
   /**
    * Stops speech.
   */
