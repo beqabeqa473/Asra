@@ -501,9 +501,7 @@ class Handler(pkg:String, cls:String) {
 
     val fallback = dispatchers.get(eventType).map(dispatchTo(_)).getOrElse(false)
 
-    Log.d("spiel", "Processing as "+dispatchers.get(eventType)+", "+fallback)
-
-    if(!fallback)
+    if((pkg == "" && cls == "*") || !fallback)
       dispatchTo("default")
     else fallback
   }
@@ -753,6 +751,16 @@ class Handlers {
     }
 
     onViewHoverExit { e:AccessibilityEvent => shortVibration() }
+
+    byDefault { e:AccessibilityEvent =>
+      if(e.getRecordCount > 0) {
+        Log.d("spielcheck", "E: "+e)
+        for(i <- 0 to e.getRecordCount-1) {
+          Log.d("spielcheck", e.getRecord(i).toString)
+        }
+      }
+      false
+    }
 
   }
 
