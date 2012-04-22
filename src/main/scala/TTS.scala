@@ -61,7 +61,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     if(status == TextToSpeech.ERROR)
       return service.stopSelf()
     tts.setLanguage(java.util.Locale.getDefault)
-    if(currentEngine == "") currentEngine = defaultEngine
+    if(currentEngine == "") currentEngine = Preferences.speechEngine
     engine = currentEngine
     tts.setOnUtteranceCompletedListener(this)
     tts.addEarcon("tick", "info.spielproject.spiel", R.raw.tick)
