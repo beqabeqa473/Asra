@@ -236,7 +236,7 @@ object Handler {
                   continue = continue && dispatchTo(v._1._1, v._1._2)
               } catch {
                 case e:ClassNotFoundException =>
-                case e => Log.e("spielcheck", "Error dispatching to handler:", e)
+                case e => Log.e("spiel", "Error dispatching to handler:", e)
               }
             }
           }
@@ -697,17 +697,13 @@ class Handlers {
 
     onViewHoverEnter { e:AccessibilityEvent =>
       Option(e.getSource).map { source=>
-        Log.d("spielcheck", "Source: "+source)
-        Log.d("spielcheck", "Children: "+source.getChildCount+", Interactables: "+interactables(source)+", children: "+leavesOf(source))
         if(utterancesFor(e, addBlank=false, stripBlanks=true) != Nil)
           true
-        else if(interactables(source).size > 1) {
-          Log.d("spielcheck", "Source has "+interactables(source).size+" interactables, swallowing.")
+        else if(interactables(source).size > 1)
           true
-        } else if(source.getChildCount == 1 || interactables(source).size == 1) {
-          Log.d("spielcheck", "Source has "+source.getChildCount+" children and "+interactables(source).size+" interactables, presenting.")
+        else if(source.getChildCount == 1 || interactables(source).size == 1)
           false
-        } else true
+        else true
       }.getOrElse(true)
     }
 
@@ -725,7 +721,6 @@ class Handlers {
         case hd :: tl if(name(hd) == "a" && hd.text != null) =>
           hd.text :: Handler.context.getString(R.string.link) :: Nil
         case hd :: tl if(hd.descendant.size == 0 && hd.text != null && hd.text != "") =>
-          Log.d("spielcheck", "Hd: "+hd.text)
           hd.text :: recurse(tl)
         case hd :: tl => recurse(tl)
       }
@@ -741,7 +736,6 @@ class Handlers {
         else
           utils.HtmlParser(t)
       }.getOrElse(<span/>)
-      Log.d("spielcheck", "XML: "+x)
       speak(utterancesFor(x))
     }
 
@@ -896,7 +890,6 @@ class Handlers {
                 math.abs(ost-to)
               ).min if(distance > 1)
             ) yield {
-              Log.d("spielcheck", "ost: "+ost+"From: "+from+", To: "+to)
               val interval = try {
                 (if(ost < from)
                   text.subSequence(ost, from)

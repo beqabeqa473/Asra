@@ -130,14 +130,11 @@ object StateReactor {
 
     override def onReceive(c:Context, i:Intent) {
       val state = i.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, AudioManager.SCO_AUDIO_STATE_DISCONNECTED)
-      Log.d("spielhead", "State: "+state)
       if(state == AudioManager.SCO_AUDIO_STATE_CONNECTED) {
         usingSco = true
-        Log.d("spielcheck", "Connected")
         audioManager.setMode(AudioManager.MODE_IN_CALL)
         wasConnected = true
       } else if(state == AudioManager.SCO_AUDIO_STATE_ERROR) {
-        Log.d("spielcheck", "Error")
         cleanupState()
       } else if(usingSco && wasConnected && state == AudioManager.SCO_AUDIO_STATE_DISCONNECTED) {
         cleanupState()
@@ -183,10 +180,8 @@ object StateReactor {
   }
 
   onMediaUnmounted { path =>
-    if(path == Uri.fromFile(Environment.getExternalStorageDirectory)) {
-      Log.d("spielcheck", "Media unmounted at "+path)
+    if(path == Uri.fromFile(Environment.getExternalStorageDirectory))
       TTS.init()
-    }
   }
 
   // Manage speaking of occasional voicemail notification.

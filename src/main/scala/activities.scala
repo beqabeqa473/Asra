@@ -344,7 +344,6 @@ class Scripts extends TypedActivity with Refreshable with RadioGroup.OnCheckedCh
     dialogType match {
       // TODO: Why can't I just match against literals without getting an "unreachable code"?
       case v if(v == credentialsDialog) =>
-        Log.d("spielcheck", "Creating credentials dialog.")
         dialog.setContentView(R.layout.bazaar_credentials)
         val message = dialog.findView(TR.message)
         if(Preferences.bazaarUsername != "" || Preferences.bazaarPassword != "")
@@ -417,7 +416,6 @@ class Scripts extends TypedActivity with Refreshable with RadioGroup.OnCheckedCh
       dialog.show()
     } catch {
       case e@dispatch.StatusCode(401, _) =>
-        Log.d("spielcheck", "Credentials error.")
         Preferences.bazaarPassword = ""
         showDialog(credentialsDialog)
       case e =>
@@ -634,7 +632,6 @@ class CommandHandler extends Activity {
 
   private def reviewMode() {
     TTS.speak(getString(R.string.review), true)
-    Log.d("spielcheck", "Current: "+currentNode)
   }
 
   private def upLeft() {
