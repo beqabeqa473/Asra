@@ -249,6 +249,9 @@ object StateReactor {
     handlers.Handler.nextShouldNotInterrupt
   }
 
-  onTTSEngineChanged { () => TTS.init() }
+  onTTSEngineChanged { () =>
+    if(TTS.engine != TTS.defaultEngine)
+      TTS.init()
+  }
 
 }
