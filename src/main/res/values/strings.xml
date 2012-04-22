@@ -44,6 +44,7 @@
 
   <string name="speechTitle">Speech</string>
   <string name="speechEngineTitle">Speech engine</string>
+  <string name="systemDefault">System default</string>
   <string name="rateScaleTitle">Rate scale</string>
   <string name="rateScaleSummary">Factor by which default rate should be scaled</string>
   <string name="pitchScaleTitle">Pitch scale</string>

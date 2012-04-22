@@ -35,7 +35,10 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
    * Indicates desired speech engine.
   */
 
-  def speechEngine = prefs.getString("speechEngine", TTS.defaultEngine)
+  def speechEngine = {
+    val rv = prefs.getString("speechEngine", "")
+    if(rv == "") TTS.defaultEngine else rv
+  }
 
   /**
    * Sets the desired speech engine.

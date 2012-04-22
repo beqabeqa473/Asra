@@ -71,8 +71,8 @@ class PreferencesActivity extends PreferenceActivity {
 
     val enginesPreference = findPreference("speechEngine").asInstanceOf[ListPreference]
     if(!TTS.defaultsEnforced_?) {
-      enginesPreference.setEntries(TTS.engines.map(_._1).toArray[CharSequence])
-      enginesPreference.setEntryValues(TTS.engines.map(_._2).toArray[CharSequence])
+      enginesPreference.setEntries((getString(R.string.systemDefault) :: TTS.engines.map(_._1).toList).toArray[CharSequence])
+      enginesPreference.setEntryValues(("" :: TTS.engines.map(_._2).toList).toArray[CharSequence])
     }
 
     def enableOrDisablePreference(p:Preference) {
