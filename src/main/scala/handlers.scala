@@ -473,11 +473,11 @@ class Handler(pkg:String, cls:String) {
         v.getBoundsInScreen(rect)
         rect.intersect(sourceRect)
       }
-      row.filter(_.getClassName == "android.widget.TextView").headOption.map(_.getText.toString)
+      row.find(_.getClassName == "android.widget.TextView").map(_.getText.toString)
       .orElse {
         val index = leaves.indexOf(e.getSource)
         if(index > 0)
-          leaves.take(index).reverse.filter(_.getText != null).headOption.map(_.getText.toString)
+          leaves.take(index).reverse.find(_.getText != null).map(_.getText.toString)
         else None
       }
     }
@@ -753,10 +753,12 @@ class Handlers {
     onViewHoverExit { e:AccessibilityEvent => shortVibration() }
 
     byDefault { e:AccessibilityEvent =>
-      if(e.getRecordCount > 0) {
-        Log.d("spielcheck", "E: "+e)
-        for(i <- 0 to e.getRecordCount-1) {
-          Log.d("spielcheck", e.getRecord(i).toString)
+      if(VERSION.SDK_INT >= 14) {
+        if(e.getRecordCount > 0) {
+          Log.d("spielcheck", "E: "+e)
+          for(i <- 0 to e.getRecordCount-1) {
+            Log.d("spielcheck", e.getRecord(i).toString)
+          }
         }
       }
       false
