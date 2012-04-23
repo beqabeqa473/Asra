@@ -93,8 +93,8 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   }
 
   def platformEngine =
-    engines.filter(_._2 == "com.google.android.tts").headOption.map(_._2)
-    .orElse(engines.filter(_._2 == "com.svox.pico").headOption.map(_._2))
+    engines.find(_._2 == "com.google.android.tts").map(_._2)
+    .orElse(engines.find(_._2 == "com.svox.pico").map(_._2))
     .getOrElse(defaultEngine)
 
   /**
