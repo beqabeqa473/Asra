@@ -3,7 +3,6 @@ package handlers
 
 import collection.JavaConversions._
 import collection.mutable.Map
-import util.control.Breaks._
 
 import android.app.{ActivityManager, Service}
 import android.content.Context
@@ -140,9 +139,6 @@ object Handler {
     vibrator = c.getSystemService(Context.VIBRATOR_SERVICE).asInstanceOf[Vibrator]
   }
 
-  def onDestroy {
-  }
-
   private var _lastEvent:AccessibilityEvent = null
   def lastEvent = _lastEvent
 
@@ -177,7 +173,7 @@ object Handler {
       case Some(h) =>
         if(alreadyCalled.contains(h)) {
           Log.d("spiel", "Already called "+h.getClass.getName+", skipping.")
-          true
+          false
         } else {
           Log.d("spiel", "Dispatching to "+pkg+":"+cls)
           alreadyCalled ::= h
@@ -188,23 +184,32 @@ object Handler {
             Log.d("spiel", "Caching "+h.getClass.getName+" for "+e.getPackageName+"/"+e.getClassName)
             handlers(e.getPackageName.toString -> e.getClassName.toString) = h
           }
-          !h(e, eType)
+          h(e, eType)
         }
-      case None => true
+      case None => false
     }
 
     // First, run the Always handler and ignore its return value. This 
     // mandates certain behavior types for all events but prevents those 
     // actions from blocking others.
-    dispatchTo("", "*", shouldCache=false)
+    def dispatchToAlways() = {
+      Log.d("spiel", "Always dispatch")
+      dispatchTo("", "*", shouldCache=false)
+      false
+    }
 
     // Let's check if there's a handler for this exact package and 
-    // class. If one was cached above then dispatch ends here.
-    var continue = dispatchTo(e.getPackageName.toString, e.getClassName.toString)
+    // class.
+    def dispatchToExact() = {
+      Log.d("spiel", "Exact match dispatch")
+      dispatchTo(e.getPackageName.toString, e.getClassName.toString)
+    }
 
     // Now check for just the class name.
-    if(continue)
-      continue = dispatchTo("", e.getClassName.toString)
+    def dispatchToClass() = {
+      Log.d("spiel", "Class match dispatch")
+      dispatchTo("", e.getClassName.toString)
+    }
 
     // Now we check superclasses. Basically, if a given class is a subclass 
     // of a widget for which we already have a Handler (I.e. a subclass of 
@@ -212,7 +217,8 @@ object Handler {
     // Surround this in a try block to catch the various exceptions that can 
     // bubble up. While this is a heavy step, previous caching minimizes the 
     // need to do it.
-    if(continue) {
+    def dispatchToSubclass() = {
+      Log.d("spiel", "Subclass match dispatch")
       def test(originator:Class[_], target:Class[_]) =
         target.isAssignableFrom(originator)
       val originator = try {
@@ -225,27 +231,30 @@ object Handler {
           case _ => None
         }
       }
-      originator.foreach { o =>
-        breakable {
-          handlers.foreach { v =>
-            if(!continue) break
-            if(v._1._1 == "" && v._1._2 != "" && v._1._2 != "*") {
-              try {
-                val target = context.getClassLoader.loadClass(v._1._2)
-                if(test(o, target))
-                  continue = continue && dispatchTo(v._1._1, v._1._2)
-              } catch {
-                case e:ClassNotFoundException =>
-                case e => throw(e)
-              }
+      originator.map { o =>
+        handlers.exists { v =>
+          if(v._1._1 == "" && v._1._2 != "" && v._1._2 != "*") {
+            try {
+              val target = context.getClassLoader.loadClass(v._1._2)
+              if(test(o, target))
+                dispatchTo(v._1._1, v._1._2)
+              else false
+            } catch {
+              case e:ClassNotFoundException => false
+              case e => throw(e)
             }
-          }
+          } else false
         }
-      }
+      }.getOrElse(false)
     }
 
     // Now dispatch to the default, catch-all handler.
-    if(continue) dispatchTo("", "")
+    def dispatchToDefault() = {
+      Log.d("spiel", "Default dispatch")
+      dispatchTo("", "")
+    }
+
+    Log.d("spiel", "Result: "+(dispatchToAlways() || dispatchToExact() || dispatchToClass() || dispatchToSubclass() || dispatchToDefault()))
 
     if(!nextShouldNotInterruptCalled)
       myNextShouldNotInterrupt = false

@@ -52,9 +52,8 @@ class SpielService extends AccessibilityService {
 
   override def onDestroy() {
     super.onDestroy
-    Handler.onDestroy
     TTS.shutdown
-    Scripter.onDestroy
+    Scripter.shutdown()
     if(Preferences.profiling)
       Debug.stopMethodTracing()
     notificationManager.cancelAll

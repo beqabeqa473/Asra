@@ -317,7 +317,7 @@ object Scripter {
     userScripts.foreach(_.run())
   }
 
-  def onDestroy = {
+  def shutdown() {
     observer.stopWatching()
   }
 
