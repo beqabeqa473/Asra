@@ -310,9 +310,9 @@ class Scripts extends TypedActivity with Refreshable with RadioGroup.OnCheckedCh
           if(script.reload()) {
             scriptToPost = Some(script)
             if(Preferences.bazaarUsername == "" || Preferences.bazaarPassword == "")
-              showDialog(credentialsDialog)
+              showDialog(CredentialsDialog)
             else
-              showDialog(postDialog)
+              showDialog(PostDialog)
           } else {
             new AlertDialog.Builder(this)
             .setMessage(getString(R.string.script_reload_error))
@@ -336,14 +336,13 @@ class Scripts extends TypedActivity with Refreshable with RadioGroup.OnCheckedCh
     true
   }
 
-  private val credentialsDialog = 1
-  private val postDialog = 2
+  private val CredentialsDialog = 1
+  private val PostDialog = 2
 
   override protected def onCreateDialog(dialogType:Int):Dialog = {
     val dialog = new Dialog(this) with TypedDialog
     dialogType match {
-      // TODO: Why can't I just match against literals without getting an "unreachable code"?
-      case v if(v == credentialsDialog) =>
+      case CredentialsDialog =>
         dialog.setContentView(R.layout.bazaar_credentials)
         val message = dialog.findView(TR.message)
         if(Preferences.bazaarUsername != "" || Preferences.bazaarPassword != "")
@@ -376,7 +375,7 @@ class Scripts extends TypedActivity with Refreshable with RadioGroup.OnCheckedCh
             dialog.dismiss()
           }
         })
-      case v if(v == postDialog) =>
+      case PostDialog =>
         dialog.setContentView(R.layout.post_script)
         val changesField = dialog.findView(TR.changes)
         changesField.setText(scriptChanges)
@@ -417,7 +416,7 @@ class Scripts extends TypedActivity with Refreshable with RadioGroup.OnCheckedCh
     } catch {
       case e@dispatch.StatusCode(401, _) =>
         Preferences.bazaarPassword = ""
-        showDialog(credentialsDialog)
+        showDialog(CredentialsDialog)
       case e =>
         scriptToPost = None
         dialog.setMessage(getString(R.string.script_posting_error))
