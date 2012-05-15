@@ -8,7 +8,7 @@ import android.app.{ActivityManager, Service}
 import android.content.Context
 import android.graphics.Rect
 import android.os.Build.VERSION
-import android.os.Vibrator
+import android.os.{SystemClock, Vibrator}
 import android.util.Log
 import android.view.accessibility.{AccessibilityEvent, AccessibilityNodeInfo}
 import AccessibilityEvent._
@@ -350,7 +350,7 @@ class Handler(pkg:String, cls:String) {
     true
   }
 
-  def shortVibration() = vibrate(15)
+  def shortVibration() = vibrate(20)
 
   /**
    * Indicates that the next <code>AccessibilityEvent</code> should not interrupt speech.
@@ -756,10 +756,16 @@ class Handlers {
 
     onViewHoverEnter { e:AccessibilityEvent =>
       stopSpeaking()
-      shortVibration()
+      if(SystemClock.uptimeMillis-e.getEventTime <= 100)
+        shortVibration()
+      false
     }
 
-    onViewHoverExit { e:AccessibilityEvent => shortVibration() }
+    onViewHoverExit { e:AccessibilityEvent =>
+      if(SystemClock.uptimeMillis-e.getEventTime <= 100)
+        shortVibration()
+      true
+    }
 
     byDefault { e:AccessibilityEvent =>
       if(VERSION.SDK_INT >= 14) {
