@@ -125,7 +125,11 @@ object StateReactor {
     private def cleanup() {
       audioManager.stopBluetoothSco()
       cleanupState()
-      service.unregisterReceiver(this)
+      try {
+        service.unregisterReceiver(this)
+      } catch {
+        case _ =>
+      }
     }
 
     override def onReceive(c:Context, i:Intent) {
