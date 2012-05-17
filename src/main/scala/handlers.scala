@@ -481,11 +481,12 @@ class Handler(pkg:String, cls:String) {
         v.getBoundsInScreen(rect)
         rect.intersect(sourceRect)
       }
-      row.find(_.getClassName == "android.widget.TextView").map(_.getText.toString)
-      .orElse {
+      row.find((v) => v.getClassName == "android.widget.TextView" && v.getText != null && v.getText.length > 0).map(
+        _.getText.toString
+      ).orElse {
         val index = leaves.indexOf(e.getSource)
         if(index > 0)
-          leaves.take(index).reverse.find(_.getText != null).map(_.getText.toString)
+          leaves.take(index).reverse.find((v) =>v.getText != null && v.getText.length > 0).map(_.getText.toString)
         else None
       }
     }
