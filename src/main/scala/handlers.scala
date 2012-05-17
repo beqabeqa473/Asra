@@ -627,6 +627,11 @@ class Handlers {
         false
     }
 
+    onViewScrolled { e:AccessibilityEvent =>
+      val percentage = e.getToIndex.toDouble/e.getItemCount
+      TTS.tick(Some(0.5+percentage/2))
+    }
+
     onViewSelected { e:AccessibilityEvent =>
       if(e.getCurrentItemIndex >= 0)
         speak(Handler.context.getString(R.string.listItem, utterancesFor(e).mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
