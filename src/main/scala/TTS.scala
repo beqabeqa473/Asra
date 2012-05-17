@@ -308,10 +308,11 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
    * Play a tick.
   */
 
-  def tick(pitchScale:Option[Double] = None) {
+  def tick(pitchScale:Option[Double] = None) = {
     pitchScale.map { s =>
       play(Sounds.tick, s)
     }.getOrElse(guard { tts.playEarcon("tick", 0, null) })
+    true
   }
 
   def tick():Unit = tick(None)
