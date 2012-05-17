@@ -241,7 +241,6 @@ object Handler {
               else false
             } catch {
               case e:ClassNotFoundException => false
-              case e => throw(e)
             }
           } else false
         }
@@ -764,7 +763,7 @@ class Handlers {
     onViewHoverExit { e:AccessibilityEvent =>
       if(SystemClock.uptimeMillis-e.getEventTime <= 100)
         shortVibration()
-      true
+      false
     }
 
     byDefault { e:AccessibilityEvent =>
