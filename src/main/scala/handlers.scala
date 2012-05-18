@@ -629,8 +629,11 @@ class Handlers {
     }
 
     onViewScrolled { e:AccessibilityEvent =>
-      val percentage = e.getToIndex.toDouble/e.getItemCount
-      TTS.tick(Some(0.5+percentage/2))
+      if(e.getToIndex >= 0 && e.getItemCount > 0) {
+        val percentage = e.getToIndex.toDouble/e.getItemCount
+        TTS.tick(Some(0.5+percentage/2))
+      }
+      true
     }
 
     onViewSelected { e:AccessibilityEvent =>
