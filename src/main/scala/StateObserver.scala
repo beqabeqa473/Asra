@@ -604,7 +604,7 @@ object StateObserver {
   def shakerEnabled = _shakerEnabled
 
   // This may need tweaking, but this seems like a good value for an intentional shake.
-  private val shakerThreshold = 1.3
+  private val shakerThreshold = 1.2
 
   private val shaker = new SensorEventListener {
 
@@ -630,7 +630,7 @@ object StateObserver {
     if(lastShakeAt == 0)
       shakingStartedAt = now
     lastShakeAt = now
-    if(shakingStartedAt != 0 && now-shakingStartedAt >= 1000) {
+    if(shakingStartedAt != 0 && now-shakingStartedAt >= 500) {
       shakingStartedAt = 0
       shakingStarted()
     }
