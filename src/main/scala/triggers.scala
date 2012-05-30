@@ -153,6 +153,7 @@ object ShakingStarted extends Trigger {
     super.apply(a)
     StateObserver.onScreenOff { () => a.foreach(v => uninstall(v.function)) }
     StateObserver.onScreenOn { () => install() }
+    if(StateReactor.screenOn_?) install()
   }
 
   private var installed = false
