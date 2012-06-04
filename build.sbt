@@ -16,6 +16,8 @@ versionCode := 9
 
 scalaVersion := "2.9.2"
 
+scalacOptions ++= Seq("-deprecation")
+
 platformName in Android := "android-15"
 
 keystorePath in Android := Path.userHome / ".keystore" / "spiel.keystore"
