@@ -198,7 +198,8 @@ class Scripts extends TypedActivity with Refreshable with RadioGroup.OnCheckedCh
   private def refreshSystem() {
     cursor = managedQuery(Provider.uri, Provider.columns.projection, null, null, null)
     listView.setAdapter(
-      new SimpleCursorAdapter(this,
+      new SimpleCursorAdapter(
+        this,
         R.layout.script_row,
         cursor,
         List(Provider.columns.label).toArray,
@@ -209,7 +210,6 @@ class Scripts extends TypedActivity with Refreshable with RadioGroup.OnCheckedCh
   }
 
   private def refreshUser() {
-    Log.d("spielscript", "refreshUser(): "+Scripter.userScripts)
     listView.setAdapter(
       new ArrayAdapter[Script](
         this,
@@ -292,7 +292,7 @@ class Scripts extends TypedActivity with Refreshable with RadioGroup.OnCheckedCh
               def onClick(i:DialogInterface, what:Int) {
                 getContentResolver.delete(uri, null, null)
                 s.uninstall()
-                cursor.requery()
+                refreshSystem()
               }
             })
             .setNegativeButton(getString(R.string.no), null)
