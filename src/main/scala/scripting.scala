@@ -14,7 +14,7 @@ import android.os.Build.VERSION
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 
-import org.mozilla.javascript.{Context, Function, RhinoException, ScriptableObject}
+import org.mozilla.javascript.{Context, ContextFactory, Function, RhinoException, ScriptableObject}
 
 import handlers.{Callback, Handler}
 
@@ -27,7 +27,7 @@ class RhinoCallback(f:Function) extends Callback {
     var args = new Array[Object](2)
     args(0) = e
     args(1) = Handler.currentActivity
-    Context.enter(Scripter.context)
+    ContextFactory.getGlobal.enterContext(Scripter.context)
     try {
       Scripter.scope.put("__pkg__", Scripter.scope, e.getPackageName)
       Context.toBoolean(f.call(Scripter.context, Scripter.scope, Scripter.scope, args))
@@ -93,7 +93,7 @@ class Script(
   def run() = {
     Log.d("spiel", "Running "+pkg)
     uninstall()
-    Context.enter(Scripter.context)
+    ContextFactory.getGlobal.enterContext(Scripter.context)
     Scripter.scope.put("__pkg__", Scripter.scope, pkg)
     Scripter.script = Some(this)
     try {
@@ -268,7 +268,7 @@ object Scripter {
 
   def apply(svc:AContext) {
     service = svc
-    myCx = Context.enter
+    myCx = ContextFactory.getGlobal.enterContext()
     myCx.setOptimizationLevel(-1)
     myScope = myCx.initStandardObjects()
 
