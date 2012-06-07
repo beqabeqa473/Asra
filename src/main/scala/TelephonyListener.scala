@@ -2,7 +2,7 @@ package info.spielproject.spiel
 
 import android.content.{ContentResolver, Context}
 import android.net.Uri
-import android.provider.{Contacts, ContactsContract}
+import android.provider.ContactsContract
 import android.telephony.{PhoneStateListener, TelephonyManager}
 import TelephonyManager._
 import android.util.Log
@@ -29,12 +29,15 @@ object TelephonyListener extends PhoneStateListener {
 
   private def resolve(number:String) = {
     if(number != null && number != "") {
-      val uri= Uri.withAppendedPath(Contacts.Phones.CONTENT_FILTER_URL, Uri.encode(number))
+      val uri= Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number))
       val cursor = context.getContentResolver.query(uri, null, null, null, null)
       var name = number
       if(cursor.getCount > 0) {
         while(cursor.moveToNext) {
-          name = cursor.getString(cursor.getColumnIndex(Contacts.PeopleColumns.DISPLAY_NAME))
+          // TODO: Using "display_name" rather than the actual value because 
+          // Scala doesn't seem to like class constants, and the interface 
+          // that declares this one is marked protected.
+          name = cursor.getString(cursor.getColumnIndex("display_name"))
         }
       }
       name
