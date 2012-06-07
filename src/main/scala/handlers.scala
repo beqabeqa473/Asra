@@ -464,15 +464,18 @@ class Handler(pkg:String, cls:String) {
       ).toList.flatten
   }
 
-  protected def rootOf(n:AccessibilityNodeInfo):AccessibilityNodeInfo = n.getParent match {
-    case null => n
-    case v => rootOf(v)
+  protected def rootOf(node:AccessibilityNodeInfo):Option[AccessibilityNodeInfo] = Option(node).map { n =>
+    def iterate(v:AccessibilityNodeInfo):AccessibilityNodeInfo = v.getParent match {
+      case null => v
+      case v2 => iterate(v2)
+    }
+    iterate(n)
   }
 
   private def guessLabelFor(e:AccessibilityEvent) = {
 
-    Option(e.getSource).flatMap { source =>
-      val leaves = leavesOf(rootOf(source))
+    rootOf(e.getSource).flatMap { source =>
+      val leaves = leavesOf(source)
       val sr = new Rect()
       source.getBoundsInScreen(sr)
       val sourceRect = new Rect(0, sr.top, Int.MaxValue, sr.bottom)
@@ -612,13 +615,14 @@ class Handlers {
         if(e.getItemCount > 0 && e.getCurrentItemIndex >= 0)
           speak(Handler.context.getString(R.string.listItem, Handler.context.getText(R.string.image), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
         else if(VERSION.SDK_INT >= 14 && e.getSource != null) {
-          val leaves = leavesOf(rootOf(e.getSource))
-          val index = leaves.indexOf(e.getSource)+1
-          if(index > 0)
-            speak(Handler.context.getString(R.string.listItem, Handler.context.getText(R.string.image), index.toString, leaves.length.toString))
-
-          else
-            speak(Handler.context.getText(R.string.image).toString)
+          rootOf(e.getSource).map { source =>
+            val leaves = leavesOf(source)
+            val index = leaves.indexOf(e.getSource)+1
+            if(index > 0)
+              speak(Handler.context.getString(R.string.listItem, Handler.context.getText(R.string.image), index.toString, leaves.length.toString))
+            else
+              speak(Handler.context.getText(R.string.image).toString)
+          }.getOrElse(speak(Handler.context.getText(R.string.image).toString))
         } else
           speak(Handler.context.getText(R.string.image).toString)
       else
