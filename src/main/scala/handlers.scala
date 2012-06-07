@@ -727,9 +727,12 @@ class Handlers {
 
     onViewHoverEnter { e:AccessibilityEvent =>
       Option(e.getSource).map { source=>
-        if(utterancesFor(e, addBlank=false, stripBlanks=true) != Nil)
-          true
-        else if(interactables(source).size > 1)
+        if(utterancesFor(e, addBlank=false, stripBlanks=true) != Nil) {
+          if(source.getChildCount > 0 && interactables(source) == 0)
+            false
+          else
+            true
+        } else if(interactables(source).size > 1)
           true
         else if(source.getChildCount == 1 || interactables(source).size == 1)
           false
