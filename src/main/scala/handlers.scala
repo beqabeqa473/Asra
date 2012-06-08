@@ -44,8 +44,8 @@ class PrettyAccessibilityEvent(val e:AccessibilityEvent) {
 
   val activityName = Handler.currentActivity
 
-  override lazy val toString = {
-    val eventType = Handler.dispatchers(e.getEventType)
+  override val toString = {
+    val eventType = Handler.dispatchers.get(e.getEventType).getOrElse("Unknown")
     val text = if(e.getText.length == 0)
       "no text: " 
     else
