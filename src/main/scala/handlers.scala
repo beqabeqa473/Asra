@@ -918,7 +918,8 @@ class Handlers {
           else
             e.getToIndex
           val width = to-from
-          if(from >= 0 && to >= 0 && e.getSource != null && e.getSource.isFocused) {
+          val source = e.getSource
+          if(from >= 0 && to >= 0 && source != null && source.isFocused) {
             if(from > to) {
               val tmp = to
               to = from
@@ -928,7 +929,7 @@ class Handlers {
               t.subSequence(from, to).toString
             } catch {
               case e =>
-              Log.d("spiel", "Error determining selection", e)
+                Log.d("spiel", "Error determining selection", e)
                 ""
             }
             (for(
