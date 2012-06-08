@@ -98,7 +98,7 @@ class PreferencesActivity extends PreferenceActivity {
           intent.setClassName("com.android.settings", "com.android.settings.TextToSpeechSettings")
           startActivity(intent)
         } else {
-          startPreferencePanel("com.android.settings.tts.TextToSpeechSettings", null, 0, null, null, 0)
+          startActivity(new Intent("com.android.settings.TTS_SETTINGS"))
         }
         false
       }
