@@ -473,11 +473,11 @@ class Handler(pkg:String, cls:String) {
   }
 
   private def guessLabelFor(e:AccessibilityEvent) = {
-
-    rootOf(e.getSource).flatMap { source =>
-      val leaves = leavesOf(source)
+    val source = e.getSource
+    rootOf(source).flatMap { root =>
+      val leaves = leavesOf(root)
       val sr = new Rect()
-      source.getBoundsInScreen(sr)
+      root.getBoundsInScreen(sr)
       val sourceRect = new Rect(0, sr.top, Int.MaxValue, sr.bottom)
       val rect = new Rect()
       val row = leaves.filter { v =>
@@ -487,7 +487,7 @@ class Handler(pkg:String, cls:String) {
       row.find((v) => v.getClassName == "android.widget.TextView" && v.getText != null && v.getText.length > 0).map(
         _.getText.toString
       ).orElse {
-        val index = leaves.indexOf(e.getSource)
+        val index = leaves.indexOf(source)
         if(index > 0)
           leaves.take(index).reverse.find((v) =>v.getText != null && v.getText.length > 0).map(_.getText.toString)
         else None
@@ -615,9 +615,10 @@ class Handlers {
         if(e.getItemCount > 0 && e.getCurrentItemIndex >= 0)
           speak(Handler.context.getString(R.string.listItem, Handler.context.getText(R.string.image), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
         else if(VERSION.SDK_INT >= 14 && e.getSource != null) {
-          rootOf(e.getSource).map { source =>
-            val leaves = leavesOf(source)
-            val index = leaves.indexOf(e.getSource)+1
+          val source = e.getSource
+          rootOf(source).map { root =>
+            val leaves = leavesOf(root)
+            val index = leaves.indexOf(source)+1
             if(index > 0)
               speak(Handler.context.getString(R.string.listItem, Handler.context.getText(R.string.image), index.toString, leaves.length.toString))
             else
