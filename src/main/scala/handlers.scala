@@ -477,7 +477,7 @@ class Handler(pkg:String, cls:String) {
     rootOf(source).flatMap { root =>
       val leaves = leavesOf(root)
       val sr = new Rect()
-      root.getBoundsInScreen(sr)
+      source.getBoundsInScreen(sr)
       val sourceRect = new Rect(0, sr.top, Int.MaxValue, sr.bottom)
       val rect = new Rect()
       val row = leaves.filter { v =>
