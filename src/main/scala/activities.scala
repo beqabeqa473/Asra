@@ -439,22 +439,13 @@ class Events extends ListActivity with Refreshable {
   }
 
   def refresh() {
-    if(Preferences.viewRecentEvents)
-      setListAdapter(
-        new ArrayAdapter[PrettyAccessibilityEvent](
-          this,
-          android.R.layout.simple_list_item_1,
-          EventReviewQueue.toArray
-        )
+    setListAdapter(
+      new ArrayAdapter[PrettyAccessibilityEvent](
+        this,
+        android.R.layout.simple_list_item_1,
+        EventReviewQueue.toArray
       )
-    else
-      setListAdapter(
-        new ArrayAdapter[String](
-          this,
-          android.R.layout.simple_list_item_1,
-          List(getString(R.string.noEvents)).toArray
-        )
-      )
+    )
   }
 
   private var menu:Option[Menu] = None

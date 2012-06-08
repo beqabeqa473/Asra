@@ -73,17 +73,15 @@
   <string name="onProximityNearTitle">Bei Annäherung</string>
   <string name="onProximityNearSummary">Aktion festlegen, die ausgeführt wird, sobald der Nähe-Ssensor eine Annäherung erkennt</string>
 
-  <string name="scriptingDebuggingTitle">Skripten und Debuggen</string>
+  <string name="debuggingTitle">Debuggen</string>
   <string name="sendBacktracesTitle">Problemberichte senden, beim Absturz von Spiel </string>
   <string name="sendBacktracesSummary">Automatisch anonyme Fehlerberichte an den Entwickler senden, wann immer Spiel abstürzt (macht einen Neustart erforderlich)</string>
-  <string name="viewRecentEventsTitle">Die neuesten accessibility events ansehen</string>
-  <string name="viewRecentEventsSummary">Zeigt die neuesten accessibility events sowie Zusatzfunktionen für Skriptentwickler an</string>
   <string name="profilingTitle">Profiling</string>
 
   <string name="profilingSummary">sollte nur zu Entwicklungszwecken aktiviert werden, da hierdurch das Antwortverhalten verschlechtert wird</string>
 
   <string name="events">Events</string>
-  <string name="noEvents">Keine events verfügbar. Bitte schalten Sie zunächst die Option \"Die neuesten accessibility events ansehen\" im Menü \"Skripten und Debuggen\" ein. Werden nach wie vor keine Events angezeigt, drücken Sie Menü und wählen Sie dann \"Aktualisieren\".</string>
+
   <string name="createScriptTemplate">skript-Vorlage erstellen</string>
 
   <string name="scripts">Skripte</string>

@@ -152,16 +152,6 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
   def useBluetoothSCO = prefs.getBoolean("useBluetoothSCO", false)
 
-  /**
-   * Indicates whether recent <code>AccessibilityEvent</code>s are to be viewed/logged.
-  */
-
-  def viewRecentEvents = prefs.getBoolean("viewRecentEvents", false)
-
-  /**
-   * Indicates whether profiling is enabled.
-  */
-
   def profiling = prefs.getBoolean("profiling", false)
 
   /**
@@ -205,7 +195,6 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
       case "onShakingStarted" => ShakingStarted(onShakingStarted)
       case "profiling" if(profiling) => Debug.startMethodTracing("spiel")
       case "profiling" if(!profiling) => Debug.stopMethodTracing()
-      case "viewRecentEvents" if(!viewRecentEvents) => handlers.EventReviewQueue.clear()
       case "voicemailAlerts" =>
         if(voicemailAlerts) StateReactor.startVoicemailAlerts()
         else StateReactor.stopVoicemailAlerts()

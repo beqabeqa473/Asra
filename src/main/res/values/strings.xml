@@ -74,16 +74,14 @@
   <string name="onProximityNearTitle">On proximity near</string>
   <string name="onProximityNearSummary">Set an action to perform when the proximity sensor determines that something is near</string>
 
-  <string name="scriptingDebuggingTitle">Scripting and debugging</string>
+  <string name="debuggingTitle">Debugging</string>
   <string name="sendBacktracesTitle">Send backtraces when Spiel crashes</string>
   <string name="sendBacktracesSummary">Automatically send anonymous error reports to the developer whenever Spiel crashes (requires restart)</string>
-  <string name="viewRecentEventsTitle">View most recent accessibility events</string>
-  <string name="viewRecentEventsSummary">Displays recent accessibility events with added functionality for script developers</string>
   <string name="profilingTitle">Profiling</string>
   <string name="profilingSummary">Only enable for development as this impacts performance!</string>
 
   <string name="events">Events</string>
-  <string name="noEvents">No events available. Please enable \"View most recent accessibility events\" in the \"Scripting and debugging\" menu first. If you have done this and none are displaying, press Menu then select \"Refresh\".</string>
+
   <string name="createScriptTemplate">Create script template</string>
 
   <string name="scripts">Scripts</string>

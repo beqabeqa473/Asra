@@ -64,14 +64,12 @@
 <string name="onProximityNearTitle">Na přiblížení</string>
 <string name="onProximityNearSummary">Nastavit provedení akce, když je něco v blízkosti senzoru přiblížení</string>
 
-<string name="scriptingDebuggingTitle">Skriptování a ladění</string>
+<string name="debuggingTitle">Ladění</string>
 <string name="sendBacktracesTitle">Odeslat report, když Spiel havaruje</string>
 <string name="sendBacktracesSummary">Automaticky odesílat anonimní zprávy o chybě vývojáři, kdykoli Spiel havaruje (vyžaduje restart)</string>
-<string name="viewRecentEventsTitle">Zobrazit nejnovější události přístupnosti</string>
-<string name="viewRecentEventsSummary">Zobrazuje nejnovější události přístupnosti, včetně přidaných funkcí pro vývojáře skriptů</string>
 
 <string name="events">Události</string>
-<string name="noEvents">žádné události k dispozici. Povolte prosím nejprve \ "Zobrazit dostupnost nejnovějších událostí \" v menu \ "Skriptování a ladění \". Pokud jste tak učinili a události se stále nezobrazují, stiskněte tlačítko Menu a zvolte \ "Obnovit \".</string>
+
 <string name="createScriptTemplate">Vytvořit šablonu skriptu</string>
 
 <string name="scripts">Skripty</string>

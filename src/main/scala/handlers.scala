@@ -153,7 +153,7 @@ object Handler {
       return true
 
     _lastEvent = e
-    if(eventType == None && Preferences.viewRecentEvents) {
+    if(eventType == None) {
       EventReviewQueue(new PrettyAccessibilityEvent(e))
       Log.d("spiel", "Event "+e.toString+"; Activity: "+currentActivity)
     }

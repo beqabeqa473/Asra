@@ -63,14 +63,12 @@
 <string name="onProximityNearTitle">közelségkor</string>
 <string name="onProximityNearSummary">művelet beállítása, mikor a közelségi szenzor érzélkeli, hogy valami közel van</string>
 
-<string name="scriptingDebuggingTitle">szkriptek és hibakeresés</string>
+<string name="debuggingTitle">Hibakeresés</string>
 <string name="sendBacktracesTitle">visszajővő adatok elküldése, amikor a spiel lefagy</string>
 <string name="sendBacktracesSummary">Automatikus névtelen hibajelentések elküldése a fejlesztőnek, ha a Spiel lefagy (újraindítást igényel)</string>
-<string name="viewRecentEventsTitle">Legfrisebb hozzáférhetőségi események megtekintése</string>
-<string name="viewRecentEventsSummary">Megjeleníti a legújabb hozzáférhetőségi eseményeket, script fejlesztőknek hasznos információval</string>
 
 <string name="events">Események</string>
-<string name="noEvents">Nincs megjelenthető esemény. Kérjük, engedélyezze a \"legfrissebb hozzáférhetőség események megtekintése"\ a \"Scripting és hibakeresés"\ menü alatt. Ha ezt megtette, és semmi sem megjeleníthető, nyomja meg a Menü gombot, majd válassza a \"Frissítés"\ opciót.</string>
+
 <string name="createScriptTemplate">Szkript sablon készítése</string>
 
 <string name="scripts">Szkriptek</string>

@@ -62,14 +62,12 @@
 <string name="onProximityNearTitle">Al acercarse</string>
 <string name="onProximityNearSummary">Configurar una acción a realizar cuando el sensor de proximidad determina que algo está cerca</string>
 
-<string name="scriptingDebuggingTitle">Escritura de script y depuración</string>
+<string name="debuggingTitle">Depuración</string>
 <string name="sendBacktracesTitle">Enviar trazas cuando Spiel falla</string>
 <string name="sendBacktracesSummary">Enviar informe de error automática y anonímamente al desarrollador cada vez que Spiel falle (se necesita reiniciar).</string>
-<string name="viewRecentEventsTitle">Visualizar últimos eventos de accesibilidad</string>
-<string name="viewRecentEventsSummary">Mostrar últimos eventos de accesibilidad con funcionalidad adicional para desarrolladores de script</string>
 
 <string name="events">Eventos</string>
-<string name="noEvents">No hay eventos disponibles. Favor de habilitar "Visualizar últimos eventos de accesibilidad" en el Menú "Escritura de script y depuración". Si tras hacer esto no se muestra ninguno, presionar Menú, luego seleccionar "Actualizar pantalla".</string>
+
 <string name="createScriptTemplate">Crear plantilla de script</string>
 
 <string name="scripts">Script</string>

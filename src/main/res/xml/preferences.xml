@@ -104,19 +104,13 @@
     android:key="scripts"
     />
 
-  <PreferenceScreen android:title="@string/scriptingDebuggingTitle">
+  <PreferenceScreen android:title="@string/debuggingTitle">
 
     <CheckBoxPreference
       android:key="sendBacktraces"
       android:defaultValue="true"
       android:title="@string/sendBacktracesTitle"
       android:summary="@string/sendBacktracesSummary"/>
-
-    <CheckBoxPreference
-      android:key="viewRecentEvents"
-      android:defaultValue="false"
-      android:title="@string/viewRecentEventsTitle"
-      android:summary="@string/viewRecentEventsSummary"/>
 
     <CheckBoxPreference
       android:key="profiling"
