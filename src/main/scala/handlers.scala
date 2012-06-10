@@ -697,7 +697,7 @@ class Handlers {
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(Handler.context.getString(R.string.radioButton, utterancesFor(e, guessLabelIfTextMissing = true).mkString(": ")))
+      speak(Handler.context.getString(R.string.radioButton, utterancesFor(e, guessLabelIfTextShorterThan = Some(2)).mkString(": ")))
     }
 
   }
