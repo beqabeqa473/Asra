@@ -108,21 +108,26 @@ object StateReactor {
     def connect() {
       cleanupState()
       if(audioManager.isBluetoothScoAvailableOffCall) {
+        Log.d("spielcheck", "Connecting")
         val f = new IntentFilter
-        f.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_CHANGED)
-        f.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED)
+        if(VERSION.SDK_INT < 14)
+          f.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_CHANGED)
+        else
+          f.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED)
         service.registerReceiver(this, f)
         audioManager.startBluetoothSco()
       }
     }
 
     private def cleanupState() {
+      Log.d("spielcheck", "Cleaning up state.")
       usingSco = false
       wasConnected = false
       if(!inCall) audioManager.setMode(AudioManager.MODE_NORMAL)
     }
 
     private def cleanup() {
+      Log.d("spielcheck", "Cleaning up.")
       audioManager.stopBluetoothSco()
       cleanupState()
       try {
@@ -134,21 +139,27 @@ object StateReactor {
 
     override def onReceive(c:Context, i:Intent) {
       val state = i.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, AudioManager.SCO_AUDIO_STATE_DISCONNECTED)
+      Log.d("spielcheck", "Got "+i+", "+state)
       if(state == AudioManager.SCO_AUDIO_STATE_CONNECTED) {
+        Log.d("spielcheck", "here1")
         usingSco = true
         audioManager.setMode(AudioManager.MODE_IN_CALL)
         wasConnected = true
       } else if(state == AudioManager.SCO_AUDIO_STATE_ERROR) {
+        Log.d("spielcheck", "here2")
         cleanupState()
       } else if(usingSco && wasConnected && state == AudioManager.SCO_AUDIO_STATE_DISCONNECTED) {
+        Log.d("spielcheck", "here3")
         cleanupState()
         audioManager.startBluetoothSco()
       } else if(wasConnected) {
+        Log.d("spielcheck", "here4")
         cleanup()
       }
     }
 
     def disconnect() {
+      Log.d("spielcheck", "Disconnecting")
       audioManager.stopBluetoothSco()
       cleanup()
     }
@@ -158,6 +169,7 @@ object StateReactor {
   private var btReceiver:Option[BTReceiver] = None
 
   private def startBluetoothSCO() {
+    Log.d("spielcheck", "startBluetoothSCO()")
     if(Preferences.useBluetoothSCO) {
       val r = new BTReceiver()
       r.connect()
@@ -254,8 +266,11 @@ object StateReactor {
   }
 
   onTTSEngineChanged { () =>
-    if(TTS.engine != TTS.defaultEngine)
+    Log.d("spielcheck", "Engine changing. "+TTS.engine+", default: "+TTS.defaultEngine)
+    if(TTS.engine != TTS.defaultEngine) {
+      Log.d("spielcheck", "No, really")
       TTS.init()
+    }
   }
 
 }
