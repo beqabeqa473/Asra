@@ -265,12 +265,9 @@ object StateReactor {
     handlers.Handler.nextShouldNotInterrupt
   }
 
-  onTTSEngineChanged { () =>
-    Log.d("spielcheck", "Engine changing. "+TTS.engine+", default: "+TTS.defaultEngine)
-    if(TTS.engine != TTS.defaultEngine) {
-      Log.d("spielcheck", "No, really")
-      TTS.init()
-    }
+  onTTSEngineChanged { () => 
+    if(TTS.defaultEngine != Preferences.speechEngine)
+      TTS.init() 
   }
 
 }
