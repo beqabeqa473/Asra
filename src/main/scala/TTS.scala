@@ -47,11 +47,14 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   */
 
   def init() {
-    if(tts != null) {
-      tts.shutdown()
-      tts = null
+    guard {
+      if(tts != null) {
+        tts.shutdown()
+        tts = null
+      }
+      tts = new TextToSpeech(service, this)
+      TextToSpeech.SUCCESS
     }
-    tts = new TextToSpeech(service, this)
   }
 
   private var welcomed = false
@@ -160,6 +163,8 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
       case e =>
         failures += 1
         Log.e("spiel", "TTS error:", e)
+        if(failures >= 3)
+          reInitOnFailure()
         false
     }
   }
@@ -224,16 +229,18 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   private var failures = 0
 
+  private def reInitOnFailure() {
+    currentEngine = platformEngine
+    failures = 0
+    val intent = new Intent()
+    intent.setAction(tts.Engine.ACTION_INSTALL_TTS_DATA)
+    intent.setPackage(engine)
+    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    service.startActivity(intent)
+    init()
+  }
+
   def guard(f: => Int) {
-
-    def installTTSData() {
-      val intent = new Intent()
-      intent.setAction(tts.Engine.ACTION_INSTALL_TTS_DATA)
-      intent.setPackage(engine)
-      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-      service.startActivity(intent)
-    }
-
     try {
       if(f == TextToSpeech.SUCCESS)
         failures = 0
@@ -244,12 +251,8 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
         failures += 1
         Log.e("spiel", "TTS error:", e)
     } finally {
-      if(failures >= 3) {
-        currentEngine = platformEngine
-        failures = 0
-        installTTSData()
-        init()
-      }
+      if(failures >= 3)
+        reInitOnFailure()
     }
   }
 
