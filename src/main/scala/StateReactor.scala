@@ -9,6 +9,8 @@ import android.media.AudioManager
 import android.net.Uri
 import android.os.Build.VERSION
 import android.os.Environment
+
+import android.telephony.PhoneNumberUtils
 import android.text.format.{DateFormat, DateUtils}
 import android.util.Log
 
@@ -66,7 +68,7 @@ object StateReactor {
     if(usingSco)
       btReceiver.foreach(_.connect())
     if(Preferences.talkingCallerID)
-      callerIDRepeaterID = TTS.speakEvery(3, number)
+      callerIDRepeaterID = TTS.speakEvery(3, PhoneNumberUtils.formatNumber(number))
   }
 
   private var _inCall = false
