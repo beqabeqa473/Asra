@@ -681,9 +681,7 @@ class Handlers {
   class ProgressBar extends Handler("android.widget.ProgressBar") {
     onViewSelected { e:AccessibilityEvent =>
       val percent = (e.getCurrentItemIndex.toFloat/e.getItemCount*100).toInt
-      
       TTS.presentPercentage(percent)
-      true
     }
   }
 

@@ -226,9 +226,9 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   def guard(f: => Int) {
 
-    def checkTTSData() {
+    def installTTSData() {
       val intent = new Intent()
-      intent.setAction(tts.Engine.ACTION_CHECK_TTS_DATA)
+      intent.setAction(tts.Engine.ACTION_INSTALL_TTS_DATA)
       intent.setPackage(engine)
       intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
       service.startActivity(intent)
@@ -247,7 +247,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
       if(failures >= 3) {
         currentEngine = platformEngine
         failures = 0
-        checkTTSData()
+        installTTSData()
         init()
       }
     }
@@ -328,8 +328,9 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     guard { tts.stop() }
   }
 
-  def presentPercentage(percentage:Double) {
+  def presentPercentage(percentage:Double) = {
     tick(Some(0.5+percentage/200))
+    true
   }
 
   private var repeatedSpeech = collection.mutable.Map[String, Tuple2[Int, String]]()
