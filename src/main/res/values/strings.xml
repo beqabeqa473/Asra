@@ -35,6 +35,7 @@
   <string name="notSelected">not selected</string>
   <string name="password">password</string>
   <string name="radioButton">%1$s: radio button</string>
+  <string name="rating">Rating</string>
   <string name="searchText">%1$s: search text</string>
   <string name="selected">selected</string>
   <string name="tab">%1$s: tab</string>

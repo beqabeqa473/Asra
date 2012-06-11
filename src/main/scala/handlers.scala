@@ -477,7 +477,7 @@ class Handler(pkg:String, cls:String) {
     iterate(n)
   }
 
-  private def guessLabelFor(e:AccessibilityEvent) = {
+  protected def guessLabelFor(e:AccessibilityEvent) = {
     val source = e.getSource
     rootOf(source).flatMap { root =>
       val leaves = leavesOf(root)
@@ -684,10 +684,17 @@ class Handlers {
   }
 
   class ProgressBar extends Handler("android.widget.ProgressBar") {
+
+    onViewFocused { e:AccessibilityEvent =>
+      val percent = (e.getCurrentItemIndex.toDouble/e.getItemCount*100).toInt
+      speak(utterancesFor(e, addBlank = false, guessLabelIfContentDescriptionMissing = true, providedText=Some(percent+"%")))
+    }
+
     onViewSelected { e:AccessibilityEvent =>
       val percent = (e.getCurrentItemIndex.toFloat/e.getItemCount*100).toInt
       TTS.presentPercentage(percent)
     }
+
   }
 
   class RadioButton extends Handler("android.widget.RadioButton") {
@@ -706,7 +713,23 @@ class Handlers {
   }
 
   class RatingBar extends Handler("android.widget.RatingBar") {
-    onViewSelected { e:AccessibilityEvent => true }
+
+    onViewFocused { e:AccessibilityEvent =>
+      val label = guessLabelFor(e).getOrElse(Handler.context.getString(R.string.rating))
+      val rating = Handler.context.getString(R.string.listItem, label, e.getCurrentItemIndex.toString, e.getItemCount.toString)
+      speak(utterancesFor(e, addBlank = false, providedText=Some(rating)))
+    }
+
+    onViewSelected { e:AccessibilityEvent =>
+      if(VERSION.SDK_INT >= 14) {
+        Option(e.getSource).map { source =>
+          if(source.isFocused)
+            speak(e.getCurrentItemIndex.toString)
+          else true
+        }.getOrElse(true)
+      } else true
+    }
+
   }
 
   class ScrollView extends Handler("android.widget.ScrollView") {
@@ -718,13 +741,6 @@ class Handlers {
   class SearchBox extends Handler("android.app.SearchDialog$SearchAutoComplete") {
     onViewFocused { e:AccessibilityEvent =>
       speak(Handler.context.getString(R.string.searchText, utterancesFor(e).mkString(": ")), false)
-    }
-  }
-
-  class SeekBar extends Handler("android.widget.SeekBar") {
-    onViewFocused { e:AccessibilityEvent =>
-      val percent = (e.getCurrentItemIndex.toDouble/e.getItemCount*100).toInt
-      speak(utterancesFor(e, addBlank = false, guessLabelIfContentDescriptionMissing = true, providedText=Some(percent+"%")))
     }
   }
 
