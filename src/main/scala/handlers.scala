@@ -408,9 +408,12 @@ class Handler(pkg:String, cls:String) {
    * adding a blank utterance.
   */
 
-  protected def utterancesFor(e:AccessibilityEvent, addBlank:Boolean = true, stripBlanks:Boolean = false, guessLabelIfTextMissing:Boolean = false, guessLabelIfContentDescriptionMissing:Boolean = false, guessLabelIfTextShorterThan:Option[Int] = None):List[String] = {
+  protected def utterancesFor(e:AccessibilityEvent, addBlank:Boolean = true, stripBlanks:Boolean = false, guessLabelIfTextMissing:Boolean = false, guessLabelIfContentDescriptionMissing:Boolean = false, guessLabelIfTextShorterThan:Option[Int] = None, providedText:Option[String] = None):List[String] = {
     var rv = List[String]()
-    val txt = Option(e.getText).map(_.toList).getOrElse(Nil).filterNot(_ == null).map(_.toString).mkString("\n").split("\n").toList
+    val txt = Option(e.getText).map(_.toList).getOrElse(Nil).filterNot(_ == null).map(_.toString).mkString("\n") match {
+      case "" => List()
+      case v => v.split("\n").toList
+    }
     val text = if(stripBlanks)
       txt.filterNot(_.trim.length == 0)
     else txt
@@ -420,9 +423,11 @@ class Handler(pkg:String, cls:String) {
     )
       rv ::= context.getString(R.string.checked)
     var blankAdded = false
-    if(text.size == 0 && e.getContentDescription == null && addBlank) {
-      blankAdded = true
-      rv ::= ""
+    providedText.map(rv ::= _).getOrElse {
+      if(text.size == 0 && e.getContentDescription == null && addBlank) {
+        blankAdded = true
+        rv ::= ""
+      }
     }
     rv :::= text
     if(e.getContentDescription != null && e.getContentDescription != "")
@@ -451,6 +456,7 @@ class Handler(pkg:String, cls:String) {
           }.getOrElse(Nil)
       }
     }
+    Log.d("spielcheck", "RV: "+rv)
     rv
   }
 
@@ -713,6 +719,13 @@ class Handlers {
   class SearchBox extends Handler("android.app.SearchDialog$SearchAutoComplete") {
     onViewFocused { e:AccessibilityEvent =>
       speak(Handler.context.getString(R.string.searchText, utterancesFor(e).mkString(": ")), false)
+    }
+  }
+
+  class SeekBar extends Handler("android.widget.SeekBar") {
+    onViewFocused { e:AccessibilityEvent =>
+      val percent = (e.getCurrentItemIndex.toDouble/e.getItemCount*100).toInt
+      speak(utterancesFor(e, addBlank = false, guessLabelIfContentDescriptionMissing = true, providedText=Some(percent+"%")))
     }
   }
 
