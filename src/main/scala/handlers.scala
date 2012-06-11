@@ -175,15 +175,15 @@ object Handler {
           Log.d("spiel", "Already called "+h.getClass.getName+", skipping.")
           false
         } else {
-          Log.d("spiel", "Dispatching to "+pkg+":"+cls)
+          Log.d("spiel", "Dispatching to "+pkg+":"+cls+": "+h.getClass.getName)
           alreadyCalled ::= h
           // If we don't already have a handler for this exact package and 
           // class, then associate the one we're calling with it. This 
           // allows for similar AccessibilityEvents to skip several dispatch steps
-          if(shouldCache && handlers.get((e.getPackageName.toString, e.getClassName.toString)) == None) {
+          /*if(shouldCache && handlers.get((e.getPackageName.toString, e.getClassName.toString)) == None) {
             Log.d("spiel", "Caching "+h.getClass.getName+" for "+e.getPackageName+"/"+e.getClassName)
             handlers(e.getPackageName.toString -> e.getClassName.toString) = h
-          }
+          }*/
           h(e, eType)
         }
       case None => false
@@ -219,8 +219,15 @@ object Handler {
     // need to do it.
     def dispatchToSubclass() = {
       Log.d("spiel", "Subclass match dispatch")
-      def test(originator:Class[_], target:Class[_]) =
-        target.isAssignableFrom(originator)
+
+      def ancestors(cls:Class[_]):List[Class[_]] = {
+        def iterate(start:Class[_], classes:List[Class[_]] = Nil):List[Class[_]] = start.getSuperclass match {
+          case null => classes
+          case v => iterate(v, v :: classes)
+        }
+        iterate(cls).reverse
+      }
+
       val originator = try {
         Some(context.getClassLoader.loadClass(e.getClassName.toString))
       } catch {
@@ -231,19 +238,23 @@ object Handler {
           case _ => None
         }
       }
-      originator.map { o =>
-        handlers.exists { v =>
-          if(v._1._1 == "" && v._1._2 != "" && v._1._2 != "*") {
-            try {
-              val target = context.getClassLoader.loadClass(v._1._2)
-              if(test(o, target))
-                dispatchTo(v._1._1, v._1._2)
-              else false
-            } catch {
-              case e:ClassNotFoundException => false
-            }
-          } else false
-        }
+
+      originator.flatMap { o =>
+        val a = ancestors(o)
+        val candidates = handlers.filter { h =>
+          h._1._1 == "" && h._1._2 != "" && h._1._2 != "*"
+        }.toList.map { h =>
+          val target:Class[_] = try {
+            context.getClassLoader.loadClass(h._1._2)
+          } catch {
+            case e:ClassNotFoundException => o
+          }
+          (a.indexOf(target), h)
+        }.filter(_._1 >= 0).sortBy((v:Tuple2[Int, _]) => v._1)
+        //Log.d("spielcheck", "Subclass candidate handlers for "+e.getClassName+": "+candidates)
+        Some(candidates.exists { v =>
+          dispatchTo(v._2._1._1, v._2._1._2, shouldCache = false)
+        })
       }.getOrElse(false)
     }
 
@@ -822,12 +833,12 @@ class Handlers {
 
     byDefault { e:AccessibilityEvent =>
       if(VERSION.SDK_INT >= 14) {
-        if(e.getRecordCount > 0) {
+        /*if(e.getRecordCount > 0) {
           Log.d("spielcheck", "E: "+e)
           for(i <- 0 to e.getRecordCount-1) {
             Log.d("spielcheck", e.getRecord(i).toString)
           }
-        }
+        }*/
       }
       false
     }
