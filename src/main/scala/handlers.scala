@@ -456,7 +456,6 @@ class Handler(pkg:String, cls:String) {
           }.getOrElse(Nil)
       }
     }
-    Log.d("spielcheck", "RV: "+rv)
     rv
   }
 
