@@ -488,25 +488,27 @@ class Handler(pkg:String, cls:String) {
     iterate(n)
   }
 
-  protected def guessLabelFor(e:AccessibilityEvent) = {
+  protected def guessLabelFor(e:AccessibilityEvent):Option[String] = {
     val source = e.getSource
     rootOf(source).flatMap { root =>
-      val leaves = leavesOf(root)
+      val leaves = leavesOf(root).map { leaf =>
+        val rect = new Rect()
+        leaf.getBoundsInScreen(rect)
+        (leaf, rect)
+      }
       val sr = new Rect()
       source.getBoundsInScreen(sr)
       val sourceRect = new Rect(0, sr.top, Int.MaxValue, sr.bottom)
-      val rect = new Rect()
-      val row = leaves.filter { v =>
-        v.getBoundsInScreen(rect)
-        rect.intersect(sourceRect)
-      }
-      row.find((v) => v.getClassName == "android.widget.TextView" && v.getText != null && v.getText.length > 0).map(
-        _.getText.toString
+      val row = leaves.filter(_._2.intersect(sourceRect))
+      Log.d("spielcheck", "Row: "+row)
+      row.find((v) => v._1.getClassName == "android.widget.TextView" && v._1.getText != null && v._1.getText.length > 0).map(
+        _._1.getText.toString
       ).orElse {
-        val index = leaves.indexOf(source)
-        if(index > 0)
-          leaves.take(index).reverse.find((v) =>v.getText != null && v.getText.length > 0).map(_.getText.toString)
-        else None
+        Log.d("spielcheck", "Initial: "+leaves.filter(_._2.bottom <= sourceRect.top))
+        leaves.filter(_._2.bottom <= sourceRect.top)
+        .filter((v) => v._1.getClassName == "android.widget.TextView" && v._1.getText.length > 0)
+        .sortBy(_._2.bottom)
+        .reverse.headOption.map(_._1.getText.toString)
       }
     }
   }
@@ -611,6 +613,7 @@ class Handlers {
 
     onViewFocused { e:AccessibilityEvent =>
       if(e.isPassword) {
+        speak(utterancesFor(e, addBlank=false, guessLabelIfContentDescriptionMissing = true), false)
         speak(Handler.context.getString(R.string.password))
         speak(Handler.context.getString(R.string.editText), false)
       } else {
