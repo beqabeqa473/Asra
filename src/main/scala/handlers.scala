@@ -146,6 +146,12 @@ object Handler {
 
   def process(e:AccessibilityEvent, eventType:Option[Int] = None):Boolean = {
 
+    if(
+      SystemClock.uptimeMillis-e.getEventTime > 100 &&
+      List(TYPE_TOUCH_EXPLORATION_GESTURE_END, TYPE_TOUCH_EXPLORATION_GESTURE_START, TYPE_VIEW_HOVER_ENTER, TYPE_VIEW_HOVER_EXIT).contains(e.getEventType)
+    )
+      return true
+
     if(!StateReactor.screenOn_? && e.getEventType != TYPE_NOTIFICATION_STATE_CHANGED)
       return true
 
