@@ -169,7 +169,7 @@ object Handler {
     var alreadyCalled = List[Handler]()
 
     // Call the specified handler, setting state appropriately.
-    def dispatchTo(pkg:String, cls:String, shouldCache:Boolean=true):Boolean = handlers.get(pkg -> cls) match {
+    def dispatchTo(pkg:String, cls:String):Boolean = handlers.get(pkg -> cls) match {
       case Some(h) =>
         if(alreadyCalled.contains(h)) {
           Log.d("spiel", "Already called "+h.getClass.getName+", skipping.")
@@ -177,13 +177,6 @@ object Handler {
         } else {
           Log.d("spiel", "Dispatching to "+pkg+":"+cls+": "+h.getClass.getName)
           alreadyCalled ::= h
-          // If we don't already have a handler for this exact package and 
-          // class, then associate the one we're calling with it. This 
-          // allows for similar AccessibilityEvents to skip several dispatch steps
-          /*if(shouldCache && handlers.get((e.getPackageName.toString, e.getClassName.toString)) == None) {
-            Log.d("spiel", "Caching "+h.getClass.getName+" for "+e.getPackageName+"/"+e.getClassName)
-            handlers(e.getPackageName.toString -> e.getClassName.toString) = h
-          }*/
           h(e, eType)
         }
       case None => false
@@ -194,7 +187,7 @@ object Handler {
     // actions from blocking others.
     def dispatchToAlways() = {
       Log.d("spiel", "Always dispatch")
-      dispatchTo("", "*", shouldCache=false)
+      dispatchTo("", "*")
       false
     }
 
@@ -215,8 +208,8 @@ object Handler {
     // of a widget for which we already have a Handler (I.e. a subclass of 
     // Button) then it should be delegated to the handler for buttons. 
     // Surround this in a try block to catch the various exceptions that can 
-    // bubble up. While this is a heavy step, previous caching minimizes the 
-    // need to do it.
+    // bubble up.
+
     def dispatchToSubclass() = {
       Log.d("spiel", "Subclass match dispatch")
 
@@ -253,7 +246,7 @@ object Handler {
         }.filter(_._1 >= 0).sortBy((v:Tuple2[Int, _]) => v._1)
         //Log.d("spielcheck", "Subclass candidate handlers for "+e.getClassName+": "+candidates)
         Some(candidates.exists { v =>
-          dispatchTo(v._2._1._1, v._2._1._2, shouldCache = false)
+          dispatchTo(v._2._1._1, v._2._1._2)
         })
       }.getOrElse(false)
     }
