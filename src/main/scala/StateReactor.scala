@@ -77,7 +77,7 @@ object StateReactor {
    * Returns <code>true</code> if in call, <code>false</code> otherwise.
   */
 
-  def inCall = _inCall
+  def inCall_? = _inCall
 
   onCallAnswered { () =>
     _inCall = true
@@ -125,7 +125,7 @@ object StateReactor {
       Log.d("spielcheck", "Cleaning up state.")
       usingSco = false
       wasConnected = false
-      if(!inCall) audioManager.setMode(AudioManager.MODE_NORMAL)
+      if(!inCall_?) audioManager.setMode(AudioManager.MODE_NORMAL)
     }
 
     private def cleanup() {

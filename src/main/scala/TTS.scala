@@ -369,7 +369,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   }
 
   private def shouldSpeakNotification:Boolean = {
-    if(StateReactor.ringerOff_? || StateReactor.inCall) return false
+    if(StateReactor.ringerOff_? || StateReactor.inCall_?) return false
     if(!Preferences.speakNotificationsWhenScreenOff && StateReactor.screenOff_?) return false
     true
   }
