@@ -500,11 +500,9 @@ class Handler(pkg:String, cls:String) {
       source.getBoundsInScreen(sr)
       val sourceRect = new Rect(0, sr.top, Int.MaxValue, sr.bottom)
       val row = leaves.filter(_._2.intersect(sourceRect))
-      Log.d("spielcheck", "Row: "+row)
       row.find((v) => v._1.getClassName == "android.widget.TextView" && v._1.getText != null && v._1.getText.length > 0).map(
         _._1.getText.toString
       ).orElse {
-        Log.d("spielcheck", "Initial: "+leaves.filter(_._2.bottom <= sourceRect.top))
         leaves.filter(_._2.bottom <= sourceRect.top)
         .filter((v) => v._1.getClassName == "android.widget.TextView" && v._1.getText.length > 0)
         .sortBy(_._2.bottom)
@@ -764,7 +762,7 @@ class Handlers {
 
   class ViewGroup extends Handler("android.view.ViewGroup") {
 
-    onViewFocused { e:AccessibilityEvent => speak(utterancesFor(e, stripBlanks=true)) }
+    onViewFocused { e:AccessibilityEvent => speak(utterancesFor(e, stripBlanks = true)) }
 
     onViewHoverEnter { e:AccessibilityEvent =>
       Option(e.getSource).map { source=>
