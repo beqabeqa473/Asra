@@ -100,7 +100,7 @@ class Script(
       Scripter.context.evaluateString(Scripter.scope, code, filename, 1, null)
       successfullyRan = true
     } catch {
-      case e:RhinoException => Log.e("spiel", "Error creating script: ", e)
+      case e:RhinoException => Log.e("spiel", "Error creating script: "+e.getMessage)
       case e => Log.e("spiel", e.toString)
     }finally {
       Scripter.scope.put("__pkg__", Scripter.scope, null)
