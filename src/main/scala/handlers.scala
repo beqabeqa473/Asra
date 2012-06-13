@@ -463,7 +463,7 @@ class Handler(pkg:String, cls:String) {
     rv
   }
 
-  protected def leavesOf(n:AccessibilityNodeInfo):List[AccessibilityNodeInfo] = n.getChildCount match {
+  protected def leavesOf(n:AccessibilityNodeInfo):List[AccessibilityNodeInfo] = (n.getChildCount match {
     case 0 => List(n)
     case v =>
       (for(
@@ -471,7 +471,7 @@ class Handler(pkg:String, cls:String) {
         c = n.getChild(i) if(c != null)
       ) yield(leavesOf(c))
       ).toList.flatten
-  }
+  }).filter(_ != null)
 
   protected def rootOf(node:AccessibilityNodeInfo):Option[AccessibilityNodeInfo] = Option(node).map { n =>
     def iterate(v:AccessibilityNodeInfo):AccessibilityNodeInfo = v.getParent match {
@@ -497,7 +497,7 @@ class Handler(pkg:String, cls:String) {
         _._1.getText.toString
       ).orElse {
         leaves.filter(_._2.bottom <= sourceRect.top)
-        .filter((v) => v._1.getClassName == "android.widget.TextView" && v._1.getText.length > 0)
+        .filter((v) => v._1 != null && v._1.getClassName == "android.widget.TextView" && v._1.getText != null && v._1.getText.length > 0)
         .sortBy(_._2.bottom)
         .reverse.headOption.map(_._1.getText.toString)
       }
