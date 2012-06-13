@@ -635,6 +635,8 @@ import JsonAST._
 import JsonParser._
 import Serialization.{read, write}
 
+class AuthorizationFailed extends Exception
+
 class BazaarProvider extends ContentProvider with AbstractProvider {
 
   val mimeType = "vnd.spiel.bazaar.script"
@@ -686,11 +688,15 @@ class BazaarProvider extends ContentProvider with AbstractProvider {
     val parameters = collection.mutable.Map[String, String]()
     parameters("code") = values.getAsString("code")
     parameters("changes") = values.getAsString("changes")
-    http((
-      apiRoot / "script" / values.getAsString("package") << parameters as (Preferences.bazaarUsername, Preferences.bazaarPassword)
-    ) >~ { response =>
-    })
-    null
+    try {
+      http((
+        apiRoot / "script" / values.getAsString("package") << parameters as (Preferences.bazaarUsername, Preferences.bazaarPassword)
+      ) >~ { response =>
+      })
+      null
+    } catch {
+      case e@StatusCode(401, _) => throw new AuthorizationFailed
+    }
   }
 
   override def update(u:Uri, values:ContentValues, where:String, whereArgs:Array[String]) = 0

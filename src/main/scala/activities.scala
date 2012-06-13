@@ -414,7 +414,7 @@ class Scripts extends TypedActivity with Refreshable with RadioGroup.OnCheckedCh
       dialog.setMessage(getString(R.string.script_posted))
       dialog.show()
     } catch {
-      case e@dispatch.StatusCode(401, _) =>
+      case e:scripting.AuthorizationFailed =>
         Preferences.bazaarPassword = ""
         showDialog(CredentialsDialog)
       case e =>
