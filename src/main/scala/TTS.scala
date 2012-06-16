@@ -233,7 +233,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     currentEngine = platformEngine
     failures = 0
     val intent = new Intent()
-    intent.setAction(tts.Engine.ACTION_INSTALL_TTS_DATA)
+    intent.setAction(tts.Engine.ACTION_CHECK_TTS_DATA)
     intent.setPackage(engine)
     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     service.startActivity(intent)
