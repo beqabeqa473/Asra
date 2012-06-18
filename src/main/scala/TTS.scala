@@ -264,7 +264,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   def speak(text:String, flush:Boolean, utteranceID:Option[String] = Some(lastUtteranceID)) {
     if(!SpielService.enabled) return
-    if(text.contains("\n"))
+    if(text.length > 1 && text.contains("\n"))
       return speak(text.split("\n").toList, flush)
     Log.d("spiel", "Speaking "+text+": "+flush)
     val mode = if(flush) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD
