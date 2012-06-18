@@ -6,6 +6,7 @@ import collection.JavaConversions._
 import android.app.{Activity, AlertDialog, Dialog, ListActivity, TabActivity}
 import android.content.{ContentUris, Context, DialogInterface, Intent}
 import android.database.Cursor
+import android.net.Uri
 import android.os.Build.VERSION
 import android.os.Bundle
 import android.preference.{CheckBoxPreference, ListPreference, Preference, PreferenceActivity, PreferenceCategory, PreferenceScreen}
@@ -45,7 +46,24 @@ class Spiel extends TabActivity {
       .setIndicator(getString(R.string.events))
       .setContent(new Intent(this, classOf[Events]))
     )
+    handleCustomUri()
   }
+
+  override def onResume() {
+    super.onResume()
+    handleCustomUri()
+  }
+
+  private def handleCustomUri() {
+    Option(getIntent).flatMap((i) => Option(i.getData)).foreach { uri =>
+      if(uri.getScheme == "spiel") {
+        val parts = uri.getSchemeSpecificPart.split("?")
+        if(!parts.isEmpty && parts.head == "scripts")
+          setDefaultTab(1)
+      }
+    }
+  }
+
 }
 
 /**
@@ -366,6 +384,15 @@ class Scripts extends TypedActivity with Refreshable with RadioGroup.OnCheckedCh
               postToBazaar()
             } else
               dialog.show()
+          }
+        })
+        dialog.findView(TR.signup).setOnClickListener(new View.OnClickListener {
+          def onClick(v:View) {
+            val url = "http://bazaar.spielproject.info/signup?returnTo=spiel:scripts"
+            val intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+            startActivity(intent)
+            dialog.dismiss()
           }
         })
         dialog.findView(TR.cancel).setOnClickListener(new View.OnClickListener {
