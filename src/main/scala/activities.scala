@@ -4,6 +4,7 @@ package activities
 import collection.JavaConversions._
 
 import android.app.{Activity, AlertDialog, Dialog, ListActivity, TabActivity}
+import android.bluetooth.BluetoothAdapter
 import android.content.{ContentUris, Context, DialogInterface, Intent}
 import android.database.Cursor
 import android.net.Uri
@@ -106,6 +107,10 @@ class PreferencesActivity extends PreferenceActivity {
     enableOrDisablePreference(enginesPreference)
     enableOrDisablePreference(findPreference("rateScale"))
     enableOrDisablePreference(findPreference("pitchScale"))
+
+    Option(BluetoothAdapter.getDefaultAdapter).getOrElse {
+      getPreferenceScreen.getPreference(0).asInstanceOf[PreferenceScreen].removePreference(findPreference("useBluetoothSCO"))
+    }
 
     // Now set the shortcut to system-wide TTS settings.
     val ttsPreference = findPreference("textToSpeechSettings")
