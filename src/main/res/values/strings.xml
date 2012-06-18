@@ -38,7 +38,6 @@
   <string name="rating">Rating</string>
   <string name="searchText">%1$s: search text</string>
   <string name="selected">selected</string>
-  <string name="tab">%1$s: tab</string>
 
   <!-- Preferences -->
   <string name="preferences">Preferences</string>
@@ -161,6 +160,7 @@
   <string name="dash">dash</string>
   <string name="plus">plus</string>
   <string name="newline">Newline</string>
+  <string name="tab">tab</string>
 
   <!-- Command mode -->
   <string name="commandModeUnavailable">Command mode is unavailable in this version of Android.</string>

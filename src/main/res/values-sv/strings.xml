@@ -25,7 +25,6 @@
 <string name="password">%1$s: lösenord</string>
 <string name="radioButton">%1$s: radioknapp</string>
 <string name="searchText">%1$s: sök text</string>
-<string name="tab">%1$s: flik</string>
 
 <!-- Preferences -->
 <string name="preferences">Inställningar</string>

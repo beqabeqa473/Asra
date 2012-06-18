@@ -217,7 +217,8 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     ":" -> R.string.colon,
     "-" -> R.string.dash,
     "+" -> R.string.plus,
-    "\n" -> R.string.newline
+    "\n" -> R.string.newline,
+    "\t" -> R.string.tab
   )
 
   private def requestFocus() {

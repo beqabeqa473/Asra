@@ -28,7 +28,6 @@
 <string name="password">%1$s: contraseña</string>
 <string name="radioButton">%1$s: botón radio</string>
 <string name="searchText">%1$s: buscar en el texto</string>
-<string name="tab">Pestaña %1$s</string>
 
 <!-- Preferences -->
 <string name="preferences">Preferencias</string>

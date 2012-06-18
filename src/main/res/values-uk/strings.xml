@@ -15,7 +15,6 @@
 <string name="password">пароль</string>
 <string name="radioButton">радіоКнопка</string>
 <string name="searchText">шукатиТекст</string>
-<string name="tab">Вкладка</string>
 
 <!-- Preferences -->
 <string name="preferences">Налаштування</string>

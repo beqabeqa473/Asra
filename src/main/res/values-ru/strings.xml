@@ -24,7 +24,6 @@
 <string name="password">%1$s: пароль</string>
 <string name="radioButton">%1$s: радиокнопка</string>
 <string name="searchText">%1$s: поиск текста</string>
-<string name="tab">%1$s: вкладка</string>
 
 <!-- Preferences -->
 <string name="preferences">Настройки</string>

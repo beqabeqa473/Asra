@@ -29,7 +29,6 @@
 <string name="password">%1$s: Jelszó</string>
 <string name="radioButton">%1$s: választó gomb</string>
 <string name="searchText">%1$s: keresési mező</string>
-<string name="tab">%1$s: tab</string>
 
 <!-- Preferences -->
 <string name="preferences">beállítások</string>

@@ -36,7 +36,6 @@
   <string name="radioButton">%1$s Auswahlschalter</string>
   <string name="searchText">%1$s: Suchbegriff</string>
   <string name="selected">gewählt</string>
-  <string name="tab">%1$s Registerkarte</string>
 
   <!-- Preferences -->
   <string name="preferences">Einstellungen</string>
