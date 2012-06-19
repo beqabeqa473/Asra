@@ -187,7 +187,7 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
     key match {
       case "pitchScale" => TTS.pitch = pitchScale
       case "rateScale" => TTS.rate = rateScale
-      case "speechEngine" => TTS.engine = speechEngine
+      case "speechEngine" if(speechEngine != "") => TTS.engine = speechEngine
       case "onProximityNear" => ProximityNear(onProximityNear)
       case "onShakingStarted" => ShakingStarted(onShakingStarted)
       case "profiling" if(profiling) => Debug.startMethodTracing("spiel")
