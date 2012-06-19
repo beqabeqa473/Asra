@@ -84,7 +84,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
    * @return default engine, or empty string if unknown
   */
 
-  def defaultEngine = tts.getDefaultEngine
+  def defaultEngine = Option(tts.getDefaultEngine)
 
   def engines = {
     val pm = service.getPackageManager
@@ -103,7 +103,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   def platformEngine =
     engines.find(_._2 == "com.google.android.tts").map(_._2)
     .orElse(engines.find(_._2 == "com.svox.pico").map(_._2))
-    .getOrElse(defaultEngine)
+    .orElse(defaultEngine)
 
   /**
    * @return desired speech engine
@@ -117,8 +117,10 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   def engine_=(e:String) {
     if(tts.setEngineByPackageName(e) != TextToSpeech.SUCCESS) {
-      tts.setEngineByPackageName(defaultEngine)
-      Log.d("spiel", "Error setting speech engine. Reverting to "+defaultEngine)
+      defaultEngine.map { default =>
+        tts.setEngineByPackageName(default)
+        Log.d("spiel", "Error setting speech engine. Reverting to "+default)
+      }.getOrElse(Log.d("spiel", "Error setting default engine"))
     } else
       currentEngine = e
   }
@@ -231,7 +233,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   private var failures = 0
 
   private def reInitOnFailure() {
-    currentEngine = platformEngine
+    currentEngine = platformEngine.getOrElse(Preferences.speechEngine)
     failures = 0
     val intent = new Intent()
     intent.setAction(tts.Engine.ACTION_CHECK_TTS_DATA)
