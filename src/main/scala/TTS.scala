@@ -22,12 +22,26 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   private var service:Service = null
 
-  private var audioManager:Option[AudioManager] = None
+  private lazy val audioManager = Option(service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager])
 
-  private var pool:SoundPool = null
+  private def activeStream = audioManager.map { a =>
+    if(a.isMusicActive)
+      AudioManager.STREAM_MUSIC
+    else
+      AudioManager.STREAM_RING
+  }.getOrElse(AudioManager.STREAM_MUSIC)
 
-  object Sounds extends Enumeration {
-    var tick = 0
+  private lazy val musicPool = new SoundPool(8, AudioManager.STREAM_MUSIC, 0)
+
+  private lazy val ringPool = new SoundPool(8, AudioManager.STREAM_RING, 0)
+
+  object Sounds {
+    object Music {
+      var tick = 0
+    }
+    object Ring {
+      var tick = 0
+    }
   }
 
   /**
@@ -36,9 +50,8 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   def apply(s:Service) {
     service = s
-    audioManager = Some(service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager])
-    pool = new SoundPool(8, AudioManager.STREAM_MUSIC, 0)
-    Sounds.tick = pool.load(service, R.raw.tick, 1)
+    Sounds.Music.tick = musicPool.load(service, R.raw.tick, 1)
+    Sounds.Ring.tick = ringPool.load(service, R.raw.tick, 1)
     init()
   }
 
@@ -159,7 +172,8 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   def shutdown() {
     tts.shutdown
-    pool.release()
+    musicPool.release()
+    ringPool.release()
   }
 
   private def speaking_? = {
@@ -311,7 +325,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     }
   }
 
-  def play(id:Int, pitch:Double = 1d) {
+  def play(pool:SoundPool, id:Int, pitch:Double = 1d) {
     pool.play(id, 1f, 1f, 0, 0, pitch.toFloat)
   }
 
@@ -319,9 +333,14 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
    * Play a tick.
   */
 
-  def tick(pitchScale:Option[Double] = None) = {
+  def tick(pitchScale:Option[Double] = None, onSpeechStream:Boolean = true) = {
     pitchScale.map { s =>
-      play(Sounds.tick, s)
+      if(onSpeechStream)
+        play(musicPool, Sounds.Music.tick, s)
+      else activeStream match {
+        case AudioManager.STREAM_MUSIC => play(musicPool, Sounds.Music.tick, s)
+        case AudioManager.STREAM_RING => play(ringPool, Sounds.Music.tick, s)
+      }
     }.getOrElse(guard { tts.playEarcon("tick", 0, null) })
     true
   }
