@@ -83,6 +83,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
       engine = currentEngine
     tts.setOnUtteranceCompletedListener(this)
     tts.addEarcon("tick", "info.spielproject.spiel", R.raw.tick)
+    pitch = Preferences.pitchScale
     if(!welcomed) {
       speak(service.getString(R.string.welcomeMsg), true)
       welcomed = true
@@ -296,9 +297,9 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     guard { if(text.length == 0)
       tts.speak(service.getString(R.string.blank), mode, params)
     else if(text.length == 1 && Character.isUpperCase(text(0))) {
-      pitch = 1.5f
+      pitch = Preferences.pitchScale*1.5f
       tts.speak(service.getString(R.string.cap, text), mode, params)
-      pitch = 1
+      pitch = Preferences.pitchScale
     } else if(text.length == 1 && Preferences.managePunctuationSpeech && managedPunctuations.get(text) != None)
       tts.speak(service.getString(managedPunctuations(text)), mode, params)
     else
