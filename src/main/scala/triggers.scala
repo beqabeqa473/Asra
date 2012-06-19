@@ -2,6 +2,7 @@ package info.spielproject.spiel
 package triggers
 
 import android.content.{BroadcastReceiver, Context, Intent}
+import android.content.pm.PackageManager
 import android.util.Log
 
 import handlers.EventReviewQueue
@@ -125,8 +126,11 @@ object Triggers {
       } catch { case _ => }
     }
     // Set triggers to the <code>Action</code> specified in <code>Preferences</code>.
-    ProximityNear(Preferences.onProximityNear)
-    ShakingStarted(Preferences.onShakingStarted)
+    val pm = service.getPackageManager
+    if(pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_PROXIMITY))
+      ProximityNear(Preferences.onProximityNear)
+    if(pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER))
+      ShakingStarted(Preferences.onShakingStarted)
   }
 
 }
