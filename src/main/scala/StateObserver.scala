@@ -25,9 +25,20 @@ import android.util.Log
 
 object StateObserver {
 
-  private var sensorManager:SensorManager = null
+  private lazy val sensorManager = service.getSystemService(Context.SENSOR_SERVICE).asInstanceOf[SensorManager]
 
   private var service:SpielService = null
+
+  private def registerReceiver(r:(Context, Intent) => Unit, intents:List[String], dataScheme:Option[String] = None) {
+    val f = new IntentFilter
+    intents.foreach(f.addAction(_))
+    dataScheme.foreach(f.addDataScheme(_))
+    service.registerReceiver(new BroadcastReceiver {
+      override def onReceive(c:Context, i:Intent) = r(c, i)
+    }, f)
+  }
+
+  lazy val audioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
 
   /**
    * Initialize this <code>StateReactor</code> based off of the specified <code>SpielService</code>.
@@ -36,17 +47,6 @@ object StateObserver {
   def apply(_service:SpielService) {
 
     service = _service
-
-    val audioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
-
-    def registerReceiver(r:(Context, Intent) => Unit, intents:List[String], dataScheme:Option[String] = None) {
-      val f = new IntentFilter
-      intents.foreach(f.addAction(_))
-      dataScheme.foreach(f.addDataScheme(_))
-      service.registerReceiver(new BroadcastReceiver {
-        override def onReceive(c:Context, i:Intent) = r(c, i)
-      }, f)
-    }
 
     registerReceiver((c, i) => mediaMounted(i.getData), Intent.ACTION_MEDIA_MOUNTED :: Nil, Some("file"))
 
@@ -88,6 +88,28 @@ object StateObserver {
       }
     }, Intent.ACTION_HEADSET_PLUG :: "android.bluetooth.headset.action.STATE_CHANGED" :: Nil)
 
+    if(VERSION.SDK_INT > 8)
+      registerBluetoothScoV9()
+
+    registerReceiver((c, i) => screenOff() , Intent.ACTION_SCREEN_OFF :: Nil)
+
+    registerReceiver((c, i) => screenOn(), Intent.ACTION_SCREEN_ON :: Nil)
+
+    service.getContentResolver.registerContentObserver(Secure.getUriFor(Secure.TTS_DEFAULT_SYNTH), false, new ContentObserver(new Handler) {
+      override def onChange(bySelf:Boolean) = ttsEngineChanged()
+    })
+
+    service.getContentResolver.registerContentObserver(Secure.getUriFor(Secure.TTS_DEFAULT_RATE), false, new ContentObserver(new Handler) {
+      override def onChange(bySelf:Boolean) = ttsRateChanged()
+    })
+
+    service.getContentResolver.registerContentObserver(Secure.getUriFor(Secure.TTS_DEFAULT_PITCH), false, new ContentObserver(new Handler) {
+      override def onChange(bySelf:Boolean) = ttsPitchChanged()
+    })
+
+  }
+
+  private def registerBluetoothScoV9() {
     registerReceiver({(c, i) =>
       val device = i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE).asInstanceOf[BluetoothDevice]
       device.getBluetoothClass.getDeviceClass match {
@@ -103,25 +125,6 @@ object StateObserver {
     registerReceiver({(c, i) =>
       bluetoothSCOHeadsetDisconnected()
     }, android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECTED :: Nil)
-
-    registerReceiver((c, i) => screenOff() , Intent.ACTION_SCREEN_OFF :: Nil)
-
-    registerReceiver((c, i) => screenOn(), Intent.ACTION_SCREEN_ON :: Nil)
-
-    sensorManager = service.getSystemService(Context.SENSOR_SERVICE).asInstanceOf[SensorManager]
-
-    service.getContentResolver.registerContentObserver(Secure.getUriFor(Secure.TTS_DEFAULT_SYNTH), false, new ContentObserver(new Handler) {
-      override def onChange(bySelf:Boolean) = ttsEngineChanged()
-    })
-
-    service.getContentResolver.registerContentObserver(Secure.getUriFor(Secure.TTS_DEFAULT_RATE), false, new ContentObserver(new Handler) {
-      override def onChange(bySelf:Boolean) = ttsRateChanged()
-    })
-
-    service.getContentResolver.registerContentObserver(Secure.getUriFor(Secure.TTS_DEFAULT_PITCH), false, new ContentObserver(new Handler) {
-      override def onChange(bySelf:Boolean) = ttsPitchChanged()
-    })
-
   }
 
   private var applicationAddedHandlers = List[(Intent) => Unit]()
