@@ -66,7 +66,8 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
       return service.stopSelf()
     tts.setLanguage(java.util.Locale.getDefault)
     if(currentEngine == "") currentEngine = Preferences.speechEngine
-    engine = currentEngine
+    if(currentEngine != "")
+      engine = currentEngine
     tts.setOnUtteranceCompletedListener(this)
     tts.addEarcon("tick", "info.spielproject.spiel", R.raw.tick)
     if(!welcomed) {
@@ -84,7 +85,10 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
    * @return default engine, or empty string if unknown
   */
 
-  def defaultEngine = Option(tts.getDefaultEngine)
+  def defaultEngine = Option(tts.getDefaultEngine).flatMap { e => e match {
+    case "" => None
+    case v => Some(v)
+  } }
 
   def engines = {
     val pm = service.getPackageManager
