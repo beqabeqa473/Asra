@@ -544,9 +544,21 @@ class Handler(pkg:String, cls:String) {
 trait GenericButtonHandler extends Handler {
   onViewFocused { e:AccessibilityEvent =>
     val text = utterancesFor(e, addBlank=false).mkString(": ")
-    if(text == "")
-      speak(Handler.context.getString(R.string.button).toString)
-    else
+    if(text == "") {
+      if(VERSION.SDK_INT >= 14) {
+        Option(e.getSource).flatMap { source =>
+          rootOf(source).map { root =>
+            val leaves = leavesOf(root)
+            val index = leaves.indexOf(source)+1
+            if(index > 0)
+              speak(Handler.context.getString(R.string.listItem, Handler.context.getText(R.string.button), index.toString, leaves.size.toString))
+            else None
+          }
+        }.getOrElse(speak(Handler.context.getString(R.string.button).toString))
+        true
+      } else
+        speak(Handler.context.getString(R.string.button).toString)
+    } else
       speak(Handler.context.getString(R.string.labeledButton, text))
   }
 }
