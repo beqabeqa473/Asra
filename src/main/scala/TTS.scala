@@ -77,7 +77,6 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   def onInit(status:Int) {
     if(status == TextToSpeech.ERROR)
       return service.stopSelf()
-    tts.setLanguage(java.util.Locale.getDefault)
     if(currentEngine == "") currentEngine = Preferences.speechEngine
     if(currentEngine != "")
       engine = currentEngine
