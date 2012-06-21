@@ -607,10 +607,10 @@ object Before extends Handler("*") {
 */
 
 object After extends Handler("", "*") {
-  byDefault { e:AccessibilityEvent =>
+  onViewFocused { e:AccessibilityEvent =>
     if(VERSION.SDK_INT >= 14)
       Option(e.getSource).foreach { source =>
-        if(interactive_?(source) && !e.isEnabled)
+        if(source.getChildCount == 0 && interactive_?(source) && !e.isEnabled)
           speak(Handler.context.getString(R.string.disabled), false)
         }
     true
