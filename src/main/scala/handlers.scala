@@ -188,12 +188,10 @@ object Handler {
       case None => false
     }
 
-    // First, run the Always handler and ignore its return value. This 
-    // mandates certain behavior types for all events but prevents those 
-    // actions from blocking others.
-    def dispatchToAlways() = {
-      Log.d("spiel", "Always dispatch")
-      dispatchTo("", "*")
+    // Always run this handler before an event. This cannot block others from executing.
+    def dispatchToBefore() = {
+      Log.d("spiel", "Before dispatch")
+      Before(e, eType)
       false
     }
 
@@ -263,7 +261,7 @@ object Handler {
       dispatchTo("", "")
     }
 
-    Log.d("spiel", "Result: "+(dispatchToAlways() || dispatchToExact() || dispatchToClass() || dispatchToSubclass() || dispatchToDefault()))
+    Log.d("spiel", "Result: "+(dispatchToBefore() || dispatchToExact() || dispatchToClass() || dispatchToSubclass() || dispatchToDefault()))
 
     if(!nextShouldNotInterruptCalled)
       myNextShouldNotInterrupt = false
@@ -564,6 +562,40 @@ trait GenericButtonHandler extends Handler {
 }
 
 /**
+ * Run before every event. Cannot pre-empt other handlers.
+*/
+
+object Before extends Handler("*") {
+
+  onViewHoverEnter { e:AccessibilityEvent =>
+    stopSpeaking()
+    if(SystemClock.uptimeMillis-e.getEventTime <= 100)
+      shortVibration()
+    false
+  }
+
+  onViewHoverExit { e:AccessibilityEvent =>
+    if(SystemClock.uptimeMillis-e.getEventTime <= 100)
+      shortVibration()
+    false
+  }
+
+  byDefault { e:AccessibilityEvent =>
+    if(VERSION.SDK_INT >= 14) {
+      /*if(e.getRecordCount > 0) {
+        Log.d("spielcheck", "E: "+e)
+        for(i <- 0 to e.getRecordCount-1) {
+          Log.d("spielcheck", e.getRecord(i).toString)
+        }
+      }*/
+    }
+    false
+  }
+
+}
+
+
+/**
  * By placing all <code>Handler</code> classes here, we can use the power of 
  * reflection to avoid manually registering each and every one.
 */
@@ -820,39 +852,6 @@ class Handlers {
           utils.HtmlParser(t)
       }.getOrElse(<span/>)
       speak(utterancesFor(x))
-    }
-
-  }
-
-  /**
-   * This handler is always called, and cannot prevent others from running.
-  */
-
-  class Always extends Handler("*") {
-
-    onViewHoverEnter { e:AccessibilityEvent =>
-      stopSpeaking()
-      if(SystemClock.uptimeMillis-e.getEventTime <= 100)
-        shortVibration()
-      false
-    }
-
-    onViewHoverExit { e:AccessibilityEvent =>
-      if(SystemClock.uptimeMillis-e.getEventTime <= 100)
-        shortVibration()
-      false
-    }
-
-    byDefault { e:AccessibilityEvent =>
-      if(VERSION.SDK_INT >= 14) {
-        /*if(e.getRecordCount > 0) {
-          Log.d("spielcheck", "E: "+e)
-          for(i <- 0 to e.getRecordCount-1) {
-            Log.d("spielcheck", e.getRecord(i).toString)
-          }
-        }*/
-      }
-      false
     }
 
   }
