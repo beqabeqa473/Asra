@@ -271,7 +271,7 @@ object Handler {
 
     dispatchToAfter()
 
-    if(!nextShouldNotInterruptCalled)
+    if(!nextShouldNotInterruptCalled && eType == None)
       myNextShouldNotInterrupt = false
 
     true
