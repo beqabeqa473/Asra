@@ -181,7 +181,7 @@ object Handler {
           Log.d("spiel", "Already called "+h.getClass.getName+", skipping.")
           false
         } else {
-          Log.d("spiel", "Dispatching to "+pkg+":"+cls+": "+h.getClass.getName)
+          Log.d("spiel", "Dispatching to "+h.getClass.getName)
           alreadyCalled ::= h
           h(e, eType)
         }
