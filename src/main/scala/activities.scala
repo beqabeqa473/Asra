@@ -153,10 +153,9 @@ class PreferencesActivity extends PreferenceActivity {
       getPreferenceScreen.removePreference(getPreferenceScreen.getPreference(2))
 
     val scripts = findPreference("scripts").asInstanceOf[PreferenceScreen]
-    if(Scripter.preferences == Map.empty) {
-      scripts.setEnabled(false)
-      scripts.setSelectable(false)
-    } else {
+    if(Scripter.preferences == Map.empty)
+      getPreferenceScreen.removePreference(scripts)
+    else {
       scripts.removeAll()
       Scripter.preferences.foreach { pkg =>
         scripts.addPreference(scriptPreferencesFor(pkg._1))
