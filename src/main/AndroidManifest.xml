@@ -30,7 +30,9 @@
 
     </service>
 
-    <activity android:name=".activities.Spiel">
+    <activity
+      android:name=".activities.Spiel"
+      android:configChanges="orientation|keyboardHidden|screenSize">
       <intent-filter>
         <action android:name="android.intent.action.VIEW"/>
 <category android:name="android.intent.category.DEFAULT"/>
@@ -39,7 +41,9 @@
       </intent-filter>
     </activity>
 
-    <activity android:name=".activities.PreferencesActivity">
+    <activity
+      android:name=".activities.PreferencesActivity"
+      android:configChanges="orientation|keyboardHidden|screenSize">
       <intent-filter>    
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.accessibilityservice.SERVICE_SETTINGS"/>
