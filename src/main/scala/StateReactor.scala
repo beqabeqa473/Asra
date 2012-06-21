@@ -192,7 +192,7 @@ object StateReactor {
 
   onMediaMounted { path =>
     if(path == Uri.fromFile(Environment.getExternalStorageDirectory)) {
-      TTS.engine = Preferences.speechEngine
+      TTS.init()
       scripting.Scripter.initExternalScripts()
     }
   }

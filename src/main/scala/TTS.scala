@@ -55,6 +55,8 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     init()
   }
 
+  private var desiredEngine:Option[String] = None
+
   /**
    * Initialize or re-initialize TTS.
   */
@@ -65,21 +67,23 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
         tts.shutdown()
         tts = null
       }
-      tts = new TextToSpeech(service, this)
+      desiredEngine.getOrElse(desiredEngine = Some(Preferences.speechEngine))
+      tts = if(VERSION.SDK_INT < 14) {
+        val tmp = new TextToSpeech(service, this)
+        desiredEngine.foreach(tmp.setEngineByPackageName(_))
+        tmp
+      } else
+        desiredEngine.map(new TextToSpeech(service, this, _)).getOrElse(new TextToSpeech(service, this))
+      desiredEngine = None
       TextToSpeech.SUCCESS
     }
   }
 
   private var welcomed = false
 
-  private var currentEngine = ""
-
   def onInit(status:Int) {
     if(status == TextToSpeech.ERROR)
       return service.stopSelf()
-    if(currentEngine == "") currentEngine = Preferences.speechEngine
-    if(currentEngine != "")
-      engine = currentEngine
     tts.setOnUtteranceCompletedListener(this)
     tts.addEarcon("tick", "info.spielproject.spiel", R.raw.tick)
     pitch = Preferences.pitchScale
@@ -121,26 +125,6 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     engines.find(_._2 == "com.google.android.tts").map(_._2)
     .orElse(engines.find(_._2 == "com.svox.pico").map(_._2))
     .orElse(defaultEngine)
-
-  /**
-   * @return desired speech engine
-  */
-
-  def engine = Preferences.speechEngine
-
-  /**
-   * Set desired speech engine
-  */
-
-  def engine_=(e:String) {
-    if(tts.setEngineByPackageName(e) != TextToSpeech.SUCCESS) {
-      defaultEngine.map { default =>
-        tts.setEngineByPackageName(default)
-        Log.d("spiel", "Error setting speech engine. Reverting to "+default)
-      }.getOrElse(Log.d("spiel", "Error setting default engine"))
-    } else
-      currentEngine = e
-  }
 
   /**
    * @return desired rate scale
@@ -251,12 +235,12 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   private var failures = 0
 
   private def reInitOnFailure() {
-    currentEngine = platformEngine.getOrElse(Preferences.speechEngine)
+    desiredEngine = platformEngine.orElse(Some(Preferences.speechEngine))
     failures = 0
     val intent = new Intent()
     intent.setAction(tts.Engine.ACTION_CHECK_TTS_DATA)
-    if(engine != "")
-      intent.setPackage(engine)
+    if(Preferences.speechEngine != "")
+      intent.setPackage(Preferences.speechEngine)
     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     service.startActivity(intent)
     init()
