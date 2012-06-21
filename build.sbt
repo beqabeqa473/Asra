@@ -10,9 +10,9 @@ AndroidMarketPublish.settings
 
 name := "Spiel"
 
-version := "2.0.0"
+version := "2.0.1"
 
-versionCode := 9
+versionCode := 10
 
 scalaVersion := "2.9.2"
 
