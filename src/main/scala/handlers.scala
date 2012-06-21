@@ -831,7 +831,21 @@ class Handlers {
 
   class ViewGroup extends Handler("android.view.ViewGroup") {
 
-    onViewFocused { e:AccessibilityEvent => speak(utterancesFor(e, stripBlanks = true)) }
+    onViewFocused { e:AccessibilityEvent => 
+      if(VERSION.SDK_INT >= 14) {
+        val utterances = utterancesFor(e, stripBlanks = true, addBlank=false)
+        if(utterances != Nil)
+          speak(utterances)
+        else
+          Option(e.getSource).map { source =>
+            if(interactive_?(source))
+              speak(utterances)
+            else
+              true
+          }.getOrElse(speak(utterancesFor(e, stripBlanks = true)))
+      } else
+        speak(utterancesFor(e, stripBlanks = true))
+    }
 
     onViewHoverEnter { e:AccessibilityEvent =>
       Option(e.getSource).map { source=>
