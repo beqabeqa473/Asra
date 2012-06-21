@@ -720,10 +720,14 @@ class Handlers {
       if(utterances != Nil)
         if(e.getText.size == 1)
           speak(Handler.context.getString(R.string.listItem, e.getText.get(0), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
-        else
-          false
       else
-        false
+        if(e.getItemCount == 0)
+          speak(Handler.context.getString(R.string.emptyList))
+        else if(e.getItemCount == 1)
+          speak(Handler.context.getString(R.string.listWithItem))
+        else if(e.getItemCount > 1)
+          speak(Handler.context.getString(R.string.listWithItems, e.getItemCount.toString))
+      true
     }
 
     onViewScrolled { e:AccessibilityEvent =>
