@@ -235,7 +235,7 @@ class Observer(context:AContext, path:String) extends FileObserver(path) {
   import FileObserver._
   def onEvent(event:Int, path:String) = event match {
     case CREATE | MODIFY | MOVED_TO => (new Script(context, path, false)).reload()
-    case DELETE | MOVED_FROM =>
+    case DELETE | MOVED_FROM => Handler.unregisterPackage(path.split("\\.").head)
     case _ =>
   }
 }
