@@ -29,17 +29,6 @@ object StateObserver {
 
   private var service:SpielService = null
 
-  private def registerReceiver(r:(Context, Intent) => Unit, intents:List[String], dataScheme:Option[String] = None) {
-    val f = new IntentFilter
-    intents.foreach(f.addAction(_))
-    dataScheme.foreach(f.addDataScheme(_))
-    service.registerReceiver(new BroadcastReceiver {
-      override def onReceive(c:Context, i:Intent) = r(c, i)
-    }, f)
-  }
-
-  lazy val audioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
-
   /**
    * Initialize this <code>StateReactor</code> based off of the specified <code>SpielService</code>.
   */
@@ -47,6 +36,17 @@ object StateObserver {
   def apply(_service:SpielService) {
 
     service = _service
+
+    val audioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
+
+    def registerReceiver(r:(Context, Intent) => Unit, intents:List[String], dataScheme:Option[String] = None) {
+      val f = new IntentFilter
+      intents.foreach(f.addAction(_))
+      dataScheme.foreach(f.addDataScheme(_))
+      service.registerReceiver(new BroadcastReceiver {
+        override def onReceive(c:Context, i:Intent) = r(c, i)
+      }, f)
+    }
 
     registerReceiver((c, i) => mediaMounted(i.getData), Intent.ACTION_MEDIA_MOUNTED :: Nil, Some("file"))
 
@@ -88,8 +88,23 @@ object StateObserver {
       }
     }, Intent.ACTION_HEADSET_PLUG :: "android.bluetooth.headset.action.STATE_CHANGED" :: Nil)
 
-    if(VERSION.SDK_INT > 8)
-      registerBluetoothScoV9()
+    if(VERSION.SDK_INT > 8) {
+      registerReceiver({(c, i) =>
+        val device = i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE).asInstanceOf[BluetoothDevice]
+        device.getBluetoothClass.getDeviceClass match {
+          case BluetoothClass.Device.AUDIO_VIDEO_WEARABLE_HEADSET => actor {
+            Thread.sleep(5000)
+            if(!audioManager.isBluetoothA2dpOn)
+              bluetoothSCOHeadsetConnected()
+          }
+          case _ =>
+        }
+      }, android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED :: Nil)
+
+      registerReceiver({(c, i) =>
+        bluetoothSCOHeadsetDisconnected()
+      }, android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECTED :: Nil)
+    }
 
     registerReceiver((c, i) => screenOff() , Intent.ACTION_SCREEN_OFF :: Nil)
 
@@ -107,24 +122,6 @@ object StateObserver {
       override def onChange(bySelf:Boolean) = ttsPitchChanged()
     })
 
-  }
-
-  private def registerBluetoothScoV9() {
-    registerReceiver({(c, i) =>
-      val device = i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE).asInstanceOf[BluetoothDevice]
-      device.getBluetoothClass.getDeviceClass match {
-        case BluetoothClass.Device.AUDIO_VIDEO_WEARABLE_HEADSET => actor {
-          Thread.sleep(5000)
-          if(!audioManager.isBluetoothA2dpOn)
-            bluetoothSCOHeadsetConnected()
-        }
-        case _ =>
-      }
-    }, android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED :: Nil)
-
-    registerReceiver({(c, i) =>
-      bluetoothSCOHeadsetDisconnected()
-    }, android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECTED :: Nil)
   }
 
   private var applicationAddedHandlers = List[(Intent) => Unit]()
