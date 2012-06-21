@@ -923,8 +923,10 @@ class Handlers {
           e.getClassName.toString.split("\\.").last :: Nil
         case u => u
       }
-      if(!utterances.isEmpty)
+      if(!utterances.isEmpty) {
         speak(utterances)
+        nextShouldNotInterrupt()
+      }
       true
     }
 
