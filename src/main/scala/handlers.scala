@@ -261,7 +261,15 @@ object Handler {
       dispatchTo("", "")
     }
 
-    Log.d("spiel", "Result: "+(dispatchToBefore() || dispatchToExact() || dispatchToClass() || dispatchToSubclass() || dispatchToDefault()))
+    def dispatchToAfter() = {
+      Log.d("spiel", "After dispatch")
+      After(e, eType)
+      true
+    }
+
+    (dispatchToBefore() || dispatchToExact() || dispatchToClass() || dispatchToSubclass() || dispatchToDefault())
+
+    dispatchToAfter()
 
     if(!nextShouldNotInterruptCalled)
       myNextShouldNotInterrupt = false
@@ -594,6 +602,20 @@ object Before extends Handler("*") {
 
 }
 
+/**
+ * Run after every event.
+*/
+
+object After extends Handler("", "*") {
+  byDefault { e:AccessibilityEvent =>
+    if(VERSION.SDK_INT >= 14)
+      Option(e.getSource).foreach { source =>
+        if(interactive_?(source) && !e.isEnabled)
+          speak(Handler.context.getString(R.string.disabled), false)
+        }
+    true
+  }
+}
 
 /**
  * By placing all <code>Handler</code> classes here, we can use the power of 
