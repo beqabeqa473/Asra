@@ -333,11 +333,9 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
    * Play a tick.
   */
 
-  def tick(pitchScale:Option[Double] = None, onSpeechStream:Boolean = true) = {
+  def tick(pitchScale:Option[Double] = None) = {
     pitchScale.map { s =>
-      if(onSpeechStream)
-        play(musicPool, Sounds.Music.tick, s)
-      else activeStream match {
+      activeStream match {
         case AudioManager.STREAM_MUSIC => play(musicPool, Sounds.Music.tick, s)
         case AudioManager.STREAM_RING => play(ringPool, Sounds.Music.tick, s)
       }
