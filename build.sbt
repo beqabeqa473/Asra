@@ -25,6 +25,7 @@ keystorePath in Android := Path.userHome / ".keystore" / "spiel.keystore"
 keyalias in Android := "spiel"
 
 libraryDependencies := Seq(
+  "com.google.android" % "support-v4" % "r7",
   "rhino" % "js" % "1.7R2" from "http://android-scripting.googlecode.com/hg/rhino/rhino1_7R2.jar",
   "net.databinder" % "dispatch-lift-json_2.9.1" % "0.7.8",
   "org.ccil.cowan.tagsoup" % "tagsoup" % "1.2.1"

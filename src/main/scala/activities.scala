@@ -16,6 +16,8 @@ import android.util.Log
 import android.view.{ContextMenu, KeyEvent, Menu, MenuInflater, MenuItem, View, ViewGroup}
 import android.view.accessibility.{AccessibilityEvent, AccessibilityNodeInfo}
 import android.widget.{AdapterView, ArrayAdapter, ListView, RadioGroup, TabHost}
+import android.support.v4.app.{FragmentActivity, LoaderManager}
+import android.support.v4.content.{CursorLoader, Loader}
 import com.google.marvin.widget.TouchGestureControlOverlay
 import TouchGestureControlOverlay._
 
@@ -203,7 +205,7 @@ trait Refreshable {
 
 import android.widget.SimpleCursorAdapter
 
-class Scripts extends TypedActivity with Refreshable with RadioGroup.OnCheckedChangeListener {
+class Scripts extends FragmentActivity with TypedActivity with Refreshable with RadioGroup.OnCheckedChangeListener with LoaderManager.LoaderCallbacks[Cursor] {
 
   private var listView:ListView = null
 
@@ -233,17 +235,30 @@ class Scripts extends TypedActivity with Refreshable with RadioGroup.OnCheckedCh
 
   private var cursor:Cursor = null
 
+  private lazy val adapter = new SimpleCursorAdapter(
+    this,
+    R.layout.script_row,
+    null,
+    List(Provider.columns.label).toArray,
+    List(R.id.script_title).toArray,
+    0
+  )
+
+  def onCreateLoader(id:Int, bundle:Bundle) = {
+    new CursorLoader(this, Provider.uri, Provider.columns.projection, null, null, null)
+  }
+
+  def onLoaderReset(loader:Loader[Cursor]) {
+    adapter.swapCursor(null)
+  }
+
+  def onLoadFinished(loader:Loader[Cursor], cursor:Cursor) {
+    adapter.swapCursor(cursor)
+  }
+
   private def refreshSystem() {
-    cursor = managedQuery(Provider.uri, Provider.columns.projection, null, null, null)
-    listView.setAdapter(
-      new SimpleCursorAdapter(
-        this,
-        R.layout.script_row,
-        cursor,
-        List(Provider.columns.label).toArray,
-        List(R.id.script_title).toArray
-      )
-    )
+    getSupportLoaderManager.initLoader(0, null, this)
+    listView.setAdapter(adapter)
     BazaarProvider.checkRemoteScripts()
   }
 
