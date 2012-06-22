@@ -57,12 +57,15 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   private var desiredEngine:Option[String] = None
 
+  private var reinitializing = false
+
   /**
    * Initialize or re-initialize TTS.
   */
 
   def init() {
     guard {
+      reinitializing = true
       if(tts != null) {
         tts.shutdown()
         tts = null
@@ -82,6 +85,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   private var welcomed = false
 
   def onInit(status:Int) {
+    reinitializing = false
     if(status == TextToSpeech.ERROR)
       return service.stopSelf()
     desiredEngine.foreach { engine =>
@@ -169,7 +173,8 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
       tts.isSpeaking
     } catch {
       case e =>
-        failures += 1
+        if(!reinitializing)
+          failures += 1
         Log.e("spiel", "TTS error:", e)
         if(failures >= 3)
           reInitOnFailure()
@@ -255,10 +260,12 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
       if(f == TextToSpeech.SUCCESS)
         failures = 0
       else
-        failures += 1
+        if(!reinitializing)
+          failures += 1
     } catch {
       case e =>
-        failures += 1
+        if(!reinitializing)
+          failures += 1
         Log.e("spiel", "TTS error:", e)
     } finally {
       if(failures >= 3)
