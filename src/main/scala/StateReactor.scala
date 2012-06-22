@@ -268,7 +268,7 @@ object StateReactor {
   }
 
   onTTSEngineChanged { () => 
-    if(TTS.defaultEngine != Preferences.speechEngine)
+    if((!TTS.defaultsEnforced_? && TTS.defaultEngine != Preferences.speechEngine) || TTS.defaultsEnforced_?)
       TTS.init() 
   }
 
