@@ -68,13 +68,13 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
         tts = null
       }
       desiredEngine.getOrElse(desiredEngine = Some(Preferences.speechEngine))
-      tts = if(VERSION.SDK_INT < 14) {
-        val tmp = new TextToSpeech(service, this)
-        desiredEngine.foreach(tmp.setEngineByPackageName(_))
+      tts = if(VERSION.SDK_INT < 14)
+        new TextToSpeech(service, this)
+      else {
+        val tmp = desiredEngine.map(new TextToSpeech(service, this, _)).getOrElse(new TextToSpeech(service, this))
+        desiredEngine = None
         tmp
-      } else
-        desiredEngine.map(new TextToSpeech(service, this, _)).getOrElse(new TextToSpeech(service, this))
-      desiredEngine = None
+      }
       TextToSpeech.SUCCESS
     }
   }
@@ -84,6 +84,10 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   def onInit(status:Int) {
     if(status == TextToSpeech.ERROR)
       return service.stopSelf()
+    desiredEngine.foreach { engine =>
+      tts.setEngineByPackageName(engine)
+      desiredEngine = None
+    }
     tts.setOnUtteranceCompletedListener(this)
     tts.addEarcon("tick", "info.spielproject.spiel", R.raw.tick)
     pitch = Preferences.pitchScale
