@@ -16,7 +16,7 @@ import android.util.Log
 import android.view.{ContextMenu, KeyEvent, Menu, MenuInflater, MenuItem, View, ViewGroup}
 import android.view.accessibility.{AccessibilityEvent, AccessibilityNodeInfo}
 import android.widget.{AdapterView, ArrayAdapter, ListView, RadioGroup, TabHost}
-import android.support.v4.app.{FragmentActivity, LoaderManager}
+import android.support.v4.app.{DialogFragment, FragmentActivity, LoaderManager}
 import android.support.v4.content.{CursorLoader, Loader}
 import com.google.marvin.widget.TouchGestureControlOverlay
 import TouchGestureControlOverlay._
@@ -362,9 +362,9 @@ class Scripts extends FragmentActivity with TypedActivity with Refreshable with 
           if(script.reload()) {
             scriptToPost = Some(script)
             if(Preferences.bazaarUsername == "" || Preferences.bazaarPassword == "")
-              showDialog(CredentialsDialog)
+              (new CredentialsDialog).show(getSupportFragmentManager, "credentials")
             else
-              showDialog(PostDialog)
+              (new PostDialog).show(getSupportFragmentManager, "post")
           } else {
             new AlertDialog.Builder(this)
             .setMessage(getString(R.string.script_reload_error))
@@ -388,78 +388,80 @@ class Scripts extends FragmentActivity with TypedActivity with Refreshable with 
     true
   }
 
-  private val CredentialsDialog = 1
-  private val PostDialog = 2
-
-  override protected def onCreateDialog(dialogType:Int):Dialog = {
-    val dialog = new Dialog(this) with TypedDialog
-    dialogType match {
-      case CredentialsDialog =>
-        dialog.setContentView(R.layout.bazaar_credentials)
-        val message = dialog.findView(TR.message)
-        if(Preferences.bazaarUsername != "" || Preferences.bazaarPassword != "")
-          message.setText(getString(R.string.bazaar_credentials_invalid))
-        else
-          message.setText(getString(R.string.bazaar_credentials))
-        val username = dialog.findView(TR.username)
-        username.setText(Preferences.bazaarUsername)
-        val password = dialog.findView(TR.password)
-        password.setText(Preferences.bazaarPassword)
-        def clearValues() {
-          username.setText("")
-          password.setText("")
-        }
-        dialog.findView(TR.ok).setOnClickListener(new View.OnClickListener {
-          def onClick(v:View) {
-            if(username.getText.toString != "" && password.getText.toString != "") {
-              Preferences.bazaarUsername = username.getText.toString
-              Preferences.bazaarPassword = password.getText.toString
-              dialog.dismiss()
-              postToBazaar()
-            } else
-              dialog.show()
-          }
-        })
-        dialog.findView(TR.signup).setOnClickListener(new View.OnClickListener {
-          def onClick(v:View) {
-            val url = "http://bazaar.spielproject.info/signup?returnTo=spiel:scripts"
-            val intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-            startActivity(intent)
-            dialog.dismiss()
-          }
-        })
-        dialog.findView(TR.cancel).setOnClickListener(new View.OnClickListener {
-          def onClick(v:View) {
-            clearValues()
-            scriptToPost = None
-            dialog.dismiss()
-          }
-        })
-      case PostDialog =>
-        dialog.setContentView(R.layout.post_script)
-        val changesField = dialog.findView(TR.changes)
-        changesField.setText(scriptChanges)
-        def clearValues() {
-          changesField.setText("")
-        }
-        dialog.findView(TR.ok).setOnClickListener(new View.OnClickListener {
-          def onClick(v:View) {
-            scriptChanges = changesField.getText.toString
+  private class CredentialsDialog extends DialogFragment {
+    override def onCreateDialog(bundle:Bundle) = {
+      val dialog = new Dialog(Scripts.this) with TypedDialog
+      dialog.setContentView(R.layout.bazaar_credentials)
+      val message = dialog.findView(TR.message)
+      if(Preferences.bazaarUsername != "" || Preferences.bazaarPassword != "")
+        message.setText(getString(R.string.bazaar_credentials_invalid))
+      else
+        message.setText(getString(R.string.bazaar_credentials))
+      val username = dialog.findView(TR.username)
+      username.setText(Preferences.bazaarUsername)
+      val password = dialog.findView(TR.password)
+      password.setText(Preferences.bazaarPassword)
+      def clearValues() {
+        username.setText("")
+        password.setText("")
+      }
+      dialog.findView(TR.ok).setOnClickListener(new View.OnClickListener {
+        def onClick(v:View) {
+          if(username.getText.toString != "" && password.getText.toString != "") {
+            Preferences.bazaarUsername = username.getText.toString
+            Preferences.bazaarPassword = password.getText.toString
             dialog.dismiss()
             postToBazaar()
-          }
-        })
-        dialog.findView(TR.cancel).setOnClickListener(new View.OnClickListener {
-          def onClick(v:View) = {
-            clearValues()
-            scriptToPost = None
-            scriptChanges = ""
-            dialog.dismiss()
-          }
-        })
+          } else
+            dialog.show()
+        }
+      })
+      dialog.findView(TR.signup).setOnClickListener(new View.OnClickListener {
+        def onClick(v:View) {
+          val url = "http://bazaar.spielproject.info/signup?returnTo=spiel:scripts"
+          val intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
+          intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+          startActivity(intent)
+          dialog.dismiss()
+        }
+      })
+      dialog.findView(TR.cancel).setOnClickListener(new View.OnClickListener {
+        def onClick(v:View) {
+          clearValues()
+          scriptToPost = None
+          dialog.dismiss()
+        }
+      })
+      dialog
     }
-    dialog
+  }
+
+  private class PostDialog extends DialogFragment {
+    override def onCreateDialog(bundle:Bundle) = {
+      val dialog = new Dialog(Scripts.this) with TypedDialog
+      dialog.setContentView(R.layout.post_script)
+      val changesField = dialog.findView(TR.changes)
+      changesField.setText(scriptChanges)
+      def clearValues() {
+        changesField.setText("")
+      }
+      dialog.findView(TR.ok).setOnClickListener(new View.OnClickListener {
+        def onClick(v:View) {
+          scriptChanges = changesField.getText.toString
+          dialog.dismiss()
+          postToBazaar()
+        }
+      })
+      dialog.findView(TR.cancel).setOnClickListener(new View.OnClickListener {
+        def onClick(v:View) {
+          clearValues()
+          scriptToPost = None
+          scriptChanges = ""
+          dialog.dismiss()
+        }
+      })
+      dialog
+    }
   }
 
   private var scriptToPost:Option[Script] = None
@@ -477,7 +479,7 @@ class Scripts extends FragmentActivity with TypedActivity with Refreshable with 
     } catch {
       case e:scripting.AuthorizationFailed =>
         Preferences.bazaarPassword = ""
-        showDialog(CredentialsDialog)
+        (new CredentialsDialog).show(getSupportFragmentManager, "credentials")
       case e =>
         scriptToPost = None
         dialog.setMessage(getString(R.string.script_posting_error))
