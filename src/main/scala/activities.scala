@@ -207,14 +207,13 @@ import android.widget.SimpleCursorAdapter
 
 class Scripts extends FragmentActivity with TypedActivity with Refreshable with RadioGroup.OnCheckedChangeListener with LoaderManager.LoaderCallbacks[Cursor] {
 
-  private var listView:ListView = null
+  private lazy val listView = findView(TR.scripts)
 
   private var system = true
 
   override def onCreate(bundle:Bundle) {
     super.onCreate(bundle)
     setContentView(R.layout.scripts)
-    listView = findView(TR.scripts)
     registerForContextMenu(listView)
     val mode = findView(TR.mode)
     mode.setOnCheckedChangeListener(this)
