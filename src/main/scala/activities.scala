@@ -232,8 +232,6 @@ class Scripts extends FragmentActivity with TypedActivity with Refreshable with 
       refreshUser()
   }
 
-  private var cursor:Cursor = null
-
   private lazy val adapter = new SimpleCursorAdapter(
     this,
     R.layout.script_row,

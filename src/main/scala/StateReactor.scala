@@ -27,7 +27,7 @@ object StateReactor {
 
   private var service:SpielService = null
 
-  private var audioManager:AudioManager = null
+  private lazy val audioManager:AudioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
 
   /**
    * Initializes based on the specified <code>SpielService</code>, setting initial states.
@@ -35,7 +35,6 @@ object StateReactor {
 
   def apply(svc:SpielService) {
     service = svc
-    audioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
   }
 
   // Check Bazaar for new scripts on app installation.

@@ -15,20 +15,19 @@ import triggers._
 
 object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
-  private var prefs:SharedPreferences = null
+  private var service:SpielService = null
 
-  def sharedPreferences = prefs
+  lazy val prefs = PreferenceManager.getDefaultSharedPreferences(service)
 
-  private var audioManager:AudioManager = null
+  private lazy val audioManager:AudioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
 
   /**
    * Initialized based on the provided <code>SpielService</code>.
   */
 
-  def apply(service:SpielService) {
-    prefs = PreferenceManager.getDefaultSharedPreferences(service)
+  def apply(svc:SpielService) {
+    service = svc
     prefs.registerOnSharedPreferenceChangeListener(this)
-    audioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
   }
 
   /**

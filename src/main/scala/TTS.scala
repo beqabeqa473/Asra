@@ -22,14 +22,14 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   private var service:Service = null
 
-  private lazy val audioManager = Option(service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager])
+  private lazy val audioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
 
-  private def activeStream = audioManager.map { a =>
-    if(a.isMusicActive)
+  private def activeStream = {
+    if(audioManager.isMusicActive)
       AudioManager.STREAM_MUSIC
     else
       AudioManager.STREAM_RING
-  }.getOrElse(AudioManager.STREAM_MUSIC)
+  }
 
   private lazy val musicPool = new SoundPool(8, AudioManager.STREAM_MUSIC, 0)
 
@@ -183,12 +183,10 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   }
 
   private def abandonFocus() {
-    audioManager.foreach { a =>
-      actor {
-        Thread.sleep(200)
-        if(!speaking_?)
-          a.abandonAudioFocus(this)
-      }
+    actor {
+      Thread.sleep(200)
+      if(!speaking_?)
+        audioManager.abandonAudioFocus(this)
     }
   }
 
@@ -236,9 +234,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   private def requestFocus() {
     if(Preferences.duckNonSpeechAudio)
-      audioManager.foreach { a =>
-        a.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
-      }
+      audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
   }
 
   private var failures = 0

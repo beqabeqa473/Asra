@@ -120,9 +120,7 @@ object Triggers {
     val a = new Actions
     a.getClass.getDeclaredClasses.foreach { cls =>
       try {
-        val cons = cls.getConstructor(classOf[Actions])
-        if(cons != null)
-          cons.newInstance(a)
+        Option(cls.getConstructor(classOf[Actions])).foreach(_.newInstance(a))
       } catch { case _ => }
     }
     // Set triggers to the <code>Action</code> specified in <code>Preferences</code>.

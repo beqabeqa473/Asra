@@ -246,21 +246,19 @@ class Observer(context:AContext, path:String) extends FileObserver(path) {
 
 object Scripter {
 
-  private var myCx:Context = null
-  private var myScope:ScriptableObject = null
+  lazy val context = ContextFactory.getGlobal.enterContext()
 
-  def context = myCx
-  def scope = myScope
+  lazy val scope = context.initStandardObjects()
 
   private[scripting] var script:Option[Script] = None
 
-  private var _scriptsDir:File = null
+  private lazy val spielDir = new File(Environment.getExternalStorageDirectory, "spiel")
 
-  def scriptsDir = _scriptsDir
+  lazy val scriptsDir = new File(spielDir, "scripts")
 
   private[scripting] var service:AContext = null
 
-  private var observer:Observer = null
+  private lazy val observer = new Observer(service, scriptsDir.getPath)
 
   /**
    * Initialize the scripting subsystem based on the specified Context.
@@ -268,26 +266,24 @@ object Scripter {
 
   def apply(svc:AContext) {
     service = svc
-    myCx = ContextFactory.getGlobal.enterContext()
-    myCx.setOptimizationLevel(-1)
-    myScope = myCx.initStandardObjects()
+    context.setOptimizationLevel(-1)
 
     // Inject some Spiel objects into the scripting environment.
-    val wrappedHandler = Context.javaToJS(Handler, myScope)
-    ScriptableObject.putProperty(myScope, "Handler", wrappedHandler)
+    val wrappedHandler = Context.javaToJS(Handler, scope)
+    ScriptableObject.putProperty(scope, "Handler", wrappedHandler)
 
-    val wrappedScripter = Context.javaToJS(this, myScope)
-    ScriptableObject.putProperty(myScope, "Scripter", wrappedScripter)
+    val wrappedScripter = Context.javaToJS(this, scope)
+    ScriptableObject.putProperty(scope, "Scripter", wrappedScripter)
 
-    val wrappedTTS = Context.javaToJS(TTS, myScope)
-    ScriptableObject.putProperty(myScope, "TTS", wrappedTTS)
+    val wrappedTTS = Context.javaToJS(TTS, scope)
+    ScriptableObject.putProperty(scope, "TTS", wrappedTTS)
 
-    myScope.put("ANDROID_PLATFORM_VERSION", myScope, VERSION.SDK_INT)
+    scope.put("ANDROID_PLATFORM_VERSION", scope, VERSION.SDK_INT)
 
     val pm = svc.getPackageManager.asInstanceOf[PackageManager]
     val pi = pm.getPackageInfo(svc.getPackageName(), 0)
-    myScope.put("SPIEL_VERSION_NAME", myScope, pi.versionName)
-    myScope.put("SPIEL_VERSION_CODE", myScope, pi.versionCode)
+    scope.put("SPIEL_VERSION_NAME", scope, pi.versionName)
+    scope.put("SPIEL_VERSION_CODE", scope, pi.versionCode)
     new Script(service, "scripts/api.js", true).run()
     val assets = service.getAssets
     for(fn <- assets.list("scripts") if(fn != "api.js")) {
@@ -308,11 +304,8 @@ object Scripter {
   }
 
   def initExternalScripts() {
-    val spielDir = new File(Environment.getExternalStorageDirectory, "spiel")
     if(!spielDir.isDirectory) spielDir.mkdir
-    _scriptsDir = new File(spielDir, "scripts")
     if(!scriptsDir.isDirectory) scriptsDir.mkdir
-    observer = new Observer(service, scriptsDir.getPath)
     observer.startWatching()
     userScripts.foreach(_.run())
   }
@@ -322,9 +315,11 @@ object Scripter {
   }
 
   def userScripts = {
-    val list = scriptsDir.list()
-    if(list == null) List[Script]()
-    else list.toList.map(new Script(service, _, false))
+    Option(scriptsDir.list()).map { scripts =>
+      scripts.toList.map { script =>
+        new Script(service, script, false)
+      }
+    }.getOrElse(Nil)
   }
 
   def registerHandlerFor(cls:String, scr:Object) = script.map(_.registerHandlerFor(cls, scr))
@@ -351,7 +346,7 @@ object Scripter {
     preferences.get(pkg).flatMap { prefs =>
       prefs.get(key).map { pref =>
         val default = pref("default").asInstanceOf[Boolean]
-        Preferences.sharedPreferences.getBoolean(pkg+"_"+key, default)
+        Preferences.prefs.getBoolean(pkg+"_"+key, default)
       }
     }.getOrElse(false)
   }
@@ -548,11 +543,10 @@ class Provider extends ContentProvider with AbstractProvider {
 
   }
 
-  private var db:SQLiteDatabase = null
+  private lazy val db = (new DatabaseHelper(getContext)).getWritableDatabase
 
   override def onCreate() = {
-    db=(new DatabaseHelper(getContext)).getWritableDatabase
-    if(db == null) false else true
+    Option(db).map(d => true).getOrElse(false)
   }
 
   val mimeType = "vnd.spiel.script"
@@ -713,15 +707,12 @@ object BazaarProvider {
 
   private var context:AContext = null
 
-  private var pm:PackageManager = null
-
   /**
    * Initialize the Bazaar based off the specified <code>Context</code>.
   */
 
   def apply(c:AContext) {
     context = c
-    pm = context.getPackageManager
     checkRemoteScripts()
   }
 
@@ -729,6 +720,7 @@ object BazaarProvider {
   def newOrUpdatedScripts = _newOrUpdatedScripts
 
   def checkRemoteScripts() = actor {
+    val pm = context.getPackageManager
     val installedPackages = pm.getInstalledPackages(0).map { i => i.packageName }
     val userPackages = Scripter.userScripts.map(_.pkg)
     val packages = installedPackages.filterNot(userPackages.contains(_))

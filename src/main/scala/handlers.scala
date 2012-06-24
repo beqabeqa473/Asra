@@ -131,9 +131,7 @@ object Handler {
     val h = new Handlers
     h.getClass.getDeclaredClasses.foreach { cls =>
       try {
-        val cons = cls.getConstructor(classOf[Handlers])
-        if(cons != null)
-          cons.newInstance(h)
+        Option(cls.getConstructor(classOf[Handlers])).foreach(_.newInstance(h))
       } catch { case _ => }
     }
     vibrator = c.getSystemService(Context.VIBRATOR_SERVICE).asInstanceOf[Vibrator]
