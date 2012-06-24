@@ -21,6 +21,7 @@
   <string name="labeledButton">%1$s Schalter</string>
   <string name="checkbox">%1$s Kontrollfeld</string>
   <string name="checked">aktiviert</string>
+  <string name="disabled">nicht verfügbar</string>
   <string name="editText">Text bearbeiten</string>
   <string name="emptyList">leere Liste</string>
   <string name="item">%1$s: 1 Eintrag</string>
@@ -28,12 +29,15 @@
   <string name="image">Bild</string>
   <string name="labeledImage">%1$s: Bild</string>
   <string name="link">link</string>
-  <string name="listItem">%1$s: %2$s von %3$s</string>
+	 <string name="listItem">%1$s: %2$s von %3$s</string>
+  <string name="listWithItem">Liste mit 1 Eintrag</string>
+  <string name="listWithItems">Liste mit %1$s Einträgen</string>
   <string name="menu">Menü</string>
   <string name="notChecked">nicht aktiviert</string>
   <string name="notSelected">nicht gewählt</string>
   <string name="password">Passwort</string>
   <string name="radioButton">%1$s Auswahlschalter</string>
+  <string name="rating">Bewertung</string>
   <string name="searchText">%1$s: Suchbegriff</string>
   <string name="selected">gewählt</string>
 
@@ -103,7 +107,7 @@
   <string name="script_posting_error">Beim Einstellen Ihres Skripts ist ein temporärer Netzwerk-Fehler aufgetreten. Bitte versuchen Sie es später noch einmal.</string>
 
   <string name="confirmDelete">Sind Sie sicher, dass Sie das Skript für %1$s löschen möchten?</string>
-  <string name="scriptCopied">Skript nach %1$s kopiert.</string>
+	  <string name="scriptCopied">Skript nach %1$s kopiert.</string>
 
   <string name="newOrUpdatedScripts">Es sind neue oder aktualisierte Skripte verfügbar. Bitte wählen Sie aus, welche Sie installieren möchten.</string>
   <string name="selectAll">Alle auswählen</string>
@@ -156,6 +160,7 @@
   <string name="dash">strich</string>
   <string name="plus">plus</string>
   <string name="newline">neue zeile</string>
+  <string name="tab">tab</string>
 
   <!-- Command mode -->
   <string name="commandModeUnavailable">Der Befehlsmodus ist in dieser Version von Android nicht verfügbar.</string>
