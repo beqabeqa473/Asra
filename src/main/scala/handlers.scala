@@ -586,17 +586,17 @@ object Before extends Handler("*") {
     false
   }
 
-  byDefault { e:AccessibilityEvent =>
+  /*byDefault { e:AccessibilityEvent =>
     if(VERSION.SDK_INT >= 14) {
-      /*if(e.getRecordCount > 0) {
+      if(e.getRecordCount > 0) {
         Log.d("spielcheck", "E: "+e)
         for(i <- 0 to e.getRecordCount-1) {
           Log.d("spielcheck", e.getRecord(i).toString)
         }
-      }*/
+      }
     }
     false
-  }
+  }*/
 
 }
 
@@ -605,14 +605,16 @@ object Before extends Handler("*") {
 */
 
 object After extends Handler("", "*") {
+
   onViewFocused { e:AccessibilityEvent =>
     if(VERSION.SDK_INT >= 14)
       Option(e.getSource).foreach { source =>
         if(source.getChildCount == 0 && interactive_?(source) && !e.isEnabled)
           speak(Handler.context.getString(R.string.disabled), false)
-        }
-    true
+      }
+    false
   }
+
 }
 
 /**
@@ -718,7 +720,14 @@ class Handlers {
       if(utterances != Nil)
         if(e.getText.size == 1)
           speak(Handler.context.getString(R.string.listItem, e.getText.get(0), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
-      else
+      else if(VERSION.SDK_INT > 14) {
+        Option(e.getSource).map { source =>
+          val child = source.getChild(e.getCurrentItemIndex)
+          val text = Option(e.getText).map(_.toString).orElse(Option(e.getContentDescription)).getOrElse("")
+          speak(Handler.context.getString(R.string.listItem, text, e.getCurrentItemIndex.toString, e.getItemCount.toString))
+        }
+        true
+      } else
         if(e.getItemCount == 0)
           speak(Handler.context.getString(R.string.emptyList))
         else if(e.getItemCount == 1)
