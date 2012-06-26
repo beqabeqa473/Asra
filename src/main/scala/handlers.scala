@@ -144,25 +144,26 @@ object Handler {
 
   def process(e:AccessibilityEvent, eventType:Option[Int] = None):Boolean = {
 
+    if(e == null || e.getClassName == null || e.getPackageName == null)
+      return true
+
     if(
       SystemClock.uptimeMillis-e.getEventTime > 100 &&
       List(TYPE_TOUCH_EXPLORATION_GESTURE_END, TYPE_TOUCH_EXPLORATION_GESTURE_START, TYPE_VIEW_HOVER_ENTER, TYPE_VIEW_HOVER_EXIT).contains(e.getEventType)
     )
       return true
 
-    if(!StateReactor.screenOn_? && e.getEventType != TYPE_NOTIFICATION_STATE_CHANGED)
-      return true
-
-    if(e == null || e.getClassName == null || e.getPackageName == null)
-      return true
-
-    _lastEvent = e
     if(eventType == None) {
       EventReviewQueue(new PrettyAccessibilityEvent(e))
       Log.d("spiel", "Event "+e.toString+"; Activity: "+currentActivity)
     }
 
-    nextShouldNotInterruptCalled = false
+    if(!StateReactor.screenOn_? && e.getEventType != TYPE_NOTIFICATION_STATE_CHANGED)
+      return true
+
+    _lastEvent = e
+    if(eventType == None)
+      nextShouldNotInterruptCalled = false
 
     val eType = eventType.getOrElse(e.getEventType)
 
