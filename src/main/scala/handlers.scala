@@ -174,18 +174,16 @@ object Handler {
     var alreadyCalled = List[Handler]()
 
     // Call the specified handler, setting state appropriately.
-    def dispatchTo(pkg:String, cls:String):Boolean = handlers.get(pkg -> cls) match {
-      case Some(h) =>
-        if(alreadyCalled.contains(h)) {
-          Log.d("spiel", "Already called "+h.getClass.getName+", skipping.")
-          false
-        } else {
-          Log.d("spiel", "Dispatching to "+h.getClass.getName)
-          alreadyCalled ::= h
-          h(e, eType)
-        }
-      case None => false
-    }
+    def dispatchTo(pkg:String, cls:String):Boolean = handlers.get(pkg -> cls).map { h =>
+      if(alreadyCalled.contains(h)) {
+        Log.d("spiel", "Already called "+h.getClass.getName+", skipping.")
+        false
+      } else {
+        Log.d("spiel", "Dispatching to "+h.getClass.getName)
+        alreadyCalled ::= h
+        h(e, eType)
+      }
+    }.getOrElse(false)
 
     // Always run this handler before an event. This cannot block others from executing.
     def dispatchToBefore() = {
