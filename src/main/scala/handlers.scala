@@ -895,7 +895,7 @@ class Handlers {
         if(t == "")
           <span/>
         else
-          utils.HtmlParser(t)
+          utils.htmlToXml(t)
       }.getOrElse(<span/>)
       speak(utterancesFor(x))
     }

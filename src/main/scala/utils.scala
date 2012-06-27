@@ -1,16 +1,15 @@
 package info.spielproject.spiel
-package utils
 
 import android.util.Log
 
-object HtmlParser {
+package object utils {
 
   import xml.XML
   import java.io.{ByteArrayInputStream, ByteArrayOutputStream, OutputStreamWriter}
   import org.ccil.cowan.tagsoup._
   import org.xml.sax.InputSource
 
-  def apply(html:String) = {
+  def htmlToXml(html:String) = {
     val parser = new Parser()
     parser.setProperty(Parser.schemaProperty, new HTMLSchema())
     val input = new InputSource(new ByteArrayInputStream(html.getBytes))
