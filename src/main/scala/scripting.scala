@@ -294,11 +294,14 @@ object Scripter {
     }
 
     spawn {
+      val userPackages = scriptsDir.list().map { str =>
+        str.substring(0, str.lastIndexOf("."))
+      }.toList
       val cursor = service.getContentResolver.query(Provider.uri, Provider.columns.projection, null, null, null)
       cursor.moveToFirst()
       while(!cursor.isAfterLast) {
-        val s = new Script(service, cursor)
-        s.run()
+        if(!userPackages.contains(cursor.getString(cursor.getColumnIndex(Provider.columns.pkg))))
+          (new Script(service, cursor)).run()
         cursor.moveToNext()
       }
       cursor.close()
