@@ -4,6 +4,8 @@ package scripting
 import java.io.{File, FileInputStream, FileOutputStream, FileWriter, InputStream}
 import java.lang.Integer
 
+import concurrent.ops._
+
 import handlers.PrettyAccessibilityEvent
 
 import android.content.{BroadcastReceiver, ContentValues, Context => AContext, Intent}
@@ -217,6 +219,7 @@ object Script {
     val a = is.available
     val b = new Array[Byte](a)
     is.read(b)
+    is.close()
     new String(b)
   }
 
@@ -290,14 +293,16 @@ object Scripter {
       new Script(service, fn, true).run()
     }
 
-    val cursor = service.getContentResolver.query(Provider.uri, Provider.columns.projection, null, null, null)
-    cursor.moveToFirst()
-    while(!cursor.isAfterLast) {
-      val s = new Script(service, cursor)
-      s.run()
-      cursor.moveToNext()
+    spawn {
+      val cursor = service.getContentResolver.query(Provider.uri, Provider.columns.projection, null, null, null)
+      cursor.moveToFirst()
+      while(!cursor.isAfterLast) {
+        val s = new Script(service, cursor)
+        s.run()
+        cursor.moveToNext()
+      }
+      cursor.close()
     }
-    cursor.close()
 
     Context.exit()
     initExternalScripts()
@@ -307,7 +312,7 @@ object Scripter {
     if(!spielDir.isDirectory) spielDir.mkdir
     if(!scriptsDir.isDirectory) scriptsDir.mkdir
     observer.startWatching()
-    userScripts.foreach(_.run())
+    spawn { userScripts.foreach(_.run()) }
   }
 
   def shutdown() {
