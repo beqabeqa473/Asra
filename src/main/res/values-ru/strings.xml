@@ -12,8 +12,8 @@
   <string name="spielOff">Spiel выключен.</string>
   <string name="screenOff">Экран выключен.</string>
   <string name="unlocked">Разблокировано.</string>
-  <string name="ringer_off">Звонок выключен.</string>
-  <string name="ringer_on">Звонок включён.</string>
+  <string name="ringerOff">Звонок выключен.</string>
+  <string name="ringerOn">Звонок включён.</string>
   <string name="newVoicemail">Новая голосовая почта</string>
 
   <!-- View names and actions -->
