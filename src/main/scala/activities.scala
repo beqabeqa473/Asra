@@ -1,6 +1,7 @@
 package info.spielproject.spiel
 package activities
 
+import actors.Actor.actor
 import collection.JavaConversions._
 
 import android.app.{Activity, AlertDialog, Dialog, ListActivity, TabActivity}
@@ -20,6 +21,7 @@ import android.support.v4.app.{DialogFragment, FragmentActivity, LoaderManager}
 import android.support.v4.content.{CursorLoader, Loader}
 import com.google.marvin.widget.TouchGestureControlOverlay
 import TouchGestureControlOverlay._
+import org.droidparts.preference.MultiSelectListPreference
 
 import handlers._
 import scripting._
@@ -154,6 +156,24 @@ class PreferencesActivity extends PreferenceActivity {
     } else
       getPreferenceScreen.removePreference(getPreferenceScreen.getPreference(2))
 
+    actor {
+      val notificationFilters = findPreference("notificationFilters").asInstanceOf[MultiSelectListPreference]
+      notificationFilters.setShouldDisableView(true)
+      notificationFilters.setEnabled(false)
+      val packages = utils.installedPackages.map { pkg =>
+        (pkg.packageName, try {
+          pm.getApplicationInfo(pkg.packageName, 0).loadLabel(pm).toString
+        } catch {
+          case _ => pkg.packageName
+        })
+      }.sortWith((v1, v2) => v1._2 < v2._2)
+      notificationFilters.setEntryValues(packages.map(_._1.asInstanceOf[CharSequence]).toArray)
+      notificationFilters.setEntries(packages.map(_._2.asInstanceOf[CharSequence]).toArray)
+      notificationFilters.setEnabled(true)
+    }
+
+
+
     val scripts = findPreference("scripts").asInstanceOf[PreferenceScreen]
     if(Scripter.preferences == Map.empty)
       getPreferenceScreen.removePreference(scripts)
@@ -163,6 +183,7 @@ class PreferencesActivity extends PreferenceActivity {
         scripts.addPreference(scriptPreferencesFor(pkg._1))
       }
     }
+
   }
 
   private def scriptPreferencesFor(pkg:String) = {

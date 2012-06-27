@@ -182,6 +182,8 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
     editor.commit()
   }
 
+  def notificationFilters = prefs.getString("notificationFilters", "").split("\\|")
+
   def onSharedPreferenceChanged(p:SharedPreferences, key:String) {
     key match {
       case "pitchScale" => TTS.pitch = pitchScale

@@ -23,4 +23,7 @@ package object utils {
     x
   }
 
+  def installedPackages =
+    SpielService.context.getPackageManager.getInstalledPackages(0)
+
 }

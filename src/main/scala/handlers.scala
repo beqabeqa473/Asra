@@ -161,6 +161,9 @@ object Handler {
     if(!StateReactor.screenOn_? && e.getEventType != TYPE_NOTIFICATION_STATE_CHANGED)
       return true
 
+    if(e.getEventType == TYPE_NOTIFICATION_STATE_CHANGED && Preferences.notificationFilters.contains(e.getPackageName))
+      return true
+
     _lastEvent = e
     if(eventType == None)
       nextShouldNotInterruptCalled = false

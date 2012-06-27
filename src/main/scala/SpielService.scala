@@ -50,6 +50,7 @@ class SpielService extends AccessibilityService {
     .getNotification
     startForeground(1, notification)
     SpielService.initialized = true
+    SpielService._context = this
     SpielService.enabled = true
   }
 
@@ -83,6 +84,9 @@ class SpielService extends AccessibilityService {
 }
 
 object SpielService {
+
+  private var _context:Context = null
+  def context = _context
 
   var initialized = false
 
