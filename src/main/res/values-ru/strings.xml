@@ -1,95 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
+  <string name="appName">Spiel</string>
+  <string name="appDescription">Гибкая программа экранного доступа для операционной системы Android с возможностью скриптования</string>
 
-<!-- Initial welcome message-->
-<string name="welcomeMsg">Привет!</string>
+  <!-- Initial welcome message-->
+  <string name="welcomeMsg">Добро пожаловать в Spiel!</string>
 
-<!-- On/off and other alerts -->
-<string name="spielOn">Spiel включен.</string>
-<string name="spielOff">Spiel выключен.</string>
-<string name="unlocked">Разблокирована.</string>
+  <!-- On/off and other alerts -->
+  <string name="spielOn">Spiel включён.</string>
+  <string name="spielOff">Spiel выключен.</string>
+  <string name="screenOff">Экран выключен.</string>
+  <string name="unlocked">Разблокировано.</string>
+  <string name="ringer_off">Звонок выключен.</string>
+  <string name="ringer_on">Звонок включён.</string>
+  <string name="newVoicemail">Новая голосовая почта</string>
 
-<!-- View names and actions -->
-<string name="button">кнопка</string>
-<string name="labeledButton">%1$s: кнопка</string>
-<string name="checkbox">%1$s: флажок</string>
-<string name="checked">отмечено</string>
-<string name="emptyList">пустой список</string>
-<string name="image">Изображение</string>
-<string name="labeledImage">%1$s: изображение</string>
-<string name="listItem">%1$s: %2$s из %3$s</string>
-<string name="menu">меню</string>
-<string name="notChecked">не отмечено</string>
-<string name="password">%1$s: пароль</string>
-<string name="radioButton">%1$s: радиокнопка</string>
-<string name="searchText">%1$s: поиск текста</string>
+  <!-- View names and actions -->
+  <string name="alert">Уведомление! %1$s</string>
+  <string name="button">кнопка</string>
+  <string name="labeledButton">%1$s кнопка</string>
+  <string name="checkbox">%1$s флажок</string>
+  <string name="checked">отмечено</string>
+  <string name="disabled">недоступно</string>
+  <string name="editText">редактор</string>
+  <string name="emptyList">пустой список</string>
+  <string name="item">%1$s: 1 элемент</string>
+  <string name="items">%1$s: %2$s элементов</string>
+  <string name="image">изображение</string>
+  <string name="labeledImage">%1$s изображение</string>
+  <string name="link">ссылка</string>
+  <string name="listItem">%1$s: %2$s из %3$s</string>
+  <string name="listWithItem">список с 1 элементом</string>
+  <string name="listWithItems">список с %1$s элементами</string>
+  <string name="menu">меню</string>
+  <string name="notChecked">не отмечено</string>
+  <string name="notSelected">не выделено</string>
+  <string name="password">пароль</string>
+  <string name="radioButton">%1$s радиокнопка</string>
+  <string name="rating">Прогресс</string>
+  <string name="searchText">%1$s поиск</string>
+  <string name="selected">выделено</string>
 
-<!-- Preferences -->
-<string name="preferences">Настройки</string>
+  <!-- Preferences -->
+  <string name="preferences">Настройки</string>
 
-<string name="speechTitle">Реч</string>
-<string name="speechEngineTitle">Речевой модуль</string>
-<string name="speakNotificationsWhenScreenOffTitle">Озвучивать уведомления, даже когда экран выключен</string>
-<string name="managePunctuationSpeechTitle">Пунктуация</string>
+  <string name="speechTitle">Речь</string>
+  <string name="speechEngineTitle">Речевой движок</string>
+  <string name="systemDefault">Система по умолчанию</string>
+  <string name="rateScaleTitle">Шкала скорости</string>
+  <string name="rateScaleSummary">Коэффициент, на который будет увеличена скорость по умолчанию</string>
+  <string name="pitchScaleTitle">Шкала высоты голоса</string>
+  <string name="pitchScaleSummary">Коэффициент, на который будет увеличена высота голоса по умолчанию</string>
+  <string name="echoByCharTitle">Озвучивать ввод по символам</string>
+  <string name="echoByWordTitle">Озвучивать ввод по словам</string>
+  <string name="speakNotificationsWhenScreenOffTitle">Объявлять уведомления, даже когда экран выключен</string>
+  <string name="useBluetoothSCOTitle">Использовать Bluetooth SCO</string>
+  <string name="useBluetoothSCOSummary">Перенаправлять аудио, не относящееся к вызовам, на наушники Bluetooth SCO (на этапе испытаний!)</string>
+  <string name="managePunctuationSpeechTitle">Настройка объявления пунктуации</string>
+  <string name="managePunctuationSpeechSummary">Передать Spiel объявление некоторой необрабатываемой пунктуации</string>
+  <string name="duckNonSpeechAudioTitle">Приглушать неречевое аудио</string>
+  <string name="duckNonSpeechAudioSummary">Уменьшать громкость музыки, игр и т.д. во время речевых сообщений</string>
+  <string name="textToSpeechTitle">Настройки синтеза речи</string>
+  <string name="textToSpeechSummary">Настройка свойств синтеза речи для всей системы</string>
 
-<string name="alertsTitle">Уведомления</string>
+  <string name="alertsTitle">Уведомления</string>
+  <string name="talkingCallerIDTitle">Говорящий АОН</string>
+  <string name="talkingCallerIDSummary">Объявлять с повторением сообщения автоматического определителя номера во время входящего звонка</string>
+  <string name="voicemailAlertsTitle">Уведомления автоответчика</string>
+  <string name="voicemailAlertsSummary">Уведомлять с повторением о новых доступных сообщениях автоответчика</string>
 
+  <string name="triggersTitle">Датчики</string>
+  <string name="triggersSummary">Настройка действий, выполняемых при физических событиях</string>
+  <string name="onShakeTitle">При потряхивании</string>
+  <string name="onShakeSummary">Назначить действие, выполняемое при потряхивании устройтсва</string>
+  <string name="onProximityNearTitle">при приближении</string>
+  <string name="onProximityNearSummary">Назначить действие, выполняемое, когда датчик приближения обнаружит что-либо около устройтсва</string>
 
+  <string name="debuggingTitle">Отладка</string>
+  <string name="sendBacktracesTitle">Отправлять обратную трассировку при падении Spiel</string>
+  <string name="sendBacktracesSummary">Автоматически отправлять анонимные отчёты об ошибках при каждом падении Spiel (требует перезапуска)</string>
+  <string name="profilingTitle">Профилирование</string>
+  <string name="profilingSummary">Включать только для разработки, поскольку это воздействует на производительность!</string>
 
-<string name="events">События</string>
-<string name="createScriptTemplate">Создать шаблон скрипта</string>
+  <string name="events">События</string>
 
-<string name="scripts">Скрипты</string>
+  <string name="createScriptTemplate">Создать шаблон скрипта</string>
 
-<string name="system">Система</string>
-<string name="user">Пользователь</string>
+  <string name="scripts">Скрипты</string>
 
-<!-- Script context menu -->
-<string name="delete">Удалить</string>
+  <string name="system">Система</string>
+  <string name="user">Пользователь</string>
 
-<string name="bazaar_username_label">Имя пользователя</string>
-<string name="bazaar_password_label">Пароль</string>
+  <!-- Script context menu -->
+  <string name="delete">Удалить</string>
+  <string name="copyToExternalStorage">Скопировать на внешний носитель информации</string>
+  <string name="postToBazaar">Отправить в Bazaar</string>
 
+  <string name="bazaar_credentials">Пожалуйста, введите ваши данные в Spiel Bazaar ниже.</string>
+  <string name="bazaar_credentials_invalid">Неверное имя пользователя и/или пароль. Пожалуйста, введите данные ещё раз.</string>
+  <string name="bazaar_username_label">Имя пользователя</string>
+  <string name="bazaar_password_label">Пароль</string>
+  <string name="signup">Регистрация</string>
+  <string name="script_reload_error">Этот скрипт некорректен. Пожалуйста, устраните ошибки, сообщение о которых вы можете найти в логах, и попробуйте снова.</string>
+  <string name="changes_label">Изменения (необязательно):</string>
+  <string name="script_posted">Ваш скрипт был успешно отправлен. Спасибо за сотрудничество.</string>
+  <string name="script_posting_error">Во время отправки скрипта произошла временная ошибка сети. Пожалуйста, попробуйте снова позднее.</string>
 
+  <string name="confirmDelete">Вы действительно хотите удалить скрипт для пакета %1$s?</string>
+  <string name="scriptCopied">Скрипт скопирован в %1$s.</string>
 
-<!-- Menu items -->
+  <string name="newOrUpdatedScripts">Доступны новые или обновлённые скрипты. Пожалуйста, выделите те, которые хотите установить.</string>
+  <string name="selectAll">Выделить все</string>
+  <string name="deselectAll">Снять выделение со всех</string>
+  <string name="install">Установить</string>
 
-<!-- Dialog buttons -->
-<string name="cancel">Отмена</string>
-<string name="yes">Да</string>
-<string name="no">Нет</string>
+  <!-- Menu items -->
+  <string name="refresh">Обновить</string>
 
-<!-- Action names and related -->
+  <!-- Dialog buttons -->
+  <string name="ok">OK</string>
+  <string name="cancel">Отмена</string>
+  <string name="yes">Да</string>
+  <string name="no">Нет</string>
 
-<string name="stopSpeech">Остановка речи</string>
+  <!-- Action names and related -->
 
-<!-- Punctuation and other speech-related strings -->
+  <string name="none">Ничего</string>
+  <string name="createScriptTemplateAction">Создать шаблон скрипта для последнего события доступности</string>
+  <string name="templateCreated">Шаблон создан в %1$s.</string>
+  <string name="templateCreationError">Во время создания шаблона произошла ошибка.</string>
+  <string name="stopSpeech">Остановить речь</string>
+  <string name="toggleSpiel">Включить или выключить Spiel</string>
 
-<string name="blank">Пусто</string>
-<string name="exclamation">Восклицательный знак</string>
-<string name="at">Собака</string>
-<string name="pound">ФУНТ</string>
-<string name="dollar">Доллар</string>
-<string name="percent">процент</string>
-<string name="ampersand">амперсанд</string>
-<string name="asterisk">Звёздочка</string>
-<string name="leftParen">Левая скобка</string>
-<string name="rightParen">Правая скобка</string>
-<string name="underscore">подчеркивание</string>
-<string name="space">пробел</string>
-<string name="period">точка</string>
-<string name="comma">запятая</string>
-<string name="lessThan">меньше</string>
-<string name="greaterThan">больше</string>
-<string name="slash">слэш\</string>
-<string name="backslash">бэкслэш</string>
-<string name="questionMark">вопросительный знак</string>
-<string name="quote">кавычка</string>
-<string name="apostrophe">апостроф</string>
-<string name="semiColon">точка с запятой</string>
-<string name="colon">двоеточие</string>
-<string name="dash">минус</string>
-<string name="plus">плюс</string>
+  <!-- Punctuation and other speech-related strings -->
+
+  <string name="blank">пусто</string>
+  <string name="cap">большая %1$s</string>
+  <string name="exclamation">восклицательный</string>
+  <string name="at">собака</string>
+  <string name="pound">решётка</string>
+  <string name="dollar">доллар</string>
+  <string name="percent">процент</string>
+  <string name="caret">крышка</string>
+  <string name="ampersand">амперсанд</string>
+  <string name="asterisk">звёздочка</string>
+  <string name="leftParen">левая круглая</string>
+  <string name="rightParen">правая круглая</string>
+  <string name="underscore">подчёркивание</string>
+  <string name="space">пробел</string>
+  <string name="period">точка</string>
+  <string name="comma">запятая</string>
+  <string name="lessThan">меньше</string>
+  <string name="greaterThan">больше</string>
+  <string name="slash">слэш</string>
+  <string name="backslash">бэкслэш</string>
+  <string name="questionMark">вопросительный</string>
+  <string name="quote">кавычки</string>
+  <string name="apostrophe">апостроф</string>
+  <string name="semiColon">точка с запятой</string>
+  <string name="colon">двоеточие</string>
+  <string name="dash">тире</string>
+  <string name="plus">плюс</string>
+  <string name="newline">Перевод строки</string>
+  <string name="tab">табуляция</string>
+
+  <!-- Command mode -->
+  <string name="commandModeUnavailable">Командный режим недоступен в этой версии Android.</string>
+  <string name="review">Просмотр</string>
+
+  <!-- String returned when an unknown number calls. -->
+  <string name="unknown">Номер не определён</string>
 
 </resources>
