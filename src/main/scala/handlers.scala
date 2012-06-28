@@ -985,7 +985,7 @@ class Handlers {
               if(Preferences.echoByWord && !Character.isLetterOrDigit(str(0))) {
                 val word = (text.substring(0, e.getFromIndex)
                 .reverse.takeWhile(_.isLetterOrDigit).reverse+str).trim
-                if(word.length > 1)
+                if(word.length > 0)
                   speak(word, flush)
               }
             } catch {
