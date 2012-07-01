@@ -118,7 +118,7 @@ object Handler {
 
   private[handlers] var context:Context = null
 
-  private var vibrator:Vibrator = null
+  private lazy val vibrator:Vibrator = context.getSystemService(Context.VIBRATOR_SERVICE).asInstanceOf[Vibrator]
 
   /**
    * Initialize handlers for the given <code>Context</code>.
@@ -134,7 +134,6 @@ object Handler {
         Option(cls.getConstructor(classOf[Handlers])).foreach(_.newInstance(h))
       } catch { case _ => }
     }
-    vibrator = c.getSystemService(Context.VIBRATOR_SERVICE).asInstanceOf[Vibrator]
   }
 
   private var _lastEvent:AccessibilityEvent = null
