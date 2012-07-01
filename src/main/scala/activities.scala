@@ -224,7 +224,7 @@ trait Refreshable {
 
 }
 
-import android.widget.SimpleCursorAdapter
+import android.support.v4.widget.SimpleCursorAdapter
 
 class Scripts extends FragmentActivity with TypedActivity with Refreshable with RadioGroup.OnCheckedChangeListener with LoaderManager.LoaderCallbacks[Cursor] {
 
