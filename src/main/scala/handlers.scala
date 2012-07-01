@@ -493,6 +493,7 @@ class Handler(pkg:String, cls:String) {
   }
 
   protected def guessLabelFor(e:AccessibilityEvent):Option[String] = {
+    if(VERSION.SDK_INT < 14) return None
     val source = e.getSource
     rootOf(source).flatMap { root =>
       val leaves = leavesOf(root).map { leaf =>
