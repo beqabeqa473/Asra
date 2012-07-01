@@ -892,7 +892,7 @@ class Handlers {
       try {
         recurse(x.descendant)
       } catch {
-        catch e =>
+        case e =>
           Log.e("spiel", "Error parsing HTML", e)
           Nil
       }
@@ -1000,7 +1000,7 @@ class Handlers {
           else if(e.getRemovedCount > 0) {
             val start = e.getFromIndex
             val end = e.getFromIndex+e.getRemovedCount
-            speak(e.getBeforeText.toString.substring(start, end), true)
+            Option(e.getBeforeText).foreach(v => speak(v.toString.substring(start, end), true))
           }
         else
           speak(utterancesFor(e), true)
