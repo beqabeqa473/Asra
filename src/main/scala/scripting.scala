@@ -4,8 +4,6 @@ package scripting
 import java.io.{File, FileInputStream, FileOutputStream, FileWriter, InputStream}
 import java.lang.Integer
 
-import concurrent.ops._
-
 import handlers.PrettyAccessibilityEvent
 
 import android.content.{BroadcastReceiver, ContentValues, Context => AContext, Intent}
@@ -294,21 +292,20 @@ object Scripter {
       new Script(service, fn, true).run()
     }
 
-    spawn {
-      val userPackages = scriptsDir.list().map { str =>
-        str.substring(0, str.lastIndexOf("."))
-      }.toList
-      val cursor = service.getContentResolver.query(Provider.uri, Provider.columns.projection, null, null, null)
-      cursor.moveToFirst()
-      while(!cursor.isAfterLast) {
-        if(!userPackages.contains(cursor.getString(cursor.getColumnIndex(Provider.columns.pkg))))
-          (new Script(service, cursor)).run()
-        cursor.moveToNext()
-      }
-      cursor.close()
+    val userPackages = scriptsDir.list().map { str =>
+      str.substring(0, str.lastIndexOf("."))
+    }.toList
+    val cursor = service.getContentResolver.query(Provider.uri, Provider.columns.projection, null, null, null)
+    cursor.moveToFirst()
+    while(!cursor.isAfterLast) {
+      if(!userPackages.contains(cursor.getString(cursor.getColumnIndex(Provider.columns.pkg))))
+        (new Script(service, cursor)).run()
+      cursor.moveToNext()
     }
+    cursor.close()
 
     initExternalScripts()
+
     Context.exit()
   }
 
@@ -316,7 +313,7 @@ object Scripter {
     if(!spielDir.isDirectory) spielDir.mkdir
     if(!scriptsDir.isDirectory) scriptsDir.mkdir
     observer.startWatching()
-    spawn { userScripts.foreach(_.run()) }
+    userScripts.foreach(_.run())
   }
 
   def shutdown() {
