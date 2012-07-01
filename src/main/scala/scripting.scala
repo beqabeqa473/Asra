@@ -253,11 +253,11 @@ object Scripter {
 
   private[scripting] var script:Option[Script] = None
 
+  private[scripting] var service:AContext = null
+
   private lazy val spielDir = new File(Environment.getExternalStorageDirectory, "spiel")
 
   lazy val scriptsDir = new File(spielDir, "scripts")
-
-  private[scripting] var service:AContext = null
 
   private lazy val observer = new Observer(service, scriptsDir.getPath)
 
@@ -292,9 +292,14 @@ object Scripter {
       new Script(service, fn, true).run()
     }
 
-    val userPackages = Option(scriptsDir).map(_.list().toList).getOrElse(List[String]()).map { str =>
-      str.substring(0, str.lastIndexOf("."))
-    }.toList
+    val userPackages = try {
+      scriptsDir.list().map { str =>
+        str.substring(0, str.lastIndexOf("."))
+      }.toList
+    } catch {
+      case e:NullPointerException => Nil
+    }
+
     val cursor = service.getContentResolver.query(Provider.uri, Provider.columns.projection, null, null, null)
     cursor.moveToFirst()
     while(!cursor.isAfterLast) {
@@ -307,6 +312,7 @@ object Scripter {
     initExternalScripts()
 
     Context.exit()
+
   }
 
   def initExternalScripts() {
