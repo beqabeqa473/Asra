@@ -247,7 +247,11 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     if(Preferences.speechEngine != "")
       intent.setPackage(Preferences.speechEngine)
     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    service.startActivity(intent)
+    try {
+      service.startActivity(intent)
+    } catch {
+      case e:android.content.ActivityNotFoundException => Log.e("spiel", "Error reinitializing speech", e)
+    }
     init()
   }
 
