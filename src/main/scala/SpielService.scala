@@ -23,6 +23,7 @@ class SpielService extends AccessibilityService {
 
   override def onCreate() {
     super.onCreate()
+    SpielService._context = this
     Preferences(this)
     if(Preferences.profiling)
       Debug.startMethodTracing("spiel")
@@ -50,7 +51,6 @@ class SpielService extends AccessibilityService {
     .getNotification
     startForeground(1, notification)
     SpielService.initialized = true
-    SpielService._context = this
     SpielService.enabled = true
   }
 
