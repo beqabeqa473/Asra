@@ -889,7 +889,13 @@ class Handlers {
         case hd :: tl => recurse(tl)
       }
 
-      recurse(x.descendant)
+      try {
+        recurse(x.descendant)
+      } catch {
+        catch e =>
+          Log.e("spiel", "Error parsing HTML", e)
+          Nil
+      }
     }
 
     onViewSelected { e:AccessibilityEvent =>
