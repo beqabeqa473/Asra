@@ -292,7 +292,7 @@ object Scripter {
       new Script(service, fn, true).run()
     }
 
-    val userPackages = scriptsDir.list().map { str =>
+    val userPackages = Option(scriptsDir).map(_.list().toList).getOrElse(List[String]()).map { str =>
       str.substring(0, str.lastIndexOf("."))
     }.toList
     val cursor = service.getContentResolver.query(Provider.uri, Provider.columns.projection, null, null, null)
@@ -310,6 +310,7 @@ object Scripter {
   }
 
   def initExternalScripts() {
+    if(spielDir == null || scriptsDir == null) return
     if(!spielDir.isDirectory) spielDir.mkdir
     if(!scriptsDir.isDirectory) scriptsDir.mkdir
     observer.startWatching()
