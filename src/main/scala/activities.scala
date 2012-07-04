@@ -52,7 +52,9 @@ class Spiel extends TabActivity {
       .setIndicator(getString(R.string.events))
       .setContent(new Intent(this, classOf[Events]))
     )
+
     handleCustomUri()
+
   }
 
   override def onResume() {
@@ -167,9 +169,11 @@ class PreferencesActivity extends PreferenceActivity {
           case _ => pkg.packageName
         })
       }.sortWith((v1, v2) => v1._2 < v2._2)
-      notificationFilters.setEntryValues(packages.map(_._1.asInstanceOf[CharSequence]).toArray)
-      notificationFilters.setEntries(packages.map(_._2.asInstanceOf[CharSequence]).toArray)
-      notificationFilters.setEnabled(true)
+      runOnUiThread(new Runnable { def run() {
+        notificationFilters.setEntryValues(packages.map(_._1.asInstanceOf[CharSequence]).toArray)
+        notificationFilters.setEntries(packages.map(_._2.asInstanceOf[CharSequence]).toArray)
+        notificationFilters.setEnabled(true)
+      }})
     }
 
 
