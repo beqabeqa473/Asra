@@ -243,10 +243,13 @@ object StateReactor {
   def screenOn_? = screenOn
   def screenOff_? = !screenOn_?
 
+  private var locked = screenOff_?
+
   onScreenOff { () =>
     if(screenOn) {
       TTS.speak(service.getString(R.string.screenOff), false)
       screenOn = false
+      locked = true
     }
   }
 
@@ -261,9 +264,12 @@ object StateReactor {
     }
   }
 
-  onUnlocked { () => 
-    TTS.speak(service.getString(R.string.unlocked), false)
-    handlers.Handler.nextShouldNotInterrupt
+  onUnlocked { () =>
+    if(locked) {
+      TTS.speak(service.getString(R.string.unlocked), false)
+      handlers.Handler.nextShouldNotInterrupt
+      locked = false
+    }
   }
 
   onTTSEngineChanged { () => 
