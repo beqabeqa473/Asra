@@ -718,18 +718,10 @@ class Handlers {
   class ListView extends Handler("android.widget.ListView") {
 
     onViewFocused { e:AccessibilityEvent =>
-      val utterances = utterancesFor(e)
-      if(utterances != Nil)
-        if(e.getText.size == 1)
-          speak(Handler.context.getString(R.string.listItem, e.getText.get(0), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
-      else if(VERSION.SDK_INT > 14) {
-        Option(e.getSource).map { source =>
-          val child = source.getChild(e.getCurrentItemIndex)
-          val text = Option(e.getText).map(_.toString).orElse(Option(e.getContentDescription)).getOrElse("")
-          speak(Handler.context.getString(R.string.listItem, text, e.getCurrentItemIndex.toString, e.getItemCount.toString))
-        }
-        true
-      } else
+      val utterances = utterancesFor(e, stripBlanks = true)
+      if(utterances != Nil && e.getCurrentItemIndex != -1)
+        speak(Handler.context.getString(R.string.listItem, utterances.mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
+      else
         if(e.getItemCount == 0)
           speak(Handler.context.getString(R.string.emptyList))
         else if(e.getItemCount == 1)
