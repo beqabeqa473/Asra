@@ -24,24 +24,10 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   private lazy val audioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
 
-  private def activeStream = {
-    if(audioManager.isMusicActive)
-      AudioManager.STREAM_MUSIC
-    else
-      AudioManager.STREAM_RING
-  }
-
-  private lazy val musicPool = new SoundPool(8, AudioManager.STREAM_MUSIC, 0)
-
-  private lazy val ringPool = new SoundPool(8, AudioManager.STREAM_RING, 0)
+  private lazy val pool = new SoundPool(8, AudioManager.STREAM_MUSIC, 0)
 
   object Sounds {
-    object Music {
-      var tick = 0
-    }
-    object Ring {
-      var tick = 0
-    }
+    var tick = 0
   }
 
   /**
@@ -50,8 +36,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   def apply(s:Service) {
     service = s
-    Sounds.Music.tick = musicPool.load(service, R.raw.tick, 1)
-    Sounds.Ring.tick = ringPool.load(service, R.raw.tick, 1)
+    Sounds.tick = pool.load(service, R.raw.tick, 1)
     init()
   }
 
@@ -164,8 +149,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   def shutdown() {
     tts.shutdown
-    musicPool.release()
-    ringPool.release()
+    pool.release()
   }
 
   private def speaking_? = {
@@ -320,7 +304,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     }
   }
 
-  def play(pool:SoundPool, id:Int, pitch:Double = 1d) {
+  def play(id:Int, pitch:Double = 1d) {
     pool.play(id, 1f, 1f, 0, 0, pitch.toFloat)
   }
 
@@ -330,10 +314,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
 
   def tick(pitchScale:Option[Double] = None) = {
     pitchScale.map { s =>
-      activeStream match {
-        case AudioManager.STREAM_MUSIC => play(musicPool, Sounds.Music.tick, s)
-        case AudioManager.STREAM_RING => play(ringPool, Sounds.Music.tick, s)
-      }
+      play(Sounds.tick, s)
     }.getOrElse(guard { tts.playEarcon("tick", 0, null) })
     true
   }
