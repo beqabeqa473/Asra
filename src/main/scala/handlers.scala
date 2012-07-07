@@ -685,11 +685,14 @@ class Handlers {
       }
       true
     }
-  } 
+  }
 
-  class ExpandedMenuView extends Handler("com.android.internal.view.menu.ExpandedMenuView") {
+  trait MenuView {
+    self: Handler =>
     onViewFocused { e:AccessibilityEvent => speak(Handler.context.getString(R.string.menu)) }
   }
+
+  class ExpandedMenuView extends Handler("com.android.internal.view.menu.ExpandedMenuView") with MenuView
 
   class HomeView extends Handler("com.android.internal.widget.ActionBarView$HomeView") {
 
@@ -730,6 +733,8 @@ class Handlers {
         speak(Handler.context.getString(R.string.labeledImage, text))
     }
   }
+
+  class IconMenuView extends Handler("com.android.internal.view.menu.IconMenuView") with MenuView
 
   class ListView extends Handler("android.widget.ListView") {
 
