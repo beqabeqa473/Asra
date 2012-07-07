@@ -632,6 +632,16 @@ class Handlers {
 
   }
 
+  class AdapterView extends Handler("android.widget.AdapterView") {
+    onViewScrolled { e:AccessibilityEvent =>
+      if(e.getToIndex >= 0 && e.getItemCount > 0) {
+        val percentage = e.getToIndex.toDouble/e.getItemCount
+        TTS.tick(Some(0.5+percentage/2))
+      }
+      true
+    }
+  }
+
   class AlertDialog extends Handler("android.app.AlertDialog") {
     onWindowStateChanged { e:AccessibilityEvent =>
       speak(Handler.context.getString(R.string.alert, utterancesFor(e, stripBlanks=true).mkString(": ")), true)
@@ -717,14 +727,6 @@ class Handlers {
           speak(Handler.context.getString(R.string.listWithItem))
         else if(e.getItemCount > 1)
           speak(Handler.context.getString(R.string.listWithItems, e.getItemCount.toString))
-      true
-    }
-
-    onViewScrolled { e:AccessibilityEvent =>
-      if(e.getToIndex >= 0 && e.getItemCount > 0) {
-        val percentage = e.getToIndex.toDouble/e.getItemCount
-        TTS.tick(Some(0.5+percentage/2))
-      }
       true
     }
 
