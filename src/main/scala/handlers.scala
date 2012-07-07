@@ -674,7 +674,6 @@ class Handlers {
   }
 
   class EditText extends Handler("android.widget.EditText") {
-
     onViewFocused { e:AccessibilityEvent =>
       if(e.isPassword) {
         speak(utterancesFor(e, addBlank=false, guessLabelIfContentDescriptionMissing = true), false)
@@ -686,7 +685,6 @@ class Handlers {
       }
       true
     }
-
   } 
 
   class ImageButton extends Handler("android.widget.ImageButton") with GenericButtonHandler
@@ -808,6 +806,17 @@ class Handlers {
   class ScrollView extends Handler("android.widget.ScrollView") {
 
     onViewFocused { e:AccessibilityEvent => true }
+
+    onViewScrolled { e:AccessibilityEvent =>
+      val percent = (if(e.getMaxScrollX > 0 && e.getMaxScrollY == 0)
+        e.getScrollX.toFloat/e.getMaxScrollX
+      else if(e.getMaxScrollX == 0 && e.getMaxScrollY > 0)
+        e.getScrollY.toFloat/e.getMaxScrollY
+      else
+        0
+      )*100
+      TTS.presentPercentage(percent)
+    }
 
   }
 
