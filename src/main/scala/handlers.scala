@@ -687,6 +687,10 @@ class Handlers {
     }
   } 
 
+  class ExpandedMenuView extends Handler("com.android.internal.view.menu.ExpandedMenuView") {
+    onViewFocused { e:AccessibilityEvent => speak(Handler.context.getString(R.string.menu)) }
+  }
+
   class HomeView extends Handler("com.android.internal.widget.ActionBarView$HomeView") {
 
     private def process(e:AccessibilityEvent) = {
