@@ -433,11 +433,6 @@ class Handler(pkg:String, cls:String) {
     val text = if(stripBlanks)
       txt.filterNot(_.trim.length == 0)
     else txt
-    if(
-      e.isChecked &&
-      List(R.string.checked, R.string.selected).map(context.getString(_)).map(text.contains(_)).toSet == Set(false)
-    )
-      rv ::= context.getString(R.string.checked)
     var blankAdded = false
     providedText.map(rv ::= _).getOrElse {
       if(text.size == 0 && e.getContentDescription == null && addBlank) {
