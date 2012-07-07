@@ -237,6 +237,7 @@ object Handler {
 
       originator.flatMap { o =>
         val a = ancestors(o)
+        Log.d("spiel", "Ancestors: "+a)
         val candidates = handlers.filter { h =>
           h._1._1 == "" && h._1._2 != "" && h._1._2 != "*"
         }.toList.map { h =>
@@ -626,8 +627,7 @@ object After extends Handler("", "*") {
 
 class Handlers {
 
-  trait MenuItem {
-    self: Handler =>
+  class ActionMenuItemView extends Handler("com.android.internal.view.menu.ActionMenuItemView") {
 
     onViewFocused { e:AccessibilityEvent =>
       speak(utterancesFor(e, stripBlanks=true) ::: ("Menu item" :: Nil))
@@ -636,12 +636,6 @@ class Handlers {
     onViewHoverEnter { e:AccessibilityEvent => Handler.process(e, Some(TYPE_VIEW_FOCUSED)) }
 
   }
-
-  class ActionBarView extends Handler("com.android.internal.widget.ActionBarView") with MenuItem
-
-  class ActionMenuItemView extends Handler("com.android.internal.widget.ActionBarView") with MenuItem
-
-  class ActionMenuItemView2 extends Handler("com.android.internal.view.menu.ActionMenuItemView") with MenuItem
 
   class AlertDialog extends Handler("android.app.AlertDialog") {
     onWindowStateChanged { e:AccessibilityEvent =>
