@@ -687,6 +687,21 @@ class Handlers {
     }
   } 
 
+  class HomeView extends Handler("com.android.internal.widget.ActionBarView$HomeView") {
+
+    private def process(e:AccessibilityEvent) = {
+      val utterances = utterancesFor(e, addBlank = false)
+      if(utterances != Nil)
+        speak(utterances.mkString(" "))
+      true
+    }
+
+    onViewFocused { e:AccessibilityEvent => process(e) }
+
+    onViewHoverEnter { e:AccessibilityEvent => process(e) }
+
+  }
+
   class ImageButton extends Handler("android.widget.ImageButton") with GenericButtonHandler
 
   class ImageView extends Handler("android.widget.ImageView") {
