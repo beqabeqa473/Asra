@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+  <string name="appName">Spiel</string>
+  <string name="appDescription">Joustava, skriptattava Android-ruudunlukija</string>
+
+  <!-- Initial welcome message-->
+  <string name="welcomeMsg">Tervetuloa Spieliin!</string>
+
+  <!-- On/off and other alerts -->
+  <string name="spielOn">Spiel käytössä.</string>
+  <string name="spielOff">Spiel pois käytöstä.</string>
+  <string name="screenOff">Näyttö pois käytöstä.</string>
+  <string name="unlocked">Avattu.</string>
+  <string name="ringerOff">Soittoääni pois käytöstä.</string>
+  <string name="ringerOn">Soittoääni käytössä.</string>
+  <string name="newVoicemail">Uusi ääniviesti</string>
+
+  <!-- View names and actions -->
+  <string name="alert">Ilmoitus! %1$s</string>
+  <string name="button">painike</string>
+  <string name="labeledButton">%1$s: painike</string>
+  <string name="checkbox">%1$s: valintaruutu</string>
+  <string name="checked">valittu</string>
+  <string name="disabled">ei käytettävissä</string>
+  <string name="editText">muokkaa tekstiä</string>
+  <string name="emptyList">tyhjä lista</string>
+  <string name="item">%1$s: 1 kohde</string>
+  <string name="items">%1$s: %2$s kohdetta</string>
+  <string name="image">kuva</string>
+  <string name="labeledImage">%1$s: kuva</string>
+  <string name="link">linkki</string>
+  <string name="listItem">%1$s: %2$s / %3$s</string>
+  <string name="listWithItem">lista jossa 1 kohde</string>
+  <string name="listWithItems">lista jossa %1$s kohdetta</string>
+  <string name="menu">valikko</string>
+  <string name="notChecked">ei valittu</string>
+  <string name="notSelected">ei valittu</string>
+  <string name="password">salasana</string>
+  <string name="radioButton">%1$s: valintapainike</string>
+  <string name="rating">Arviointi</string>
+  <string name="searchText">%1$s: etsi tekstiä</string>
+  <string name="selected">valittu</string>
+
+  <!-- Preferences -->
+  <string name="preferences">Asetukset</string>
+
+  <string name="speechTitle">Puhe</string>
+  <string name="speechEngineTitle">Puhemoottori</string>
+  <string name="systemDefault">Järjestelmän oletus</string>
+  <string name="rateScaleTitle">Nopeuden skaala</string>
+  <string name="rateScaleSummary">Kerroin, jolla oletusnopeutta skaalataan</string>
+  <string name="pitchScaleTitle">Korkeuden skaala</string>
+  <string name="pitchScaleSummary">Kerroin, jolla oletuskorkeutta skaalataan</string>
+  <string name="echoByCharTitle">Kaiuta merkeittäin</string>
+  <string name="echoByWordTitle">Kaiuta sanoittain</string>
+  <string name="speakNotificationsWhenScreenOffTitle">Lue ilmoitukset, kun näyttö on pois käytöstä</string>
+  <string name="useBluetoothSCOTitle">Käytä Bluetooth SCO:ta</string>
+  <string name="useBluetoothSCOSummary">Reititä muut kuin puheluiden äänet  Bluetooth SCO -kuulokkeisiin (kokeellinen!)</string>
+  <string name="managePunctuationSpeechTitle">Puhuttavien välimerkkien hallinta</string>
+  <string name="managePunctuationSpeechSummary">Siirtää joidenkin käsittelemättömien välimerkkien puhumisen Spielille</string>
+  <string name="duckNonSpeechAudioTitle">Alenna muun kuin puheen äänenvoimakkuutta</string>
+  <string name="duckNonSpeechAudioSummary">Alentaa puhuttaessa musiikin, pelien ym. äänenvoimakkuutta</string>
+  <string name="textToSpeechTitle">Tekstistä puheeksi</string>
+  <string name="textToSpeechSummary">Määritä järjestelmänlaajuiset tekstistä puheeksi -asetukset</string>
+
+  <string name="alertsTitle">Ilmoitukset</string>
+  <string name="talkingCallerIDTitle">Lue soittajan tiedot</string>
+  <string name="talkingCallerIDSummary">Lukee toistuvasti soittajan tiedot saapuville puheluille</string>
+  <string name="voicemailAlertsTitle">Ääniviestit</string>
+  <string name="voicemailAlertsSummary">Ilmoittaa toistuvasti uusista ääniviesteistä</string>
+
+  <string name="triggersTitle">Toiminnot</string>
+  <string name="triggersSummary">Valitse tietyille fyysisille tapahtumille suoritettavat toiminnot</string>
+  <string name="onShakeTitle">Laitetta ravistettaessa</string>
+  <string name="onShakeSummary">Valitse toiminto, joka suoritetaan, kun laitetta ravistetaan</string>
+  <string name="onProximityNearTitle">Kun jotakin on lähellä</string>
+  <string name="onProximityNearSummary">Valitse toiminto, joka suoritetaan, kun läheisyyden tunnistin havaitsee lähellä jotakin</string>
+
+  <string name="notificationFiltersTitle">Ilmoitussuodattimet</string>
+  <string name="notificationFiltersSummary">Suodata ilmoitusmuutosten lukemista äänekkäissä sovelluksissa</string>
+
+  <string name="debuggingTitle">Virheenkorjaus</string>
+  <string name="sendBacktracesTitle">Lähetä virheenjäljitystietoja Spielin kaatuessa</string>
+  <string name="sendBacktracesSummary">Lähetä kehittäjälle nimettömiä kaatumisilmoituksia automaattisesti Spielin kaatuessa (edellyttää uudelleenkäynnistystä)</string>
+  <string name="profilingTitle">Profilointi</string>
+  <string name="profilingSummary">Ota käyttöön vain kehitystarkoituksiin, sillä tämä vaikuttaa suorituskykyyn!</string>
+
+  <string name="events">Tapahtumat</string>
+
+  <string name="createScriptTemplate">Luo skriptin malli</string>
+
+  <string name="scripts">Skriptit</string>
+
+  <string name="system">Järjestelmä</string>
+  <string name="user">Käyttäjä</string>
+
+  <!-- Script context menu -->
+  <string name="delete">Poista</string>
+  <string name="copyToExternalStorage">Kopioi ulkoiselle tallennusvälineelle</string>
+  <string name="postToBazaar">Lähetä Bazaariin</string>
+
+  <string name="bazaar_credentials">Syötä Spiel Bazaar -käyttäjätietosi.</string>
+  <string name="bazaar_credentials_invalid">Käyttäjänimi ja/tai salasana ovat virheellisiä. Syötä ne uudestaan alle ja yritä uudelleen.</string>
+  <string name="bazaar_username_label">Käyttäjänimi</string>
+  <string name="bazaar_password_label">Salasana</string>
+  <string name="signup">Rekisteröi</string>
+  <string name="script_reload_error">Tämä skripti on virheellinen. Korjaa lokeissa mahdollisesti ilmoitetut virheet ja yritä uudelleen.</string>
+  <string name="changes_label">Muutokset (valinnainen):</string>
+  <string name="script_posted">Skripti on lähetetty onnistuneesti. Kiitos panoksestasi.</string>
+  <string name="script_posting_error">Tilapäinen verkkovirhe lähetettäessä skriptiä. Yritä myöhemmin uudelleen.</string>
+
+  <string name="confirmDelete">Haluatko varmasti poistaa paketin %1$s skriptin?</string>
+  <string name="scriptCopied">Skripti kopioitu kohteeseen %1$s.</string>
+
+  <string name="newOrUpdatedScripts">Uusia tai päivitettyjä skriptejä on saatavilla. Valitse, mitkä haluat asentaa.</string>
+  <string name="selectAll">Valitse kaikki</string>
+  <string name="deselectAll">Poista kaikki valinnat</string>
+  <string name="install">Asenna</string>
+
+  <!-- Menu items -->
+  <string name="refresh">Päivitä</string>
+
+  <!-- Dialog buttons -->
+  <string name="ok">OK</string>
+  <string name="cancel">Peruuta</string>
+  <string name="yes">Kyllä</string>
+  <string name="no">Ei</string>
+
+  <!-- Action names and related -->
+
+  <string name="none">Ei mitään</string>
+  <string name="createScriptTemplateAction">Luo skriptin malli uusimmalle esteettömyystapahtumalle</string>
+  <string name="templateCreated">Malli luotu tiedostoon %1$s.</string>
+  <string name="templateCreationError">Virhe luotaessa skriptin mallia.</string>
+  <string name="stopSpeech">Keskeytä puhe</string>
+  <string name="toggleSpiel">Ottaa Spielin käyttöön tai poistaa sen käytöstä</string>
+
+  <!-- Punctuation and other speech-related strings -->
+
+  <string name="blank">tyhjä</string>
+  <string name="cap">iso %1$s</string>
+  <string name="exclamation">huuto</string>
+  <string name="at">ät</string>
+  <string name="pound">punta</string>
+  <string name="dollar">dollari</string>
+  <string name="percent">prosentti</string>
+  <string name="caret">hattu</string>
+  <string name="ampersand">ja</string>
+  <string name="asterisk">tähti</string>
+  <string name="leftParen">alkusulku</string>
+  <string name="rightParen">loppusulku</string>
+  <string name="underscore">alaviiva</string>
+  <string name="space">väli</string>
+  <string name="period">piste</string>
+  <string name="comma">pilkku</string>
+  <string name="lessThan">pienempi</string>
+  <string name="greaterThan">suurempi</string>
+  <string name="slash">kautta</string>
+  <string name="backslash">keno</string>
+  <string name="questionMark">kysymys</string>
+  <string name="quote">lainaus</string>
+  <string name="apostrophe">heitto</string>
+  <string name="semiColon">puolipiste</string>
+  <string name="colon">kaksoispiste</string>
+  <string name="dash">viiva</string>
+  <string name="plus">plus</string>
+  <string name="newline">uusi rivi</string>
+  <string name="tab">sarkain</string>
+
+  <!-- Command mode -->
+  <string name="commandModeUnavailable">Komentotila ei ole käytettävissä tässä Android-versiossa.</string>
+  <string name="review">Tarkastelu</string>
+
+  <!-- String returned when an unknown number calls. -->
+  <string name="unknown">Tuntematon</string>
+
+</resources>
