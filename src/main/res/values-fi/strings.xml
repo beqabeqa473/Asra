@@ -168,10 +168,6 @@
   <string name="newline">uusi rivi</string>
   <string name="tab">sarkain</string>
 
-  <!-- Command mode -->
-  <string name="commandModeUnavailable">Komentotila ei ole käytettävissä tässä Android-versiossa.</string>
-  <string name="review">Tarkastelu</string>
-
   <!-- String returned when an unknown number calls. -->
   <string name="unknown">Tuntematon</string>
 

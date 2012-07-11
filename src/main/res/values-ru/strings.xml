@@ -165,10 +165,6 @@
   <string name="newline">Перевод строки</string>
   <string name="tab">табуляция</string>
 
-  <!-- Command mode -->
-  <string name="commandModeUnavailable">Командный режим недоступен в этой версии Android.</string>
-  <string name="review">Просмотр</string>
-
   <!-- String returned when an unknown number calls. -->
   <string name="unknown">Номер не определён</string>
 

@@ -136,11 +136,6 @@ object Handler {
     }
   }
 
-  private var _lastEvent:AccessibilityEvent = null
-  def lastEvent = _lastEvent
-
-  private var lastEnteredSource:AccessibilityNodeInfo = null
-
   def process(e:AccessibilityEvent, eventType:Option[Int] = None):Boolean = {
 
     if(e == null || e.getClassName == null || e.getPackageName == null)
@@ -163,7 +158,6 @@ object Handler {
     if(e.getEventType == TYPE_NOTIFICATION_STATE_CHANGED && Preferences.notificationFilters.contains(e.getPackageName))
       return true
 
-    _lastEvent = e
     if(eventType == None)
       nextShouldNotInterruptCalled = false
 

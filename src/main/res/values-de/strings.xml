@@ -162,10 +162,6 @@
   <string name="newline">neue zeile</string>
   <string name="tab">tab</string>
 
-  <!-- Command mode -->
-  <string name="commandModeUnavailable">Der Befehlsmodus ist in dieser Version von Android nicht verfügbar.</string>
-  <string name="review">Überblick</string>
-
   <!-- String returned when an unknown number calls. -->
   <string name="unknown">Unbekannt</string>
 

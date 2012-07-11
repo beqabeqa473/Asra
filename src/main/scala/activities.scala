@@ -19,8 +19,6 @@ import android.view.accessibility.{AccessibilityEvent, AccessibilityNodeInfo}
 import android.widget.{AdapterView, ArrayAdapter, ListView, RadioGroup, TabHost}
 import android.support.v4.app.{DialogFragment, FragmentActivity, LoaderManager}
 import android.support.v4.content.{CursorLoader, Loader}
-import com.google.marvin.widget.TouchGestureControlOverlay
-import TouchGestureControlOverlay._
 import org.droidparts.preference.MultiSelectListPreference
 
 import handlers._
@@ -658,94 +656,6 @@ class ScriptInstaller extends TypedActivity with AdapterView.OnItemClickListener
       }
     } else
       TTS.speak(getString(R.string.notChecked), true)
-  }
-
-}
-
-class CommandHandler extends Activity {
-
-  class Listener extends GestureListener {
-
-    def onGestureStart(g:Gesture) = g match {
-      case _ =>
-    }
-
-    def onGestureChange(g:Gesture) = g match {
-      case _ =>
-    }
-
-    def onGestureFinish(g:Gesture) = g match {
-      case Gesture.UPLEFT => upLeft()
-      case Gesture.UP => up()
-      case Gesture.UPRIGHT => upRight()
-      case Gesture.LEFT => left()
-      case Gesture.CENTER => center()
-      case Gesture.RIGHT => right()
-      case Gesture.DOWNLEFT => downLeft()
-      case Gesture.DOWN => down()
-      case Gesture.DOWNRIGHT => downRight()
-    }
-
-  }
-
-  private var currentNode:AccessibilityNodeInfo = null
-
-  override def onCreate(bundle:Bundle) {
-    if(VERSION.SDK_INT >= 14)
-      currentNode = handlers.Handler.lastEvent.getSource
-    super.onCreate(bundle)
-    setContentView(new TouchGestureControlOverlay(this, new Listener))
-    if(VERSION.SDK_INT < 14)
-      new AlertDialog.Builder(this)
-      .setMessage(getString(R.string.commandModeUnavailable))
-      .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener {
-        def onClick(i:DialogInterface, what:Int) = finish()
-      })
-      .show()
-    else
-      reviewMode()
-  }
-
-  private def reviewMode() {
-    TTS.speak(getString(R.string.review), true)
-  }
-
-  private def upLeft() {
-  }
-
-  private def up() {
-  }
-
-  private def upRight() {
-  }
-
-  private def left() {
-  }
-
-  private def center() {
-  }
-
-  private def right() {
-  }
-
-  private def downLeft() {
-  }
-
-  private def down() {
-  }
-
-  private def downRight() {
-  }
-
-  override def onKeyDown(keyCode:Int, event:KeyEvent) = {
-    keyCode match {
-      case KeyEvent.KEYCODE_DPAD_UP => up()
-      case KeyEvent.KEYCODE_DPAD_DOWN => down()
-      case KeyEvent.KEYCODE_DPAD_LEFT => left()
-      case KeyEvent.KEYCODE_DPAD_RIGHT => right()
-      case _ =>
-    }
-    super.onKeyDown(keyCode, event)
   }
 
 }
