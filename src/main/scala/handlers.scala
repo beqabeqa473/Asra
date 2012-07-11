@@ -443,7 +443,7 @@ class Handler(pkg:String, cls:String) {
     rv :::= text
     if(e.getContentDescription != null && e.getContentDescription != "")
       rv match {
-        case hd :: Nil if(hd == e.getContentDescription) =>
+        case hd :: Nil if(hd.toLowerCase.trim == e.getContentDescription.toString.toLowerCase.trim) =>
         case _ =>
           rv ::= e.getContentDescription.toString
       }
@@ -513,7 +513,7 @@ class Handler(pkg:String, cls:String) {
   }
 
   protected def interactive_?(source:AccessibilityNodeInfo) =
-    source.isCheckable || source.isClickable || source.isLongClickable || source.isFocusable
+    source.isCheckable || source.isClickable || source.isLongClickable || source.isFocusable || (source.getActions & AccessibilityNodeInfo.ACTION_SELECT) != 0
 
   protected def interactables(source:AccessibilityNodeInfo) = 
     (source :: leavesOf(source)).filter(interactive_?(_))
@@ -874,15 +874,18 @@ class Handlers {
 
     onViewHoverEnter { e:AccessibilityEvent =>
       Option(e.getSource).map { source=>
-        if(utterancesFor(e, addBlank=false, stripBlanks=true) != Nil) {
-          if(source.getChildCount > 0 && interactables(source) == 0)
-            false
+        val utterances = utterancesFor(e, addBlank=false, stripBlanks=true)
+        Log.d("spielcheck", "Utterances: "+utterances)
+        if(utterances != Nil) {
+          Log.d("spielcheck", "Children: "+source.getChildCount+": Interactables: "+interactables(source))
+          if(interactables(source).size == 0 && source.getChildCount > 1)
+            speak(utterances)
           else
             true
         } else if(interactables(source).size > 1)
           true
-        else if(source.getChildCount == 1 || interactables(source).size == 1)
-          false
+        //else if(source.getChildCount == 1 || interactables(source).size == 1)
+          //false
         else true
       }.getOrElse(true)
     }
