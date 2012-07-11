@@ -470,15 +470,17 @@ class Handler(pkg:String, cls:String) {
     rv
   }
 
-  protected def leavesOf(n:AccessibilityNodeInfo):List[AccessibilityNodeInfo] = (n.getChildCount match {
-    case 0 => List(n)
-    case v =>
-      (for(
-        i <- 0 to v-1;
-        c = n.getChild(i) if(c != null)
-      ) yield(leavesOf(c))
-      ).toList.flatten
-  }).filter(_ != null)
+  protected def descendantsOf(n:AccessibilityNodeInfo):List[AccessibilityNodeInfo] = {
+    (n.getChildCount match {
+      case 0 => Nil
+      case v =>
+        (for(
+          i <- 0 to v-1;
+          c = n.getChild(i) if(c != null)
+        ) yield(List(c)++descendantsOf(c))
+        ).toList.flatten
+    }).filter(_ != null)
+  }
 
   protected def rootOf(node:AccessibilityNodeInfo):Option[AccessibilityNodeInfo] = Option(node).map { n =>
     def iterate(v:AccessibilityNodeInfo):AccessibilityNodeInfo = v.getParent match {
@@ -492,7 +494,7 @@ class Handler(pkg:String, cls:String) {
     if(VERSION.SDK_INT < 14) return None
     val source = e.getSource
     rootOf(source).flatMap { root =>
-      val leaves = leavesOf(root).map { leaf =>
+      val descendants = descendantsOf(root).map { leaf =>
         val rect = new Rect()
         leaf.getBoundsInScreen(rect)
         (leaf, rect)
@@ -500,11 +502,11 @@ class Handler(pkg:String, cls:String) {
       val sr = new Rect()
       source.getBoundsInScreen(sr)
       val sourceRect = new Rect(0, sr.top, Int.MaxValue, sr.bottom)
-      val row = leaves.filter(_._2.intersect(sourceRect))
+      val row = descendants.filter(_._2.intersect(sourceRect))
       row.find((v) => v._1.getClassName == "android.widget.TextView" && v._1.getText != null && v._1.getText.length > 0).map(
         _._1.getText.toString
       ).orElse {
-        leaves.filter(_._2.bottom <= sourceRect.top)
+        descendants.filter(_._2.bottom <= sourceRect.top)
         .filter((v) => v._1 != null && v._1.getClassName == "android.widget.TextView" && v._1.getText != null && v._1.getText.length > 0)
         .sortBy(_._2.bottom)
         .reverse.headOption.map(_._1.getText.toString)
@@ -516,7 +518,7 @@ class Handler(pkg:String, cls:String) {
     source.isCheckable || source.isClickable || source.isLongClickable || source.isFocusable || (source.getActions & AccessibilityNodeInfo.ACTION_SELECT) != 0
 
   protected def interactables(source:AccessibilityNodeInfo) = 
-    (source :: leavesOf(source)).filter(interactive_?(_))
+    (source :: descendantsOf(source)).filter(interactive_?(_))
 
   /**
    * Run a given <code>AccessibilityEvent</code> through this <code>Handler</code>
@@ -550,10 +552,10 @@ trait GenericButtonHandler extends Handler {
       if(VERSION.SDK_INT >= 14) {
         Option(e.getSource).flatMap { source =>
           rootOf(source).map { root =>
-            val leaves = leavesOf(root)
-            val index = leaves.indexOf(source)+1
+            val descendants = descendantsOf(root)
+            val index = descendants.indexOf(source)+1
             if(index > 0)
-              speak(Handler.context.getString(R.string.listItem, Handler.context.getText(R.string.button), index.toString, leaves.size.toString))
+              speak(Handler.context.getString(R.string.listItem, Handler.context.getText(R.string.button), index.toString, descendants.size.toString))
             else None
           }
         }.getOrElse(speak(Handler.context.getString(R.string.button).toString))
@@ -720,10 +722,10 @@ class Handlers {
         else if(VERSION.SDK_INT >= 14 && e.getSource != null) {
           val source = e.getSource
           rootOf(source).map { root =>
-            val leaves = leavesOf(root)
-            val index = leaves.indexOf(source)+1
+            val descendants = descendantsOf(root)
+            val index = descendants.indexOf(source)+1
             if(index > 0)
-              speak(Handler.context.getString(R.string.listItem, Handler.context.getText(R.string.image), index.toString, leaves.length.toString))
+              speak(Handler.context.getString(R.string.listItem, Handler.context.getText(R.string.image), index.toString, descendants.length.toString))
             else
               speak(Handler.context.getText(R.string.image).toString)
           }.getOrElse(speak(Handler.context.getText(R.string.image).toString))
@@ -875,18 +877,20 @@ class Handlers {
     onViewHoverEnter { e:AccessibilityEvent =>
       Option(e.getSource).map { source=>
         val utterances = utterancesFor(e, addBlank=false, stripBlanks=true)
-        Log.d("spielcheck", "Utterances: "+utterances)
+        Log.d("spielcheck", "Utterances: "+utterances+": Children: "+descendantsOf(source))
         if(utterances != Nil) {
-          Log.d("spielcheck", "Children: "+source.getChildCount+": Interactables: "+interactables(source))
-          if(interactables(source).size == 0 && source.getChildCount > 1)
+          Log.d("spielcheck", "Leaves: "+descendantsOf(source)+": Children: "+source.getChildCount)
+          val textCount = descendantsOf(source).map { v =>
+            if(v.getText != null && v.getText.length != 0) 1 else 0
+          }.foldLeft(0) { (acc, v) => acc+v }
+          Log.d("spielcheck", "Textcount: "+textCount)
+          if(textCount == 0)
             speak(utterances)
+          else if(textCount > 1)
+            false
           else
             true
-        } else if(interactables(source).size > 1)
-          true
-        //else if(source.getChildCount == 1 || interactables(source).size == 1)
-          //false
-        else true
+        } else true
       }.getOrElse(true)
     }
 
