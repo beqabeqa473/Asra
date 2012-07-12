@@ -669,6 +669,7 @@ class Handlers {
   }
 
   class EditText extends Handler("android.widget.EditText") {
+
     onViewFocused { e:AccessibilityEvent =>
       if(e.isPassword) {
         speak(utterancesFor(e, addBlank=false, guessLabelIfContentDescriptionMissing = true), false)
@@ -680,6 +681,52 @@ class Handlers {
       }
       true
     }
+
+    onViewTextChanged { e:AccessibilityEvent =>
+      if(e.getBeforeText == e.getText.mkString)
+        true
+      else if(e.getFromIndex == -1 || e.getToIndex == -1) {
+        val oldText = e.getBeforeText.toString
+        val newText = e.getText.mkString
+        if(newText.length > oldText.length)
+          speak(newText.replace(oldText, ""), true)
+        else
+          speak(oldText.replace(newText, ""), true)
+      } else if(e.getAddedCount > 0 || e.getRemovedCount > 0) {
+        if(e.isPassword)
+          speak("*", true)
+        else
+          if(e.getAddedCount > 0)
+            // We're getting an exception here due to what appear to be 
+            // malformed AccessibilityEvents.
+            try {
+              val text = e.getText.mkString
+              val str = text.substring(e.getFromIndex,   e.getFromIndex+e.getAddedCount)
+              var flush = true
+              if(Preferences.echoByChar) {
+                speak(str, flush)
+                flush = false
+              }
+              if(Preferences.echoByWord && !Character.isLetterOrDigit(str(0))) {
+                val word = (text.substring(0, e.getFromIndex)
+                .reverse.takeWhile(_.isLetterOrDigit).reverse+str).trim
+                if(word.length > 0)
+                  speak(word, flush)
+              }
+            } catch {
+              case e => Log.d("spiel", "Think we have a malformed event. Got "+e.getMessage)
+            }
+          else if(e.getRemovedCount > 0) {
+            val start = e.getFromIndex
+            val end = e.getFromIndex+e.getRemovedCount
+            Option(e.getBeforeText).foreach(v => speak(v.toString.substring(start, end), true))
+          }
+        else
+          speak(utterancesFor(e), true)
+      }
+      true
+    }
+
   }
 
   trait MenuView {
@@ -988,41 +1035,7 @@ class Handlers {
         speak("")
     }
 
-    onViewTextChanged { e:AccessibilityEvent =>
-      if(e.getAddedCount > 0 || e.getRemovedCount > 0) {
-        if(e.isPassword)
-          speak("*", true)
-        else
-          if(e.getAddedCount > 0)
-            // We're getting an exception here due to what appear to be 
-            // malformed AccessibilityEvents.
-            try {
-              val text = e.getText.mkString
-              val str = text.substring(e.getFromIndex,   e.getFromIndex+e.getAddedCount)
-              var flush = true
-              if(Preferences.echoByChar) {
-                speak(str, flush)
-                flush = false
-              }
-              if(Preferences.echoByWord && !Character.isLetterOrDigit(str(0))) {
-                val word = (text.substring(0, e.getFromIndex)
-                .reverse.takeWhile(_.isLetterOrDigit).reverse+str).trim
-                if(word.length > 0)
-                  speak(word, flush)
-              }
-            } catch {
-              case e => Log.d("spiel", "Think we have a malformed event. Got "+e.getMessage)
-            }
-          else if(e.getRemovedCount > 0) {
-            val start = e.getFromIndex
-            val end = e.getFromIndex+e.getRemovedCount
-            Option(e.getBeforeText).foreach(v => speak(v.toString.substring(start, end), true))
-          }
-        else
-          speak(utterancesFor(e), true)
-      }
-      true
-    }
+    onViewTextChanged { e:AccessibilityEvent => speak(utterancesFor(e, addBlank = false, stripBlanks = true)) }
 
     private var oldSelectionFrom:Option[Int] = None
     private var oldSelectionTo:Option[Int] = None
