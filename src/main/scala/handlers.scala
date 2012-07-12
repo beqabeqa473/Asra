@@ -242,7 +242,6 @@ object Handler {
           }
           (a.indexOf(target), h)
         }.filter(_._1 >= 0).sortBy((v:Tuple2[Int, _]) => v._1)
-        //Log.d("spielcheck", "Subclass candidate handlers for "+e.getClassName+": "+candidates)
         Some(candidates.exists { v =>
           dispatchTo(v._2._1._1, v._2._1._2)
         })
@@ -509,7 +508,7 @@ class Handler(pkg:String, cls:String) {
   }
 
   protected def interactive_?(source:AccessibilityNodeInfo) =
-    source.isCheckable || source.isClickable || source.isLongClickable || source.isFocusable || (source.getActions & AccessibilityNodeInfo.ACTION_SELECT) != 0
+    source.isCheckable || source.isClickable || source.isLongClickable || source.isFocusable
 
   protected def interactables(source:AccessibilityNodeInfo) = 
     (source :: descendantsOf(source)).filter(interactive_?(_))
@@ -871,17 +870,17 @@ class Handlers {
     onViewHoverEnter { e:AccessibilityEvent =>
       Option(e.getSource).map { source=>
         val utterances = utterancesFor(e, addBlank=false, stripBlanks=true)
-        Log.d("spielcheck", "Utterances: "+utterances+": Children: "+descendantsOf(source))
         if(utterances != Nil) {
-          Log.d("spielcheck", "Leaves: "+descendantsOf(source)+": Children: "+source.getChildCount)
           val textCount = descendantsOf(source).map { v =>
             if(v.getText != null && v.getText.length != 0) 1 else 0
           }.foldLeft(0) { (acc, v) => acc+v }
-          Log.d("spielcheck", "Textcount: "+textCount)
           if(textCount == 0)
             speak(utterances)
           else if(textCount > 1)
-            false
+            if(interactables(source).size > 0)
+              true
+            else
+              false
           else
             true
         } else true
