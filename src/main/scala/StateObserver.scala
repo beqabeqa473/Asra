@@ -102,7 +102,11 @@ object StateObserver {
       }, android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED :: Nil)
 
       registerReceiver({(c, i) =>
-        bluetoothSCOHeadsetDisconnected()
+        val device = i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE).asInstanceOf[BluetoothDevice]
+        device.getBluetoothClass.getDeviceClass match {
+          case BluetoothClass.Device.AUDIO_VIDEO_WEARABLE_HEADSET if(audioManager.isBluetoothScoOn()) => bluetoothSCOHeadsetDisconnected()
+          case _ =>
+        }
       }, android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECTED :: Nil)
     }
 
