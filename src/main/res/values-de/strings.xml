@@ -46,6 +46,7 @@
 
   <string name="speechTitle">Sprachausgabe</string>
   <string name="speechEngineTitle">Sprachausgabe Stimme</string>
+  <string name="systemDefault">Systemvoreinstellung</string>
   <string name="rateScaleTitle">Geschwindigkeit</string>
   <string name="rateScaleSummary">Faktor, um welchen die voreingestellte Geschwindigkeit geändert wird</string>
   <string name="pitchScaleTitle">Tonhöhe</string>
@@ -66,7 +67,6 @@
   <string name="talkingCallerIDTitle">Anrufer ansagen</string>
   <string name="talkingCallerIDSummary">Bei eingehenden Anrufen wiederholt Anruferdetails ansagen</string>
   <string name="voicemailAlertsTitle">Voicemail hinweis</string>
-
   <string name="voicemailAlertsSummary">Gibt wiederholt die Verfügbarkeit neuer Sprachnachrichten aus</string>
 
   <string name="triggersTitle">Aktionen</string>
@@ -75,6 +75,8 @@
   <string name="onShakeSummary">Aktion festlegen, die ausgeführt wird, sobald das Gerät geschüttelt wird</string>
   <string name="onProximityNearTitle">Bei Annäherung</string>
   <string name="onProximityNearSummary">Aktion festlegen, die ausgeführt wird, sobald der Nähe-Ssensor eine Annäherung erkennt</string>
+  <string name="notificationFiltersTitle">Benachrichtigungsfilter</string>
+  <string name="notificationFiltersSummary">Einstellungen zur Benachrichtigungsfilterung für Anwendungen mit häufiger Ausgabeaktualisierung</string>
 
   <string name="debuggingTitle">Debuggen</string>
   <string name="sendBacktracesTitle">Problemberichte senden, beim Absturz von Spiel </string>
@@ -83,7 +85,7 @@
 
   <string name="profilingSummary">sollte nur zu Entwicklungszwecken aktiviert werden, da hierdurch das Antwortverhalten verschlechtert wird</string>
 
-  <string name="events">Events</string>
+  <string name="events">Ereignisse</string>
 
   <string name="createScriptTemplate">skript-Vorlage erstellen</string>
 
@@ -101,6 +103,7 @@
   <string name="bazaar_credentials_invalid">Ihr Benutzername und/oder das Passwort ist ungültig. Bitte geben Sie nachfolgend beides neu ein und versuchen Sie es erneut.</string>
   <string name="bazaar_username_label">Benutzername</string>
   <string name="bazaar_password_label">Passwort</string>
+  <string name="signup">Anmelden</string>
   <string name="script_reload_error">Dieses Skript ist ungültig. Bitte korrigieren Sie alle Fehler, die in den logs aufgelistet sind, und versuchen Sie es erneut.</string>
   <string name="changes_label">Änderungen (optional):</string>
   <string name="script_posted">Ihr Skript wurde erfolgreich  eingestellt. Vielen Dank für Ihren Beitrag.</string>
