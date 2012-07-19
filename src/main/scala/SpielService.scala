@@ -10,7 +10,7 @@ import android.view.accessibility.AccessibilityEvent
 import android.support.v4.app.NotificationCompat
 import com.nullwire.trace.ExceptionHandler
 
-import handlers.Handler
+import presenters.Presenter
 import scripting._
 import triggers.Triggers
 
@@ -34,7 +34,7 @@ class SpielService extends AccessibilityService {
     } catch {
       case e:VerifyError => // We've almost certainly handled this, so ignore.
     }
-    Handler(this)
+    Presenter(this)
     Scripter(this)
     BazaarProvider(this)
     StateObserver(this)
@@ -78,7 +78,7 @@ class SpielService extends AccessibilityService {
 
   override def onAccessibilityEvent(event:AccessibilityEvent) {
     if(!SpielService.enabled) return
-    Handler.process(event)
+    Presenter.process(event)
   }
 
   override protected def onGesture(id:Int) = id match {

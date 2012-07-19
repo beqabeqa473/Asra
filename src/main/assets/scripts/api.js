@@ -4,7 +4,7 @@ function speak(str, shouldInterrupt) {
   if(shouldInterrupt != undefined)
     TTS.speak(str, shouldInterrupt)
   else
-    TTS.speak(str, !Handler.nextShouldNotInterrupt())
+    TTS.speak(str, !Presenter.nextShouldNotInterrupt())
   return true
 }
 
@@ -14,7 +14,7 @@ function speakNotification(str) {
 }
 
 function nextShouldNotInterrupt() {
-  Handler.nextShouldNotInterrupt()
+  Presenter.nextShouldNotInterrupt()
   return true
 }
 
@@ -26,7 +26,7 @@ function tick() {
 function forClass(cls, scr) {
   if(cls[0] == ".")
     cls = __pkg__+cls
-  Scripter.registerHandlerFor(cls, scr)
+  Scripter.registerPresenterFor(cls, scr)
 }
 
 function addBooleanPreference(key, title, summary, dflt) {

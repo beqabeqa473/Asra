@@ -4,7 +4,7 @@ package scripting
 import java.io.{File, FileInputStream, FileOutputStream, FileWriter, InputStream}
 import java.lang.Integer
 
-import handlers.PrettyAccessibilityEvent
+import presenters.PrettyAccessibilityEvent
 
 import android.content.{BroadcastReceiver, ContentValues, Context => AContext, Intent}
 import android.content.pm.PackageManager
@@ -16,17 +16,17 @@ import android.view.accessibility.AccessibilityEvent
 
 import org.mozilla.javascript.{Context, ContextFactory, Function, RhinoException, ScriptableObject}
 
-import handlers.{Callback, Handler}
+import presenters.{Callback, Presenter}
 
 /**
- * Handler callback that executes a Rhino script.
+ * Presenter callback that executes a Rhino script.
 */
 
 class RhinoCallback(f:Function) extends Callback {
   def apply(e:AccessibilityEvent):Boolean = {
     var args = new Array[Object](2)
     args(0) = e
-    args(1) = Handler.currentActivity
+    args(1) = Presenter.currentActivity
     ContextFactory.getGlobal.enterContext(Scripter.context)
     try {
       Scripter.scope.put("__pkg__", Scripter.scope, e.getPackageName)
@@ -110,15 +110,15 @@ class Script(
     successfullyRan
   }
 
-  private var handlers = List[Handler]()
+  private var presenters = List[Presenter]()
 
   /**
-   * Register a Handler for a given package and class.
+   * Register a Presenter for a given package and class.
   */
 
-  def registerHandlerFor(cls:String, s:Object) {
+  def registerPresenterFor(cls:String, s:Object) {
     val scr = s.asInstanceOf[ScriptableObject]
-    val h = new Handler(pkg, cls)
+    val p = new Presenter(pkg, cls)
 
     scr.getIds.foreach { property =>
 
@@ -132,18 +132,18 @@ class Script(
 
       // Check to ensure that the property name maps to a valid AccessibilityEvent type.
 
-      if(Handler.dispatchers.valuesIterator.contains(func)) {
+      if(Presenter.dispatchers.valuesIterator.contains(func)) {
         val f = scr.get(id, Scripter.scope)
         if(f.isInstanceOf[Function])
           // Map the script to an Android AccessibilityEvent type.
-          h.dispatches(func) = new RhinoCallback(f.asInstanceOf[Function])
+          p.dispatches(func) = new RhinoCallback(f.asInstanceOf[Function])
       } else
-        Log.e("spiel", func+" is not a valid handler. Skipping.")
+        Log.e("spiel", func+" is not a valid presenter. Skipping.")
     }
 
-    handlers ::= h
+    presenters ::= p
 
-    h
+    p
   }
 
   def save() {
@@ -200,9 +200,9 @@ class Script(
   }
 
   def uninstall() {
-    handlers.foreach(Handler.unregisterHandler(_))
-    Handler.unregisterPackage(pkg)
-    handlers = Nil
+    presenters.foreach(Presenter.unregisterPresenter(_))
+    Presenter.unregisterPackage(pkg)
+    presenters = Nil
     Scripter.unsetStringsFor(pkg)
     Scripter.removePreferencesFor(pkg)
   }
@@ -236,7 +236,7 @@ class Observer(context:AContext, path:String) extends FileObserver(path) {
   import FileObserver._
   def onEvent(event:Int, path:String) = event match {
     case CREATE | MODIFY | MOVED_TO => (new Script(context, path, false)).reload()
-    case DELETE | MOVED_FROM => Handler.unregisterPackage(path.split("\\.").head)
+    case DELETE | MOVED_FROM => Presenter.unregisterPackage(path.split("\\.").head)
     case _ =>
   }
 }
@@ -271,8 +271,8 @@ object Scripter {
     context.setOptimizationLevel(-1)
 
     // Inject some Spiel objects into the scripting environment.
-    val wrappedHandler = Context.javaToJS(Handler, scope)
-    ScriptableObject.putProperty(scope, "Handler", wrappedHandler)
+    val wrappedPresenter = Context.javaToJS(Presenter, scope)
+    ScriptableObject.putProperty(scope, "Presenter", wrappedPresenter)
 
     val wrappedScripter = Context.javaToJS(this, scope)
     ScriptableObject.putProperty(scope, "Scripter", wrappedScripter)
@@ -335,7 +335,7 @@ object Scripter {
     }.getOrElse(Nil)
   }
 
-  def registerHandlerFor(cls:String, scr:Object) = script.map(_.registerHandlerFor(cls, scr))
+  def registerPresenterFor(cls:String, scr:Object) = script.map(_.registerPresenterFor(cls, scr))
 
   private var _preferences = Map[String, Map[String, Map[String, Any]]]()
 
@@ -414,8 +414,8 @@ object Scripter {
 
   def createTemplateFor(event:PrettyAccessibilityEvent) = {
     try {
-      val handler = "on"+Handler.dispatchers(event.e.getEventType).capitalize
-      val code = "forClass(\""+event.e.getClassName+"\", {\n  "+handler+": function(e, activity) {\n    // "+event.toString+"\n    return false\n  }\n})\n"
+      val presenter = "on"+Presenter.dispatchers(event.e.getEventType).capitalize
+      val code = "forClass(\""+event.e.getClassName+"\", {\n  "+presenter+": function(e, activity) {\n    // "+event.toString+"\n    return false\n  }\n})\n"
       val file = new File(scriptsDir, event.e.getPackageName+".js")
       val writer = new FileWriter(file, true)
       writer.write(code)

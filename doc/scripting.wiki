@@ -14,7 +14,7 @@ The intricacies of the Android accessibility API are described exhaustively else
 
 Changes in the Android interface are described by a stream of events. When focus changes, an event is sent. When text is inserted into or deleted from a text field, an event is generated. When an incoming SMS arrives, a button is clicked or a selection is scrolled, events are generated.
 
-Designing an Android accessibility solution involves intercepting these events and presenting them accordingly. This is precisely what Spiel does, having hard-coded handlers for a number of fundamental events. It is also what your scripts will do.
+Designing an Android accessibility solution involves intercepting these events and presenting them accordingly. This is precisely what Spiel does, having hard-coded presenters for a number of fundamental events. It is also what your scripts will do.
 
 Each event has a number of properties associated with it. Not all events use every single property, and just which properties you can expect to have meaningful values depends on the event type received.
 
@@ -47,9 +47,9 @@ For purposes of simplicity and security, scripts are divided on package boundari
 
 Scripts indicate what package they handle via their filename followed by a <b>.js</b> extension. For instance, a script that handles events in the <b>com.acme.android</b> package would be named <b>com.acme.android.js</b>.
 
-<h3>Handlers</h3>
+<h3>Presenters</h3>
 
-As previously stated, all events have a class and package name with which they are associated. Events are associated with handlers, which run specific code when various criteria are matched. To attach a handler to events of a given class, the <b>forClass</b> method is called with the class name as its first argument and a Javascript object as its second.
+As previously stated, all events have a class and package name with which they are associated. Events are associated with presenters, which run specific code when various criteria are matched. To attach a presenter to events of a given class, the <b>forClass</b> method is called with the class name as its first argument and a Javascript object as its second.
 
 For instance, if the app in the package <b>com.acme.android</b> contains a number of unlabeled buttons, then you may wish to write a script which speaks various text when said buttons receive focus. We'll discuss the contents of such a script more indepth as this manual progresses, but such a script might look like this:
 
@@ -83,11 +83,11 @@ It is also necessary to specify which events from a given class and package are 
 
 Each of these events is the name of a Javascript function which accepts the event as its first argument, and the activity name as its second. Since arguments are optional in Javascript, if the event or activity is not needed, then the function can be declared with a truncated argument list. These functions are declared in the Javascript object passed to the <b>forClass</b> function demonstrated above.
 
-Spiel introduces a special handler, <b>byDefault</b>. This is a catch-all for events which don't yet exist but may be added in future Android versions. It is also a convenient handler for default behavior that transcends event types.
+Spiel introduces a special presenter, <b>byDefault</b>. This is a catch-all for events which don't yet exist but may be added in future Android versions. It is also a convenient presenter for default behavior that transcends event types.
 
-Multiple handlers can be associated with a single package and/or class. As such, these functions need to indicate if they provide all handling necessary for a given event, or if processing should continue further. They do so by returning <b>true</b> to indicate that handling should stop, or <b>false</b> if it should continue.
+Multiple presenters can be associated with a single package and/or class. As such, these functions need to indicate if they provide all handling necessary for a given event, or if processing should continue further. They do so by returning <b>true</b> to indicate that handling should stop, or <b>false</b> if it should continue.
 
-How handlers are matched is a somewhat complex subject. As a script developer, all you need know is that the handlers created in your scripts will be matched before the more generic handlers defined in Spiel. As such, in most instances you'll wish to return <b>false</b> from your handler functions, letting default handlers run in addition to your own.
+How presenters are matched is a somewhat complex subject. As a script developer, all you need know is that the presenters created in your scripts will be matched before the more generic presenters defined in Spiel. As such, in most instances you'll wish to return <b>false</b> from your presenter functions, letting default presenters run in addition to your own.
 
 Building on our previous example where we wish to provide speech feedback for unlabeled buttons, we are interested in the <b>onViewFocused</b> event for buttons in the app's package. Since the inaccessible behavior results from focus moving to buttons with no accessible text, it makes sense that we wish to modify how such buttons are presented when they receive focus. We'll discuss how to modify the presentation later, but the below code intercepts the focus events and simply passes them on unchanged.
 
@@ -171,9 +171,9 @@ Speaking of notifications is more complex than is simply speaking strings. The s
 
 As previously mentioned, the method by which Spiel determines whether text should interrupt is somewhat complex. It generally makes more sense to tell Spiel that a given utterance should <b>not</b> interrupt speech rather than that it should.
 
-For instance, say you wish to speak a piece of text, then let event delegation continue on to core handlers. If you simply speak a string and return, Spiel will likely interrupt whatever you've spoken with its own handling of the event. If you wish to indicate that any speech generated by future handlers should not interrupt your own, however, calling <b>nextShouldNotInterrupt()</b> will achieve this in almost every case.
+For instance, say you wish to speak a piece of text, then let event delegation continue on to core presenters. If you simply speak a string and return, Spiel will likely interrupt whatever you've spoken with its own handling of the event. If you wish to indicate that any speech generated by future presenters should not interrupt your own, however, calling <b>nextShouldNotInterrupt()</b> will achieve this in almost every case.
 
-This is why scripts generally shouldn't explicitly interrupt speech without a good reason. While it is guaranteed that scripted handlers will be run before application handlers, the order in which they are run is not guaranteed. Explicitly interrupting speech disregards the needs of previously-run scripts.
+This is why scripts generally shouldn't explicitly interrupt speech without a good reason. While it is guaranteed that scripted presenters will be run before application presenters, the order in which they are run is not guaranteed. Explicitly interrupting speech disregards the needs of previously-run scripts.
 
 <h3>Event Properties</h3>
 
@@ -202,7 +202,7 @@ forClass("android.widget.Button" {
 });
 </pre>
 
-Here we do several things. As previously described, we intercept events of the given type from the package specified by the filename and the class specified in the script. In the function, we check the <b>currentItemIndex</b> property of the buttons, speaking a string for each which assumedly corresponds to some inaccessible label text. We then specify that the next handler should not interrupt speech and return false, stating that processing should continue. Processing then continues, eventually reaching the default button handler which speaks the string "Button". Because we have explicitly asked that the next handler not interrupt speech, our existing speech is allowed to continue and "Button" is queued. Had we not called <b>nextShouldNotInterrupt()</b>, the string "Button" would have interrupted our attempts to speak more accessible text, and our script would seem to have no effect.
+Here we do several things. As previously described, we intercept events of the given type from the package specified by the filename and the class specified in the script. In the function, we check the <b>currentItemIndex</b> property of the buttons, speaking a string for each which assumedly corresponds to some inaccessible label text. We then specify that the next presenter should not interrupt speech and return false, stating that processing should continue. Processing then continues, eventually reaching the default button presenter which speaks the string "Button". Because we have explicitly asked that the next presenter not interrupt speech, our existing speech is allowed to continue and "Button" is queued. Had we not called <b>nextShouldNotInterrupt()</b>, the string "Button" would have interrupted our attempts to speak more accessible text, and our script would seem to have no effect.
 
 <h3>Other Functions and Properties</h3>
 
@@ -216,7 +216,7 @@ Logging is an incredibly useful debugging tool. Sometimes it is helpful to know 
 log("Here.")
 </pre>
 
-from a handler in the script for the package <b>com.acme.android</b> will place the message "Here." into your device logs, prefixed by "com.acme.android".
+from a presenter in the script for the package <b>com.acme.android</b> will place the message "Here." into your device logs, prefixed by "com.acme.android".
 
 <h4>SPIEL_VERSION_CODE</h4>
 
@@ -244,13 +244,13 @@ It is likely that Android's behavior will change over time, with new accessibili
 
 <h3>Script Locations</h3>
 
-Spiel checks for scripts in a number of locations, each with a very specific purpose. If a script read later in the loading process defines a handler with the same package and class name as one encountered earlier, that handler will override the one defined earlier. Handlers are read from the following locations:
+Spiel checks for scripts in a number of locations, each with a very specific purpose. If a script read later in the loading process defines a presenter with the same package and class name as one encountered earlier, that presenter will override the one defined earlier. presenters are read from the following locations:
 
   *  The assets directory in the Spiel package. This is only used to define a few core scripts whose contents should never be changed or overridden.
   *  Spiel's internal scripts directory. Here reside various scripts received from others via the Spiel Bazaar.
   *  The Spiel scripts directory on your SD card, typically <b>/spiel/scripts</b>. Here is where your own scripts should be developed before being shared with others via the Spiel Bazaar.
 
-The main point to keep in mind is that scripts you develop or copy will always override those provided by others, or by Spiel itself. This provides you as the user with a great deal of power, but as any comic book fan knows, with great power comes great responsibility. Be aware of the scripts located on your SD card, and be sure that they don't redefine core functions, or other handlers you may not wish to be replaced.
+The main point to keep in mind is that scripts you develop or copy will always override those provided by others, or by Spiel itself. This provides you as the user with a great deal of power, but as any comic book fan knows, with great power comes great responsibility. Be aware of the scripts located on your SD card, and be sure that they don't redefine core functions, or other presenters you may not wish to be replaced.
 
 <h3>Viewing and Scripting Events</h3>
 
@@ -258,7 +258,7 @@ While knowing how to script is one thing, knowing which events to intercept (or 
 
 When this is done, a tab labeled <b>Events</b> starts populating with the 50 most recently-generated accessibility events. This makes it fairly easy to determine whether a given action is raising an event and, if so, whether that event includes properties that might be used to script it.
 
-By long-pressing an event from this list, you are presented with the option to output a script template to intercept it. The template is saved to the SD card in the scripts directory. By default, the script merely passes the event on for further handling. However, all of the event's properties are left as a comment in the script to help determine what to match. Note that this support is only intended for quick prototyping. If you use it to output several templates for a single event type, it is best to merge the handlers into a single <b>forClass()</b> block.
+By long-pressing an event from this list, you are presented with the option to output a script template to intercept it. The template is saved to the SD card in the scripts directory. By default, the script merely passes the event on for further handling. However, all of the event's properties are left as a comment in the script to help determine what to match. Note that this support is only intended for quick prototyping. If you use it to output several templates for a single event type, it is best to merge the presenters into a single <b>forClass()</b> block.
 
 Events are also sent to the device log. By using the Android SDK and running the following command:
 
@@ -321,4 +321,4 @@ forClass("android.widget.EditText", {
 });
 </pre>
 
-The above code is slightly more complex. Basically, we determine if the text of the current event with hyphens removed equals that of the last event received by this handler. If it does then we return true, silently swallowing the event without presenting it. Otherwise, it removes hyphens from the text of the current event and saves that as the last received text, passing the event further along the chain. The result is that hyphens will be spoken in response to some number entries, but they won't be spoken multiple times, as would occur if this script was not installed.
+The above code is slightly more complex. Basically, we determine if the text of the current event with hyphens removed equals that of the last event received by this presenter. If it does then we return true, silently swallowing the event without presenting it. Otherwise, it removes hyphens from the text of the current event and saves that as the last received text, passing the event further along the chain. The result is that hyphens will be spoken in response to some number entries, but they won't be spoken multiple times, as would occur if this script was not installed.

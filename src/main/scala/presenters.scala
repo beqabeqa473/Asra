@@ -1,5 +1,5 @@
 package info.spielproject.spiel
-package handlers
+package presenters
 
 import collection.JavaConversions._
 import collection.mutable.Map
@@ -42,10 +42,10 @@ class NativeCallback(f:AccessibilityEvent => Boolean) extends Callback {
 
 class PrettyAccessibilityEvent(val e:AccessibilityEvent) {
 
-  val activityName = Handler.currentActivity
+  val activityName = Presenter.currentActivity
 
   override val toString = {
-    val eventType = Handler.dispatchers.get(e.getEventType).getOrElse("Unknown")
+    val eventType = Presenter.dispatchers.get(e.getEventType).getOrElse("Unknown")
     val text = if(e.getText.length == 0)
       "no text: " 
     else
@@ -77,24 +77,24 @@ object EventReviewQueue extends collection.mutable.Queue[PrettyAccessibilityEven
 }
 
 /**
- * Companion for <code>Handler</code> class.
+ * Companion for <code>Presenter</code> class.
 */
 
-object Handler {
+object Presenter {
 
-  // Maps (packageName, className) tuples to specific Handler instances.
-  private var handlers = Map[(String, String), Handler]()
+  // Maps (packageName, className) tuples to specific Presenter instances.
+  private var presenters = Map[(String, String), Presenter]()
 
   /**
-   * Unregisters the given <code>Handler</code>.
+   * Unregisters the given <code>Presenter</code>.
   */
 
-  def unregisterHandler(h:Handler) = {
-    handlers = handlers.filter(_._2 != h)
+  def unregisterPresenter(p:Presenter) = {
+    presenters = presenters.filter(_._2 != p)
   }
 
   def unregisterPackage(pkg:String) = {
-    handlers = handlers.filter(_._1._1 != pkg)
+    presenters = presenters.filter(_._1._1 != pkg)
   }
 
   // Track and report state of whether next AccessibilityEvent should interrupt speech.
@@ -105,7 +105,7 @@ object Handler {
 
   /**
    * In some instances, speech for the next <code>AccessibilityEvent</code> 
-   * shouldn't interrupt. Calling this method from a handler indicates this 
+   * shouldn't interrupt. Calling this method from a presenter indicates this 
    * to be the case.
   */
 
@@ -116,22 +116,22 @@ object Handler {
     true
   }
 
-  private[handlers] var context:Context = null
+  private[presenters] var context:Context = null
 
   private lazy val vibrator:Vibrator = context.getSystemService(Context.VIBRATOR_SERVICE).asInstanceOf[Vibrator]
 
   /**
-   * Initialize handlers for the given <code>Context</code>.
+   * Initialize presenters for the given <code>Context</code>.
   */
 
   def apply(c:Context) {
     context = c
-    // By iterating through the members of this class, we can add handlers 
+    // By iterating through the members of this class, we can add presenters
     // without manual registration.
-    val h = new Handlers
-    h.getClass.getDeclaredClasses.foreach { cls =>
+    val p = new Presenters
+    p.getClass.getDeclaredClasses.foreach { cls =>
       try {
-        Option(cls.getConstructor(classOf[Handlers])).foreach(_.newInstance(h))
+        Option(cls.getConstructor(classOf[Presenters])).foreach(_.newInstance(p))
       } catch { case _ => }
     }
   }
@@ -166,11 +166,11 @@ object Handler {
     // Now we engage in the complex process of dispatching events. This 
     // happens in several steps.
 
-    // Store handlers we've called so we don't match them again.
-    var alreadyCalled = List[Handler]()
+    // Store presenters we've called so we don't match them again.
+    var alreadyCalled = List[Presenter]()
 
-    // Call the specified handler, setting state appropriately.
-    def dispatchTo(pkg:String, cls:String):Boolean = handlers.get(pkg -> cls).map { h =>
+    // Call the specified Presenter, setting state appropriately.
+    def dispatchTo(pkg:String, cls:String):Boolean = presenters.get(pkg -> cls).map { h =>
       if(alreadyCalled.contains(h)) {
         Log.d("spiel", "Already called "+h.getClass.getName+", skipping.")
         false
@@ -181,14 +181,14 @@ object Handler {
       }
     }.getOrElse(false)
 
-    // Always run this handler before an event. This cannot block others from executing.
+    // Always run this Presenter before an event. This cannot block others from executing.
     def dispatchToBefore() = {
       Log.d("spiel", "Before dispatch")
       Before(e, eType)
       false
     }
 
-    // Let's check if there's a handler for this exact package and 
+    // Let's check if there's a Presenter for this exact package and 
     // class.
     def dispatchToExact() = {
       Log.d("spiel", "Exact match dispatch")
@@ -202,8 +202,8 @@ object Handler {
     }
 
     // Now we check superclasses. Basically, if a given class is a subclass 
-    // of a widget for which we already have a Handler (I.e. a subclass of 
-    // Button) then it should be delegated to the handler for buttons. 
+    // of a widget for which we already have a Presenter (I.e. a subclass of 
+    // Button) then it should be delegated to the Presenter for buttons. 
     // Surround this in a try block to catch the various exceptions that can 
     // bubble up.
 
@@ -232,7 +232,7 @@ object Handler {
       originator.flatMap { o =>
         val a = ancestors(o)
         Log.d("spiel", "Ancestors: "+a)
-        val candidates = handlers.filter { h =>
+        val candidates = presenters.filter { h =>
           h._1._1 == "" && h._1._2 != "" && h._1._2 != "*"
         }.toList.map { h =>
           val target:Class[_] = try {
@@ -248,7 +248,7 @@ object Handler {
       }.getOrElse(false)
     }
 
-    // Now dispatch to the default, catch-all handler.
+    // Now dispatch to the default, catch-all Presenter.
     def dispatchToDefault() = {
       Log.d("spiel", "Default dispatch")
       dispatchTo("", "")
@@ -312,14 +312,14 @@ object Handler {
  * Passing a blank string for either indicates events from all packages or all classes.
 */
 
-class Handler(pkg:String, cls:String) {
+class Presenter(pkg:String, cls:String) {
 
   def this() = this("", "")
   def this(c:String) = this("", c)
 
-  import Handler._
+  import Presenter._
 
-  handlers(pkg -> cls) = this
+  presenters(pkg -> cls) = this
 
   // Convenience functions for calling TTS, used from scripting subsystem.
 
@@ -364,7 +364,7 @@ class Handler(pkg:String, cls:String) {
    * Indicates that the next <code>AccessibilityEvent</code> should not interrupt speech.
   */
 
-  def nextShouldNotInterrupt() = Handler.nextShouldNotInterrupt()
+  def nextShouldNotInterrupt() = Presenter.nextShouldNotInterrupt()
 
   // Convenience method for converting functions to callbacks.
 
@@ -514,7 +514,7 @@ class Handler(pkg:String, cls:String) {
     (source :: descendantsOf(source)).filter(interactive_?(_))
 
   /**
-   * Run a given <code>AccessibilityEvent</code> through this <code>Handler</code>
+   * Run a given <code>AccessibilityEvent</code> through this <code>Presenter</code>
    *
    * @return <code>true</code> if processing should stop, <code>false</code> otherwise.
   */
@@ -538,7 +538,7 @@ class Handler(pkg:String, cls:String) {
  * Encapsulates generic handling for multiple types of buttons.
 */
 
-trait GenericButtonHandler extends Handler {
+trait GenericButtonPresenter extends Presenter {
   onViewFocused { e:AccessibilityEvent =>
     val text = utterancesFor(e, addBlank=false).mkString(": ")
     if(text == "") {
@@ -548,23 +548,23 @@ trait GenericButtonHandler extends Handler {
             val descendants = descendantsOf(root)
             val index = descendants.indexOf(source)+1
             if(index > 0)
-              speak(Handler.context.getString(R.string.listItem, Handler.context.getText(R.string.button), index.toString, descendants.size.toString))
+              speak(Presenter.context.getString(R.string.listItem, Presenter.context.getText(R.string.button), index.toString, descendants.size.toString))
             else None
           }
-        }.getOrElse(speak(Handler.context.getString(R.string.button).toString))
+        }.getOrElse(speak(Presenter.context.getString(R.string.button).toString))
         true
       } else
-        speak(Handler.context.getString(R.string.button).toString)
+        speak(Presenter.context.getString(R.string.button).toString)
     } else
-      speak(Handler.context.getString(R.string.labeledButton, text))
+      speak(Presenter.context.getString(R.string.labeledButton, text))
   }
 }
 
 /**
- * Run before every event. Cannot pre-empt other handlers.
+ * Run before every event. Cannot pre-empt other Presenters.
 */
 
-object Before extends Handler("*") {
+object Before extends Presenter("*") {
 
   onViewHoverEnter { e:AccessibilityEvent =>
     stopSpeaking()
@@ -597,13 +597,13 @@ object Before extends Handler("*") {
  * Run after every event.
 */
 
-object After extends Handler("", "*") {
+object After extends Presenter("", "*") {
 
   onViewFocused { e:AccessibilityEvent =>
     if(VERSION.SDK_INT >= 14)
       Option(e.getSource).foreach { source =>
         if(source.getChildCount == 0 && interactive_?(source) && !e.isEnabled)
-          speak(Handler.context.getString(R.string.disabled), false)
+          speak(Presenter.context.getString(R.string.disabled), false)
       }
     false
   }
@@ -611,35 +611,35 @@ object After extends Handler("", "*") {
 }
 
 /**
- * By placing all <code>Handler</code> classes here, we can use the power of 
+ * By placing all <code>Presenter</code> classes here, we can use the power of 
  * reflection to avoid manually registering each and every one.
 */
 
-class Handlers {
+class Presenters {
 
-  class ActionMenuItemView extends Handler("com.android.internal.view.menu.ActionMenuItemView") {
+  class ActionMenuItemView extends Presenter("com.android.internal.view.menu.ActionMenuItemView") {
 
     onViewFocused { e:AccessibilityEvent =>
       speak(utterancesFor(e, stripBlanks=true) ::: ("Menu item" :: Nil))
     }
 
-    onViewHoverEnter { e:AccessibilityEvent => Handler.process(e, Some(TYPE_VIEW_FOCUSED)) }
+    onViewHoverEnter { e:AccessibilityEvent => Presenter.process(e, Some(TYPE_VIEW_FOCUSED)) }
 
   }
 
-  class AdapterView extends Handler("android.widget.AdapterView") {
+  class AdapterView extends Presenter("android.widget.AdapterView") {
 
     private def focusedOnList(e:AccessibilityEvent) = {
       val utterances = utterancesFor(e, stripBlanks = true)
       if(utterances != Nil && e.getCurrentItemIndex != -1)
-        speak(Handler.context.getString(R.string.listItem, utterances.mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
+        speak(Presenter.context.getString(R.string.listItem, utterances.mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
       else
         if(e.getItemCount == 0)
-          speak(Handler.context.getString(R.string.emptyList))
+          speak(Presenter.context.getString(R.string.emptyList))
         else if(e.getItemCount == 1)
-          speak(Handler.context.getString(R.string.listWithItem))
+          speak(Presenter.context.getString(R.string.listWithItem))
         else if(e.getItemCount > 1)
-          speak(Handler.context.getString(R.string.listWithItems, e.getItemCount.toString))
+          speak(Presenter.context.getString(R.string.listWithItems, e.getItemCount.toString))
       true
     }
 
@@ -655,9 +655,9 @@ class Handlers {
 
     onViewSelected { e:AccessibilityEvent =>
       if(e.getCurrentItemIndex >= 0)
-        speak(Handler.context.getString(R.string.listItem, utterancesFor(e).mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
+        speak(Presenter.context.getString(R.string.listItem, utterancesFor(e).mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
       else if(e.getItemCount == 0)
-        speak(Handler.context.getString(R.string.emptyList))
+        speak(Presenter.context.getString(R.string.emptyList))
       true
     }
 
@@ -665,47 +665,47 @@ class Handlers {
 
   }
 
-  class AlertDialog extends Handler("android.app.AlertDialog") {
+  class AlertDialog extends Presenter("android.app.AlertDialog") {
     onWindowStateChanged { e:AccessibilityEvent =>
-      speak(Handler.context.getString(R.string.alert, utterancesFor(e, stripBlanks=true).mkString(": ")), true)
+      speak(Presenter.context.getString(R.string.alert, utterancesFor(e, stripBlanks=true).mkString(": ")), true)
       nextShouldNotInterrupt()
     }
   }
 
-  class Button extends Handler("android.widget.Button") with GenericButtonHandler
+  class Button extends Presenter("android.widget.Button") with GenericButtonPresenter
 
-  class CheckBox extends Handler("android.widget.CheckBox") {
+  class CheckBox extends Presenter("android.widget.CheckBox") {
 
     onViewClicked { e:AccessibilityEvent =>
       if(e.isChecked)
-        speak(Handler.context.getString(R.string.checked))
+        speak(Presenter.context.getString(R.string.checked))
       else
-        speak(Handler.context.getString(R.string.notChecked))
+        speak(Presenter.context.getString(R.string.notChecked))
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(Handler.context.getString(R.string.checkbox, utterancesFor(e, addBlank=false, guessLabelIfTextShorterThan = Some(2)).mkString(": ")))
+      speak(Presenter.context.getString(R.string.checkbox, utterancesFor(e, addBlank=false, guessLabelIfTextShorterThan = Some(2)).mkString(": ")))
     }
 
   }
 
-  class Dialog extends Handler("android.app.Dialog") {
+  class Dialog extends Presenter("android.app.Dialog") {
     onWindowStateChanged { e:AccessibilityEvent =>
       speak(utterancesFor(e), true)
       nextShouldNotInterrupt()
     }
   }
 
-  class EditText extends Handler("android.widget.EditText") {
+  class EditText extends Presenter("android.widget.EditText") {
 
     onViewFocused { e:AccessibilityEvent =>
       if(e.isPassword) {
         speak(utterancesFor(e, addBlank=false, guessLabelIfContentDescriptionMissing = true), false)
-        speak(Handler.context.getString(R.string.password))
-        speak(Handler.context.getString(R.string.editText), false)
+        speak(Presenter.context.getString(R.string.password))
+        speak(Presenter.context.getString(R.string.editText), false)
       } else {
         speak(utterancesFor(e, addBlank=true, guessLabelIfContentDescriptionMissing = true), false)
-        speak(Handler.context.getString(R.string.editText), false)
+        speak(Presenter.context.getString(R.string.editText), false)
       }
       true
     }
@@ -758,13 +758,13 @@ class Handlers {
   }
 
   trait MenuView {
-    self: Handler =>
-    onViewFocused { e:AccessibilityEvent => speak(Handler.context.getString(R.string.menu)) }
+    self: Presenter =>
+    onViewFocused { e:AccessibilityEvent => speak(Presenter.context.getString(R.string.menu)) }
   }
 
-  class ExpandedMenuView extends Handler("com.android.internal.view.menu.ExpandedMenuView") with MenuView
+  class ExpandedMenuView extends Presenter("com.android.internal.view.menu.ExpandedMenuView") with MenuView
 
-  class HomeView extends Handler("com.android.internal.widget.ActionBarView$HomeView") {
+  class HomeView extends Presenter("com.android.internal.widget.ActionBarView$HomeView") {
 
     private def process(e:AccessibilityEvent) = {
       val utterances = utterancesFor(e, addBlank = false)
@@ -779,34 +779,34 @@ class Handlers {
 
   }
 
-  class ImageButton extends Handler("android.widget.ImageButton") with GenericButtonHandler
+  class ImageButton extends Presenter("android.widget.ImageButton") with GenericButtonPresenter
 
-  class ImageView extends Handler("android.widget.ImageView") {
+  class ImageView extends Presenter("android.widget.ImageView") {
     onViewFocused { e:AccessibilityEvent =>
       val text = utterancesFor(e, addBlank=false).mkString(": ")
       if(text == "")
         if(e.getItemCount > 0 && e.getCurrentItemIndex >= 0)
-          speak(Handler.context.getString(R.string.listItem, Handler.context.getText(R.string.image), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
+          speak(Presenter.context.getString(R.string.listItem, Presenter.context.getText(R.string.image), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
         else if(VERSION.SDK_INT >= 14 && e.getSource != null) {
           val source = e.getSource
           rootOf(source).map { root =>
             val descendants = descendantsOf(root)
             val index = descendants.indexOf(source)+1
             if(index > 0)
-              speak(Handler.context.getString(R.string.listItem, Handler.context.getText(R.string.image), index.toString, descendants.length.toString))
+              speak(Presenter.context.getString(R.string.listItem, Presenter.context.getText(R.string.image), index.toString, descendants.length.toString))
             else
-              speak(Handler.context.getText(R.string.image).toString)
-          }.getOrElse(speak(Handler.context.getText(R.string.image).toString))
+              speak(Presenter.context.getText(R.string.image).toString)
+          }.getOrElse(speak(Presenter.context.getText(R.string.image).toString))
         } else
-          speak(Handler.context.getText(R.string.image).toString)
+          speak(Presenter.context.getText(R.string.image).toString)
       else
-        speak(Handler.context.getString(R.string.labeledImage, text))
+        speak(Presenter.context.getString(R.string.labeledImage, text))
     }
   }
 
-  class IconMenuView extends Handler("com.android.internal.view.menu.IconMenuView") with MenuView
+  class IconMenuView extends Presenter("com.android.internal.view.menu.IconMenuView") with MenuView
 
-  class Menu extends Handler("com.android.internal.view.menu.MenuView") {
+  class Menu extends Presenter("com.android.internal.view.menu.MenuView") {
 
     onViewSelected { e:AccessibilityEvent =>
       speak(utterancesFor(e))
@@ -814,7 +814,7 @@ class Handlers {
 
     onWindowStateChanged { e:AccessibilityEvent =>
       if(e.getCurrentItemIndex == -1) {
-        speak(Handler.context.getString(R.string.menu), true)
+        speak(Presenter.context.getString(R.string.menu), true)
         nextShouldNotInterrupt()
       }
       true
@@ -822,7 +822,7 @@ class Handlers {
 
   }
 
-  class ProgressBar extends Handler("android.widget.ProgressBar") {
+  class ProgressBar extends Presenter("android.widget.ProgressBar") {
 
     onViewFocused { e:AccessibilityEvent =>
       val percent = (e.getCurrentItemIndex.toDouble/e.getItemCount*100).toInt
@@ -836,26 +836,26 @@ class Handlers {
 
   }
 
-  class RadioButton extends Handler("android.widget.RadioButton") {
+  class RadioButton extends Presenter("android.widget.RadioButton") {
 
     onViewClicked { e:AccessibilityEvent =>
       if(e.isChecked)
-        speak(Handler.context.getString(R.string.selected))
+        speak(Presenter.context.getString(R.string.selected))
       else
-        speak(Handler.context.getString(R.string.notSelected))
+        speak(Presenter.context.getString(R.string.notSelected))
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(Handler.context.getString(R.string.radioButton, utterancesFor(e, guessLabelIfTextShorterThan = Some(2)).mkString(": ")))
+      speak(Presenter.context.getString(R.string.radioButton, utterancesFor(e, guessLabelIfTextShorterThan = Some(2)).mkString(": ")))
     }
 
   }
 
-  class RatingBar extends Handler("android.widget.RatingBar") {
+  class RatingBar extends Presenter("android.widget.RatingBar") {
 
     onViewFocused { e:AccessibilityEvent =>
-      val label = guessLabelFor(e).getOrElse(Handler.context.getString(R.string.rating))
-      val rating = Handler.context.getString(R.string.listItem, label, e.getCurrentItemIndex.toString, e.getItemCount.toString)
+      val label = guessLabelFor(e).getOrElse(Presenter.context.getString(R.string.rating))
+      val rating = Presenter.context.getString(R.string.listItem, label, e.getCurrentItemIndex.toString, e.getItemCount.toString)
       speak(utterancesFor(e, addBlank = false, providedText=Some(rating)))
     }
 
@@ -871,7 +871,7 @@ class Handlers {
 
   }
 
-  class ScrollView extends Handler("android.widget.ScrollView") {
+  class ScrollView extends Presenter("android.widget.ScrollView") {
 
     onViewFocused { e:AccessibilityEvent => true }
 
@@ -888,17 +888,17 @@ class Handlers {
 
   }
 
-  class SearchBox extends Handler("android.app.SearchDialog$SearchAutoComplete") {
+  class SearchBox extends Presenter("android.app.SearchDialog$SearchAutoComplete") {
     onViewFocused { e:AccessibilityEvent =>
-      speak(Handler.context.getString(R.string.searchText, utterancesFor(e).mkString(": ")), false)
+      speak(Presenter.context.getString(R.string.searchText, utterancesFor(e).mkString(": ")), false)
     }
   }
 
-  class TextView extends Handler("android.widget.TextView") {
+  class TextView extends Presenter("android.widget.TextView") {
     onViewFocused { e:AccessibilityEvent => speak(utterancesFor(e, stripBlanks=true)) }
   }
 
-  class ViewGroup extends Handler("android.view.ViewGroup") {
+  class ViewGroup extends Presenter("android.view.ViewGroup") {
 
     onViewFocused { e:AccessibilityEvent => 
       if(VERSION.SDK_INT >= 14) {
@@ -939,7 +939,7 @@ class Handlers {
 
   }
 
-  class WebView extends Handler("android.webkit.WebView") {
+  class WebView extends Presenter("android.webkit.WebView") {
 
     private def utterancesFor(x:xml.Node):List[String] = {
 
@@ -949,7 +949,7 @@ class Handlers {
       def recurse(nodes:List[xml.Node]):List[String] = nodes match {
         case Nil => Nil
         case hd :: tl if(name(hd) == "a" && hd.text != null) =>
-          hd.text :: Handler.context.getString(R.string.link) :: Nil
+          hd.text :: Presenter.context.getString(R.string.link) :: Nil
         case hd :: tl if(hd.descendant.size == 0 && hd.text != null && hd.text != "") =>
           hd.text :: recurse(tl)
         case hd :: tl => recurse(tl)
@@ -978,10 +978,10 @@ class Handlers {
   }
 
   /**
-   * Default catch-all handler which catches unresolved <code>AccessibilityEvent</code>s.
+   * Default catch-all Presenter which catches unresolved <code>AccessibilityEvent</code>s.
   */
 
-  class Default extends Handler {
+  class Default extends Presenter {
 
     onNotificationStateChanged { e:AccessibilityEvent =>
       val utterances = utterancesFor(e, addBlank=false, stripBlanks=true)
@@ -1009,7 +1009,7 @@ class Handlers {
       true
     }
 
-    onViewHoverEnter { e:AccessibilityEvent => Handler.process(e, Some(TYPE_VIEW_FOCUSED)) }
+    onViewHoverEnter { e:AccessibilityEvent => Presenter.process(e, Some(TYPE_VIEW_FOCUSED)) }
 
     onViewHoverExit { e:AccessibilityEvent => true }
 
@@ -1029,9 +1029,9 @@ class Handlers {
       if(utterances.length > 0) {
         if(e.getCurrentItemIndex == -1)
           if(e.getItemCount == 1)
-            speak(Handler.context.getString(R.string.item, utterances.mkString(" ")))
+            speak(Presenter.context.getString(R.string.item, utterances.mkString(" ")))
           else if(e.getItemCount >= 0)
-            speak(Handler.context.getString(R.string.items, utterances.mkString(" "), e.getItemCount.toString))
+            speak(Presenter.context.getString(R.string.items, utterances.mkString(" "), e.getItemCount.toString))
           else
             speak(utterances)
         else

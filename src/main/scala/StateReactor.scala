@@ -267,7 +267,7 @@ object StateReactor {
   onUnlocked { () =>
     if(locked) {
       TTS.speak(service.getString(R.string.unlocked), false)
-      handlers.Handler.nextShouldNotInterrupt
+      presenters.Presenter.nextShouldNotInterrupt
       locked = false
     }
   }

@@ -21,7 +21,7 @@ import android.support.v4.app.{DialogFragment, FragmentActivity, LoaderManager}
 import android.support.v4.content.{CursorLoader, Loader}
 import org.droidparts.preference.MultiSelectListPreference
 
-import handlers._
+import presenters._
 import scripting._
 import triggers.Triggers
 

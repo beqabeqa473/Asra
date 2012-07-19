@@ -12,6 +12,8 @@ import android.os.Environment
 import android.speech.tts.TextToSpeech
 import android.util.Log
 
+import presenters.Presenter
+
 /**
  * Singleton facade around TTS functionality.
 */
@@ -383,7 +385,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   def speakNotification(text:String) {
     if(shouldSpeakNotification) {
       speak(text, false)
-      handlers.Handler.nextShouldNotInterrupt
+      Presenter.nextShouldNotInterrupt
     }
   }
 
@@ -395,7 +397,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   def speakNotification(text:List[String]) {
     if(shouldSpeakNotification) {
       speak(text, false)
-      handlers.Handler.nextShouldNotInterrupt
+      Presenter.nextShouldNotInterrupt
     }
   }
 

@@ -5,7 +5,7 @@ import android.content.{BroadcastReceiver, Context, Intent}
 import android.content.pm.PackageManager
 import android.util.Log
 
-import handlers.EventReviewQueue
+import presenters.EventReviewQueue
 import scripting.Scripter
 
 /**
