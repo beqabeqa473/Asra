@@ -1011,6 +1011,8 @@ class Handlers {
 
     onViewHoverEnter { e:AccessibilityEvent => Handler.process(e, Some(TYPE_VIEW_FOCUSED)) }
 
+    onViewHoverExit { e:AccessibilityEvent => true }
+
     onViewLongClicked { e:AccessibilityEvent => true }
 
     onViewScrolled { e:AccessibilityEvent =>
