@@ -294,7 +294,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   */
 
   def speak(list:List[String], flush:Boolean) {
-    if(flush) stop()
+    if(list != Nil && flush) stop()
     list match {
       case Nil =>
       case hd :: Nil => speak(hd, false)
