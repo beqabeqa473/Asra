@@ -321,6 +321,10 @@ class Presenter(pkg:String, cls:String) {
 
   presenters(pkg -> cls) = this
 
+  protected def getString(resID:Int) = Presenter.context.getString(resID)
+
+  protected def getString(resID:Int, formatArgs:AnyRef*) = context.getString(resID, formatArgs: _*)
+
   // Convenience functions for calling TTS, used from scripting subsystem.
 
   def speak(text:String, interrupt:Boolean) = {
@@ -548,15 +552,15 @@ trait GenericButtonPresenter extends Presenter {
             val descendants = descendantsOf(root)
             val index = descendants.indexOf(source)+1
             if(index > 0)
-              speak(Presenter.context.getString(R.string.listItem, Presenter.context.getText(R.string.button), index.toString, descendants.size.toString))
+              speak(getString(R.string.listItem, getString(R.string.button), index.toString, descendants.size.toString))
             else None
           }
-        }.getOrElse(speak(Presenter.context.getString(R.string.button).toString))
+        }.getOrElse(speak(getString(R.string.button).toString))
         true
       } else
-        speak(Presenter.context.getString(R.string.button).toString)
+        speak(getString(R.string.button).toString)
     } else
-      speak(Presenter.context.getString(R.string.labeledButton, text))
+      speak(getString(R.string.labeledButton, text))
   }
 }
 
@@ -603,7 +607,7 @@ object After extends Presenter("", "*") {
     if(VERSION.SDK_INT >= 14)
       Option(e.getSource).foreach { source =>
         if(source.getChildCount == 0 && interactive_?(source) && !e.isEnabled)
-          speak(Presenter.context.getString(R.string.disabled), false)
+          speak(getString(R.string.disabled), false)
       }
     false
   }
@@ -632,14 +636,14 @@ class Presenters {
     private def focusedOnList(e:AccessibilityEvent) = {
       val utterances = utterancesFor(e, stripBlanks = true)
       if(utterances != Nil && e.getCurrentItemIndex != -1)
-        speak(Presenter.context.getString(R.string.listItem, utterances.mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
+        speak(getString(R.string.listItem, utterances.mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
       else
         if(e.getItemCount == 0)
-          speak(Presenter.context.getString(R.string.emptyList))
+          speak(getString(R.string.emptyList))
         else if(e.getItemCount == 1)
-          speak(Presenter.context.getString(R.string.listWithItem))
+          speak(getString(R.string.listWithItem))
         else if(e.getItemCount > 1)
-          speak(Presenter.context.getString(R.string.listWithItems, e.getItemCount.toString))
+          speak(getString(R.string.listWithItems, e.getItemCount.toString))
       true
     }
 
@@ -655,9 +659,9 @@ class Presenters {
 
     onViewSelected { e:AccessibilityEvent =>
       if(e.getCurrentItemIndex >= 0)
-        speak(Presenter.context.getString(R.string.listItem, utterancesFor(e).mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
+        speak(getString(R.string.listItem, utterancesFor(e).mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
       else if(e.getItemCount == 0)
-        speak(Presenter.context.getString(R.string.emptyList))
+        speak(getString(R.string.emptyList))
       true
     }
 
@@ -667,7 +671,7 @@ class Presenters {
 
   class AlertDialog extends Presenter("android.app.AlertDialog") {
     onWindowStateChanged { e:AccessibilityEvent =>
-      speak(Presenter.context.getString(R.string.alert, utterancesFor(e, stripBlanks=true).mkString(": ")), true)
+      speak(getString(R.string.alert, utterancesFor(e, stripBlanks=true).mkString(": ")), true)
       nextShouldNotInterrupt()
     }
   }
@@ -678,13 +682,13 @@ class Presenters {
 
     onViewClicked { e:AccessibilityEvent =>
       if(e.isChecked)
-        speak(Presenter.context.getString(R.string.checked))
+        speak(getString(R.string.checked))
       else
-        speak(Presenter.context.getString(R.string.notChecked))
+        speak(getString(R.string.notChecked))
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(Presenter.context.getString(R.string.checkbox, utterancesFor(e, addBlank=false, guessLabelIfTextShorterThan = Some(2)).mkString(": ")))
+      speak(getString(R.string.checkbox, utterancesFor(e, addBlank=false, guessLabelIfTextShorterThan = Some(2)).mkString(": ")))
     }
 
   }
@@ -701,11 +705,11 @@ class Presenters {
     onViewFocused { e:AccessibilityEvent =>
       if(e.isPassword) {
         speak(utterancesFor(e, addBlank=false, guessLabelIfContentDescriptionMissing = true), false)
-        speak(Presenter.context.getString(R.string.password))
-        speak(Presenter.context.getString(R.string.editText), false)
+        speak(getString(R.string.password))
+        speak(getString(R.string.editText), false)
       } else {
         speak(utterancesFor(e, addBlank=true, guessLabelIfContentDescriptionMissing = true), false)
-        speak(Presenter.context.getString(R.string.editText), false)
+        speak(getString(R.string.editText), false)
       }
       true
     }
@@ -759,7 +763,7 @@ class Presenters {
 
   trait MenuView {
     self: Presenter =>
-    onViewFocused { e:AccessibilityEvent => speak(Presenter.context.getString(R.string.menu)) }
+    onViewFocused { e:AccessibilityEvent => speak(getString(R.string.menu)) }
   }
 
   class ExpandedMenuView extends Presenter("com.android.internal.view.menu.ExpandedMenuView") with MenuView
@@ -786,21 +790,21 @@ class Presenters {
       val text = utterancesFor(e, addBlank=false).mkString(": ")
       if(text == "")
         if(e.getItemCount > 0 && e.getCurrentItemIndex >= 0)
-          speak(Presenter.context.getString(R.string.listItem, Presenter.context.getText(R.string.image), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
+          speak(getString(R.string.listItem, getString(R.string.image), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
         else if(VERSION.SDK_INT >= 14 && e.getSource != null) {
           val source = e.getSource
           rootOf(source).map { root =>
             val descendants = descendantsOf(root)
             val index = descendants.indexOf(source)+1
             if(index > 0)
-              speak(Presenter.context.getString(R.string.listItem, Presenter.context.getText(R.string.image), index.toString, descendants.length.toString))
+              speak(getString(R.string.listItem, getString(R.string.image), index.toString, descendants.length.toString))
             else
-              speak(Presenter.context.getText(R.string.image).toString)
-          }.getOrElse(speak(Presenter.context.getText(R.string.image).toString))
+              speak(getString(R.string.image).toString)
+          }.getOrElse(speak(getString(R.string.image).toString))
         } else
-          speak(Presenter.context.getText(R.string.image).toString)
+          speak(getString(R.string.image).toString)
       else
-        speak(Presenter.context.getString(R.string.labeledImage, text))
+        speak(getString(R.string.labeledImage, text))
     }
   }
 
@@ -814,7 +818,7 @@ class Presenters {
 
     onWindowStateChanged { e:AccessibilityEvent =>
       if(e.getCurrentItemIndex == -1) {
-        speak(Presenter.context.getString(R.string.menu), true)
+        speak(getString(R.string.menu), true)
         nextShouldNotInterrupt()
       }
       true
@@ -840,13 +844,13 @@ class Presenters {
 
     onViewClicked { e:AccessibilityEvent =>
       if(e.isChecked)
-        speak(Presenter.context.getString(R.string.selected))
+        speak(getString(R.string.selected))
       else
-        speak(Presenter.context.getString(R.string.notSelected))
+        speak(getString(R.string.notSelected))
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(Presenter.context.getString(R.string.radioButton, utterancesFor(e, guessLabelIfTextShorterThan = Some(2)).mkString(": ")))
+      speak(getString(R.string.radioButton, utterancesFor(e, guessLabelIfTextShorterThan = Some(2)).mkString(": ")))
     }
 
   }
@@ -854,8 +858,8 @@ class Presenters {
   class RatingBar extends Presenter("android.widget.RatingBar") {
 
     onViewFocused { e:AccessibilityEvent =>
-      val label = guessLabelFor(e).getOrElse(Presenter.context.getString(R.string.rating))
-      val rating = Presenter.context.getString(R.string.listItem, label, e.getCurrentItemIndex.toString, e.getItemCount.toString)
+      val label = guessLabelFor(e).getOrElse(getString(R.string.rating))
+      val rating = getString(R.string.listItem, label, e.getCurrentItemIndex.toString, e.getItemCount.toString)
       speak(utterancesFor(e, addBlank = false, providedText=Some(rating)))
     }
 
@@ -890,7 +894,7 @@ class Presenters {
 
   class SearchBox extends Presenter("android.app.SearchDialog$SearchAutoComplete") {
     onViewFocused { e:AccessibilityEvent =>
-      speak(Presenter.context.getString(R.string.searchText, utterancesFor(e).mkString(": ")), false)
+      speak(getString(R.string.searchText, utterancesFor(e).mkString(": ")), false)
     }
   }
 
@@ -949,7 +953,7 @@ class Presenters {
       def recurse(nodes:List[xml.Node]):List[String] = nodes match {
         case Nil => Nil
         case hd :: tl if(name(hd) == "a" && hd.text != null) =>
-          hd.text :: Presenter.context.getString(R.string.link) :: Nil
+          hd.text :: getString(R.string.link) :: Nil
         case hd :: tl if(hd.descendant.size == 0 && hd.text != null && hd.text != "") =>
           hd.text :: recurse(tl)
         case hd :: tl => recurse(tl)
@@ -1029,9 +1033,9 @@ class Presenters {
       if(utterances.length > 0) {
         if(e.getCurrentItemIndex == -1)
           if(e.getItemCount == 1)
-            speak(Presenter.context.getString(R.string.item, utterances.mkString(" ")))
+            speak(getString(R.string.item, utterances.mkString(" ")))
           else if(e.getItemCount >= 0)
-            speak(Presenter.context.getString(R.string.items, utterances.mkString(" "), e.getItemCount.toString))
+            speak(getString(R.string.items, utterances.mkString(" "), e.getItemCount.toString))
           else
             speak(utterances)
         else
