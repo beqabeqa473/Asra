@@ -628,6 +628,23 @@ class Handlers {
   }
 
   class AdapterView extends Handler("android.widget.AdapterView") {
+
+    private def focusedOnList(e:AccessibilityEvent) = {
+      val utterances = utterancesFor(e, stripBlanks = true)
+      if(utterances != Nil && e.getCurrentItemIndex != -1)
+        speak(Handler.context.getString(R.string.listItem, utterances.mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
+      else
+        if(e.getItemCount == 0)
+          speak(Handler.context.getString(R.string.emptyList))
+        else if(e.getItemCount == 1)
+          speak(Handler.context.getString(R.string.listWithItem))
+        else if(e.getItemCount > 1)
+          speak(Handler.context.getString(R.string.listWithItems, e.getItemCount.toString))
+      true
+    }
+
+    onViewFocused { e:AccessibilityEvent => focusedOnList(e) }
+
     onViewScrolled { e:AccessibilityEvent =>
       if(e.getToIndex >= 0 && e.getItemCount > 0) {
         val percentage = e.getToIndex.toDouble/e.getItemCount
@@ -635,6 +652,17 @@ class Handlers {
       }
       true
     }
+
+    onViewSelected { e:AccessibilityEvent =>
+      if(e.getCurrentItemIndex >= 0)
+        speak(Handler.context.getString(R.string.listItem, utterancesFor(e).mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
+      else if(e.getItemCount == 0)
+        speak(Handler.context.getString(R.string.emptyList))
+      true
+    }
+
+    onWindowStateChanged { e:AccessibilityEvent => focusedOnList(e) }
+
   }
 
   class AlertDialog extends Handler("android.app.AlertDialog") {
@@ -777,32 +805,6 @@ class Handlers {
   }
 
   class IconMenuView extends Handler("com.android.internal.view.menu.IconMenuView") with MenuView
-
-  class ListView extends Handler("android.widget.ListView") {
-
-    onViewFocused { e:AccessibilityEvent =>
-      val utterances = utterancesFor(e, stripBlanks = true)
-      if(utterances != Nil && e.getCurrentItemIndex != -1)
-        speak(Handler.context.getString(R.string.listItem, utterances.mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
-      else
-        if(e.getItemCount == 0)
-          speak(Handler.context.getString(R.string.emptyList))
-        else if(e.getItemCount == 1)
-          speak(Handler.context.getString(R.string.listWithItem))
-        else if(e.getItemCount > 1)
-          speak(Handler.context.getString(R.string.listWithItems, e.getItemCount.toString))
-      true
-    }
-
-    onViewSelected { e:AccessibilityEvent =>
-      if(e.getCurrentItemIndex >= 0)
-        speak(Handler.context.getString(R.string.listItem, utterancesFor(e).mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
-      else if(e.getItemCount == 0)
-        speak(Handler.context.getString(R.string.emptyList))
-      true
-    }
-
-  }
 
   class Menu extends Handler("com.android.internal.view.menu.MenuView") {
 
@@ -1112,21 +1114,13 @@ class Handlers {
     }
 
     onWindowStateChanged { e:AccessibilityEvent =>
-      // Needed because menus send their contents as a non-fullscreen 
-      // onWindowStateChanged event and we don't want to read an entire menu 
-      // when it focuses.
-      if(!e.isFullScreen)
-        true
-      else {
-        speak(utterancesFor(e), true)
-        nextShouldNotInterrupt()
-      }
+      speak(utterancesFor(e, addBlank = false, stripBlanks = true), true)
+      nextShouldNotInterrupt()
     }
 
     byDefault { e:AccessibilityEvent =>
       //Log.d("spiel", "Unhandled event: "+e.toString)
-      //speak(utterancesFor(e))
-      true
+      speak(utterancesFor(e, addBlank = false, stripBlanks = true))
     }
 
   }
