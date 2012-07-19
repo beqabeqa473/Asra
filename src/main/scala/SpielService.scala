@@ -81,6 +81,10 @@ class SpielService extends AccessibilityService {
     Handler.process(event)
   }
 
+  override protected def onGesture(id:Int) = id match {
+    case _ => true
+  }
+
 }
 
 object SpielService {
