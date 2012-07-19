@@ -3,7 +3,7 @@
   android:accessibilityEventTypes="typeAllMask"
   android:accessibilityFeedbackType="feedbackSpoken|feedbackAudible"
   android:notificationTimeout="0"
-  android:accessibilityFlags="flagDefault"
+  android:accessibilityFlags="flagDefault|flagRequestTouchExplorationMode"
   android:canRetrieveWindowContent="true"
   android:settingsActivity="info.spielproject.spiel.activities.PreferencesActivity"
   android:description="@string/appDescription"/>
