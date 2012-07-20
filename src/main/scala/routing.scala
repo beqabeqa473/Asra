@@ -44,7 +44,7 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
     table = table.filter(_._1.pkg != Value(pkg))
   }
 
-  def dispatch(payload:PayloadType, directive:PayloadDirective) {
+  def dispatch(payload:PayloadType, directive:PayloadDirective) = {
 
     var alreadyCalled:List[Handler[PayloadType]] = Nil
 
@@ -135,9 +135,9 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
     }
 
     dispatchToBefore()
-    dispatchToExact() || dispatchToClass() || dispatchToSubclass() || dispatchToDefault()
+    val rv = dispatchToExact() || dispatchToClass() || dispatchToSubclass() || dispatchToDefault()
     dispatchToAfter()
-
+    rv
   }
 
 }

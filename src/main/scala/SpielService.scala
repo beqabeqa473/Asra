@@ -10,7 +10,9 @@ import android.view.accessibility.AccessibilityEvent
 import android.support.v4.app.NotificationCompat
 import com.nullwire.trace.ExceptionHandler
 
+import gestures.{Gesture, GestureDispatcher}
 import presenters.Presenter
+import routing.PayloadDirective
 import scripting._
 import triggers.Triggers
 
@@ -35,6 +37,7 @@ class SpielService extends AccessibilityService {
       case e:VerifyError => // We've almost certainly handled this, so ignore.
     }
     Presenter(this)
+    GestureDispatcher(this)
     Scripter(this)
     BazaarProvider(this)
     StateObserver(this)
@@ -76,13 +79,37 @@ class SpielService extends AccessibilityService {
 
   override def onInterrupt = TTS.stop
 
+  private var lastEvent:Option[AccessibilityEvent] = None
+
   override def onAccessibilityEvent(event:AccessibilityEvent) {
     if(!SpielService.enabled) return
+    lastEvent = Some(event)
     Presenter.process(event)
   }
 
-  override protected def onGesture(id:Int) = id match {
-    case _ => true
+  override protected def onGesture(id:Int) = {
+    import AccessibilityService._
+    lastEvent.map { e =>
+      val directive = new PayloadDirective(e.getPackageName.toString, e.getClassName.toString)
+      id match {
+        case GESTURE_SWIPE_UP => GestureDispatcher.dispatch(Gesture.Up, directive)
+        case GESTURE_SWIPE_DOWN => GestureDispatcher.dispatch(Gesture.Down, directive)
+        case GESTURE_SWIPE_LEFT => GestureDispatcher.dispatch(Gesture.Left, directive)
+        case GESTURE_SWIPE_RIGHT => GestureDispatcher.dispatch(Gesture.Right, directive)
+        case GESTURE_SWIPE_UP_AND_LEFT => GestureDispatcher.dispatch(Gesture.UpLeft, directive)
+        case GESTURE_SWIPE_UP_AND_RIGHT => GestureDispatcher.dispatch(Gesture.UpRight, directive)
+        case GESTURE_SWIPE_DOWN_AND_LEFT => GestureDispatcher.dispatch(Gesture.DownLeft, directive)
+        case GESTURE_SWIPE_DOWN_AND_RIGHT => GestureDispatcher.dispatch(Gesture.DownRight, directive)
+        case GESTURE_SWIPE_LEFT_AND_UP => GestureDispatcher.dispatch(Gesture.LeftUp, directive)
+        case GESTURE_SWIPE_RIGHT_AND_UP => GestureDispatcher.dispatch(Gesture.RightUp, directive)
+        case GESTURE_SWIPE_LEFT_AND_DOWN => GestureDispatcher.dispatch(Gesture.LeftDown, directive)
+        case GESTURE_SWIPE_RIGHT_AND_DOWN => GestureDispatcher.dispatch(Gesture.RightDown, directive)
+        case GESTURE_SWIPE_UP_AND_DOWN => GestureDispatcher.dispatch(Gesture.UpDown, directive)
+        case GESTURE_SWIPE_DOWN_AND_UP => GestureDispatcher.dispatch(Gesture.DownUp, directive)
+        case GESTURE_SWIPE_RIGHT_AND_LEFT => GestureDispatcher.dispatch(Gesture.RightLeft, directive)
+        case GESTURE_SWIPE_LEFT_AND_RIGHT => GestureDispatcher.dispatch(Gesture.LeftRight, directive)
+      }
+    }.getOrElse(false)
   }
 
 }
