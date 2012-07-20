@@ -1,6 +1,8 @@
 package info.spielproject.spiel
 package gestures
 
+import android.view.accessibility.AccessibilityNodeInfo
+
 import routing._
 
 object Gesture extends Enumeration {
@@ -22,9 +24,11 @@ object Gesture extends Enumeration {
   val RightLeft = Value
 }
 
-class Listener extends Handler[Gesture.Value] {
+case class GesturePayload(gesture:Gesture.Value, source:AccessibilityNodeInfo)
 
-  private type Callback = () => Boolean
+class Listener(directive:Option[HandlerDirective] = None) extends Handler[GesturePayload](directive) {
+
+  private type Callback = (AccessibilityNodeInfo) => Boolean
 
   private var left:Option[Callback] = None
   def onLeft(c:Callback) = left = Some(c)
@@ -78,27 +82,70 @@ class Listener extends Handler[Gesture.Value] {
 
   import Gesture._
 
-  def apply(gesture:Gesture.Value) = gesture match {
-    case Left => left.map(_()).getOrElse(false)
-    case Right => right.map(_()).getOrElse(false)
-    case Up => up.map(_()).getOrElse(false)
-    case Down => down.map(_()).getOrElse(false)
-    case UpLeft => upLeft.map(_()).getOrElse(false)
-    case UpRight => upRight.map(_()).getOrElse(false)
-    case DownLeft => downLeft.map(_()).getOrElse(false)
-    case DownRight => downRight.map(_()).getOrElse(false)
-    case LeftUp => leftUp.map(_()).getOrElse(false)
-    case RightUp => rightUp.map(_()).getOrElse(false)
-    case LeftDown => leftDown.map(_()).getOrElse(false)
-    case RightDown => rightDown.map(_()).getOrElse(false)
-    case LeftRight => leftRight.map(_()).getOrElse(false)
-    case RightLeft => rightLeft.map(_()).getOrElse(false)
-    case UpDown => upDown.map(_()).getOrElse(false)
-    case DownUp => downUp.map(_()).getOrElse(false)
+  def apply(payload:GesturePayload) = payload.gesture match {
+    case Left => left.map(_(payload.source)).getOrElse(false)
+    case Right => right.map(_(payload.source)).getOrElse(false)
+    case Up => up.map(_(payload.source)).getOrElse(false)
+    case Down => down.map(_(payload.source)).getOrElse(false)
+    case UpLeft => upLeft.map(_(payload.source)).getOrElse(false)
+    case UpRight => upRight.map(_(payload.source)).getOrElse(false)
+    case DownLeft => downLeft.map(_(payload.source)).getOrElse(false)
+    case DownRight => downRight.map(_(payload.source)).getOrElse(false)
+    case LeftUp => leftUp.map(_(payload.source)).getOrElse(false)
+    case RightUp => rightUp.map(_(payload.source)).getOrElse(false)
+    case LeftDown => leftDown.map(_(payload.source)).getOrElse(false)
+    case RightDown => rightDown.map(_(payload.source)).getOrElse(false)
+    case LeftRight => leftRight.map(_(payload.source)).getOrElse(false)
+    case RightLeft => rightLeft.map(_(payload.source)).getOrElse(false)
+    case UpDown => upDown.map(_(payload.source)).getOrElse(false)
+    case DownUp => downUp.map(_(payload.source)).getOrElse(false)
   }
 
 }
 
-object GestureDispatcher extends Router[Gesture.Value] {
+object GestureDispatcher extends Router[GesturePayload] {
+
+  utils.instantiateAllMembers(classOf[Gestures])
+
+}
+
+class Gestures {
+
+  class Default extends Listener(Some(HandlerDirective(All, All))) {
+
+    onLeft { source => true }
+
+    onRight { source => true }
+
+    onUp { source => true }
+
+    onDown { source => true }
+
+    onUpLeft { source => true }
+
+    onUpRight { source => true }
+
+    onDownLeft { source => true }
+
+    onDownRight { source => true }
+
+    onLeftUp { source => true }
+
+    onRightUp { source => true }
+
+    onLeftDown { source => true }
+
+    onRightDown { source => true }
+
+    onLeftRight { source => true }
+
+    onRightLeft { source => true }
+
+    onUpDown { source => true }
+
+    onDownUp { source => true }
+
+  
+  }
 
 }
