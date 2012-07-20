@@ -157,11 +157,17 @@ class Presenter(directive:Option[HandlerDirective] = None) extends Handler[Event
 
   // Register <code>Callback</code> instances for the various <code>AccessibilityEvent</code> types.
 
+  protected def onAnnouncement(c:Callback) = dispatches(dispatchers(TYPE_ANNOUNCEMENT)) = c
+
   protected def onNotificationStateChanged(c:Callback) = dispatches(dispatchers(TYPE_NOTIFICATION_STATE_CHANGED)) = c
 
   protected def onTouchExplorationGestureEnd(c:Callback) = dispatches(dispatchers(TYPE_TOUCH_EXPLORATION_GESTURE_END)) = c
 
   protected def onTouchExplorationGestureStart(c:Callback) = dispatches(dispatchers(TYPE_TOUCH_EXPLORATION_GESTURE_START)) = c
+
+  protected def onViewAccessibilityFocusCleared(c:Callback) = dispatches(dispatchers(TYPE_VIEW_ACCESSIBILITY_FOCUS_CLEARED)) = c
+
+  protected def onViewAccessibilityFocused(c:Callback) = dispatches(dispatchers(TYPE_VIEW_ACCESSIBILITY_FOCUSED)) = c
 
   protected def onViewClicked(c:Callback) = dispatches(dispatchers(TYPE_VIEW_CLICKED)) = c
 
@@ -180,6 +186,8 @@ class Presenter(directive:Option[HandlerDirective] = None) extends Handler[Event
   protected def onViewTextChanged(c:Callback) = dispatches(dispatchers(TYPE_VIEW_TEXT_CHANGED)) = c
 
   protected def onViewTextSelectionChanged(c:Callback) = dispatches(dispatchers(TYPE_VIEW_TEXT_SELECTION_CHANGED)) = c
+
+  protected def onViewTextTraversedAtMovementGranularity(c:Callback) = dispatches(dispatchers(TYPE_VIEW_TEXT_TRAVERSED_AT_MOVEMENT_GRANULARITY)) = c
 
   protected def onWindowContentChanged(c:Callback) = dispatches(dispatchers(TYPE_WINDOW_CONTENT_CHANGED)) = c
 
@@ -992,9 +1000,12 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
   */
 
   val dispatchers = Map(
+    TYPE_ANNOUNCEMENT -> "announcement",
     TYPE_NOTIFICATION_STATE_CHANGED -> "notificationStateChanged",
     TYPE_TOUCH_EXPLORATION_GESTURE_END -> "touchExplorationGestureEnd",
     TYPE_TOUCH_EXPLORATION_GESTURE_START -> "touchExplorationGestureStart",
+    TYPE_VIEW_ACCESSIBILITY_FOCUS_CLEARED -> "viewAccessibilityFocusCleared",
+    TYPE_VIEW_ACCESSIBILITY_FOCUSED -> "viewAccessibilityFocused",
     TYPE_VIEW_CLICKED -> "viewClicked",
     TYPE_VIEW_FOCUSED -> "viewFocused",
     TYPE_VIEW_HOVER_ENTER -> "viewHoverEnter",
@@ -1004,6 +1015,7 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
     TYPE_VIEW_SELECTED -> "viewSelected",
     TYPE_VIEW_TEXT_CHANGED -> "viewTextChanged",
     TYPE_VIEW_TEXT_SELECTION_CHANGED -> "viewTextSelectionChanged",
+    TYPE_VIEW_TEXT_TRAVERSED_AT_MOVEMENT_GRANULARITY -> "viewTextTraversedAtMovementGranularity",
     TYPE_WINDOW_CONTENT_CHANGED -> "windowContentChanged",
     TYPE_WINDOW_STATE_CHANGED -> "windowStateChanged"
   )
