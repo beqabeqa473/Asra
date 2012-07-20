@@ -117,12 +117,7 @@ object Triggers {
     // Here's where we iterate through the above <code>Actions</code> class, 
     // registering all <code>Action</code> classes it contains. Doing this 
     // obviates the need to manually register new actions on creation.
-    val a = new Actions
-    a.getClass.getDeclaredClasses.foreach { cls =>
-      try {
-        Option(cls.getConstructor(classOf[Actions])).foreach(_.newInstance(a))
-      } catch { case _ => }
-    }
+    utils.instantiateAllMembers(classOf[Actions])
     // Set triggers to the <code>Action</code> specified in <code>Preferences</code>.
     val pm = service.getPackageManager
     if(pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_PROXIMITY))

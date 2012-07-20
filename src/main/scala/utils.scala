@@ -4,6 +4,15 @@ import android.util.Log
 
 package object utils {
 
+  def instantiateAllMembers(cls:Class[_]) {
+    val c = cls.newInstance().asInstanceOf[AnyRef]
+    cls.getDeclaredClasses.foreach { cls =>
+      try {
+        Option(cls.getConstructor(c.getClass)).foreach(_.newInstance(c))
+      } catch { case _ => }
+    }
+  }
+
   import xml.XML
   import java.io.{ByteArrayInputStream, ByteArrayOutputStream, OutputStreamWriter}
   import org.ccil.cowan.tagsoup._

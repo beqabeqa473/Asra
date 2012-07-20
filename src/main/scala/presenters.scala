@@ -951,12 +951,7 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
     super.apply(c)
     // By iterating through the members of this class, we can add presenters
     // without manual registration.
-    val p = new Presenters
-    p.getClass.getDeclaredClasses.foreach { cls =>
-      try {
-        Option(cls.getConstructor(classOf[Presenters])).foreach(_.newInstance(p))
-      } catch { case _ => }
-    }
+    utils.instantiateAllMembers(classOf[Presenters])
   }
 
   def process(e:AccessibilityEvent, eventType:Option[Int] = None):Boolean = {

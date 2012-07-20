@@ -74,6 +74,8 @@ class Listener extends Handler[Gesture.Value] {
   private var downUp:Option[Callback] = None
   def onDownUp(c:Callback) = downUp = Some(c)
 
+  GestureDispatcher.register(this)
+
   import Gesture._
 
   def apply(gesture:Gesture.Value) = gesture match {
