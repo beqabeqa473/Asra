@@ -2,7 +2,6 @@ package info.spielproject.spiel
 package presenters
 
 import collection.JavaConversions._
-import collection.mutable.Map
 
 import android.app.{ActivityManager, Service}
 import android.content.Context
@@ -12,6 +11,8 @@ import android.os.{SystemClock, Vibrator}
 import android.util.Log
 import android.view.accessibility.{AccessibilityEvent, AccessibilityNodeInfo}
 import AccessibilityEvent._
+
+import routing._
 
 /**
  * Represents code that is called when a specific <code>AccessibilityEvent</code> is received.
@@ -76,234 +77,7 @@ object EventReviewQueue extends collection.mutable.Queue[PrettyAccessibilityEven
 
 }
 
-/**
- * Companion for <code>Presenter</code> class.
-*/
-
-object Presenter {
-
-  // Maps (packageName, className) tuples to specific Presenter instances.
-  private var presenters = Map[(String, String), Presenter]()
-
-  /**
-   * Unregisters the given <code>Presenter</code>.
-  */
-
-  def unregisterPresenter(p:Presenter) = {
-    presenters = presenters.filter(_._2 != p)
-  }
-
-  def unregisterPackage(pkg:String) = {
-    presenters = presenters.filter(_._1._1 != pkg)
-  }
-
-  // Track and report state of whether next AccessibilityEvent should interrupt speech.
-  private var myNextShouldNotInterrupt = false
-  def shouldNextInterrupt = !myNextShouldNotInterrupt
-
-  private var nextShouldNotInterruptCalled = false
-
-  /**
-   * In some instances, speech for the next <code>AccessibilityEvent</code> 
-   * shouldn't interrupt. Calling this method from a presenter indicates this 
-   * to be the case.
-  */
-
-  def nextShouldNotInterrupt() = {
-    Log.d("spiel", "Next accessibility event should not interrupt speech.")
-    nextShouldNotInterruptCalled = true
-    myNextShouldNotInterrupt = true
-    true
-  }
-
-  private[presenters] var context:Context = null
-
-  private lazy val vibrator:Vibrator = context.getSystemService(Context.VIBRATOR_SERVICE).asInstanceOf[Vibrator]
-
-  /**
-   * Initialize presenters for the given <code>Context</code>.
-  */
-
-  def apply(c:Context) {
-    context = c
-    // By iterating through the members of this class, we can add presenters
-    // without manual registration.
-    val p = new Presenters
-    p.getClass.getDeclaredClasses.foreach { cls =>
-      try {
-        Option(cls.getConstructor(classOf[Presenters])).foreach(_.newInstance(p))
-      } catch { case _ => }
-    }
-  }
-
-  def process(e:AccessibilityEvent, eventType:Option[Int] = None):Boolean = {
-
-    if(e == null || e.getClassName == null || e.getPackageName == null)
-      return true
-
-    if(
-      SystemClock.uptimeMillis-e.getEventTime > 100 &&
-      List(TYPE_TOUCH_EXPLORATION_GESTURE_END, TYPE_TOUCH_EXPLORATION_GESTURE_START, TYPE_VIEW_HOVER_ENTER, TYPE_VIEW_HOVER_EXIT).contains(e.getEventType)
-    )
-      return true
-
-    if(eventType == None) {
-      EventReviewQueue(new PrettyAccessibilityEvent(e))
-      Log.d("spiel", "Event "+e.toString+"; Activity: "+currentActivity)
-    }
-
-    if(!StateReactor.screenOn_? && e.getEventType != TYPE_NOTIFICATION_STATE_CHANGED)
-      return true
-
-    if(e.getEventType == TYPE_NOTIFICATION_STATE_CHANGED && Preferences.notificationFilters.contains(e.getPackageName))
-      return true
-
-    if(eventType == None)
-      nextShouldNotInterruptCalled = false
-
-    val eType = eventType.getOrElse(e.getEventType)
-
-    // Now we engage in the complex process of dispatching events. This 
-    // happens in several steps.
-
-    // Store presenters we've called so we don't match them again.
-    var alreadyCalled = List[Presenter]()
-
-    // Call the specified Presenter, setting state appropriately.
-    def dispatchTo(pkg:String, cls:String):Boolean = presenters.get(pkg -> cls).map { h =>
-      if(alreadyCalled.contains(h)) {
-        Log.d("spiel", "Already called "+h.getClass.getName+", skipping.")
-        false
-      } else {
-        Log.d("spiel", "Dispatching to "+h.getClass.getName)
-        alreadyCalled ::= h
-        h(e, eType)
-      }
-    }.getOrElse(false)
-
-    // Always run this Presenter before an event. This cannot block others from executing.
-    def dispatchToBefore() = {
-      Log.d("spiel", "Before dispatch")
-      Before(e, eType)
-      false
-    }
-
-    // Let's check if there's a Presenter for this exact package and 
-    // class.
-    def dispatchToExact() = {
-      Log.d("spiel", "Exact match dispatch")
-      dispatchTo(e.getPackageName.toString, e.getClassName.toString)
-    }
-
-    // Now check for just the class name.
-    def dispatchToClass() = {
-      Log.d("spiel", "Class match dispatch")
-      dispatchTo("", e.getClassName.toString)
-    }
-
-    // Now we check superclasses. Basically, if a given class is a subclass 
-    // of a widget for which we already have a Presenter (I.e. a subclass of 
-    // Button) then it should be delegated to the Presenter for buttons. 
-    // Surround this in a try block to catch the various exceptions that can 
-    // bubble up.
-
-    def dispatchToSubclass() = {
-      Log.d("spiel", "Subclass match dispatch")
-
-      def ancestors(cls:Class[_]):List[Class[_]] = {
-        def iterate(start:Class[_], classes:List[Class[_]] = Nil):List[Class[_]] = start.getSuperclass match {
-          case null => classes
-          case v => iterate(v, v :: classes)
-        }
-        iterate(cls).reverse
-      }
-
-      val originator = try {
-        Some(context.getClassLoader.loadClass(e.getClassName.toString))
-      } catch {
-        case _ => try {
-          val c = context.createPackageContext(e.getPackageName.toString, Context.CONTEXT_INCLUDE_CODE|Context.CONTEXT_IGNORE_SECURITY)
-          Some(Class.forName(e.getClassName.toString, true, c.getClassLoader))
-        } catch {
-          case _ => None
-        }
-      }
-
-      originator.flatMap { o =>
-        val a = ancestors(o)
-        Log.d("spiel", "Ancestors: "+a)
-        val candidates = presenters.filter { h =>
-          h._1._1 == "" && h._1._2 != "" && h._1._2 != "*"
-        }.toList.map { h =>
-          val target:Class[_] = try {
-            context.getClassLoader.loadClass(h._1._2)
-          } catch {
-            case e:ClassNotFoundException => o
-          }
-          (a.indexOf(target), h)
-        }.filter(_._1 >= 0).sortBy((v:Tuple2[Int, _]) => v._1)
-        Some(candidates.exists { v =>
-          dispatchTo(v._2._1._1, v._2._1._2)
-        })
-      }.getOrElse(false)
-    }
-
-    // Now dispatch to the default, catch-all Presenter.
-    def dispatchToDefault() = {
-      Log.d("spiel", "Default dispatch")
-      dispatchTo("", "")
-    }
-
-    def dispatchToAfter() = {
-      Log.d("spiel", "After dispatch")
-      After(e, eType)
-      true
-    }
-
-    (dispatchToBefore() || dispatchToExact() || dispatchToClass() || dispatchToSubclass() || dispatchToDefault())
-
-    dispatchToAfter()
-
-    if(!nextShouldNotInterruptCalled && eventType == None)
-      myNextShouldNotInterrupt = false
-
-    true
-  }
-
-  /**
-   * Map of <code>AccessibilityEvent</code> types to more human-friendly strings.
-  */
-
-  val dispatchers = Map(
-    TYPE_NOTIFICATION_STATE_CHANGED -> "notificationStateChanged",
-    TYPE_TOUCH_EXPLORATION_GESTURE_END -> "touchExplorationGestureEnd",
-    TYPE_TOUCH_EXPLORATION_GESTURE_START -> "touchExplorationGestureStart",
-    TYPE_VIEW_CLICKED -> "viewClicked",
-    TYPE_VIEW_FOCUSED -> "viewFocused",
-    TYPE_VIEW_HOVER_ENTER -> "viewHoverEnter",
-    TYPE_VIEW_HOVER_EXIT -> "viewHoverExit",
-    TYPE_VIEW_LONG_CLICKED -> "viewLongClicked",
-    TYPE_VIEW_SCROLLED -> "viewScrolled",
-    TYPE_VIEW_SELECTED -> "viewSelected",
-    TYPE_VIEW_TEXT_CHANGED -> "viewTextChanged",
-    TYPE_VIEW_TEXT_SELECTION_CHANGED -> "viewTextSelectionChanged",
-    TYPE_WINDOW_CONTENT_CHANGED -> "windowContentChanged",
-    TYPE_WINDOW_STATE_CHANGED -> "windowStateChanged"
-  )
-
-  /**
-   * @return <code>Activity</code> currently in foreground
-  */
-
-  def currentActivity = {
-    val manager = context.getSystemService(Context.ACTIVITY_SERVICE).asInstanceOf[ActivityManager]
-    val tasks = manager.getRunningTasks(1)
-    if(!tasks.isEmpty)
-      tasks.head.topActivity.getClassName
-    else null
-  }
-
-}
+case class EventPayload(event:AccessibilityEvent, eventType:Int)
 
 /**
  * Maps a given <code>Callback</code> to events originating from a given 
@@ -312,14 +86,14 @@ object Presenter {
  * Passing a blank string for either indicates events from all packages or all classes.
 */
 
-class Presenter(pkg:String, cls:String) {
+class Presenter(directive:Option[HandlerDirective] = None) extends Handler[EventPayload](directive) {
 
-  def this() = this("", "")
-  def this(c:String) = this("", c)
+  def this(pkg:String, cls:String) = this(Some(new HandlerDirective(pkg, cls)))
+  def this(c:String) = this(Some(new HandlerDirective(c)))
 
   import Presenter._
 
-  presenters(pkg -> cls) = this
+  Presenter.register(this)
 
   protected def getString(resID:Int) = Presenter.context.getString(resID)
 
@@ -523,13 +297,13 @@ class Presenter(pkg:String, cls:String) {
    * @return <code>true</code> if processing should stop, <code>false</code> otherwise.
   */
 
-  def apply(e:AccessibilityEvent, eventType:Int):Boolean = {
+  def apply(payload:EventPayload):Boolean = {
 
-    def dispatchTo(callback:String):Boolean = dispatches.get(callback).map(_(e)).getOrElse(false)
+    def dispatchTo(callback:String):Boolean = dispatches.get(callback).map(_(payload.event)).getOrElse(false)
 
-    val fallback = dispatchers.get(eventType).map(dispatchTo(_)).getOrElse(false)
+    val fallback = dispatchers.get(payload.eventType).map(dispatchTo(_)).getOrElse(false)
 
-    if((pkg == "" && cls == "*") || !fallback)
+    if(!fallback)
       dispatchTo("default")
     else fallback
   }
@@ -568,7 +342,7 @@ trait GenericButtonPresenter extends Presenter {
  * Run before every event. Cannot pre-empt other Presenters.
 */
 
-object Before extends Presenter("*") {
+object Before extends Presenter {
 
   onViewHoverEnter { e:AccessibilityEvent =>
     stopSpeaking()
@@ -601,7 +375,7 @@ object Before extends Presenter("*") {
  * Run after every event.
 */
 
-object After extends Presenter("", "*") {
+object After extends Presenter {
 
   onViewFocused { e:AccessibilityEvent =>
     if(VERSION.SDK_INT >= 14)
@@ -985,7 +759,7 @@ class Presenters {
    * Default catch-all Presenter which catches unresolved <code>AccessibilityEvent</code>s.
   */
 
-  class Default extends Presenter {
+  class Default extends Presenter(Some(HandlerDirective(All, All))) {
 
     onNotificationStateChanged { e:AccessibilityEvent =>
       val utterances = utterancesFor(e, addBlank=false, stripBlanks=true)
@@ -1130,4 +904,120 @@ class Presenters {
     }
 
   }
+}
+
+/**
+ * Companion for <code>Presenter</code> class.
+*/
+
+object Presenter extends Router[EventPayload](Some(() => Before), Some(() => After)) {
+
+  // Track and report state of whether next AccessibilityEvent should interrupt speech.
+  private var myNextShouldNotInterrupt = false
+  def shouldNextInterrupt = !myNextShouldNotInterrupt
+
+  private var nextShouldNotInterruptCalled = false
+
+  /**
+   * In some instances, speech for the next <code>AccessibilityEvent</code> 
+   * shouldn't interrupt. Calling this method from a presenter indicates this 
+   * to be the case.
+  */
+
+  def nextShouldNotInterrupt() = {
+    Log.d("spiel", "Next accessibility event should not interrupt speech.")
+    nextShouldNotInterruptCalled = true
+    myNextShouldNotInterrupt = true
+    true
+  }
+
+  private lazy val vibrator:Vibrator = context.getSystemService(Context.VIBRATOR_SERVICE).asInstanceOf[Vibrator]
+
+  /**
+   * Initialize presenters for the given <code>Context</code>.
+  */
+
+  override def apply(c:Context) {
+    super.apply(c)
+    // By iterating through the members of this class, we can add presenters
+    // without manual registration.
+    val p = new Presenters
+    p.getClass.getDeclaredClasses.foreach { cls =>
+      try {
+        Option(cls.getConstructor(classOf[Presenters])).foreach(_.newInstance(p))
+      } catch { case _ => }
+    }
+  }
+
+  def process(e:AccessibilityEvent, eventType:Option[Int] = None):Boolean = {
+
+    if(e == null || e.getClassName == null || e.getPackageName == null)
+      return true
+
+    if(
+      SystemClock.uptimeMillis-e.getEventTime > 100 &&
+      List(TYPE_TOUCH_EXPLORATION_GESTURE_END, TYPE_TOUCH_EXPLORATION_GESTURE_START, TYPE_VIEW_HOVER_ENTER, TYPE_VIEW_HOVER_EXIT).contains(e.getEventType)
+    )
+      return true
+
+    if(eventType == None) {
+      EventReviewQueue(new PrettyAccessibilityEvent(e))
+      Log.d("spiel", "Event "+e.toString+"; Activity: "+currentActivity)
+    }
+
+    if(!StateReactor.screenOn_? && e.getEventType != TYPE_NOTIFICATION_STATE_CHANGED)
+      return true
+
+    if(e.getEventType == TYPE_NOTIFICATION_STATE_CHANGED && Preferences.notificationFilters.contains(e.getPackageName))
+      return true
+
+    if(eventType == None)
+      nextShouldNotInterruptCalled = false
+
+    val eType = eventType.getOrElse(e.getEventType)
+
+    val payload = EventPayload(e, eType)
+    val directive = new PayloadDirective(e.getPackageName.toString, e.getClassName.toString)
+
+    dispatch(payload, directive)
+
+    if(!nextShouldNotInterruptCalled && eventType == None)
+      myNextShouldNotInterrupt = false
+
+    true
+  }
+
+  /**
+   * Map of <code>AccessibilityEvent</code> types to more human-friendly strings.
+  */
+
+  val dispatchers = Map(
+    TYPE_NOTIFICATION_STATE_CHANGED -> "notificationStateChanged",
+    TYPE_TOUCH_EXPLORATION_GESTURE_END -> "touchExplorationGestureEnd",
+    TYPE_TOUCH_EXPLORATION_GESTURE_START -> "touchExplorationGestureStart",
+    TYPE_VIEW_CLICKED -> "viewClicked",
+    TYPE_VIEW_FOCUSED -> "viewFocused",
+    TYPE_VIEW_HOVER_ENTER -> "viewHoverEnter",
+    TYPE_VIEW_HOVER_EXIT -> "viewHoverExit",
+    TYPE_VIEW_LONG_CLICKED -> "viewLongClicked",
+    TYPE_VIEW_SCROLLED -> "viewScrolled",
+    TYPE_VIEW_SELECTED -> "viewSelected",
+    TYPE_VIEW_TEXT_CHANGED -> "viewTextChanged",
+    TYPE_VIEW_TEXT_SELECTION_CHANGED -> "viewTextSelectionChanged",
+    TYPE_WINDOW_CONTENT_CHANGED -> "windowContentChanged",
+    TYPE_WINDOW_STATE_CHANGED -> "windowStateChanged"
+  )
+
+  /**
+   * @return <code>Activity</code> currently in foreground
+  */
+
+  def currentActivity = {
+    val manager = context.getSystemService(Context.ACTIVITY_SERVICE).asInstanceOf[ActivityManager]
+    val tasks = manager.getRunningTasks(1)
+    if(!tasks.isEmpty)
+      tasks.head.topActivity.getClassName
+    else null
+  }
+
 }

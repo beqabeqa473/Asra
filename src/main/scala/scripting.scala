@@ -200,7 +200,7 @@ class Script(
   }
 
   def uninstall() {
-    presenters.foreach(Presenter.unregisterPresenter(_))
+    presenters.foreach(Presenter.unregister(_))
     Presenter.unregisterPackage(pkg)
     presenters = Nil
     Scripter.unsetStringsFor(pkg)
