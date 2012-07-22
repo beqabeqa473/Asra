@@ -18,7 +18,7 @@
 
   <application android:label="@string/appName"   android:icon="@drawable/empty">
 
-    <service android:name=".SpielService" android:settingsActivity=".activities.Spiel">
+    <service android:name=".SpielService" android:settingsActivity=".activities.Spiel"  android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
 
       <intent-filter>
         <action android:name="android.accessibilityservice.AccessibilityService"/>
