@@ -4,6 +4,7 @@ package gestures
 import android.view.accessibility.AccessibilityNodeInfo
 
 import routing._
+import android.util.Log
 
 object Gesture extends Enumeration {
   val Up = Value
@@ -113,7 +114,11 @@ class Gestures {
 
   class Default extends Listener(Some(HandlerDirective(All, All))) {
 
-    onLeft { source => true }
+    onLeft { source => 
+    Log.d("spielcheck", "gestures/onleft source: "+source)
+    TTS.speak("left", true)
+true 
+}
 
     onRight { source => true }
 

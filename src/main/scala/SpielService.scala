@@ -6,7 +6,7 @@ import android.content.{Context, Intent}
 import android.os.Debug
 import android.os.Build.VERSION
 import android.util.Log
-import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.{AccessibilityEvent, AccessibilityNodeInfo}
 import android.support.v4.app.NotificationCompat
 import com.nullwire.trace.ExceptionHandler
 
@@ -81,19 +81,22 @@ class SpielService extends AccessibilityService {
 
   override def onInterrupt = TTS.stop
 
-  private var lastEvent:Option[AccessibilityEvent] = None
+  private var lastNode:Option[AccessibilityNodeInfo] = None
 
   override def onAccessibilityEvent(event:AccessibilityEvent) {
     if(!SpielService.enabled) return
-    lastEvent = Some(event)
+    val tmp:AccessibilityNodeInfo = event.getSource
+    if (tmp != null) lastNode = Some(tmp) 
+
     Presenter.process(event)
   }
 
   override protected def onGesture(id:Int) = {
     import AccessibilityService._
-    lastEvent.flatMap { e =>
-      Option(e.getSource).map { source =>
-        val directive = new PayloadDirective(e.getPackageName.toString, e.getClassName.toString)
+      Log.d("spielcheck", "service/ongesture LastSorce: "+lastNode)
+      lastNode.map { source =>
+
+        val directive = new PayloadDirective(source.getPackageName.toString, source.getClassName.toString)
         id match {
           case GESTURE_SWIPE_UP => GestureDispatcher.dispatch(GesturePayload(Gesture.Up, source), directive)
           case GESTURE_SWIPE_DOWN => GestureDispatcher.dispatch(GesturePayload(Gesture.Down, source), directive)
@@ -112,7 +115,6 @@ class SpielService extends AccessibilityService {
           case GESTURE_SWIPE_RIGHT_AND_LEFT => GestureDispatcher.dispatch(GesturePayload(Gesture.RightLeft, source), directive)
           case GESTURE_SWIPE_LEFT_AND_RIGHT => GestureDispatcher.dispatch(GesturePayload(Gesture.LeftRight, source), directive)
         }
-      }
     }.getOrElse(false)
   }
 
