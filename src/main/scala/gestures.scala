@@ -114,11 +114,7 @@ class Gestures {
 
   class Default extends Listener(Some(HandlerDirective(All, All))) {
 
-    onLeft { source => 
-    Log.d("spielcheck", "gestures/onleft source: "+source)
-    TTS.speak("left", true)
-true 
-}
+    onLeft { source => true }
 
     onRight { source => true }
 
