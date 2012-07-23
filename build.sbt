@@ -12,7 +12,7 @@ name := "Spiel"
 
 version := "2.1.1"
 
-versionCode := 12
+versionCode := 13
 
 scalaVersion := "2.9.2"
 
