@@ -85,9 +85,7 @@ class SpielService extends AccessibilityService {
 
   override def onAccessibilityEvent(event:AccessibilityEvent) {
     if(!SpielService.enabled) return
-    val tmp:AccessibilityNodeInfo = event.getSource
-    if (tmp != null) lastNode = Some(tmp) 
-
+    Option(event.getSource).foreach(v => lastNode = Some(v))
     Presenter.process(event)
   }
 
@@ -95,7 +93,6 @@ class SpielService extends AccessibilityService {
     import AccessibilityService._
       Log.d("spielcheck", "service/ongesture LastSorce: "+lastNode)
       lastNode.map { source =>
-
         val directive = new PayloadDirective(source.getPackageName.toString, source.getClassName.toString)
         id match {
           case GESTURE_SWIPE_UP => GestureDispatcher.dispatch(GesturePayload(Gesture.Up, source), directive)
