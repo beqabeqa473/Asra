@@ -111,10 +111,7 @@ object StateReactor {
       if(audioManager.isBluetoothScoAvailableOffCall) {
         Log.d("spielcheck", "Connecting")
         val f = new IntentFilter
-        if(VERSION.SDK_INT < 14)
-          f.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_CHANGED)
-        else
-          f.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED)
+        f.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED)
         service.registerReceiver(this, f)
         audioManager.startBluetoothSco()
       }
