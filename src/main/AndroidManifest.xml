@@ -18,7 +18,7 @@
 
   <application android:label="@string/appName"   android:icon="@drawable/empty">
 
-    <service android:name=".SpielService" android:settingsActivity=".activities.Spiel"  android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+    <service android:name=".SpielService" android:settingsActivity=".ui.Spiel"  android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
 
       <intent-filter>
         <action android:name="android.accessibilityservice.AccessibilityService"/>
@@ -31,7 +31,7 @@
     </service>
 
     <activity
-      android:name=".activities.Spiel"
+      android:name=".ui.Spiel"
       android:configChanges="orientation|keyboardHidden|screenSize">
       <intent-filter>
         <action android:name="android.intent.action.VIEW"/>
@@ -42,7 +42,7 @@
     </activity>
 
     <activity
-      android:name=".activities.PreferencesActivity"
+      android:name=".ui.PreferencesActivity"
       android:configChanges="orientation|keyboardHidden|screenSize">
       <intent-filter>    
         <action android:name="android.intent.action.MAIN"/>
@@ -50,24 +50,17 @@
       </intent-filter>
     </activity>
 
-    <activity android:name=".activities.Scripts"/>
+    <activity android:name=".ui.Scripts"/>
 
-    <activity android:name=".activities.Events"/>
+    <activity android:name=".ui.Events"/>
 
-    <activity android:name=".activities.ScriptInstaller">
+    <activity android:name=".ui.ScriptInstaller">
       <intent-filter>
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="info.spielproject.spiel.intent.NEW_SCRIPTS_VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
       </intent-filter>
     </activity>
-
-    <!--<activity android:name=".activities.CommandHandler">
-        <intent-filter>
-            <action android:name="android.intent.action.SEARCH_LONG_PRESS"/>
-            <category android:name="android.intent.category.DEFAULT"/>
-        </intent-filter>
-    </activity>-->
 
     <provider android:name=".StatusProvider" android:authorities="info.spielproject.spiel.providers.StatusProvider"/>
 
