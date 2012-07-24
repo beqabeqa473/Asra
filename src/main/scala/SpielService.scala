@@ -7,7 +7,6 @@ import android.os.Debug
 import android.os.Build.VERSION
 import android.util.Log
 import android.view.accessibility.{AccessibilityEvent, AccessibilityNodeInfo}
-import android.support.v4.app.NotificationCompat
 import com.nullwire.trace.ExceptionHandler
 
 import gestures.{Gesture, GestureDispatcher, GesturePayload}
@@ -44,7 +43,7 @@ class SpielService extends AccessibilityService {
     StateReactor(this)
     Triggers(this)
     TelephonyListener(this)
-    val notification = new NotificationCompat.Builder(this)
+    val notification = new Notification.Builder(this)
     .setSmallIcon(R.drawable.empty)
     .setTicker(getString(R.string.appName))
     .setContentTitle(getString(R.string.appName))

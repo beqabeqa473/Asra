@@ -4,9 +4,9 @@ package activities
 import actors.Actor.actor
 import collection.JavaConversions._
 
-import android.app.{Activity, AlertDialog, Dialog, ListActivity, TabActivity}
+import android.app.{Activity, AlertDialog, Dialog, DialogFragment, ListActivity, LoaderManager, TabActivity}
 import android.bluetooth.BluetoothAdapter
-import android.content.{ContentUris, Context, DialogInterface, Intent}
+import android.content.{ContentUris, Context, CursorLoader, DialogInterface, Intent, Loader}
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
@@ -16,9 +16,7 @@ import android.preference.{CheckBoxPreference, ListPreference, Preference, Prefe
 import android.util.Log
 import android.view.{ContextMenu, KeyEvent, Menu, MenuInflater, MenuItem, View, ViewGroup}
 import android.view.accessibility.{AccessibilityEvent, AccessibilityNodeInfo}
-import android.widget.{AdapterView, ArrayAdapter, ListView, RadioGroup, TabHost}
-import android.support.v4.app.{DialogFragment, FragmentActivity, LoaderManager}
-import android.support.v4.content.{CursorLoader, Loader}
+import android.widget.{AdapterView, ArrayAdapter, ListView, RadioGroup, SimpleCursorAdapter, TabHost}
 import org.droidparts.preference.MultiSelectListPreference
 
 import presenters._
@@ -226,9 +224,7 @@ trait Refreshable {
 
 }
 
-import android.support.v4.widget.SimpleCursorAdapter
-
-class Scripts extends FragmentActivity with TypedActivity with Refreshable with RadioGroup.OnCheckedChangeListener with LoaderManager.LoaderCallbacks[Cursor] {
+class Scripts extends Activity with TypedActivity with Refreshable with RadioGroup.OnCheckedChangeListener with LoaderManager.LoaderCallbacks[Cursor] {
 
   private lazy val listView = findView(TR.scripts)
 
@@ -277,7 +273,7 @@ class Scripts extends FragmentActivity with TypedActivity with Refreshable with 
   }
 
   private def refreshSystem() {
-    getSupportLoaderManager.initLoader(0, null, this)
+    getLoaderManager.initLoader(0, null, this)
     listView.setAdapter(adapter)
     BazaarProvider.checkRemoteScripts()
   }
@@ -383,9 +379,9 @@ class Scripts extends FragmentActivity with TypedActivity with Refreshable with 
           if(script.reload()) {
             scriptToPost = Some(script)
             if(Preferences.bazaarUsername == "" || Preferences.bazaarPassword == "")
-              (new CredentialsDialog).show(getSupportFragmentManager, "credentials")
+              (new CredentialsDialog).show(getFragmentManager, "credentials")
             else
-              (new PostDialog).show(getSupportFragmentManager, "post")
+              (new PostDialog).show(getFragmentManager, "post")
           } else {
             new AlertDialog.Builder(this)
             .setMessage(getString(R.string.script_reload_error))
@@ -500,7 +496,7 @@ class Scripts extends FragmentActivity with TypedActivity with Refreshable with 
     } catch {
       case e:scripting.AuthorizationFailed =>
         Preferences.bazaarPassword = ""
-        (new CredentialsDialog).show(getSupportFragmentManager, "credentials")
+        (new CredentialsDialog).show(getFragmentManager, "credentials")
       case e =>
         scriptToPost = None
         dialog.setMessage(getString(R.string.script_posting_error))
