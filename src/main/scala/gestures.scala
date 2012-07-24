@@ -146,7 +146,6 @@ class Gestures {
 
     onDownUp { source => true }
 
-  
   }
 
 }
