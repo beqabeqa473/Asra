@@ -100,7 +100,7 @@
 
   </PreferenceScreen>
 
-  <MultiSelectListPreference
+  <org.droidparts.preference.MultiSelectListPreference
     android:title="@string/notificationFiltersTitle"
     android:summary="@string/notificationFiltersSummary"
     android:key="notificationFilters"/>

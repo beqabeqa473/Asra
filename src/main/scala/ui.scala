@@ -16,6 +16,7 @@ import android.util._
 import android.view._
 import android.view.accessibility._
 import android.widget._
+import org.droidparts.preference.MultiSelectListPreference
 
 import presenters._
 import scripting._
