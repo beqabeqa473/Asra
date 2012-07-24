@@ -88,11 +88,6 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     }
   }
 
-  def defaultsEnforced_? = {
-    if(tts == null) true
-    else tts.areDefaultsEnforced()
-  }
-
   /**
    * @return default engine, or empty string if unknown
   */
