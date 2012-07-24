@@ -9,7 +9,7 @@ import android.content.pm.ResolveInfo
 import android.media.{AudioManager, SoundPool}
 import android.os.Build.VERSION
 import android.os.Environment
-import android.speech.tts.TextToSpeech
+import android.speech.tts.{TextToSpeech, UtteranceProgressListener}
 import android.util.Log
 
 import presenters.Presenter
@@ -18,7 +18,7 @@ import presenters.Presenter
  * Singleton facade around TTS functionality.
 */
 
-object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceCompletedListener with AudioManager.OnAudioFocusChangeListener {
+object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener with AudioManager.OnAudioFocusChangeListener {
 
   private var tts:TextToSpeech = null
 
@@ -42,8 +42,6 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     init()
   }
 
-  private var desiredEngine:Option[String] = None
-
   private var reinitializing = false
 
   /**
@@ -57,14 +55,8 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
         tts.shutdown()
         tts = null
       }
-      desiredEngine.getOrElse(desiredEngine = Some(Preferences.speechEngine))
-      tts = if(VERSION.SDK_INT < 14)
-        new TextToSpeech(service, this)
-      else {
-        val tmp = desiredEngine.map(new TextToSpeech(service, this, _)).getOrElse(new TextToSpeech(service, this))
-        desiredEngine = None
-        tmp
-      }
+      val desiredEngine = platformEngine.orElse(Some(Preferences.speechEngine))
+      tts= desiredEngine.map(new TextToSpeech(service, this, _)).getOrElse(new TextToSpeech(service, this))
       TextToSpeech.SUCCESS
     }
   }
@@ -75,11 +67,7 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     reinitializing = false
     if(status == TextToSpeech.ERROR)
       return service.stopSelf()
-    desiredEngine.foreach { engine =>
-      tts.setEngineByPackageName(engine)
-      desiredEngine = None
-    }
-    tts.setOnUtteranceCompletedListener(this)
+    tts.setOnUtteranceProgressListener(this)
     tts.addEarcon("tick", "info.spielproject.spiel", R.raw.tick)
     pitch = Preferences.pitchScale
     if(!welcomed) {
@@ -171,7 +159,11 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
     }
   }
 
-  def onUtteranceCompleted(id:String) {
+  def onStart(id:String) { }
+
+  def onError(id:String) { }
+
+  def onDone(id:String) {
     if(id == lastUtteranceID)
       abandonFocus()
     repeatedSpeech.get(id).foreach { v =>
@@ -221,7 +213,6 @@ object TTS extends TextToSpeech.OnInitListener with TextToSpeech.OnUtteranceComp
   private var failures = 0
 
   private def reInitOnFailure() {
-    desiredEngine = platformEngine.orElse(Some(Preferences.speechEngine))
     failures = 0
     val intent = new Intent()
     intent.setAction(tts.Engine.ACTION_CHECK_TTS_DATA)
