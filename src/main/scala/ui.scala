@@ -4,19 +4,18 @@ package ui
 import actors.Actor.actor
 import collection.JavaConversions._
 
-import android.app.{ActionBar, Activity, AlertDialog, Dialog, DialogFragment, Fragment, FragmentTransaction, ListFragment, LoaderManager}
-import android.bluetooth.BluetoothAdapter
-import android.content.{ContentUris, Context, CursorLoader, DialogInterface, Intent, Loader}
-import android.content.pm.PackageManager
-import android.database.Cursor
-import android.net.Uri
-import android.os.Build.VERSION
-import android.os.Bundle
-import android.preference.{CheckBoxPreference, ListPreference, Preference, PreferenceActivity, PreferenceFragment, PreferenceManager, PreferenceScreen}
-import android.util.Log
-import android.view.{ContextMenu, KeyEvent, LayoutInflater, Menu, MenuInflater, MenuItem, View, ViewGroup}
-import android.view.accessibility.{AccessibilityEvent, AccessibilityNodeInfo}
-import android.widget.{AdapterView, ArrayAdapter, ListView, RadioGroup, SimpleCursorAdapter, TabHost}
+import android.app._
+import android.bluetooth._
+import android.content._
+import android.content.pm._
+import android.database._
+import android.net._
+import android.os._
+import android.preference._
+import android.util._
+import android.view._
+import android.view.accessibility._
+import android.widget._
 import org.droidparts.preference.MultiSelectListPreference
 
 import presenters._
