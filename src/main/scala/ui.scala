@@ -33,6 +33,8 @@ class Spiel extends Activity with ActionBar.TabListener {
   override def onCreate(bundle:Bundle) {
     super.onCreate(bundle)
 
+    setContentView(R.layout.spiel)
+
     val bar = getActionBar
     bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS)
 
@@ -63,18 +65,28 @@ class Spiel extends Activity with ActionBar.TabListener {
 
   def onTabReselected(tab:ActionBar.Tab, ft:FragmentTransaction) { }
 
+  private var fragment:Option[Fragment] = None
+
   def onTabSelected(tab:ActionBar.Tab, ft:FragmentTransaction) {
     val transaction = getFragmentManager.beginTransaction()
-    val fragment = tab.getPosition match {
+    fragment.foreach(transaction.remove(_))
+    val frag = tab.getPosition match {
       case 0 => new AllPreferences
       case 1 => new Scripts
       case 2 => new Events
     }
-    transaction.add(fragment, "")
+    fragment = Some(frag)
+    transaction.add(R.id.tabContainer, frag)
     transaction.commit()
   }
 
   def onTabUnselected(tab:ActionBar.Tab, ft:FragmentTransaction) {
+    fragment.foreach { frag =>
+      getFragmentManager.beginTransaction()
+      .remove(frag)
+      .commit()
+      fragment = None
+    }
   }
 
 }
@@ -105,15 +117,7 @@ trait HasScriptPreferences {
 
 }
 
-trait ReplacesContentView extends Fragment {
-  this: Fragment =>
-  override def onViewCreated(v:View, b:Bundle) {
-    super.onViewCreated(v, b)
-    getActivity.setContentView(getView)
-  }
-}
-
-class AllPreferences extends PreferenceFragment with HasScriptPreferences with ReplacesContentView {
+class AllPreferences extends PreferenceFragment with HasScriptPreferences {
 
   protected def context = getActivity
 
@@ -243,7 +247,7 @@ trait Refreshable extends Fragment {
 
 }
 
-class Scripts extends Fragment with Refreshable with RadioGroup.OnCheckedChangeListener with LoaderManager.LoaderCallbacks[Cursor] with ReplacesContentView {
+class Scripts extends Fragment with Refreshable with RadioGroup.OnCheckedChangeListener with LoaderManager.LoaderCallbacks[Cursor] {
 
   private lazy val listView = getView.findViewById(R.id.scripts).asInstanceOf[ListView]
 
@@ -524,7 +528,7 @@ class Scripts extends Fragment with Refreshable with RadioGroup.OnCheckedChangeL
  * Lists most recently-received AccessibilityEvents.
 */
 
-class Events extends ListFragment with Refreshable with ReplacesContentView {
+class Events extends ListFragment with Refreshable {
 
   override def onViewCreated(v:View, b:Bundle) {
     super.onViewCreated(v, b)
