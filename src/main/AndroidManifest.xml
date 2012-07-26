@@ -18,7 +18,7 @@
 
   <application android:label="@string/appName"   android:icon="@drawable/empty">
 
-    <service android:name=".SpielService" android:settingsActivity=".ui.Spiel"  android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+    <service android:name=".SpielService" android:settingsActivity="info.spielproject.spiel.ui.PreferencesActivity" android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
 
       <intent-filter>
         <action android:name="android.accessibilityservice.AccessibilityService"/>
@@ -35,7 +35,7 @@
       android:configChanges="orientation|keyboardHidden|screenSize">
       <intent-filter>
         <action android:name="android.intent.action.VIEW"/>
-<category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="spiel"/>
       </intent-filter>

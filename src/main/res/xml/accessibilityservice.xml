@@ -5,5 +5,5 @@
   android:notificationTimeout="0"
   android:accessibilityFlags="flagDefault|flagRequestTouchExplorationMode"
   android:canRetrieveWindowContent="true"
-  android:settingsActivity="info.spielproject.spiel.activities.PreferencesActivity"
+  android:settingsActivity=".ui.PreferencesActivity"
   android:description="@string/appDescription"/>
