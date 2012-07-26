@@ -118,6 +118,11 @@
   <string name="deselectAll">Deselect all</string>
   <string name="install">Install</string>
 
+  <!-- Spoken when script changes are detected -->
+  <string name="scriptInstalling">Installing %1$s</string>
+  <string name="scriptUninstalling">Uninstalling %1$s</string>
+  <string name="scriptUpdating">Updating %1$s</string>
+
   <!-- Menu items -->
   <string name="refresh">Refresh</string>
 
