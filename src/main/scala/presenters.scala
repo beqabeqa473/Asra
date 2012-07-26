@@ -499,7 +499,7 @@ class Presenters {
     onViewTextChanged { e:AccessibilityEvent =>
       if(e.getBeforeText == e.getText.mkString)
         true
-      else if(e.getFromIndex == -1 || e.getToIndex == -1) {
+      else if(e.getFromIndex == -1 && e.getToIndex == -1) {
         val oldText = e.getBeforeText.toString
         val newText = e.getText.mkString
         if(newText.length > oldText.length)
