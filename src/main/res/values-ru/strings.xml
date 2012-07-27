@@ -60,7 +60,7 @@
   <string name="managePunctuationSpeechTitle">Настройка объявления пунктуации</string>
   <string name="managePunctuationSpeechSummary">Передать Spiel объявление некоторой необрабатываемой пунктуации</string>
   <string name="duckNonSpeechAudioTitle">Приглушать неречевое аудио</string>
-  <string name="duckNonSpeechAudioSummary">Уменьшать громкость музыки, игр и т.д. во время речевых сообщений</string>
+  <string name="duckNonSpeechAudioSummary">Уменьшать громкость музыки, игр и т. д. во время речевых сообщений</string>
   <string name="textToSpeechTitle">Настройки синтеза речи</string>
   <string name="textToSpeechSummary">Настройка свойств синтеза речи для всей системы</string>
 
@@ -73,9 +73,12 @@
   <string name="triggersTitle">Датчики</string>
   <string name="triggersSummary">Настройка действий, выполняемых при физических событиях</string>
   <string name="onShakeTitle">При потряхивании</string>
-  <string name="onShakeSummary">Назначить действие, выполняемое при потряхивании устройтсва</string>
-  <string name="onProximityNearTitle">при приближении</string>
-  <string name="onProximityNearSummary">Назначить действие, выполняемое, когда датчик приближения обнаружит что-либо около устройтсва</string>
+  <string name="onShakeSummary">Назначить действие, выполняемое при потряхивании устройства</string>
+  <string name="onProximityNearTitle">При приближении</string>
+  <string name="onProximityNearSummary">Назначить действие, выполняемое, когда датчик приближения обнаружит что-либо около устройства</string>
+
+  <string name="notificationFiltersTitle">Фильтры уведомлений</string>
+  <string name="notificationFiltersSummary">Фильтр отображения уведомлений изменения для шумных приложений</string>
 
   <string name="debuggingTitle">Отладка</string>
   <string name="sendBacktracesTitle">Отправлять обратную трассировку при падении Spiel</string>
@@ -114,6 +117,11 @@
   <string name="selectAll">Выделить все</string>
   <string name="deselectAll">Снять выделение со всех</string>
   <string name="install">Установить</string>
+
+  <!-- Spoken when script changes are detected -->
+  <string name="scriptInstalling">Установка %1$s</string>
+  <string name="scriptUninstalling">Удаление %1$s</string>
+  <string name="scriptUpdating">Обновление %1$s</string>
 
   <!-- Menu items -->
   <string name="refresh">Обновить</string>
