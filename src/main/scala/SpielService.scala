@@ -71,7 +71,8 @@ class SpielService extends AccessibilityService {
     import AccessibilityServiceInfo._
     info.feedbackType = FEEDBACK_SPOKEN
     // Should not need this but when using install -r to reinstall, explore by touch may not get enabled otherwise
-    info.flags = FLAG_REQUEST_TOUCH_EXPLORATION_MODE | DEFAULT
+    if(VERSION.SDK_INT >= 16)
+      info.flags = FLAG_REQUEST_TOUCH_EXPLORATION_MODE | DEFAULT
     import AccessibilityEvent._
     info.eventTypes = TYPES_ALL_MASK
     setServiceInfo(info)
