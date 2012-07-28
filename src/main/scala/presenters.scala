@@ -471,6 +471,9 @@ class Presenters {
 
     onViewFocused { e:AccessibilityEvent =>
       speak(getString(R.string.checkbox, utterancesFor(e, addBlank=false, guessLabelIfTextShorterThan = Some(2)).mkString(": ")))
+      if(VERSION.SDK_INT >= 16)
+        speak(getString((if(e.isChecked) R.string.checked else R.string.notChecked)), false)
+      true
     }
 
   }
