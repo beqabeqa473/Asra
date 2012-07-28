@@ -497,16 +497,7 @@ class Presenters {
     }
 
     onViewTextChanged { e:AccessibilityEvent =>
-      if(e.getBeforeText == e.getText.mkString)
-        true
-      else if(e.getFromIndex == -1 && e.getToIndex == -1) {
-        val oldText = e.getBeforeText.toString
-        val newText = e.getText.mkString
-        if(newText.length > oldText.length)
-          speak(newText.replace(oldText, ""), true)
-        else
-          speak(oldText.replace(newText, ""), true)
-      } else if(e.getAddedCount > 0 || e.getRemovedCount > 0) {
+      if(e.getAddedCount > 0 || e.getRemovedCount > 0) {
         if(e.isPassword)
           speak("*", true)
         else
@@ -837,7 +828,6 @@ class Presenters {
       Option(e.getSource).map(_.getText).foreach { text =>
         val txt = if(e.isPassword) Some("*"*e.getItemCount) else Option(text)
         txt.map { t =>
-          //var from = if(e.getFromIndex == t.length) e.getFromIndex-1 else e.getFromIndex
           var from = e.getFromIndex
           var to = if(e.getToIndex == e.getFromIndex && e.getToIndex < t.length)
             e.getToIndex+1
@@ -887,7 +877,12 @@ class Presenters {
                 speak(selection.toString, true)
                 false
               }
-            }).getOrElse(speak(selection.toString, true))
+            }).getOrElse {
+              if(selection == "")
+                true
+              else
+                speak(selection.toString, true)
+            }
             oldSelectionFrom = Some(from)
             oldSelectionTo = Some(to)
           } else if(from == -1 || to == -1) {
