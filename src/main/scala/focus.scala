@@ -18,7 +18,7 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
   def children =
     (for(i <- 0 to node.getChildCount-1) yield(node.getChild(i))).toList.filterNot(_ == null)
 
-  def siblings = node.parent.children
+  def siblings = parent.children
 
   def descendants:List[AccessibilityNodeInfo] = children.map { c =>
     List(c)++c.descendants
