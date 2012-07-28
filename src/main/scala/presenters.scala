@@ -328,6 +328,8 @@ trait GenericButtonPresenter extends Presenter {
 
 object Before extends Presenter {
 
+  onViewAccessibilityFocused { e:AccessibilityEvent => stopSpeaking() }
+
   onViewHoverEnter { e:AccessibilityEvent =>
     stopSpeaking()
     if(SystemClock.uptimeMillis-e.getEventTime <= 100)
@@ -746,6 +748,9 @@ class Presenters {
     onTouchExplorationGestureStart { e:AccessibilityEvent => stopSpeaking() }
 
     onViewClicked { e:AccessibilityEvent => true }
+
+    onViewAccessibilityFocused { e:AccessibilityEvent => Presenter.process(e, Some(TYPE_VIEW_FOCUSED)) }
+
 
     onViewFocused { e:AccessibilityEvent =>
       val utterances = utterancesFor(e, addBlank=false, stripBlanks=true) match {
