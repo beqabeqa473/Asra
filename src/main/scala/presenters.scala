@@ -249,31 +249,9 @@ class Presenter(directive:Option[HandlerDirective] = None) extends Handler[Event
     rv
   }
 
-  protected def descendantsOf(n:AccessibilityNodeInfo):List[AccessibilityNodeInfo] = {
-    (n.getChildCount match {
-      case 0 => Nil
-      case v =>
-        (for(
-          i <- 0 to v-1;
-          c = n.getChild(i) if(c != null)
-        ) yield(List(c)++descendantsOf(c))
-        ).toList.flatten
-    }).filter(_ != null)
-  }
-
-  protected def rootOf(node:AccessibilityNodeInfo):Option[AccessibilityNodeInfo] = Option(node).map { n =>
-    def iterate(v:AccessibilityNodeInfo):AccessibilityNodeInfo = v.getParent match {
-      case null => v
-      case v2 => iterate(v2)
-    }
-    iterate(n)
-  }
-
   protected def guessLabelFor(e:AccessibilityEvent):Option[String] = {
-    if(VERSION.SDK_INT < 14) return None
-    val source = e.getSource
-    rootOf(source).flatMap { root =>
-      val descendants = descendantsOf(root).map { leaf =>
+    Option(e.getSource).flatMap { source =>
+      val descendants = source.root.descendants.map { leaf =>
         val rect = new Rect()
         leaf.getBoundsInScreen(rect)
         (leaf, rect)
@@ -297,7 +275,7 @@ class Presenter(directive:Option[HandlerDirective] = None) extends Handler[Event
     source.isCheckable || source.isClickable || source.isLongClickable || source.isFocusable
 
   protected def interactables(source:AccessibilityNodeInfo) = 
-    (source :: descendantsOf(source)).filter(interactive_?(_))
+    (source :: source.descendants).filter(interactive_?(_))
 
   /**
    * Run a given <code>AccessibilityEvent</code> through this <code>Presenter</code>
@@ -330,13 +308,11 @@ trait GenericButtonPresenter extends Presenter {
     if(text == "") {
       if(VERSION.SDK_INT >= 14) {
         Option(e.getSource).flatMap { source =>
-          rootOf(source).map { root =>
-            val descendants = descendantsOf(root)
-            val index = descendants.indexOf(source)+1
-            if(index > 0)
-              speak(getString(R.string.listItem, getString(R.string.button), index.toString, descendants.size.toString))
-            else None
-          }
+          val descendants = source.root.descendants
+          val index = descendants.indexOf(source)+1
+          if(index > 0)
+            Some(speak(getString(R.string.listItem, getString(R.string.button), index.toString, descendants.size.toString)))
+          else None
         }.getOrElse(speak(getString(R.string.button).toString))
         true
       } else
@@ -562,14 +538,12 @@ class Presenters {
           speak(getString(R.string.listItem, getString(R.string.image), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
         else if(VERSION.SDK_INT >= 14 && e.getSource != null) {
           val source = e.getSource
-          rootOf(source).map { root =>
-            val descendants = descendantsOf(root)
-            val index = descendants.indexOf(source)+1
-            if(index > 0)
-              speak(getString(R.string.listItem, getString(R.string.image), index.toString, descendants.length.toString))
-            else
-              speak(getString(R.string.image).toString)
-          }.getOrElse(speak(getString(R.string.image).toString))
+          val descendants = source.root.descendants
+          val index = descendants.indexOf(source)+1
+          if(index > 0)
+            speak(getString(R.string.listItem, getString(R.string.image), index.toString, descendants.length.toString))
+          else
+            speak(getString(R.string.image).toString)
         } else
           speak(getString(R.string.image).toString)
       else
@@ -693,7 +667,7 @@ class Presenters {
       Option(e.getSource).map { source=>
         val utterances = utterancesFor(e, addBlank=false, stripBlanks=true)
         if(utterances != Nil) {
-          val textCount = descendantsOf(source).map { v =>
+          val textCount = source.descendants.map { v =>
             if((v.getText != null && v.getText.length != 0) || (v.getContentDescription != null && v.getContentDescription.length != 0)) 1 else 0
           }.foldLeft(0) { (acc, v) => acc+v }
           Log.d("spielcheck", "textCount: "+textCount+": Children: "+source.getChildCount+": Interactables: "+interactables(source))
