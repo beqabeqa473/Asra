@@ -2,7 +2,7 @@
 
 <resources>
   <string name="appName">Spiel</string>
-  <string name="appDescription">Joustava, skriptattava Android-ruudunlukija</string>
+  <string name="appDescription">Joustava ja skriptattava Android-ruudunlukija</string>
 
   <!-- Initial welcome message-->
   <string name="welcomeMsg">Tervetuloa Spieliin!</string>
@@ -10,11 +10,11 @@
   <!-- On/off and other alerts -->
   <string name="spielOn">Spiel käytössä.</string>
   <string name="spielOff">Spiel pois käytöstä.</string>
-  <string name="screenOff">Näyttö pois käytöstä.</string>
+  <string name="screenOff">Ruutu pois käytöstä.</string>
   <string name="unlocked">Avattu.</string>
   <string name="ringerOff">Soittoääni pois käytöstä.</string>
   <string name="ringerOn">Soittoääni käytössä.</string>
-  <string name="newVoicemail">Uusi ääniviesti</string>
+  <string name="newVoicemail">Uusi vastaajaviesti</string>
 
   <!-- View names and actions -->
   <string name="alert">Ilmoitus! %1$s</string>
@@ -48,17 +48,17 @@
   <string name="speechTitle">Puhe</string>
   <string name="speechEngineTitle">Puhemoottori</string>
   <string name="systemDefault">Järjestelmän oletus</string>
-  <string name="rateScaleTitle">Nopeuden skaala</string>
-  <string name="rateScaleSummary">Kerroin, jolla oletusnopeutta skaalataan</string>
-  <string name="pitchScaleTitle">Korkeuden skaala</string>
-  <string name="pitchScaleSummary">Kerroin, jolla oletuskorkeutta skaalataan</string>
-  <string name="echoByCharTitle">Kaiuta merkeittäin</string>
-  <string name="echoByWordTitle">Kaiuta sanoittain</string>
-  <string name="speakNotificationsWhenScreenOffTitle">Lue ilmoitukset, kun näyttö on pois käytöstä</string>
+  <string name="rateScaleTitle">Nopeus</string>
+  <string name="rateScaleSummary">Kerroin, jonka verran oletusnopeutta muutetaan</string>
+  <string name="pitchScaleTitle">Korkeus</string>
+  <string name="pitchScaleSummary">Kerroin, jonka verran oletuskorkeutta muutetaan</string>
+  <string name="echoByCharTitle">Lue merkeittäin</string>
+  <string name="echoByWordTitle">Lue sanoittain</string>
+  <string name="speakNotificationsWhenScreenOffTitle">Lue ilmoitukset, vaikka näyttö on pois käytöstä</string>
   <string name="useBluetoothSCOTitle">Käytä Bluetooth SCO:ta</string>
   <string name="useBluetoothSCOSummary">Reititä muut kuin puheluiden äänet  Bluetooth SCO -kuulokkeisiin (kokeellinen!)</string>
-  <string name="managePunctuationSpeechTitle">Puhuttavien välimerkkien hallinta</string>
-  <string name="managePunctuationSpeechSummary">Siirtää joidenkin käsittelemättömien välimerkkien puhumisen Spielille</string>
+  <string name="managePunctuationSpeechTitle">Luettavien välimerkkien hallinta</string>
+  <string name="managePunctuationSpeechSummary">Siirtää joidenkin käsittelemättömien välimerkkien lukemisen Spielille</string>
   <string name="duckNonSpeechAudioTitle">Alenna muun kuin puheen äänenvoimakkuutta</string>
   <string name="duckNonSpeechAudioSummary">Alentaa puhuttaessa musiikin, pelien ym. äänenvoimakkuutta</string>
   <string name="textToSpeechTitle">Tekstistä puheeksi</string>
@@ -67,8 +67,8 @@
   <string name="alertsTitle">Ilmoitukset</string>
   <string name="talkingCallerIDTitle">Lue soittajan tiedot</string>
   <string name="talkingCallerIDSummary">Lukee toistuvasti soittajan tiedot saapuville puheluille</string>
-  <string name="voicemailAlertsTitle">Ääniviestit</string>
-  <string name="voicemailAlertsSummary">Ilmoittaa toistuvasti uusista ääniviesteistä</string>
+  <string name="voicemailAlertsTitle">Vastaajaviestit</string>
+  <string name="voicemailAlertsSummary">Ilmoittaa toistuvasti uusista vastaajaviesteistä</string>
 
   <string name="triggersTitle">Toiminnot</string>
   <string name="triggersSummary">Valitse tietyille fyysisille tapahtumille suoritettavat toiminnot</string>
@@ -97,12 +97,12 @@
 
   <!-- Script context menu -->
   <string name="delete">Poista</string>
-  <string name="copyToExternalStorage">Kopioi ulkoiselle tallennusvälineelle</string>
+  <string name="copyToExternalStorage">Kopioi ulkoiseen muistiin</string>
   <string name="postToBazaar">Lähetä Bazaariin</string>
 
   <string name="bazaar_credentials">Syötä Spiel Bazaar -käyttäjätietosi.</string>
-  <string name="bazaar_credentials_invalid">Käyttäjänimi ja/tai salasana ovat virheellisiä. Syötä ne uudestaan alle ja yritä uudelleen.</string>
-  <string name="bazaar_username_label">Käyttäjänimi</string>
+  <string name="bazaar_credentials_invalid">Käyttäjätunnus ja/tai salasana ovat virheellisiä. Syötä ne uudestaan alle ja yritä uudelleen.</string>
+  <string name="bazaar_username_label">Käyttäjätunnus</string>
   <string name="bazaar_password_label">Salasana</string>
   <string name="signup">Rekisteröi</string>
   <string name="script_reload_error">Tämä skripti on virheellinen. Korjaa lokeissa mahdollisesti ilmoitetut virheet ja yritä uudelleen.</string>
@@ -117,6 +117,11 @@
   <string name="selectAll">Valitse kaikki</string>
   <string name="deselectAll">Poista kaikki valinnat</string>
   <string name="install">Asenna</string>
+                                                     
+  <!-- Spoken when script changes are detected -->
+  <string name="scriptInstalling">Asennetaan %1$s</string>
+  <string name="scriptUninstalling">Poistetaan %1$s</string>
+  <string name="scriptUpdating">Päivitetään %1$s</string>
 
   <!-- Menu items -->
   <string name="refresh">Päivitä</string>
@@ -165,7 +170,7 @@
   <string name="colon">kaksoispiste</string>
   <string name="dash">viiva</string>
   <string name="plus">plus</string>
-  <string name="newline">uusi rivi</string>
+  <string name="newline">Rivinvaihto</string>
   <string name="tab">sarkain</string>
 
   <!-- String returned when an unknown number calls. -->
