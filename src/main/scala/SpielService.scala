@@ -24,7 +24,7 @@ class SpielService extends AccessibilityService {
 
   override def onCreate() {
     super.onCreate()
-    SpielService._context = this
+    SpielService.service = this
     Preferences(this)
     if(Preferences.profiling)
       Debug.startMethodTracing("spiel")
@@ -118,8 +118,11 @@ class SpielService extends AccessibilityService {
 
 object SpielService {
 
-  private var _context:Context = null
-  def context = _context
+  private var service:SpielService = null
+
+  def context = service.asInstanceOf[Context]
+
+  def performGlobalAction(action:Int) = service.performGlobalAction(action)
 
   var initialized = false
 

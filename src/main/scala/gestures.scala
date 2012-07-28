@@ -114,6 +114,8 @@ class Gestures {
 
   class Default extends Listener(Some(HandlerDirective(All, All))) {
 
+    import android.accessibilityservice.AccessibilityService._
+
     onLeft { source => true }
 
     onRight { source => true }
@@ -122,13 +124,13 @@ class Gestures {
 
     onDown { source => true }
 
-    onUpLeft { source => true }
+    onUpLeft { source => SpielService.performGlobalAction(GLOBAL_ACTION_HOME) }
 
-    onUpRight { source => true }
+    onUpRight { source => SpielService.performGlobalAction(GLOBAL_ACTION_NOTIFICATIONS) }
 
-    onDownLeft { source => true }
+    onDownLeft { source => SpielService.performGlobalAction(GLOBAL_ACTION_BACK) }
 
-    onDownRight { source => true }
+    onDownRight { source => SpielService.performGlobalAction(GLOBAL_ACTION_RECENTS) }
 
     onLeftUp { source => true }
 
