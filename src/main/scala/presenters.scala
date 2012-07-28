@@ -500,39 +500,32 @@ class Presenters {
     }
 
     onViewTextChanged { e:AccessibilityEvent =>
-      if(e.getAddedCount > 0 || e.getRemovedCount > 0) {
+      val text = e.getText.mkString
+      val before = e.getBeforeText.toString
+      if(before == text)
+        true
+      else if(e.getAddedCount > 0 || e.getRemovedCount > 0) {
         if(e.isPassword)
           speak("*", true)
-        else
-          if(e.getAddedCount > 0)
-            // We're getting an exception here due to what appear to be 
-            // malformed AccessibilityEvents.
-            try {
-              val text = e.getText.mkString
-              val str = text.substring(e.getFromIndex,   e.getFromIndex+e.getAddedCount)
-              var flush = true
-              if(Preferences.echoByChar) {
-                speak(str, flush)
-                flush = false
-              }
-              if(Preferences.echoByWord && !Character.isLetterOrDigit(str(0))) {
-                val word = (text.substring(0, e.getFromIndex)
-                .reverse.takeWhile(_.isLetterOrDigit).reverse+str).trim
-                if(word.length > 0)
-                  speak(word, flush)
-              }
-            } catch {
-              case e => Log.d("spiel", "Think we have a malformed event. Got "+e.getMessage)
+        else {
+          val diff = if(before.length > text.length) before.diff(text) else text.diff(before)
+          if(diff.length == 1 && before.length < text.length) {
+            var flush = true
+            if(Preferences.echoByChar) {
+              speak(diff, true)
+              flush = false
             }
-          else if(e.getRemovedCount > 0) {
-            val start = e.getFromIndex
-            val end = e.getFromIndex+e.getRemovedCount
-            Option(e.getBeforeText).foreach(v => speak(v.toString.substring(start, end), true))
-          }
-        else
-          speak(utterancesFor(e), true)
-      }
-      true
+            if(Preferences.echoByWord && !Character.isLetterOrDigit(diff(0))) {
+              val word = (text.substring(0, e.getFromIndex)
+              .reverse.takeWhile(_.isLetterOrDigit).reverse+diff).trim
+              if(word.length > 1)
+                speak(word, flush)
+              }
+            true
+          } else
+            speak(diff, true)
+        }
+      } else true
     }
 
   }
