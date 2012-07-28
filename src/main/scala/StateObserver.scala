@@ -48,10 +48,6 @@ object StateObserver {
       }, f)
     }
 
-    registerReceiver((c, i) => mediaMounted(i.getData), Intent.ACTION_MEDIA_MOUNTED :: Nil, Some("file"))
-
-    registerReceiver((c, i) => mediaUnmounted(i.getData), Intent.ACTION_MEDIA_UNMOUNTED :: Nil, Some("file"))
-
     registerReceiver((c, i) => screenOff, Intent.ACTION_SCREEN_OFF :: Nil)
 
     registerReceiver((c, i) => screenOn, Intent.ACTION_SCREEN_ON :: Nil)
@@ -425,52 +421,6 @@ object StateObserver {
   */
 
   def removeHeadsetStateChanged(h:(Boolean, Boolean) => Unit) = headsetStateChangedHandlers = headsetStateChangedHandlers.filterNot(_ == h)
-
-  private var mediaMountedHandlers = List[(Uri) => Unit]()
-
-  /**
-   * Register handler to be run when media is mounted.
-  */
-
-  def onMediaMounted(h:(Uri) => Unit) = {
-    mediaMountedHandlers ::= h
-    h
-  }
-
-  /**
-   * Run registered handlers when media is mounted.
-  */
-
-  def mediaMounted(path:Uri) = mediaMountedHandlers.foreach { f => f(path) }
-
-  /**
-   * Remove handler from being run when media is mounted.
-  */
-
-  def removeMediaMounted(h:(Uri) => Unit) = mediaMountedHandlers = mediaMountedHandlers.filterNot(_ == h)
-
-  private var mediaUnmountedHandlers = List[(Uri) => Unit]()
-
-  /**
-   * Register handler to be run when media is unmounted.
-  */
-
-  def onMediaUnmounted(h:(Uri) => Unit) = {
-    mediaUnmountedHandlers ::= h
-    h
-  }
-
-  /**
-   * Run registered handlers when media is unmounted.
-  */
-
-  def mediaUnmounted(path:Uri) = mediaUnmountedHandlers.foreach { f => f(path) }
-
-  /**
-   * Remove handler from being run when media is unmounted.
-  */
-
-  def removeMediaUnmounted(h:(Uri) => Unit) = mediaUnmountedHandlers = mediaUnmountedHandlers.filterNot(_ == h)
 
   private var screenOffHandlers = List[() => Unit]()
 

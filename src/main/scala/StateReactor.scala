@@ -186,18 +186,6 @@ object StateReactor {
 
   onBluetoothSCOHeadsetDisconnected { () => stopBluetoothSCO() }
 
-  onMediaMounted { path =>
-    if(path == Uri.fromFile(Environment.getExternalStorageDirectory)) {
-      TTS.init()
-      scripting.Scripter.initExternalScripts()
-    }
-  }
-
-  onMediaUnmounted { path =>
-    if(path == Uri.fromFile(Environment.getExternalStorageDirectory))
-      TTS.init()
-  }
-
   // Manage speaking of occasional voicemail notification.
 
   private var voicemailIndicator:Option[String] = None
