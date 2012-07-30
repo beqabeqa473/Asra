@@ -11,6 +11,7 @@ import android.os.{SystemClock, Vibrator}
 import android.util.Log
 import android.view.accessibility.{AccessibilityEvent, AccessibilityNodeInfo}
 import AccessibilityEvent._
+import AccessibilityNodeInfo._
 
 import routing._
 
@@ -369,6 +370,12 @@ object After extends Presenter {
     false
   }
 
+  onWindowStateChanged { e:AccessibilityEvent =>
+    if(VERSION.SDK_INT >= 16)
+      Option(e.getSource).foreach(_.descendants.headOption.foreach(_.performAction(FOCUS_ACCESSIBILITY)))
+    true
+  }
+
 }
 
 /**
@@ -673,7 +680,7 @@ class Presenters {
           val textCount = source.descendants.map { v =>
             if((v.getText != null && v.getText.length != 0) || (v.getContentDescription != null && v.getContentDescription.length != 0)) 1 else 0
           }.foldLeft(0) { (acc, v) => acc+v }
-          Log.d("spielcheck", "textCount: "+textCount+": Children: "+source.getChildCount+": Interactables: "+interactables(source))
+          //Log.d("spielcheck", "textCount: "+textCount+": Children: "+source.getChildCount+": Interactables: "+interactables(source))
           if(textCount == 0)
             speak(utterances)
           else if(textCount > 1)
