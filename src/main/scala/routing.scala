@@ -86,27 +86,9 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
     def dispatchToSubclass() = {
       Log.d("spiel", "Subclass match dispatch")
 
-      def ancestors(cls:Class[_]):List[Class[_]] = {
-        def iterate(start:Class[_], classes:List[Class[_]] = Nil):List[Class[_]] = start.getSuperclass match {
-          case null => classes
-          case v => iterate(v, v :: classes)
-        }
-        iterate(cls).reverse
-      }
-
-      val originator = try {
-        Some(context.getClassLoader.loadClass(directive.cls.value))
-      } catch {
-        case _ => try {
-          val c = context.createPackageContext(directive.pkg.value, Context.CONTEXT_INCLUDE_CODE|Context.CONTEXT_IGNORE_SECURITY)
-          Some(Class.forName(directive.cls.value, true, c.getClassLoader))
-        } catch {
-          case _ => None
-        }
-      }
-
+      val originator = utils.classForName(directive.cls.value, directive.pkg.value)
       originator.flatMap { o =>
-        val a = ancestors(o)
+        val a = utils.ancestors(o)
         val candidates = table.filter { h =>
           h._1.pkg == All && h._1.cls != All && h._1.cls != Value("")
         }.toList.map { h =>

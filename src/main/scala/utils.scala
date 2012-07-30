@@ -1,4 +1,5 @@
 package info.spielproject.spiel
+import android.content.Context
 
 import android.util.Log
 
@@ -10,6 +11,28 @@ package object utils {
       try {
         Option(cls.getConstructor(c.getClass)).foreach(_.newInstance(c))
       } catch { case _ => }
+    }
+  }
+
+  def ancestors(cls:Class[_]):List[Class[_]] = {
+    def iterate(start:Class[_], classes:List[Class[_]] = Nil):List[Class[_]] = start.getSuperclass match {
+      case null => classes
+      case v => iterate(v, v :: classes)
+    }
+    iterate(cls).reverse
+  }
+
+  def classForName(cls:String, pkg:String = "") = {
+    val context = SpielService.context
+    try {
+      Some(context.getClassLoader.loadClass(cls))
+    } catch {
+      case _ => try {
+        val pc = context.createPackageContext(pkg, Context.CONTEXT_INCLUDE_CODE|Context.CONTEXT_IGNORE_SECURITY)
+        Some(Class.forName(cls, true, pc.getClassLoader))
+      } catch {
+        case _ => None
+      }
     }
   }
 
