@@ -108,7 +108,7 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
       originator.flatMap { o =>
         val a = ancestors(o)
         val candidates = table.filter { h =>
-          h._1.pkg == All && h._1.cls != All
+          h._1.pkg == All && h._1.cls != All && h._1.cls != Value("")
         }.toList.map { h =>
           val target:Class[_] = try {
             context.getClassLoader.loadClass(h._1.cls.asInstanceOf[Value].value)
@@ -126,7 +126,9 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
     // Now dispatch to the default, catch-all Handler.
     def dispatchToDefault() = {
       Log.d("spiel", "Default dispatch")
-      table.get(HandlerDirective(All, All)).map(_(payload)).getOrElse(false)
+      table.get(HandlerDirective(All, All))
+      .orElse(table.get(new HandlerDirective("", "")))
+      .map(_(payload)).getOrElse(false)
     }
 
     def dispatchToAfter() {

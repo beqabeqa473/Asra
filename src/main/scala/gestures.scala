@@ -1,10 +1,12 @@
 package info.spielproject.spiel
 package gestures
 
+import android.accessibilityservice.AccessibilityService._
+import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
+import AccessibilityNodeInfo._
 
 import routing._
-import android.util.Log
 
 object Gesture extends Enumeration {
   val Up = Value
@@ -25,11 +27,11 @@ object Gesture extends Enumeration {
   val RightLeft = Value
 }
 
-case class GesturePayload(gesture:Gesture.Value, source:AccessibilityNodeInfo)
+case class GesturePayload(gesture:Gesture.Value, source:Option[AccessibilityNodeInfo])
 
 class Listener(directive:Option[HandlerDirective] = None) extends Handler[GesturePayload](directive) {
 
-  private type Callback = (AccessibilityNodeInfo) => Boolean
+  private type Callback = (Option[AccessibilityNodeInfo]) => Boolean
 
   private var left:Option[Callback] = None
   def onLeft(c:Callback) = left = Some(c)
@@ -112,17 +114,31 @@ object GestureDispatcher extends Router[GesturePayload] {
 
 class Gestures {
 
-  class Default extends Listener(Some(HandlerDirective(All, All))) {
+  class Default extends Listener(Some(HandlerDirective(Value(""), Value("")))) {
 
-    import android.accessibilityservice.AccessibilityService._
+    onLeft { source =>
+      source.flatMap { s =>
+        s.prevAccessibilityFocus.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
+      }.getOrElse(true)
+    }
 
-    onLeft { source => true }
+    onRight { source =>
+      source.flatMap { s =>
+        s.nextAccessibilityFocus.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
+      }.getOrElse(true)
+    }
 
-    onRight { source => true }
+    onUp { source =>
+      source.flatMap { s =>
+        s.prevAccessibilityFocus.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
+      }.getOrElse(true)
+    }
 
-    onUp { source => true }
-
-    onDown { source => true }
+    onDown { source =>
+      source.flatMap { s =>
+        s.nextAccessibilityFocus.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
+      }.getOrElse(true)
+    }
 
     onUpLeft { source => SpielService.performGlobalAction(GLOBAL_ACTION_HOME) }
 

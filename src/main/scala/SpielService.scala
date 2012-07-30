@@ -1,17 +1,20 @@
 package info.spielproject.spiel
 
 import android.accessibilityservice._
+import AccessibilityService._
 import android.app.{Notification, NotificationManager, PendingIntent}
 import android.content.{Context, Intent}
 import android.os.Debug
 import android.os.Build.VERSION
 import android.util.Log
 import android.view.accessibility.{AccessibilityEvent, AccessibilityNodeInfo}
+import AccessibilityEvent._
+import AccessibilityNodeInfo._
 import com.nullwire.trace.ExceptionHandler
 
 import gestures.{Gesture, GestureDispatcher, GesturePayload}
 import presenters.Presenter
-import routing.PayloadDirective
+import routing._
 import scripting._
 import triggers.Triggers
 
@@ -73,45 +76,45 @@ class SpielService extends AccessibilityService {
     // Should not need this but when using install -r to reinstall, explore by touch may not get enabled otherwise
     if(VERSION.SDK_INT >= 16)
       info.flags = FLAG_REQUEST_TOUCH_EXPLORATION_MODE | DEFAULT
-    import AccessibilityEvent._
     info.eventTypes = TYPES_ALL_MASK
     setServiceInfo(info)
   }
 
   override def onInterrupt = TTS.stop
 
-  private var lastNode:Option[AccessibilityNodeInfo] = None
-
   override def onAccessibilityEvent(event:AccessibilityEvent) {
     if(!SpielService.enabled) return
-    Option(event.getSource).foreach(v => lastNode = Some(v))
+    if(List(TYPE_VIEW_FOCUSED, TYPE_VIEW_HOVER_ENTER).contains(event.getEventType))
+      Option(event.getSource).foreach { n =>
+        if(VERSION.SDK_INT >= 16)
+          n.performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS)
+      }
     Presenter.process(event)
   }
 
   override protected def onGesture(id:Int) = {
-    import AccessibilityService._
-      Log.d("spielcheck", "service/ongesture LastSorce: "+lastNode)
-      lastNode.map { source =>
-        val directive = new PayloadDirective(source.getPackageName.toString, source.getClassName.toString)
-        id match {
-          case GESTURE_SWIPE_UP => GestureDispatcher.dispatch(GesturePayload(Gesture.Up, source), directive)
-          case GESTURE_SWIPE_DOWN => GestureDispatcher.dispatch(GesturePayload(Gesture.Down, source), directive)
-          case GESTURE_SWIPE_LEFT => GestureDispatcher.dispatch(GesturePayload(Gesture.Left, source), directive)
-          case GESTURE_SWIPE_RIGHT => GestureDispatcher.dispatch(GesturePayload(Gesture.Right, source), directive)
-          case GESTURE_SWIPE_UP_AND_LEFT => GestureDispatcher.dispatch(GesturePayload(Gesture.UpLeft, source), directive)
-          case GESTURE_SWIPE_UP_AND_RIGHT => GestureDispatcher.dispatch(GesturePayload(Gesture.UpRight, source), directive)
-          case GESTURE_SWIPE_DOWN_AND_LEFT => GestureDispatcher.dispatch(GesturePayload(Gesture.DownLeft, source), directive)
-          case GESTURE_SWIPE_DOWN_AND_RIGHT => GestureDispatcher.dispatch(GesturePayload(Gesture.DownRight, source), directive)
-          case GESTURE_SWIPE_LEFT_AND_UP => GestureDispatcher.dispatch(GesturePayload(Gesture.LeftUp, source), directive)
-          case GESTURE_SWIPE_RIGHT_AND_UP => GestureDispatcher.dispatch(GesturePayload(Gesture.RightUp, source), directive)
-          case GESTURE_SWIPE_LEFT_AND_DOWN => GestureDispatcher.dispatch(GesturePayload(Gesture.LeftDown, source), directive)
-          case GESTURE_SWIPE_RIGHT_AND_DOWN => GestureDispatcher.dispatch(GesturePayload(Gesture.RightDown, source), directive)
-          case GESTURE_SWIPE_UP_AND_DOWN => GestureDispatcher.dispatch(GesturePayload(Gesture.UpDown, source), directive)
-          case GESTURE_SWIPE_DOWN_AND_UP => GestureDispatcher.dispatch(GesturePayload(Gesture.DownUp, source), directive)
-          case GESTURE_SWIPE_RIGHT_AND_LEFT => GestureDispatcher.dispatch(GesturePayload(Gesture.RightLeft, source), directive)
-          case GESTURE_SWIPE_LEFT_AND_RIGHT => GestureDispatcher.dispatch(GesturePayload(Gesture.LeftRight, source), directive)
-        }
-    }.getOrElse(false)
+    val source = Option(getRootInActiveWindow).flatMap(v => Option(v.findFocus(FOCUS_ACCESSIBILITY)))
+    val directive = source.map { s =>
+      new PayloadDirective(s.getPackageName.toString, s.getClassName.toString)
+    }.getOrElse(new PayloadDirective("", ""))
+    id match {
+      case GESTURE_SWIPE_UP => GestureDispatcher.dispatch(GesturePayload(Gesture.Up, source), directive)
+      case GESTURE_SWIPE_DOWN => GestureDispatcher.dispatch(GesturePayload(Gesture.Down, source), directive)
+      case GESTURE_SWIPE_LEFT => GestureDispatcher.dispatch(GesturePayload(Gesture.Left, source), directive)
+      case GESTURE_SWIPE_RIGHT => GestureDispatcher.dispatch(GesturePayload(Gesture.Right, source), directive)
+      case GESTURE_SWIPE_UP_AND_LEFT => GestureDispatcher.dispatch(GesturePayload(Gesture.UpLeft, source), directive)
+      case GESTURE_SWIPE_UP_AND_RIGHT => GestureDispatcher.dispatch(GesturePayload(Gesture.UpRight, source), directive)
+      case GESTURE_SWIPE_DOWN_AND_LEFT => GestureDispatcher.dispatch(GesturePayload(Gesture.DownLeft, source), directive)
+      case GESTURE_SWIPE_DOWN_AND_RIGHT => GestureDispatcher.dispatch(GesturePayload(Gesture.DownRight, source), directive)
+      case GESTURE_SWIPE_LEFT_AND_UP => GestureDispatcher.dispatch(GesturePayload(Gesture.LeftUp, source), directive)
+      case GESTURE_SWIPE_RIGHT_AND_UP => GestureDispatcher.dispatch(GesturePayload(Gesture.RightUp, source), directive)
+      case GESTURE_SWIPE_LEFT_AND_DOWN => GestureDispatcher.dispatch(GesturePayload(Gesture.LeftDown, source), directive)
+      case GESTURE_SWIPE_RIGHT_AND_DOWN => GestureDispatcher.dispatch(GesturePayload(Gesture.RightDown, source), directive)
+      case GESTURE_SWIPE_UP_AND_DOWN => GestureDispatcher.dispatch(GesturePayload(Gesture.UpDown, source), directive)
+      case GESTURE_SWIPE_DOWN_AND_UP => GestureDispatcher.dispatch(GesturePayload(Gesture.DownUp, source), directive)
+      case GESTURE_SWIPE_RIGHT_AND_LEFT => GestureDispatcher.dispatch(GesturePayload(Gesture.RightLeft, source), directive)
+      case GESTURE_SWIPE_LEFT_AND_RIGHT => GestureDispatcher.dispatch(GesturePayload(Gesture.LeftRight, source), directive)
+    }
   }
 
 }

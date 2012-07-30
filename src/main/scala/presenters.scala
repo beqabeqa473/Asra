@@ -526,6 +526,8 @@ class Presenters {
       true
     }
 
+    onViewAccessibilityFocused { e:AccessibilityEvent => process(e) }
+
     onViewFocused { e:AccessibilityEvent => process(e) }
 
     onViewHoverEnter { e:AccessibilityEvent => process(e) }
@@ -753,10 +755,9 @@ class Presenters {
 
     onViewAccessibilityFocused { e:AccessibilityEvent => Presenter.process(e, Some(TYPE_VIEW_FOCUSED)) }
 
-
     onViewFocused { e:AccessibilityEvent =>
       val utterances = utterancesFor(e, addBlank=false, stripBlanks=true) match {
-        case Nil if(e.getEventType != TYPE_VIEW_HOVER_ENTER) => 
+        case Nil if(!List(TYPE_VIEW_ACCESSIBILITY_FOCUSED, TYPE_VIEW_HOVER_ENTER).contains(e.getEventType)) => 
           e.getClassName.toString.split("\\.").last :: Nil
         case u => u
       }
