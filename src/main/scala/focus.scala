@@ -25,6 +25,9 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
     List(c)++c.descendants
   }.flatten
 
+  lazy val interactive_? =
+    node.isCheckable || node.isClickable || node.isLongClickable || node.isFocusable
+
   private def findAccessibilityFocus(nodes:List[AccessibilityNodeInfo], from:Int):Option[AccessibilityNodeInfo] =
     nodes.drop(from).find { n =>
       Log.d("spielcheck", "Evaluating "+nodes.indexOf(n)+" with "+children.size+" children")

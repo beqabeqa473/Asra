@@ -271,11 +271,8 @@ class Presenter(directive:Option[HandlerDirective] = None) extends Handler[Event
     }
   }
 
-  protected def interactive_?(source:AccessibilityNodeInfo) =
-    source.isCheckable || source.isClickable || source.isLongClickable || source.isFocusable
-
   protected def interactables(source:AccessibilityNodeInfo) = 
-    (source :: source.descendants).filter(interactive_?(_))
+    (source :: source.descendants).filter(_.interactive_?)
 
   /**
    * Run a given <code>AccessibilityEvent</code> through this <code>Presenter</code>
@@ -366,7 +363,7 @@ object After extends Presenter {
   onViewFocused { e:AccessibilityEvent =>
     if(VERSION.SDK_INT >= 14)
       Option(e.getSource).foreach { source =>
-        if(source.getChildCount == 0 && interactive_?(source) && !e.isEnabled)
+        if(source.getChildCount == 0 && source.interactive_? && !e.isEnabled)
           speak(getString(R.string.disabled), false)
       }
     false
@@ -660,7 +657,7 @@ class Presenters {
           speak(utterances)
         else
           Option(e.getSource).map { source =>
-            if(interactive_?(source))
+            if(source.interactive_?)
               speak(utterances)
             else
               true
