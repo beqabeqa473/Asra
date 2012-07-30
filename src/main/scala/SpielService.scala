@@ -134,4 +134,6 @@ object SpielService {
   def enabled = _enabled
   def enabled_=(e:Boolean) = _enabled = e
 
+  def rootInActiveWindow = Option(service.getRootInActiveWindow)
+
 }

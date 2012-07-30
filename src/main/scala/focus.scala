@@ -1,6 +1,7 @@
 package info.spielproject.spiel
 package focus
 
+import android.os.Build.VERSION
 import android.util.Log
 import android.view.accessibility._
 
@@ -11,7 +12,10 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
       case null => v
       case v2 => iterate(v2)
     }
-    iterate(node)
+    if(VERSION.SDK_INT >= 16)
+      SpielService.rootInActiveWindow.getOrElse(iterate(node))
+    else
+      iterate(node)
   }
 
   lazy val parent = node.getParent
