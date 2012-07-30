@@ -47,7 +47,7 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
     }.orElse(findAccessibilityFocus(nodes, 0))
 
   lazy val nextAccessibilityFocus = {
-    val nodes = root.descendants
+    val nodes = root.descendants.filter(_.isVisibleToUser)
     nodes.indexOf(node) match {
       case -1 => None
       case v => findAccessibilityFocus(nodes, v+1)
@@ -55,7 +55,7 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
   }
 
   lazy val prevAccessibilityFocus = {
-    val nodes = root.descendants.reverse
+    val nodes = root.descendants.reverse.filter(_.isVisibleToUser)
     nodes.indexOf(node) match {
       case -1 => None
       case v => findAccessibilityFocus(nodes, v+1)
