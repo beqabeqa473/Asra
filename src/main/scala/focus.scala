@@ -21,8 +21,8 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
 
   lazy val siblings = parent.children
 
-  lazy val descendants:List[AccessibilityNodeInfo] = children.map { c =>
-    List(c)++c.descendants
+  lazy val descendants:List[AccessibilityNodeInfo] = children++children.map { c =>
+    c.descendants
   }.flatten
 
   lazy val interactive_? =
