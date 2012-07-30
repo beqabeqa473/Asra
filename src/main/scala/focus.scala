@@ -28,10 +28,14 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
   lazy val interactive_? =
     node.isCheckable || node.isClickable || node.isLongClickable || node.isFocusable
 
+  protected def interestedInAccessibilityFocus = {
+    node.children == Nil
+  }
+
   private def findAccessibilityFocus(nodes:List[AccessibilityNodeInfo], from:Int):Option[AccessibilityNodeInfo] =
     nodes.drop(from).find { n =>
       Log.d("spielcheck", "Evaluating "+nodes.indexOf(n)+" with "+children.size+" children")
-      n.children == Nil
+      n.interestedInAccessibilityFocus
     }.orElse(findAccessibilityFocus(nodes, 0))
 
   lazy val nextAccessibilityFocus = {

@@ -87,7 +87,8 @@ class SpielService extends AccessibilityService {
     if(List(TYPE_VIEW_FOCUSED, TYPE_VIEW_HOVER_ENTER).contains(event.getEventType))
       Option(event.getSource).foreach { n =>
         if(VERSION.SDK_INT >= 16)
-          n.performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS)
+          if(n.children == Nil)
+            n.performAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS)
       }
     Presenter.process(event)
   }
