@@ -29,12 +29,16 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
     node.isCheckable || node.isClickable || node.isLongClickable || node.isFocusable
 
   protected def interestedInAccessibilityFocus = {
-    node.children == Nil
+    val nodeClass = utils.classForName(node.getClassName.toString, node.getPackageName.toString)
+    val ancestors = nodeClass.map(utils.ancestors(_).map(_.getName)).getOrElse(Nil)
+    Log.d("spielcheck", "Evaluating "+node+": "+(node.children == Nil)+", "+ancestors)
+    val text = Option(node.getText).map(_.toString).getOrElse("")+(Option(node.getContentDescription).map(": "+_).getOrElse(""))
+    node.children == Nil &&
+    !(ancestors.contains("android.view.ViewGroup") && text.isEmpty)
   }
 
   private def findAccessibilityFocus(nodes:List[AccessibilityNodeInfo], from:Int):Option[AccessibilityNodeInfo] =
     nodes.drop(from).find { n =>
-      Log.d("spielcheck", "Evaluating "+nodes.indexOf(n)+" with "+children.size+" children")
       n.interestedInAccessibilityFocus
     }.orElse(findAccessibilityFocus(nodes, 0))
 
