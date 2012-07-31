@@ -70,14 +70,7 @@ class SpielService extends AccessibilityService {
   }
 
   override protected def onServiceConnected {
-    val info = new AccessibilityServiceInfo()
-    import AccessibilityServiceInfo._
-    info.feedbackType = FEEDBACK_SPOKEN
-    // Should not need this but when using install -r to reinstall, explore by touch may not get enabled otherwise
-    if(VERSION.SDK_INT >= 16)
-      info.flags = FLAG_REQUEST_TOUCH_EXPLORATION_MODE | DEFAULT
-    info.eventTypes = TYPES_ALL_MASK
-    setServiceInfo(info)
+    setServiceInfo(SpielService.info)
   }
 
   override def onInterrupt = TTS.stop
@@ -132,7 +125,25 @@ object SpielService {
 
   private var _enabled = false
   def enabled = _enabled
-  def enabled_=(e:Boolean) = _enabled = e
+
+  lazy val info = {
+    val info = new AccessibilityServiceInfo()
+    import AccessibilityServiceInfo._
+    info.feedbackType = FEEDBACK_SPOKEN
+    // Should not need this but when using install -r to reinstall, explore by touch may not get enabled otherwise
+    if(VERSION.SDK_INT >= 16)
+      info.flags = FLAG_REQUEST_TOUCH_EXPLORATION_MODE | DEFAULT
+    info.eventTypes = TYPES_ALL_MASK
+    info
+  }
+
+  def enabled_=(e:Boolean) = {
+    if(e)
+      service.setServiceInfo(info)
+    else
+      service.setServiceInfo(null)
+    _enabled = e
+  }
 
   def rootInActiveWindow = Option(service.getRootInActiveWindow)
 
