@@ -124,6 +124,10 @@ class AllPreferences extends PreferenceFragment with HasScriptPreferences {
     Option(getPreferenceScreen).foreach(_.removeAll())
     addPreferencesFromResource(R.xml.preferences)
 
+    val enginesPreference = findPreference("speechEngine").asInstanceOf[ListPreference]
+    enginesPreference.setEntries((getString(R.string.systemDefault) :: TTS.engines.map(_._1).toList).toArray[CharSequence])
+    enginesPreference.setEntryValues(("" :: TTS.engines.map(_._2).toList).toArray[CharSequence])
+
     Option(BluetoothAdapter.getDefaultAdapter).getOrElse {
       getPreferenceScreen.getPreference(0).asInstanceOf[PreferenceScreen].removePreference(findPreference("useBluetoothSCO"))
     }
