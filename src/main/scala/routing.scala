@@ -115,9 +115,15 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
     // Now dispatch to the default, catch-all Handler.
     def dispatchToDefault() = {
       Log.d("spiel", "Default dispatch")
-      table.get(HandlerDirective(All, All))
+      val handler = table.get(HandlerDirective(All, All))
       .orElse(table.get(new HandlerDirective("", "")))
-      .map(_(payload)).getOrElse(false)
+      
+      handler.map { h =>
+        if(!alreadyCalled.contains(h))
+          h(payload)
+        else
+          false
+      }.getOrElse(false)
     }
 
     def dispatchToAfter() {
