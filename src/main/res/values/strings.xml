@@ -176,4 +176,11 @@
   <!-- String returned when an unknown number calls. -->
   <string name="unknown">Unknown</string>
 
+  <!-- Granularities -->
+  <string name="character">Character</string>
+  <string name="word">Word</string>
+  <string name="line">Line</string>
+  <string name="paragraph">Paragraph</string>
+  <string name="page">Page</string>
+
 </resources>

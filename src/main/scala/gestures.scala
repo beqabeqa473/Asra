@@ -160,9 +160,63 @@ class Gestures {
 
     onRightLeft { source => true }
 
-    onUpDown { source => true }
+    private val granularities = List(MOVEMENT_GRANULARITY_CHARACTER, MOVEMENT_GRANULARITY_WORD, MOVEMENT_GRANULARITY_LINE, MOVEMENT_GRANULARITY_PARAGRAPH, MOVEMENT_GRANULARITY_PAGE)
 
-    onDownUp { source => true }
+    private var granularity:Option[Int] = None
+
+    private def describeGranularity() {
+      val id = granularity.map { g =>
+        g match {
+          case MOVEMENT_GRANULARITY_CHARACTER => R.string.character
+          case MOVEMENT_GRANULARITY_WORD => R.string.word
+          case MOVEMENT_GRANULARITY_LINE => R.string.line
+          case MOVEMENT_GRANULARITY_PARAGRAPH => R.string.paragraph
+          case MOVEMENT_GRANULARITY_PAGE => R.string.page
+        }
+      }.getOrElse(R.string.none)
+      TTS.speak(getString(id), true)
+    }
+
+    onUpDown { source =>
+      source.map { s =>
+        val grans = s.getMovementGranularities
+        val candidates = granularities.filter(v => (grans & v) == 0)
+        granularity.map { g =>
+          candidates.indexOf(g) match {
+            case -1 => granularity = candidates.reverse.headOption
+            case 0 =>
+              granularity = None
+              granularity.size
+            case v => granularity = Some(candidates(v-1))
+          }
+        }.getOrElse {
+          granularity = candidates.reverse.headOption
+        }
+        describeGranularity()
+      }
+      true
+    }
+
+    onDownUp { source =>
+      source.map { s =>
+        val grans = s.getMovementGranularities
+        val candidates = granularities.filter(v => (grans & v) == 0)
+        granularity.map { g =>
+          candidates.indexOf(g) match {
+            case -1 => granularity = candidates.headOption
+            case v if(v == candidates.size-1) =>
+              granularity = None
+              candidates.size
+            case v => granularity = Some(candidates(v+1))
+          }
+        }.getOrElse {
+          granularity = candidates.headOption
+        }
+        describeGranularity()
+      }
+
+      true
+    }
 
   }
 
