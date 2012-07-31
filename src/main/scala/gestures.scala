@@ -135,9 +135,12 @@ class Gestures {
             Some(s.performAction(ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY, b))
           } else None
         }.orElse {
+          var rv = false
           if((s.getActions&ACTION_PREVIOUS_HTML_ELEMENT) != 0)
-            Some(s.performAction(ACTION_PREVIOUS_HTML_ELEMENT))
-          else s.prevAccessibilityFocus.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
+            rv = s.performAction(ACTION_PREVIOUS_HTML_ELEMENT)
+          if(!rv)
+            s.prevAccessibilityFocus.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
+          Some(rv)
         }
       }.getOrElse(setInitialFocus())
 
@@ -150,9 +153,12 @@ class Gestures {
             Some(s.performAction(ACTION_NEXT_AT_MOVEMENT_GRANULARITY, b))
           } else None
         }.orElse {
+          var rv = false
           if((s.getActions&ACTION_NEXT_HTML_ELEMENT) != 0)
-            Some(s.performAction(ACTION_NEXT_HTML_ELEMENT))
-          else s.nextAccessibilityFocus.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
+            rv = s.performAction(ACTION_NEXT_HTML_ELEMENT)
+          if(!rv)
+            s.nextAccessibilityFocus.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
+          Some(rv)
         }
       }.getOrElse(setInitialFocus())
 

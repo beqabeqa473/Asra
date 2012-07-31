@@ -4,6 +4,7 @@ package focus
 import android.os.Build.VERSION
 import android.util.Log
 import android.view.accessibility._
+import AccessibilityNodeInfo._
 
 case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
 
@@ -38,7 +39,7 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
     Log.d("spielcheck", "Evaluating "+node+": "+(node.children == Nil)+", "+ancestors)
     val text = Option(node.getText).map(_.toString).getOrElse("")+(Option(node.getContentDescription).map(": "+_).getOrElse(""))
     node.children == Nil &&
-    !(ancestors.contains("android.view.ViewGroup") && text.isEmpty)
+    !(ancestors.contains("android.view.ViewGroup") && text.isEmpty && (node.getActions&ACTION_NEXT_HTML_ELEMENT) == 0)
   }
 
   private def findAccessibilityFocus(nodes:List[AccessibilityNodeInfo], from:Int, wrapped:Boolean = false):Option[AccessibilityNodeInfo] =
