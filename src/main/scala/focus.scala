@@ -41,15 +41,20 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
     !(ancestors.contains("android.view.ViewGroup") && text.isEmpty)
   }
 
-  private def findAccessibilityFocus(nodes:List[AccessibilityNodeInfo], from:Int):Option[AccessibilityNodeInfo] =
+  private def findAccessibilityFocus(nodes:List[AccessibilityNodeInfo], from:Int, wrapped:Boolean = false):Option[AccessibilityNodeInfo] =
     nodes.drop(from).find { n =>
       n.interestedInAccessibilityFocus
-    }.orElse(findAccessibilityFocus(nodes, 0))
+    }.orElse {
+      if(wrapped)
+        None
+      else
+        findAccessibilityFocus(nodes, 0, true)
+    }
 
   lazy val nextAccessibilityFocus = {
     val nodes = root.descendants.filter(_.isVisibleToUser)
     nodes.indexOf(node) match {
-      case -1 => None
+      case -1 => findAccessibilityFocus(nodes, 0, true)
       case v => findAccessibilityFocus(nodes, v+1)
     }
   }
@@ -57,7 +62,7 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
   lazy val prevAccessibilityFocus = {
     val nodes = root.descendants.reverse.filter(_.isVisibleToUser)
     nodes.indexOf(node) match {
-      case -1 => None
+      case -1 => findAccessibilityFocus(nodes, 0, true)
       case v => findAccessibilityFocus(nodes, v+1)
     }
   }

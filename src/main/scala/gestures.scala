@@ -117,29 +117,40 @@ class Gestures {
 
   class Default extends Listener(Some(HandlerDirective(Value(""), Value("")))) {
 
-    private def prev(source:Option[AccessibilityNodeInfo]):Boolean = source.flatMap { s =>
-      if((s.getActions&ACTION_PREVIOUS_HTML_ELEMENT) != 0)
-        return s.performAction(ACTION_PREVIOUS_HTML_ELEMENT)
-      granularity.map { g =>
-        val b = new Bundle()
-        b.putInt(ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, g)
-        Some(s.performAction(ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY, b))
-      }.getOrElse{
-        s.prevAccessibilityFocus.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
-      }
-    }.getOrElse(false)
+    private def setInitialFocus() =
+      SpielService.rootInActiveWindow.map { root =>
+        Log.d("spielcheck", "Setting initial focus")
+        val filtered = root.descendants.filter(_.isVisibleToUser)
+        Option(root.findFocus(FOCUS_INPUT)).map(_.performAction(FOCUS_ACCESSIBILITY)).getOrElse(false) ||
+        filtered.exists(_.performAction(FOCUS_ACCESSIBILITY)) ||
+        filtered.exists(_.performAction(FOCUS_INPUT))
+      }.getOrElse(false)
 
-    private def next(source:Option[AccessibilityNodeInfo]):Boolean = source.flatMap { s =>
-      if((s.getActions&ACTION_NEXT_HTML_ELEMENT) != 0)
-        return s.performAction(ACTION_NEXT_HTML_ELEMENT)
-      granularity.map { g =>
-        val b = new Bundle()
-        b.putInt(ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, g)
-        Some(s.performAction(ACTION_NEXT_AT_MOVEMENT_GRANULARITY, b))
-      }.getOrElse{
-        s.nextAccessibilityFocus.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
-      }
-    }.getOrElse(false)
+    private def prev(source:Option[AccessibilityNodeInfo]):Boolean = 
+      source.flatMap { s =>
+        if((s.getActions&ACTION_PREVIOUS_HTML_ELEMENT) != 0)
+          return s.performAction(ACTION_PREVIOUS_HTML_ELEMENT)
+        granularity.map { g =>
+          val b = new Bundle()
+          b.putInt(ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, g)
+          Some(s.performAction(ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY, b))
+        }.getOrElse{
+          s.prevAccessibilityFocus.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
+        }
+      }.getOrElse(setInitialFocus())
+
+    private def next(source:Option[AccessibilityNodeInfo]):Boolean =
+      source.flatMap { s =>
+        if((s.getActions&ACTION_NEXT_HTML_ELEMENT) != 0)
+          return s.performAction(ACTION_NEXT_HTML_ELEMENT)
+        granularity.map { g =>
+          val b = new Bundle()
+          b.putInt(ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, g)
+          Some(s.performAction(ACTION_NEXT_AT_MOVEMENT_GRANULARITY, b))
+        }.getOrElse{
+          s.nextAccessibilityFocus.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
+        }
+      }.getOrElse(setInitialFocus())
 
     onLeft { source => prev(source) }
 

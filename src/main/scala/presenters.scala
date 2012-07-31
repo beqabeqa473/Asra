@@ -322,8 +322,6 @@ trait GenericButtonPresenter extends Presenter {
 
 object Before extends Presenter {
 
-  onViewAccessibilityFocused { e:AccessibilityEvent => stopSpeaking() }
-
   onViewHoverEnter { e:AccessibilityEvent =>
     stopSpeaking()
     if(SystemClock.uptimeMillis-e.getEventTime <= 100)
@@ -364,12 +362,6 @@ object After extends Presenter {
           speak(getString(R.string.disabled), false)
       }
     false
-  }
-
-  onWindowStateChanged { e:AccessibilityEvent =>
-    if(VERSION.SDK_INT >= 16)
-      Option(e.getSource).foreach(_.descendants.headOption.foreach(_.performAction(FOCUS_ACCESSIBILITY)))
-    true
   }
 
 }
