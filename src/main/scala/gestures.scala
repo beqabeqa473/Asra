@@ -2,6 +2,7 @@ package info.spielproject.spiel
 package gestures
 
 import android.accessibilityservice.AccessibilityService._
+import android.os.Bundle
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import AccessibilityNodeInfo._
@@ -116,29 +117,33 @@ class Gestures {
 
   class Default extends Listener(Some(HandlerDirective(Value(""), Value("")))) {
 
-    onLeft { source =>
-      source.flatMap { s =>
+    private def prev(source:Option[AccessibilityNodeInfo]):Boolean = source.flatMap { s =>
+      granularity.map { g =>
+        val b = new Bundle()
+        b.putInt(ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, g)
+        Some(s.performAction(ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY, b))
+      }.getOrElse{
         s.prevAccessibilityFocus.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
-      }.getOrElse(true)
-    }
+      }
+    }.getOrElse(false)
 
-    onRight { source =>
-      source.flatMap { s =>
+    private def next(source:Option[AccessibilityNodeInfo]):Boolean = source.flatMap { s =>
+      granularity.map { g =>
+        val b = new Bundle()
+        b.putInt(ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, g)
+        Some(s.performAction(ACTION_NEXT_AT_MOVEMENT_GRANULARITY, b))
+      }.getOrElse{
         s.nextAccessibilityFocus.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
-      }.getOrElse(true)
-    }
+      }
+    }.getOrElse(false)
 
-    onUp { source =>
-      source.flatMap { s =>
-        s.prevAccessibilityFocus.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
-      }.getOrElse(true)
-    }
+    onLeft { source => prev(source) }
 
-    onDown { source =>
-      source.flatMap { s =>
-        s.nextAccessibilityFocus.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
-      }.getOrElse(true)
-    }
+    onRight { source => next(source) }
+
+    onUp { source => prev(source) }
+
+    onDown { source => next(source) }
 
     onUpLeft { source => SpielService.performGlobalAction(GLOBAL_ACTION_HOME) }
 
@@ -180,7 +185,8 @@ class Gestures {
     onUpDown { source =>
       source.map { s =>
         val grans = s.getMovementGranularities
-        val candidates = granularities.filter(v => (grans & v) == 0)
+        Log.d("spielcheck", "Grans: "+grans)
+        val candidates = granularities.filter(v => (grans & v) != 0)
         granularity.map { g =>
           candidates.indexOf(g) match {
             case -1 => granularity = candidates.reverse.headOption
@@ -200,7 +206,7 @@ class Gestures {
     onDownUp { source =>
       source.map { s =>
         val grans = s.getMovementGranularities
-        val candidates = granularities.filter(v => (grans & v) == 0)
+        val candidates = granularities.filter(v => (grans & v) != 0)
         granularity.map { g =>
           candidates.indexOf(g) match {
             case -1 => granularity = candidates.headOption
