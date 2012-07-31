@@ -2,15 +2,11 @@ import AndroidKeys._
 
 AndroidProject.androidSettings
 
-AndroidManifestGenerator.settings
-
 AndroidMarketPublish.settings
 
 name := "Spiel"
 
 version := "3.0.0"
-
-versionCode := 13
 
 scalaVersion := "2.9.2"
 
