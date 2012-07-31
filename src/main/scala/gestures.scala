@@ -128,27 +128,31 @@ class Gestures {
 
     private def prev(source:Option[AccessibilityNodeInfo]):Boolean = 
       source.flatMap { s =>
-        if((s.getActions&ACTION_PREVIOUS_HTML_ELEMENT) != 0)
-          return s.performAction(ACTION_PREVIOUS_HTML_ELEMENT)
-        granularity.map { g =>
-          val b = new Bundle()
-          b.putInt(ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, g)
-          Some(s.performAction(ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY, b))
-        }.getOrElse{
-          s.prevAccessibilityFocus.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
+        granularity.flatMap { g =>
+          if((s.getActions&ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY) != 0) {
+            val b = new Bundle()
+            b.putInt(ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, g)
+            Some(s.performAction(ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY, b))
+          } else None
+        }.orElse {
+          if((s.getActions&ACTION_PREVIOUS_HTML_ELEMENT) != 0)
+            Some(s.performAction(ACTION_PREVIOUS_HTML_ELEMENT))
+          else s.prevAccessibilityFocus.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
         }
       }.getOrElse(setInitialFocus())
 
-    private def next(source:Option[AccessibilityNodeInfo]):Boolean =
+    private def next(source:Option[AccessibilityNodeInfo]):Boolean = 
       source.flatMap { s =>
-        if((s.getActions&ACTION_NEXT_HTML_ELEMENT) != 0)
-          return s.performAction(ACTION_NEXT_HTML_ELEMENT)
-        granularity.map { g =>
-          val b = new Bundle()
-          b.putInt(ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, g)
-          Some(s.performAction(ACTION_NEXT_AT_MOVEMENT_GRANULARITY, b))
-        }.getOrElse{
-          s.nextAccessibilityFocus.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
+        granularity.flatMap { g =>
+          if((s.getActions&ACTION_NEXT_AT_MOVEMENT_GRANULARITY) != 0) {
+            val b = new Bundle()
+            b.putInt(ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, g)
+            Some(s.performAction(ACTION_NEXT_AT_MOVEMENT_GRANULARITY, b))
+          } else None
+        }.orElse {
+          if((s.getActions&ACTION_NEXT_HTML_ELEMENT) != 0)
+            Some(s.performAction(ACTION_NEXT_HTML_ELEMENT))
+          else s.nextAccessibilityFocus.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
         }
       }.getOrElse(setInitialFocus())
 
@@ -200,7 +204,6 @@ class Gestures {
     onUpDown { source =>
       source.map { s =>
         val grans = s.getMovementGranularities
-        Log.d("spielcheck", "Grans: "+grans)
         val candidates = granularities.filter(v => (grans & v) != 0)
         granularity.map { g =>
           candidates.indexOf(g) match {
