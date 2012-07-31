@@ -55,7 +55,11 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
         tts.shutdown()
         tts = null
       }
-      val desiredEngine = platformEngine.orElse(Some(Preferences.speechEngine))
+      val desiredEngine = if(failures >= 3)
+        platformEngine
+      else if(Preferences.speechEngine != "")
+        Some(Preferences.speechEngine)
+      else None
       tts= desiredEngine.map(new TextToSpeech(service, this, _)).getOrElse(new TextToSpeech(service, this))
       TextToSpeech.SUCCESS
     }
@@ -213,7 +217,6 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   private var failures = 0
 
   private def reInitOnFailure() {
-    failures = 0
     val intent = new Intent()
     intent.setAction(tts.Engine.ACTION_CHECK_TTS_DATA)
     if(Preferences.speechEngine != "")
@@ -225,6 +228,7 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
       case e:android.content.ActivityNotFoundException => Log.e("spiel", "Error reinitializing speech", e)
     }
     init()
+    failures = 0
   }
 
   def guard(f: => Int) {
