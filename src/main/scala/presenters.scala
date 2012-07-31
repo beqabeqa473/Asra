@@ -96,9 +96,6 @@ class Presenter(directive:Option[HandlerDirective] = None) extends Handler[Event
 
   Presenter.register(this)
 
-  protected def getString(resID:Int) = Presenter.context.getString(resID)
-
-  protected def getString(resID:Int, formatArgs:AnyRef*) = context.getString(resID, formatArgs: _*)
 
   // Convenience functions for calling TTS, used from scripting subsystem.
 

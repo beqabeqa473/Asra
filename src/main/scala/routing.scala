@@ -19,7 +19,14 @@ case class PayloadDirective(pkg:Value, cls:Value) {
 }
 
 abstract class Handler[PayloadType](val directive:Option[HandlerDirective] = None) {
+
+  protected def getString(resID:Int) = SpielService.context.getString(resID)
+
+  protected def getString(resID:Int, formatArgs:AnyRef*) = SpielService.context.getString(resID, formatArgs: _*)
+
+
   def apply(payload:PayloadType):Boolean
+
 }
 
 class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, after:Option[() => Handler[PayloadType]] = None) {
