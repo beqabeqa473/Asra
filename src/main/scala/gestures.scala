@@ -118,6 +118,8 @@ class Gestures {
   class Default extends Listener(Some(HandlerDirective(Value(""), Value("")))) {
 
     private def prev(source:Option[AccessibilityNodeInfo]):Boolean = source.flatMap { s =>
+      if((s.getActions&ACTION_PREVIOUS_HTML_ELEMENT) != 0)
+        return s.performAction(ACTION_PREVIOUS_HTML_ELEMENT)
       granularity.map { g =>
         val b = new Bundle()
         b.putInt(ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, g)
@@ -128,6 +130,8 @@ class Gestures {
     }.getOrElse(false)
 
     private def next(source:Option[AccessibilityNodeInfo]):Boolean = source.flatMap { s =>
+      if((s.getActions&ACTION_NEXT_HTML_ELEMENT) != 0)
+        return s.performAction(ACTION_NEXT_HTML_ELEMENT)
       granularity.map { g =>
         val b = new Bundle()
         b.putInt(ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, g)
