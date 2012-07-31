@@ -4,8 +4,6 @@ AndroidProject.androidSettings
 
 AndroidManifestGenerator.settings
 
-TypedResources.settings
-
 AndroidMarketPublish.settings
 
 name := "Spiel"

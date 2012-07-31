@@ -22,8 +22,6 @@ import presenters._
 import scripting._
 import triggers.Triggers
 
-import TypedResource._
-
 /**
  * Activity that serves as a host for other tabs.
 */
@@ -425,22 +423,22 @@ class Scripts extends Fragment with Refreshable with RadioGroup.OnCheckedChangeL
 
   private class CredentialsDialog extends DialogFragment {
     override def onCreateDialog(bundle:Bundle) = {
-      val dialog = new Dialog(getActivity) with TypedDialog
+      val dialog = new Dialog(getActivity)
       dialog.setContentView(R.layout.bazaar_credentials)
-      val message = dialog.findView(TR.message)
+      val message = dialog.findViewById(R.id.message).asInstanceOf[TextView]
       if(Preferences.bazaarUsername != "" || Preferences.bazaarPassword != "")
         message.setText(getString(R.string.bazaar_credentials_invalid))
       else
         message.setText(getString(R.string.bazaar_credentials))
-      val username = dialog.findView(TR.username)
+      val username = dialog.findViewById(R.id.username).asInstanceOf[EditText]
       username.setText(Preferences.bazaarUsername)
-      val password = dialog.findView(TR.password)
+      val password = dialog.findViewById(R.id.password).asInstanceOf[EditText]
       password.setText(Preferences.bazaarPassword)
       def clearValues() {
         username.setText("")
         password.setText("")
       }
-      dialog.findView(TR.ok).setOnClickListener(new View.OnClickListener {
+      dialog.findViewById(R.id.ok).asInstanceOf[Button].setOnClickListener(new View.OnClickListener {
         def onClick(v:View) {
           if(username.getText.toString != "" && password.getText.toString != "") {
             Preferences.bazaarUsername = username.getText.toString
@@ -451,7 +449,7 @@ class Scripts extends Fragment with Refreshable with RadioGroup.OnCheckedChangeL
             dialog.show()
         }
       })
-      dialog.findView(TR.signup).setOnClickListener(new View.OnClickListener {
+      dialog.findViewById(R.id.signup).asInstanceOf[Button].setOnClickListener(new View.OnClickListener {
         def onClick(v:View) {
           val url = "http://bazaar.spielproject.info/signup?returnTo=spiel:scripts"
           val intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
@@ -460,7 +458,7 @@ class Scripts extends Fragment with Refreshable with RadioGroup.OnCheckedChangeL
           dialog.dismiss()
         }
       })
-      dialog.findView(TR.cancel).setOnClickListener(new View.OnClickListener {
+      dialog.findViewById(R.id.cancel).asInstanceOf[Button].setOnClickListener(new View.OnClickListener {
         def onClick(v:View) {
           clearValues()
           scriptToPost = None
@@ -473,21 +471,21 @@ class Scripts extends Fragment with Refreshable with RadioGroup.OnCheckedChangeL
 
   private class PostDialog extends DialogFragment {
     override def onCreateDialog(bundle:Bundle) = {
-      val dialog = new Dialog(getActivity) with TypedDialog
+      val dialog = new Dialog(getActivity)
       dialog.setContentView(R.layout.post_script)
-      val changesField = dialog.findView(TR.changes)
+      val changesField = dialog.findViewById(R.id.changes).asInstanceOf[EditText]
       changesField.setText(scriptChanges)
       def clearValues() {
         changesField.setText("")
       }
-      dialog.findView(TR.ok).setOnClickListener(new View.OnClickListener {
+      dialog.findViewById(R.id.ok).asInstanceOf[Button].setOnClickListener(new View.OnClickListener {
         def onClick(v:View) {
           scriptChanges = changesField.getText.toString
           dialog.dismiss()
           postToBazaar()
         }
       })
-      dialog.findView(TR.cancel).setOnClickListener(new View.OnClickListener {
+      dialog.findViewById(R.id.cancel).asInstanceOf[Button].setOnClickListener(new View.OnClickListener {
         def onClick(v:View) {
           clearValues()
           scriptToPost = None
@@ -575,7 +573,7 @@ class Events extends ListFragment with Refreshable {
  * Activity that handles the installation of scripts.
 */
 
-class ScriptInstaller extends TypedActivity with AdapterView.OnItemClickListener {
+class ScriptInstaller extends Activity with AdapterView.OnItemClickListener {
 
   private var scripts:List[Script] = Nil
 
@@ -583,7 +581,7 @@ class ScriptInstaller extends TypedActivity with AdapterView.OnItemClickListener
     super.onCreate(bundle)
     setContentView(R.layout.script_installer)
 
-    val scriptsList = findView(TR.scripts)
+    val scriptsList = findViewById(R.id.scripts).asInstanceOf[ListView]
     scripts = BazaarProvider.newOrUpdatedScripts
     scriptsList.setAdapter(
       new ArrayAdapter[Script](
@@ -611,7 +609,7 @@ class ScriptInstaller extends TypedActivity with AdapterView.OnItemClickListener
 
     selectAll()
 
-    findView(TR.selectAll).setOnClickListener(
+    findViewById(R.id.selectAll).asInstanceOf[Button].setOnClickListener(
       new View.OnClickListener {
         def onClick(v:View) {
           selectAll()
@@ -619,13 +617,13 @@ class ScriptInstaller extends TypedActivity with AdapterView.OnItemClickListener
       }
     )
 
-    findView(TR.deselectAll).setOnClickListener(
+    findViewById(R.id.deselectAll).asInstanceOf[Button].setOnClickListener(
       new View.OnClickListener {
         def onClick(v:View) = scriptsList.clearChoices()
       }
     )
 
-    findView(TR.install).setOnClickListener(
+    findViewById(R.id.install).asInstanceOf[Button].setOnClickListener(
       new View.OnClickListener {
         def onClick(v:View) {
           val checked = scriptsList.getCheckedItemPositions()
@@ -641,7 +639,7 @@ class ScriptInstaller extends TypedActivity with AdapterView.OnItemClickListener
       }
     )
 
-    findView(TR.cancel).setOnClickListener(
+    findViewById(R.id.cancel).asInstanceOf[Button].setOnClickListener(
       new View.OnClickListener {
         def onClick(v:View) = finish()
       }
