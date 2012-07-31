@@ -10,8 +10,8 @@
   <!-- On/off and other alerts -->
   <string name="spielOn">Spiel käytössä.</string>
   <string name="spielOff">Spiel pois käytöstä.</string>
-  <string name="screenOff">Ruutu pois käytöstä.</string>
-  <string name="unlocked">Avattu.</string>
+  <string name="screenOff">Näyttö pois käytöstä.</string>
+  <string name="unlocked">Lukitus avattu.</string>
   <string name="ringerOff">Soittoääni pois käytöstä.</string>
   <string name="ringerOn">Soittoääni käytössä.</string>
   <string name="newVoicemail">Uusi vastaajaviesti</string>
@@ -175,5 +175,12 @@
 
   <!-- String returned when an unknown number calls. -->
   <string name="unknown">Tuntematon</string>
+
+  <!-- Granularities -->
+  <string name="character">Merkki</string>
+  <string name="word">Sana</string>
+  <string name="line">Rivi</string>
+  <string name="paragraph">Kappale</string>
+  <string name="page">Sivu</string>
 
 </resources>
