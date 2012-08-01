@@ -72,11 +72,13 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
 
   protected def interestedInAccessibilityFocus = {
     //Log.d("spielcheck", "Evaluating "+node+": "+(node.children == Nil)+", "+ancestors)
-    label.foreach { l => Log.d("spielcheck", "Label: "+l) }
     val text = Option(node.getText).map(_.toString).getOrElse("")+(Option(node.getContentDescription).map(": "+_).getOrElse(""))
+    def isNonLabel =
+      !node.root.descendants.map(_.label).contains(Some(node))
     def isLeafNonHtmlViewGroup =
       node.children == Nil &&
       !(isA_?("android.view.ViewGroup") && text.isEmpty && (node.getActions&ACTION_NEXT_HTML_ELEMENT) == 0)
+    isNonLabel &&
     isLeafNonHtmlViewGroup
   }
 
