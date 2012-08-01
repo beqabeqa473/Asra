@@ -5,7 +5,6 @@ import collection.JavaConversions._
 
 import android.app.{ActivityManager, Service}
 import android.content.Context
-import android.graphics.Rect
 import android.os.Build.VERSION
 import android.os.{SystemClock, Vibrator}
 import android.util.Log
@@ -248,22 +247,13 @@ class Presenter(directive:Option[HandlerDirective] = None) extends Handler[Event
 
   protected def guessLabelFor(e:AccessibilityEvent):Option[String] = {
     Option(e.getSource).flatMap { source =>
-      val descendants = source.root.descendants.map { leaf =>
-        val rect = new Rect()
-        leaf.getBoundsInScreen(rect)
-        (leaf, rect)
-      }
-      val sr = new Rect()
-      source.getBoundsInScreen(sr)
-      val sourceRect = new Rect(0, sr.top, Int.MaxValue, sr.bottom)
-      val row = descendants.filter(_._2.intersect(sourceRect))
-      row.find((v) => v._1.getClassName == "android.widget.TextView" && v._1.getText != null && v._1.getText.length > 0).map(
-        _._1.getText.toString
+      source.row.find((v) => v.getClassName == "android.widget.TextView" && v.getText != null && v.getText.length > 0).map(
+        _.getText.toString
       ).orElse {
-        descendants.filter(_._2.bottom <= sourceRect.top)
-        .filter((v) => v._1 != null && v._1.getClassName == "android.widget.TextView" && v._1.getText != null && v._1.getText.length > 0)
-        .sortBy(_._2.bottom)
-        .reverse.headOption.map(_._1.getText.toString)
+        source.root.descendants.filter(_.rect.top >= source.rect.bottom)
+        .filter((v) => v.getClassName == "android.widget.TextView" && v.getText != null && v.getText.length > 0)
+        .sortBy(_.rect.top)
+        .reverse.headOption.map(_.getText.toString)
       }
     }
   }

@@ -1,6 +1,7 @@
 package info.spielproject.spiel
 package focus
 
+import android.graphics.Rect
 import android.os.Build.VERSION
 import android.util.Log
 import android.view.accessibility._
@@ -33,13 +34,28 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
   lazy val interactive_? =
     node.isCheckable || node.isClickable || node.isLongClickable || node.isFocusable
 
+  lazy val rect = {
+    val r = new Rect()
+    node.getBoundsInScreen(r)
+    r
+  }
+
+  lazy val row = {
+    val origin = new Rect(0, rect.top, Int.MaxValue, rect.bottom)
+    root.descendants.filter(_.rect.intersect(origin))
+  }
+
+
   protected def interestedInAccessibilityFocus = {
     val nodeClass = utils.classForName(node.getClassName.toString, node.getPackageName.toString)
     val ancestors = nodeClass.map(utils.ancestors(_).map(_.getName)).getOrElse(Nil)
     Log.d("spielcheck", "Evaluating "+node+": "+(node.children == Nil)+", "+ancestors)
+    Log.d("spielcheck", "Parent: "+node.parent)
     val text = Option(node.getText).map(_.toString).getOrElse("")+(Option(node.getContentDescription).map(": "+_).getOrElse(""))
-    node.children == Nil &&
-    !(ancestors.contains("android.view.ViewGroup") && text.isEmpty && (node.getActions&ACTION_NEXT_HTML_ELEMENT) == 0)
+    def isLeafNonHtmlViewGroup =
+      node.children == Nil &&
+      !(ancestors.contains("android.view.ViewGroup") && text.isEmpty && (node.getActions&ACTION_NEXT_HTML_ELEMENT) == 0)
+    isLeafNonHtmlViewGroup
   }
 
   private def findAccessibilityFocus(nodes:List[AccessibilityNodeInfo], from:Int, wrapped:Boolean = false):Option[AccessibilityNodeInfo] =
