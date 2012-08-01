@@ -45,25 +45,38 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
     root.descendants.filter(_.rect.intersect(origin))
   }
 
+  lazy val ancestors = {
+    val nodeClass = utils.classForName(node.getClassName.toString, node.getPackageName.toString)
+    nodeClass.map(utils.ancestors(_).map(_.getName)).getOrElse(Nil)
+  }
+
+  protected def isA_?(cls:String) =
+    node.getClassName == cls || ancestors.contains(cls)
+
   lazy val label = {
-    row.find((v) => v.getClassName == "android.widget.TextView" && v.getText != null && v.getText.length > 0)
-    .orElse {
-      root.descendants.filter(_.rect.bottom <= rect.top)
-      .filter((v) => v.getClassName == "android.widget.TextView" && v.getText != null && v.getText.length > 0)
-      .sortBy(_.rect.bottom)
-      .reverse.headOption
-    }
+    if(
+      List("android.widget.CheckBox", "android.widget.EditText", "android.widget.ImageView", "android.widget.ProgressBar", "android.widget.RadioButton", "android.widget.RatingBar")
+      .exists(isA_?(_))
+    )
+      row.find((v) => v.getClassName == "android.widget.TextView" && v.getText != null && v.getText.length > 0)
+      .orElse {
+        root.descendants.filter(_.rect.bottom <= rect.top)
+        .sortBy(_.rect.bottom)
+        .reverse.headOption.filter { c =>
+          c.isA_?("android.widget.TextView") && !c.isA_?("android.widget.EditText") && c.getText != null && c.getText.length > 0
+        }
+      }
+    else
+      None
   }
 
   protected def interestedInAccessibilityFocus = {
-    val nodeClass = utils.classForName(node.getClassName.toString, node.getPackageName.toString)
-    val ancestors = nodeClass.map(utils.ancestors(_).map(_.getName)).getOrElse(Nil)
-    Log.d("spielcheck", "Evaluating "+node+": "+(node.children == Nil)+", "+ancestors)
-    Log.d("spielcheck", "Row: "+node.row)
+    //Log.d("spielcheck", "Evaluating "+node+": "+(node.children == Nil)+", "+ancestors)
+    label.foreach { l => Log.d("spielcheck", "Label: "+l) }
     val text = Option(node.getText).map(_.toString).getOrElse("")+(Option(node.getContentDescription).map(": "+_).getOrElse(""))
     def isLeafNonHtmlViewGroup =
       node.children == Nil &&
-      !(ancestors.contains("android.view.ViewGroup") && text.isEmpty && (node.getActions&ACTION_NEXT_HTML_ELEMENT) == 0)
+      !(isA_?("android.view.ViewGroup") && text.isEmpty && (node.getActions&ACTION_NEXT_HTML_ELEMENT) == 0)
     isLeafNonHtmlViewGroup
   }
 
