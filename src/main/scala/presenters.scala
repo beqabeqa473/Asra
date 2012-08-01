@@ -421,13 +421,6 @@ class Presenters {
 
   }
 
-  class AlertDialog extends Presenter("android.app.AlertDialog") {
-    onWindowStateChanged { e:AccessibilityEvent =>
-      speak(getString(R.string.alert, utterancesFor(e, stripBlanks=true).mkString(": ")), true)
-      nextShouldNotInterrupt()
-    }
-  }
-
   class Button extends Presenter("android.widget.Button") with GenericButtonPresenter
 
   class CheckBox extends Presenter("android.widget.CheckBox") {
@@ -450,7 +443,7 @@ class Presenters {
 
   class Dialog extends Presenter("android.app.Dialog") {
     onWindowStateChanged { e:AccessibilityEvent =>
-      speak(utterancesFor(e), true)
+      speak(utterancesFor(e, stripBlanks=true).mkString(": "), true)
       nextShouldNotInterrupt()
     }
   }

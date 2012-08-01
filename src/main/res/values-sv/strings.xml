@@ -14,7 +14,6 @@
 <string name="ringerOn">Ringer på</string>
 
 <!-- View names and actions -->
-<string name="alert">Varning! %1$s</string>
 <string name="button">knapp</string>
 <string name="checkbox">%1$s: kryssruta</string>
 <string name="checked">kryssad</string>

@@ -15,7 +15,6 @@
 <string name="ringerOn">Vyzvánění zapnuto.</string>
 
 <!-- View names and actions -->
-<string name="alert">Upozornění! %1$s</string>
 <string name="button">tlačítko</string>
 <string name="labeledButton">%1$s: tlačítko</string>
 <string name="checkbox">%1$s: zaškrtávací políčko</string>

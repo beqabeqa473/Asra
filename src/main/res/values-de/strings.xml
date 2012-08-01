@@ -16,7 +16,6 @@
   <string name="ringerOn">Klingelton ein.</string>
 
   <!-- View names and actions -->
-  <string name="alert">Benachrichtigung! %1$s</string>
   <string name="button">Schalter</string>
   <string name="labeledButton">%1$s Schalter</string>
   <string name="checkbox">%1$s Kontrollfeld</string>

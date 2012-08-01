@@ -17,7 +17,6 @@
   <string name="newVoicemail">Новая голосовая почта</string>
 
   <!-- View names and actions -->
-  <string name="alert">Уведомление! %1$s</string>
   <string name="button">кнопка</string>
   <string name="labeledButton">%1$s кнопка</string>
   <string name="checkbox">%1$s флажок</string>

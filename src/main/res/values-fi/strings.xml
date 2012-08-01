@@ -17,7 +17,6 @@
   <string name="newVoicemail">Uusi vastaajaviesti</string>
 
   <!-- View names and actions -->
-  <string name="alert">Ilmoitus! %1$s</string>
   <string name="button">painike</string>
   <string name="labeledButton">%1$s: painike</string>
   <string name="checkbox">%1$s: valintaruutu</string>

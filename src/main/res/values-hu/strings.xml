@@ -14,7 +14,6 @@
 <string name="ringerOn">csengő bekapcsolva</string>
 
 <!-- View names and actions -->
-<string name="alert">figyelem! %1$s</string>
 <string name="button">gomb</string>
 <string name="labeledButton">gomb</string>
 <string name="checkbox">%1$s: jelölőnégyzet</string>

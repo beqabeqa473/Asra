@@ -14,7 +14,6 @@
 <string name="ringerOn">Timbre encendido</string>
 
 <!-- View names and actions -->
-<string name="alert">¡Alerta! %1$s</string>
 <string name="button">botón de %1$s</string>
 <string name="labeledButton">%1$s botón</string>
 <string name="checkbox">%1$s: casilla de verificación</string>
