@@ -45,12 +45,11 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
     root.descendants.filter(_.rect.intersect(origin))
   }
 
-
   protected def interestedInAccessibilityFocus = {
     val nodeClass = utils.classForName(node.getClassName.toString, node.getPackageName.toString)
     val ancestors = nodeClass.map(utils.ancestors(_).map(_.getName)).getOrElse(Nil)
     Log.d("spielcheck", "Evaluating "+node+": "+(node.children == Nil)+", "+ancestors)
-    Log.d("spielcheck", "Parent: "+node.parent)
+    Log.d("spielcheck", "Row: "+node.row)
     val text = Option(node.getText).map(_.toString).getOrElse("")+(Option(node.getContentDescription).map(": "+_).getOrElse(""))
     def isLeafNonHtmlViewGroup =
       node.children == Nil &&

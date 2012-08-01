@@ -250,9 +250,9 @@ class Presenter(directive:Option[HandlerDirective] = None) extends Handler[Event
       source.row.find((v) => v.getClassName == "android.widget.TextView" && v.getText != null && v.getText.length > 0).map(
         _.getText.toString
       ).orElse {
-        source.root.descendants.filter(_.rect.top >= source.rect.bottom)
+        source.root.descendants.filter(_.rect.bottom <= source.rect.top)
         .filter((v) => v.getClassName == "android.widget.TextView" && v.getText != null && v.getText.length > 0)
-        .sortBy(_.rect.top)
+        .sortBy(_.rect.bottom)
         .reverse.headOption.map(_.getText.toString)
       }
     }
