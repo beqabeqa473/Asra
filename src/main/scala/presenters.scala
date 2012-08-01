@@ -862,7 +862,9 @@ class Presenters {
 
     onViewTextTraversedAtMovementGranularity { e:AccessibilityEvent =>
       val text = e.getText.mkString
-      speak(text.substring(e.getFromIndex, e.getToIndex), true)
+      if(e.getToIndex <= text.length)
+        speak(text.substring(e.getFromIndex, e.getToIndex), true)
+      true
     }
 
     onWindowContentChanged { e:AccessibilityEvent => true }
