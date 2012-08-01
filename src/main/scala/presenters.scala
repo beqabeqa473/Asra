@@ -235,7 +235,7 @@ class Presenter(directive:Option[HandlerDirective] = None) extends Handler[Event
           List(v)
         }.getOrElse(Nil)
       else guessLabelIfTextShorterThan.foreach { v =>
-        if(text.length < v)
+        if(VERSION.SDK_INT >= 16 || text.length < v)
           rv :::= Option(e.getSource).flatMap(_.label).map(_.getText.toString).map { v =>
             removeBlank()
             List(v)
