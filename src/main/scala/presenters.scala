@@ -865,9 +865,7 @@ class Presenters {
       speak(text.substring(e.getFromIndex, e.getToIndex), true)
     }
 
-    onWindowContentChanged { e:AccessibilityEvent =>
-      false
-    }
+    onWindowContentChanged { e:AccessibilityEvent => true }
 
     onWindowStateChanged { e:AccessibilityEvent =>
       speak(utterancesFor(e, addBlank = false, stripBlanks = true), true)
