@@ -225,37 +225,24 @@ class Presenter(directive:Option[HandlerDirective] = None) extends Handler[Event
     def removeBlank() = if(blankAdded) rv = rv.tail
     if(VERSION.SDK_INT >= 14) {
       if(guessLabelIfTextMissing && e.getText.length == 0)
-        rv :::= guessLabelFor(e).map { v =>
+        rv :::= Option(e.getSource).flatMap(_.label).map(_.getText.toString).map { v =>
           removeBlank()
           List(v)
         }.getOrElse(Nil)
       else if(guessLabelIfContentDescriptionMissing && e.getContentDescription == null)
-        rv :::= guessLabelFor(e).map { v =>
+        rv :::= Option(e.getSource).flatMap(_.label).map(_.getText.toString).map { v =>
           removeBlank()
           List(v)
         }.getOrElse(Nil)
       else guessLabelIfTextShorterThan.foreach { v =>
         if(text.length < v)
-          rv :::= guessLabelFor(e).map { v =>
+          rv :::= Option(e.getSource).flatMap(_.label).map(_.getText.toString).map { v =>
             removeBlank()
             List(v)
           }.getOrElse(Nil)
       }
     }
     rv
-  }
-
-  protected def guessLabelFor(e:AccessibilityEvent):Option[String] = {
-    Option(e.getSource).flatMap { source =>
-      source.row.find((v) => v.getClassName == "android.widget.TextView" && v.getText != null && v.getText.length > 0).map(
-        _.getText.toString
-      ).orElse {
-        source.root.descendants.filter(_.rect.bottom <= source.rect.top)
-        .filter((v) => v.getClassName == "android.widget.TextView" && v.getText != null && v.getText.length > 0)
-        .sortBy(_.rect.bottom)
-        .reverse.headOption.map(_.getText.toString)
-      }
-    }
   }
 
   protected def interactables(source:AccessibilityNodeInfo) = 
@@ -585,7 +572,7 @@ class Presenters {
   class RatingBar extends Presenter("android.widget.RatingBar") {
 
     onViewFocused { e:AccessibilityEvent =>
-      val label = guessLabelFor(e).getOrElse(getString(R.string.rating))
+      val label = Option(e.getSource).flatMap(_.label).map(_.getText.toString).getOrElse(getString(R.string.rating))
       val rating = getString(R.string.listItem, label, e.getCurrentItemIndex.toString, e.getItemCount.toString)
       speak(utterancesFor(e, addBlank = false, providedText=Some(rating)))
     }

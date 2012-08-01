@@ -45,6 +45,16 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
     root.descendants.filter(_.rect.intersect(origin))
   }
 
+  lazy val label = {
+    row.find((v) => v.getClassName == "android.widget.TextView" && v.getText != null && v.getText.length > 0)
+    .orElse {
+      root.descendants.filter(_.rect.bottom <= rect.top)
+      .filter((v) => v.getClassName == "android.widget.TextView" && v.getText != null && v.getText.length > 0)
+      .sortBy(_.rect.bottom)
+      .reverse.headOption
+    }
+  }
+
   protected def interestedInAccessibilityFocus = {
     val nodeClass = utils.classForName(node.getClassName.toString, node.getPackageName.toString)
     val ancestors = nodeClass.map(utils.ancestors(_).map(_.getName)).getOrElse(Nil)
