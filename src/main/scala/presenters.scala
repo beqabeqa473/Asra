@@ -451,15 +451,18 @@ class Presenters {
   class EditText extends Presenter("android.widget.EditText") {
 
     onViewFocused { e:AccessibilityEvent =>
+      speak(utterancesFor(e, addBlank=false, guessLabelIfContentDescriptionMissing = true), false)
       if(e.isPassword) {
-        speak(utterancesFor(e, addBlank=false, guessLabelIfContentDescriptionMissing = true), false)
         speak(getString(R.string.password))
-        speak(getString(R.string.editText), false)
-      } else {
-        speak(utterancesFor(e, addBlank=true, guessLabelIfContentDescriptionMissing = true), false)
-        speak(getString(R.string.editText), false)
+        val length = if(e.getItemCount > 0)
+          e.getItemCount
+        else if(e.getText != null && e.getText.mkString.length > 0)
+          e.getText.mkString.length
+        else 0
+        if(length > 0)
+          speak("*"*length, false)
       }
-      true
+      speak(getString(R.string.editText), false)
     }
 
     onViewTextChanged { e:AccessibilityEvent =>
