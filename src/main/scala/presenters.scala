@@ -299,6 +299,8 @@ trait GenericButtonPresenter extends Presenter {
 
 object Before extends Presenter {
 
+  onViewAccessibilityFocused { e:AccessibilityEvent => stopSpeaking() }
+
   onViewHoverEnter { e:AccessibilityEvent =>
     stopSpeaking()
     if(SystemClock.uptimeMillis-e.getEventTime <= 100)
