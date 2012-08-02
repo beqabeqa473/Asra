@@ -774,8 +774,11 @@ class Presenters {
           var from = e.getFromIndex
           var to = if(e.getToIndex == e.getFromIndex && e.getToIndex < t.length)
             e.getToIndex+1
-          else
+          else {
+            if(from > 0)
+              from -= 1
             e.getToIndex
+          }
           val width = to-from
           val source = e.getSource
           if(from >= 0 && to >= 0 && source != null && source.isFocused) {
