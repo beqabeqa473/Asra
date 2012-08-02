@@ -79,17 +79,19 @@ class SpielService extends AccessibilityService {
 
   override def onAccessibilityEvent(event:AccessibilityEvent) {
     if(!SpielService.enabled) return
-    if(List(TYPE_VIEW_ACCESSIBILITY_FOCUSED, TYPE_VIEW_FOCUSED, TYPE_VIEW_HOVER_ENTER).contains(event.getEventType))
+    if(List(TYPE_VIEW_FOCUSED, TYPE_VIEW_HOVER_ENTER).contains(event.getEventType))
       Option(event.getSource).foreach { n =>
         if(VERSION.SDK_INT >= 16)
-          if(n.children == Nil)
-            accessibilityFocusCandidate = Some(n)
+          if(n.children == Nil) {
+            n.performAction(ACTION_ACCESSIBILITY_FOCUS)
+            return
+          }
       }
     Presenter.process(event)
   }
 
   override protected def onGesture(id:Int) = {
-    val source = accessibilityFocusCandidate.orElse(Option(getRootInActiveWindow).flatMap(v => Option(v.findFocus(FOCUS_ACCESSIBILITY))))
+    val source = Option(getRootInActiveWindow).flatMap(v => Option(v.findFocus(FOCUS_ACCESSIBILITY)))
     val directive = source.map { s =>
       new PayloadDirective(s.getPackageName.toString, s.getClassName.toString)
     }.getOrElse(new PayloadDirective("", ""))
