@@ -54,16 +54,18 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
     node.getClassName == cls || ancestors.contains(cls)
 
   lazy val label = {
+    def isTextView(n:AccessibilityNodeInfo) =
+      n.isA_?("android.widget.TextView") && !n.isA_?("android.widget.EditText")
     if(
-      List("android.widget.CheckBox", "android.widget.EditText", "android.widget.ImageView", "android.widget.ProgressBar", "android.widget.RadioButton", "android.widget.RatingBar")
+      List("android.widget.CheckBox", "android.widget.EditText", "android.widget.ProgressBar", "android.widget.RadioButton", "android.widget.RatingBar")
       .exists(isA_?(_))
     )
-      row.find((v) => v.getClassName == "android.widget.TextView" && v.getText != null && v.getText.length > 0)
+      row.find((v) => isTextView(v) && v.getText != null && v.getText.length > 0)
       .orElse {
         root.descendants.filter(_.rect.bottom <= rect.top)
         .sortBy(_.rect.bottom)
         .reverse.headOption.filter { c =>
-          c.isA_?("android.widget.TextView") && !c.isA_?("android.widget.EditText") && c.getText != null && c.getText.length > 0
+          isTextView(c) && c.getText != null && c.getText.length > 0
         }
       }
     else
@@ -71,15 +73,24 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
   }
 
   protected def interestedInAccessibilityFocus = {
-    //Log.d("spielcheck", "Evaluating "+node+": "+(node.children == Nil)+", "+ancestors)
+    Log.d("spielcheck", "Evaluating "+node)
     val text = Option(node.getText).map(_.toString).getOrElse("")+(Option(node.getContentDescription).map(": "+_).getOrElse(""))
+    Log.d("spielcheck", "Text: "+text)
+    def isNotAdapterView = !node.isA_?("android.widget.AdapterView")
+    Log.d("spielcheck", "isNotAdapterView: "+isNotAdapterView)
     def isNonLabel =
       !node.root.descendants.map(_.label).contains(Some(node))
-    def isLeafNonHtmlViewGroup =
-      node.children == Nil &&
-      !(isA_?("android.view.ViewGroup") && text.isEmpty && (node.getActions&ACTION_NEXT_HTML_ELEMENT) == 0)
+    Log.d("spielcheck", "isNonLabel: "+isNonLabel)
+    def isLeafOrTextualNonHtmlViewGroup =
+      if(isA_?("android.view.ViewGroup"))
+        children == Nil &&
+        (!text.isEmpty || (node.getActions&ACTION_NEXT_HTML_ELEMENT) == 0)
+      else
+        node.children == Nil
+    Log.d("spielcheck", "Leaf: "+isLeafOrTextualNonHtmlViewGroup)
+    isNotAdapterView &&
     isNonLabel &&
-    isLeafNonHtmlViewGroup
+    isLeafOrTextualNonHtmlViewGroup
   }
 
   private def findAccessibilityFocus(nodes:List[AccessibilityNodeInfo], from:Int, wrapped:Boolean = false):Option[AccessibilityNodeInfo] =
