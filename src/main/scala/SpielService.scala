@@ -143,7 +143,7 @@ object SpielService {
     if(e)
       service.setServiceInfo(info)
     else
-      service.setServiceInfo(null)
+      service.setServiceInfo(new AccessibilityServiceInfo)
     _enabled = e
   }
 
