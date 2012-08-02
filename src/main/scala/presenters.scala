@@ -444,7 +444,10 @@ class Presenters {
       speak(getString(R.string.editText), false)
     }
 
+    private var lastTextChangedReceived = 0l
+
     onViewTextChanged { e:AccessibilityEvent =>
+      lastTextChangedReceived = e.getEventTime
       if(e.getAddedCount > 0 || e.getRemovedCount > 0) {
         if(e.isPassword)
           speak("*", true)
@@ -473,6 +476,10 @@ class Presenters {
           }
         }
       } else true
+    }
+
+    onViewTextSelectionChanged { e:AccessibilityEvent =>
+      e.getEventTime-lastTextChangedReceived <= 10
     }
 
   }
