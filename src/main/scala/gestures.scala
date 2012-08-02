@@ -121,9 +121,9 @@ class Gestures {
       SpielService.rootInActiveWindow.map { root =>
         Log.d("spielcheck", "Setting initial focus")
         val filtered = root.descendants.filter(_.isVisibleToUser)
-        Option(root.findFocus(FOCUS_INPUT)).map(_.performAction(FOCUS_ACCESSIBILITY)).getOrElse(false) ||
-        filtered.exists(_.performAction(FOCUS_ACCESSIBILITY)) ||
-        filtered.exists(_.performAction(FOCUS_INPUT))
+        Option(root.findFocus(FOCUS_INPUT)).map(_.performAction(ACTION_ACCESSIBILITY_FOCUS)).getOrElse(false) ||
+        filtered.exists(_.performAction(ACTION_ACCESSIBILITY_FOCUS)) ||
+        filtered.exists(_.performAction(ACTION_FOCUS))
       }.getOrElse(false)
 
     private def prev(source:Option[AccessibilityNodeInfo]):Boolean = 
