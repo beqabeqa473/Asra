@@ -156,10 +156,14 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   }
 
   private def abandonFocus() {
-    actor {
-      Thread.sleep(200)
-      if(!speaking_?)
-        audioManager.abandonAudioFocus(this)
+    try {
+      actor {
+        Thread.sleep(200)
+        if(!speaking_?)
+          audioManager.abandonAudioFocus(this)
+      }
+    } catch {
+      case _ => audioManager.abandonAudioFocus(this)
     }
   }
 
