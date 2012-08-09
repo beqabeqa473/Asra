@@ -18,7 +18,14 @@
   <uses-permission android:name="android.permission.VIBRATE"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
-  <application android:label="@string/appName"   android:icon="@drawable/empty">
+  <application
+    android:label="@string/appName"
+    android:icon="@drawable/empty"
+    android:backupAgent=".BackupAgent"
+    android:restoreAnyVersion="true">
+
+    <meta-data android:name="com.google.android.backup.api_key"
+      android:value="AEdPqrEAAAAI9cHvJ2G6jtUVbd2mUnCkmSMxxSDW4QsFr0T_pQ"/>
 
     <service android:name=".SpielService" android:settingsActivity="info.spielproject.spiel.ui.PreferencesActivity" android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
 
