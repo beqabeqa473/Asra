@@ -57,9 +57,12 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
       }
       val desiredEngine = if(failures >= 3)
         platformEngine
-      else if(Preferences.speechEngine != "")
-        Some(Preferences.speechEngine)
-      else None
+      else if(Preferences.speechEngine != "") {
+        val enginePackages = engines.map(_._2)
+        if(enginePackages.contains(Preferences.speechEngine))
+          Some(Preferences.speechEngine)
+        else None
+      } else None
       tts= desiredEngine.map(new TextToSpeech(service, this, _)).getOrElse(new TextToSpeech(service, this))
       TextToSpeech.SUCCESS
     }
