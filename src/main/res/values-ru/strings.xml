@@ -175,4 +175,11 @@
   <!-- String returned when an unknown number calls. -->
   <string name="unknown">Номер не определён</string>
 
+  <!-- Granularities -->
+  <string name="character">Символ</string>
+  <string name="word">Слово</string>
+  <string name="line">Строка</string>
+  <string name="paragraph">Параграф</string>
+  <string name="page">Страница</string>
+
 </resources>
