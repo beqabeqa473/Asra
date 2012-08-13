@@ -42,7 +42,7 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
 
   lazy val row = {
     val origin = new Rect(0, rect.top, Int.MaxValue, rect.bottom)
-    root.descendants.filter(_.rect.intersect(origin))
+    root.descendants.filter(_.rect.intersect(origin)).sortBy(_.rect.left)
   }
 
   lazy val ancestors = {
@@ -59,9 +59,10 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
     if(
       List("android.widget.CheckBox", "android.widget.EditText", "android.widget.ProgressBar", "android.widget.RadioButton", "android.widget.RatingBar")
       .exists(isA_?(_))
-    )
+    ) {
+      Log.d("spielcheck", "Row: "+row)
       row.find((v) => isTextView(v) && !v.interactive_? && v.getText != null && v.getText.length > 0)
-      .orElse {
+      } .orElse {
         root.descendants.filter(_.rect.bottom <= rect.top)
         .sortBy(_.rect.bottom)
         .reverse.headOption.filter { c =>
