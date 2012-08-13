@@ -40,11 +40,9 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
     r
   }
 
-  private lazy val all = root.descendants
-
   lazy val row = {
     val origin = new Rect(0, rect.top, Int.MaxValue, rect.bottom)
-    all.filter(_.rect.intersect(origin))
+    root.descendants.filter(_.rect.intersect(origin))
   }
 
   lazy val ancestors = {
@@ -64,7 +62,7 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
     )
       row.find((v) => isTextView(v) && !v.interactive_? && v.getText != null && v.getText.length > 0)
       .orElse {
-        all.filter(_.rect.bottom <= rect.top)
+        root.descendants.filter(_.rect.bottom <= rect.top)
         .sortBy(_.rect.bottom)
         .reverse.headOption.filter { c =>
           isTextView(c) && !c.interactive_? && c.getText != null && c.getText.length > 0
@@ -84,6 +82,7 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
       if(!isA_?("android.widget.TextView") || isA_?("android.widget.EditText") || isA_?("android.widget.Button")) {
         true
       }else {
+        val all = root.descendants
         val index = all.indexOf(node)
         var before:List[Option[AccessibilityNodeInfo]] = all.take(index).reverse.map(Some(_))
         var after:List[Option[AccessibilityNodeInfo]] = all.drop(index+1).map(Some(_))
@@ -119,7 +118,7 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
   }
 
   lazy val nextAccessibilityFocus = {
-    val nodes = all.filter(_.isVisibleToUser)
+    val nodes = root.descendants.filter(_.isVisibleToUser)
     .sortBy(_.rect.top)
     nodes.indexOf(node) match {
       case -1 => findAccessibilityFocus(nodes, 0, true)
@@ -128,7 +127,7 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
   }
 
   lazy val prevAccessibilityFocus = {
-    val nodes = all.filter(_.isVisibleToUser)
+    val nodes = root.descendants.filter(_.isVisibleToUser)
     .sortBy(_.rect.top).reverse
     nodes.indexOf(node) match {
       case -1 => findAccessibilityFocus(nodes, 0, true)
