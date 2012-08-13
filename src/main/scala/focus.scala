@@ -76,6 +76,12 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
     Log.d("spielcheck", "Evaluating "+node)
     val text = Option(node.getText).map(_.toString).getOrElse("")+(Option(node.getContentDescription).map(": "+_).getOrElse(""))
     Log.d("spielcheck", "Text: "+text)
+    // TODO: These predicates are ugly, should clean this logic up later.
+    lazy val isNotDisabledWithNoText =
+      if(node.isEnabled)
+        true
+      else
+        !text.isEmpty
     lazy val isNotAdapterView = !node.isA_?("android.widget.AdapterView")
     Log.d("spielcheck", "isNotAdapterView: "+isNotAdapterView)
     lazy val isNonLabel =
@@ -101,6 +107,7 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
       else
         node.children == Nil
     Log.d("spielcheck", "Leaf: "+isLeafOrTextualNonHtmlViewGroup)
+    isNotDisabledWithNoText &&
     isNotAdapterView &&
     isNonLabel &&
     isLeafOrTextualNonHtmlViewGroup
