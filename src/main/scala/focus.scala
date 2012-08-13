@@ -57,7 +57,7 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
 
   lazy val label = {
     def isTextView(n:AccessibilityNodeInfo) =
-      n.isA_?("android.widget.TextView") && !n.isA_?("android.widget.EditText")
+      n.isA_?("android.widget.TextView") && !n.isA_?("android.widget.EditText") && !n.isA_?("android.widget.Button")
     if(
       List("android.widget.CheckBox", "android.widget.EditText", "android.widget.ProgressBar", "android.widget.RadioButton", "android.widget.RatingBar")
       .exists(isA_?(_))
@@ -74,16 +74,28 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
       None
   }
 
-  protected def interestedInAccessibilityFocus(labels:List[Option[AccessibilityNodeInfo]]) = {
+  protected def interestedInAccessibilityFocus = {
     Log.d("spielcheck", "Evaluating "+node)
     val text = Option(node.getText).map(_.toString).getOrElse("")+(Option(node.getContentDescription).map(": "+_).getOrElse(""))
     Log.d("spielcheck", "Text: "+text)
-    def isNotAdapterView = !node.isA_?("android.widget.AdapterView")
+    lazy val isNotAdapterView = !node.isA_?("android.widget.AdapterView")
     Log.d("spielcheck", "isNotAdapterView: "+isNotAdapterView)
-    def isNonLabel =
-      !labels.contains(Some(node))
+    lazy val isNonLabel =
+      if(!isA_?("android.widget.TextView") || isA_?("android.widget.EditText") || isA_?("android.widget.Button")) {
+        true
+      }else {
+        val index = all.indexOf(node)
+        var before:List[Option[AccessibilityNodeInfo]] = all.take(index).reverse.map(Some(_))
+        var after:List[Option[AccessibilityNodeInfo]] = all.drop(index+1).map(Some(_))
+        if(before.length < after.length)
+          before ++= (before.length to after.length-1).map(v => None)
+        if(after.length < before.length)
+          after ++= (after.length to before.length-1).map(v => None)
+        val pattern = before.zip(after).map(v => List(v._1, v._2)).flatten
+        !pattern.exists(_.map(_.label == Some(node)).getOrElse(false))
+      }
     Log.d("spielcheck", "isNonLabel: "+isNonLabel)
-    def isLeafOrTextualNonHtmlViewGroup =
+    lazy val isLeafOrTextualNonHtmlViewGroup =
       if(isA_?("android.view.ViewGroup"))
         children == Nil &&
         (!text.isEmpty || (node.getActions&ACTION_NEXT_HTML_ELEMENT) == 0)
@@ -96,12 +108,8 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
   }
 
   private def findAccessibilityFocus(nodes:List[AccessibilityNodeInfo], from:Int, wrapped:Boolean = false):Option[AccessibilityNodeInfo] = {
-    val labels = if(isA_?("android.widget.TextView"))
-      all.map(_.label)
-    else
-      Nil
     nodes.drop(from).find { n =>
-      n.interestedInAccessibilityFocus(labels)
+      n.interestedInAccessibilityFocus
     }.orElse {
       if(wrapped)
         None
