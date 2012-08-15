@@ -439,7 +439,7 @@ class Presenters {
           e.getText.mkString.length
         else 0
         if(length > 0)
-          speak("*"*length, false)
+          speak("."*length, false)
       }
       speak(getString(R.string.editText), false)
     }
@@ -450,7 +450,7 @@ class Presenters {
       lastTextChangedReceived = e.getEventTime
       if(e.getAddedCount > 0 || e.getRemovedCount > 0) {
         if(e.isPassword)
-          speak("*", true)
+          speak(".", true)
         else {
           val text = e.getText.mkString
           val before = e.getBeforeText.toString
@@ -782,7 +782,7 @@ class Presenters {
 
     onViewTextSelectionChanged { e:AccessibilityEvent =>
       Option(e.getSource).map(_.getText).foreach { text =>
-        val txt = if(e.isPassword) Some("*"*e.getItemCount) else Option(text)
+        val txt = if(e.isPassword) Some("."*e.getItemCount) else Option(text)
         txt.map { t =>
           var from = e.getFromIndex
           var to = if(e.getToIndex == e.getFromIndex && e.getToIndex < t.length)
@@ -929,7 +929,7 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
       Log.d("spiel", "Event "+e.toString+"; Activity: "+currentActivity)
     }
 
-    if(!StateReactor.screenOn_? && e.getEventType != TYPE_NOTIFICATION_STATE_CHANGED)
+    if(!StateReactor.screenOn_? && !List(TYPE_ANNOUNCEMENT, TYPE_NOTIFICATION_STATE_CHANGED, TYPE_VIEW_TEXT_TRAVERSED_AT_MOVEMENT_GRANULARITY).contains(e.getEventType))
       return true
 
     if(e.getEventType == TYPE_NOTIFICATION_STATE_CHANGED && Preferences.notificationFilters.contains(e.getPackageName))
