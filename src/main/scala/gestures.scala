@@ -117,6 +117,23 @@ class Gestures {
 
   class Default extends Listener(Some(HandlerDirective(Value(""), Value("")))) {
 
+    private val granularities = List(MOVEMENT_GRANULARITY_CHARACTER, MOVEMENT_GRANULARITY_WORD, MOVEMENT_GRANULARITY_LINE, MOVEMENT_GRANULARITY_PARAGRAPH, MOVEMENT_GRANULARITY_PAGE)
+
+    private var granularity:Option[Int] = None
+
+    private def describeGranularity() {
+      val id = granularity.map { g =>
+        g match {
+          case MOVEMENT_GRANULARITY_CHARACTER => R.string.character
+          case MOVEMENT_GRANULARITY_WORD => R.string.word
+          case MOVEMENT_GRANULARITY_LINE => R.string.line
+          case MOVEMENT_GRANULARITY_PARAGRAPH => R.string.paragraph
+          case MOVEMENT_GRANULARITY_PAGE => R.string.page
+        }
+      }.getOrElse(R.string.none)
+      TTS.speak(getString(id), true)
+    }
+
     private def setInitialFocus() =
       SpielService.rootInActiveWindow.map { root =>
         Log.d("spielcheck", "Setting initial focus")
@@ -126,7 +143,7 @@ class Gestures {
         filtered.exists(_.performAction(ACTION_FOCUS))
       }.getOrElse(false)
 
-    private def prev(source:Option[AccessibilityNodeInfo]):Boolean = 
+    private def prev(source:Option[AccessibilityNodeInfo]):Boolean =
       source.flatMap { s =>
         granularity.flatMap { g =>
           if((s.getActions&ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY) != 0) {
@@ -150,7 +167,7 @@ class Gestures {
         }
       }.getOrElse(setInitialFocus())
 
-    private def next(source:Option[AccessibilityNodeInfo]):Boolean = 
+    private def next(source:Option[AccessibilityNodeInfo]):Boolean =
       source.flatMap { s =>
         granularity.flatMap { g =>
           if((s.getActions&ACTION_NEXT_AT_MOVEMENT_GRANULARITY) != 0) {
@@ -198,26 +215,18 @@ class Gestures {
 
     onRightDown { source => true }
 
-    onLeftRight { source => true }
+    onLeftRight { source =>
+      source.foreach { s =>
+        if((s.getActions&ACTION_NEXT_AT_MOVEMENT_GRANULARITY) != 0) {
+          val b = new Bundle()
+          b.putInt(ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, MOVEMENT_GRANULARITY_PAGE)
+          s.performAction(ACTION_NEXT_AT_MOVEMENT_GRANULARITY, b)
+        }
+      }
+      true
+    }
 
     onRightLeft { source => true }
-
-    private val granularities = List(MOVEMENT_GRANULARITY_CHARACTER, MOVEMENT_GRANULARITY_WORD, MOVEMENT_GRANULARITY_LINE, MOVEMENT_GRANULARITY_PARAGRAPH, MOVEMENT_GRANULARITY_PAGE)
-
-    private var granularity:Option[Int] = None
-
-    private def describeGranularity() {
-      val id = granularity.map { g =>
-        g match {
-          case MOVEMENT_GRANULARITY_CHARACTER => R.string.character
-          case MOVEMENT_GRANULARITY_WORD => R.string.word
-          case MOVEMENT_GRANULARITY_LINE => R.string.line
-          case MOVEMENT_GRANULARITY_PARAGRAPH => R.string.paragraph
-          case MOVEMENT_GRANULARITY_PAGE => R.string.page
-        }
-      }.getOrElse(R.string.none)
-      TTS.speak(getString(id), true)
-    }
 
     onUpDown { source =>
       source.map { s =>
