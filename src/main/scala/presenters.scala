@@ -691,7 +691,7 @@ class Presenters {
       }
     }
 
-    onViewSelected { e:AccessibilityEvent =>
+    private def focus(e:AccessibilityEvent) = {
       val x = Option(e.getText.map(v => if(v == null) "<span/>" else v)
       .mkString).map { t =>
         if(t == "")
@@ -701,6 +701,10 @@ class Presenters {
       }.getOrElse(<span/>)
       speak(utterancesFor(x))
     }
+
+    onViewSelected { e:AccessibilityEvent => focus(e) }
+
+    onViewTextTraversedAtMovementGranularity { e:AccessibilityEvent => focus(e) }
 
   }
 
