@@ -574,6 +574,9 @@ class Presenters {
 
     onViewFocused { e:AccessibilityEvent =>
       speak(getString(R.string.radioButton, utterancesFor(e, guessLabelIfTextShorterThan = Some(2)).mkString(": ")))
+      if(VERSION.SDK_INT >= 16)
+        speak(getString((if(e.isChecked) R.string.checked else R.string.notChecked)), false)
+      true
     }
 
   }
@@ -929,7 +932,8 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
       Log.d("spiel", "Event "+e.toString+"; Activity: "+currentActivity)
     }
 
-    if(!StateReactor.screenOn_? && !List(TYPE_ANNOUNCEMENT, TYPE_NOTIFICATION_STATE_CHANGED, TYPE_VIEW_TEXT_TRAVERSED_AT_MOVEMENT_GRANULARITY).contains(e.getEventType))
+    if(!StateReactor.screenOn_? && !List(TYPE_ANNOUNCEMENT, TYPE_NOTIFICATION_STATE_CHANGED, TYPE_VIEW_TEXT_TRAVERSED_AT_MOVEMENT_GRANULARITY
+    ).contains(e.getEventType))
       return true
 
     if(e.getEventType == TYPE_NOTIFICATION_STATE_CHANGED && Preferences.notificationFilters.contains(e.getPackageName))
