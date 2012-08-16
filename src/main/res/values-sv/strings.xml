@@ -85,7 +85,7 @@
 <!-- Punctuation and other speech-related strings -->
 
 <string name="blank">blank</string>
-<string name="cap">stor</string>
+<string name="cap">stor %1$s</string>
 <string name="exclamation">utropstecken</string>
 <string name="at">snabela</string>
 <string name="pound">pund</string>
