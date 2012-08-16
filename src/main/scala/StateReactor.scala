@@ -104,6 +104,9 @@ object StateReactor {
 
     private var wasConnected = false
 
+    private var musicVolume:Option[Int] = None
+    private var voiceVolume:Option[Int] = None
+
     connect()
 
     def connect() {
@@ -122,6 +125,14 @@ object StateReactor {
       usingSco = false
       wasConnected = false
       if(!inCall_?) audioManager.setMode(AudioManager.MODE_NORMAL)
+      musicVolume.foreach(
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, _, 0)
+      )
+      musicVolume = None
+      voiceVolume.foreach(
+        audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, _, 0)
+      )
+      voiceVolume = None
     }
 
     private def cleanup() {
@@ -141,6 +152,8 @@ object StateReactor {
       if(state == AudioManager.SCO_AUDIO_STATE_CONNECTED) {
         Log.d("spielcheck", "here1")
         usingSco = true
+        musicVolume = Option(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC))
+        voiceVolume = Option(audioManager.getStreamVolume(AudioManager.STREAM_VOICE_CALL))
         audioManager.setMode(AudioManager.MODE_IN_CALL)
         wasConnected = true
       } else if(state == AudioManager.SCO_AUDIO_STATE_ERROR) {
