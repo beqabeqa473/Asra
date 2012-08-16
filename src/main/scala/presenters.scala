@@ -420,6 +420,15 @@ class Presenters {
 
   }
 
+  class CheckedTextView extends Presenter("android.widget.CheckedTextView") {
+    onViewFocused { e:AccessibilityEvent => 
+      speak(utterancesFor(e, stripBlanks=true))
+      if(VERSION.SDK_INT >= 16)
+        speak(getString((if(e.isChecked) R.string.checked else R.string.notChecked)), false)
+      true
+    }
+  }
+
   class Dialog extends Presenter("android.app.Dialog") {
     onWindowStateChanged { e:AccessibilityEvent =>
       speak(utterancesFor(e, stripBlanks=true).mkString(": "), true)
