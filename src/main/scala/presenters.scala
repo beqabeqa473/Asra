@@ -299,7 +299,12 @@ trait GenericButtonPresenter extends Presenter {
 
 object Before extends Presenter {
 
-  onViewAccessibilityFocused { e:AccessibilityEvent => stopSpeaking() }
+  onViewAccessibilityFocused { e:AccessibilityEvent =>
+    val utterances = utterancesFor(e, stripBlanks = true, addBlank = false)
+    if(utterances != Nil)
+      stopSpeaking()
+    false
+  }
 
   onViewHoverEnter { e:AccessibilityEvent =>
     stopSpeaking()
