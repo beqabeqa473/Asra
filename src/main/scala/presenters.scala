@@ -416,7 +416,7 @@ class Presenters {
 
   class Button extends Presenter("android.widget.Button") with GenericButtonPresenter
 
-  class CheckBox extends Presenter("android.widget.CheckBox") {
+  class Checkable extends Presenter("android.widget.Checkable") {
 
     onViewClicked { e:AccessibilityEvent =>
       if(e.isChecked)
@@ -432,15 +432,6 @@ class Presenters {
       true
     }
 
-  }
-
-  class CheckedTextView extends Presenter("android.widget.CheckedTextView") {
-    onViewFocused { e:AccessibilityEvent => 
-      speak(utterancesFor(e, stripBlanks=true))
-      if(VERSION.SDK_INT >= 16)
-        speak(getString((if(e.isChecked) R.string.checked else R.string.notChecked)), false)
-      true
-    }
   }
 
   class Dialog extends Presenter("android.app.Dialog") {
@@ -598,7 +589,7 @@ class Presenters {
     onViewFocused { e:AccessibilityEvent =>
       speak(getString(R.string.radioButton, utterancesFor(e, guessLabelIfTextShorterThan = Some(2)).mkString(": ")))
       if(VERSION.SDK_INT >= 16)
-        speak(getString((if(e.isChecked) R.string.checked else R.string.notChecked)), false)
+        speak(getString((if(e.isChecked) R.string.selected else R.string.notSelected)), false)
       true
     }
 
