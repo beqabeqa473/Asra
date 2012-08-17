@@ -159,26 +159,21 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   }
 
   private def abandonFocus() {
-    try {
-      actor {
-        Thread.sleep(200)
-        if(!speaking_?)
-          audioManager.abandonAudioFocus(this)
-      }
-    } catch {
-      case _ => audioManager.abandonAudioFocus(this)
-    }
+    audioManager.abandonAudioFocus(this)
   }
 
-  def onStart(id:String) { }
+  def onStart(id:String) {
+    if(Preferences.duckNonSpeechAudio)
+      audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
+  }
 
-  def onError(id:String) { }
+  def onError(id:String) {
+    abandonFocus()
+  }
 
   def onDone(id:String) {
-    if(id == lastUtteranceID)
-      abandonFocus()
+    abandonFocus()
     repeatedSpeech.get(id).foreach { v =>
-      abandonFocus()
       actor {
         Thread.sleep(v._1*1000)
         performRepeatedSpeech(id)
@@ -216,11 +211,6 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
     "\t" -> R.string.tab
   )
 
-  private def requestFocus() {
-    if(Preferences.duckNonSpeechAudio)
-      audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
-  }
-
   private var failures = 0
 
   private def reInitOnFailure() {
@@ -247,6 +237,7 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
           failures += 1
     } catch {
       case e =>
+        abandonFocus()
         if(!reinitializing)
           failures += 1
         Log.e("spiel", "TTS error:", e)
@@ -256,21 +247,19 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
     }
   }
 
-  val lastUtteranceID = "last"
-
   /**
    * Speaks the specified text, optionally flushing current speech.
   */
 
-  def speak(text:String, flush:Boolean, utteranceID:Option[String] = Some(lastUtteranceID)) {
+  def speak(text:String, flush:Boolean, utteranceID:Option[String] = None) {
     if(!SpielService.enabled) return
     if(text.length > 1 && text.contains("\n"))
       return speak(text.split("\n").toList, flush)
     Log.d("spiel", "Speaking "+text+": "+flush)
     val mode = if(flush) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD
-    requestFocus()
     val params = new java.util.HashMap[String, String]()
-    utteranceID.foreach(params.put(tts.Engine.KEY_PARAM_UTTERANCE_ID, _))
+    val uid = utteranceID.getOrElse(java.util.UUID.randomUUID.toString)
+    params.put(tts.Engine.KEY_PARAM_UTTERANCE_ID, uid)
     guard { if(text.length == 0)
       tts.speak(service.getString(R.string.blank), mode, params)
     else if(text.length == 1 && Character.isUpperCase(text(0))) {
@@ -285,7 +274,7 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   }
 
   def speak(text:String, flush:Boolean) {
-    speak(text, flush, Some(lastUtteranceID))
+    speak(text, flush, None)
   }
 
   /**
@@ -327,7 +316,6 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   def stop() {
     if(!SpielService.enabled) return
     Log.d("spiel", "Stopping speech")
-    abandonFocus()
     guard { tts.stop() }
   }
 

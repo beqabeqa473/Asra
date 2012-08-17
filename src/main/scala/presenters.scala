@@ -98,7 +98,7 @@ class Presenter(directive:Option[HandlerDirective] = None) extends Handler[Event
   // Convenience functions for calling TTS, used from scripting subsystem.
 
   def speak(text:String, interrupt:Boolean) = {
-    TTS.speak(text, interrupt, Some("last"))
+    TTS.speak(text, interrupt)
     true
   }
 
