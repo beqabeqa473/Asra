@@ -348,7 +348,7 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   def stopRepeatedSpeech(key:String) = repeatedSpeech -= key
 
   private def performRepeatedSpeech(key:String):Unit = repeatedSpeech.get(key) match {
-    case Some(v) if(!shouldSpeakNotification && StateReactor.ringerOff_?) => actor {
+    case Some(v) if(!shouldSpeakNotification) => actor {
       Thread.sleep(v._1*1000)
       performRepeatedSpeech(key)
     }
