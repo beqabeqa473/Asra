@@ -334,6 +334,15 @@ object Before extends Presenter {
 
 object After extends Presenter {
 
+  onViewClicked { e:AccessibilityEvent =>
+    if(VERSION.SDK_INT >= 16)
+      Option(e.getSource).foreach { source =>
+        if(source.findFocus(FOCUS_ACCESSIBILITY) == null)
+          source.performAction(ACTION_ACCESSIBILITY_FOCUS)
+      }
+    true
+  }
+
   onViewFocused { e:AccessibilityEvent =>
     if(VERSION.SDK_INT >= 14)
       Option(e.getSource).foreach { source =>
