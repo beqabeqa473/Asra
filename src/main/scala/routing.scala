@@ -96,6 +96,7 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
       val originator = utils.classForName(directive.cls.value, directive.pkg.value)
       originator.flatMap { o =>
         val a = utils.ancestors(o)
+        Log.d("spiel", "Ancestors: "+a.mkString(", "))
         val candidates = table.filter { h =>
           h._1.pkg == All && h._1.cls != All && h._1.cls != Value("")
         }.toList.map { h =>
@@ -104,7 +105,10 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
           } catch {
             case e:ClassNotFoundException => o
           }
-          (a.indexOf(target), h)
+          val index = if(a.indexOf(target) == -1 && target.isInterface && target.isAssignableFrom(o))
+            0
+          else a.indexOf(target)
+          (index, h)
         }.filter(_._1 >= 0).sortBy((v:Tuple2[Int, _]) => v._1)
         Some(candidates.exists { v =>
           dispatchTo(v._2._2)
