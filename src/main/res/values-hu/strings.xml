@@ -27,7 +27,6 @@
 <string name="notChecked">kijelölve</string>
 <string name="password">%1$s: Jelszó</string>
 <string name="radioButton">%1$s: választó gomb</string>
-<string name="searchText">%1$s: keresési mező</string>
 
 <!-- Preferences -->
 <string name="preferences">beállítások</string>

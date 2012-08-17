@@ -14,7 +14,6 @@
 <string name="notChecked">не перевірено</string>
 <string name="password">пароль</string>
 <string name="radioButton">радіоКнопка</string>
-<string name="searchText">шукатиТекст</string>
 
 <!-- Preferences -->
 <string name="preferences">Налаштування</string>

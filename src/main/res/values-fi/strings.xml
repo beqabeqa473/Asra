@@ -38,7 +38,6 @@
   <string name="password">salasana</string>
   <string name="radioButton">%1$s: valintapainike</string>
   <string name="rating">Arviointi</string>
-  <string name="searchText">%1$s: etsi tekstiä</string>
   <string name="selected">valittu</string>
 
   <!-- Preferences -->

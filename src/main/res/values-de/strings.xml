@@ -37,7 +37,6 @@
   <string name="password">Passwort</string>
   <string name="radioButton">%1$s Auswahlschalter</string>
   <string name="rating">Bewertung</string>
-  <string name="searchText">%1$s: Suchbegriff</string>
   <string name="selected">gewählt</string>
 
   <!-- Preferences -->

@@ -632,12 +632,6 @@ class Presenters {
 
   }
 
-  class SearchBox extends Presenter("android.app.SearchDialog$SearchAutoComplete") {
-    onViewFocused { e:AccessibilityEvent =>
-      speak(getString(R.string.searchText, utterancesFor(e).mkString(": ")), false)
-    }
-  }
-
   class TextView extends Presenter("android.widget.TextView") {
     onViewFocused { e:AccessibilityEvent => speak(utterancesFor(e, stripBlanks=true)) }
   }

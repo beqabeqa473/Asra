@@ -23,7 +23,6 @@
 <string name="notChecked">ej kryssad</string>
 <string name="password">%1$s: lösenord</string>
 <string name="radioButton">%1$s: radioknapp</string>
-<string name="searchText">%1$s: sök text</string>
 
 <!-- Preferences -->
 <string name="preferences">Inställningar</string>

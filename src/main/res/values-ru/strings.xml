@@ -38,7 +38,6 @@
   <string name="password">пароль</string>
   <string name="radioButton">%1$s радиокнопка</string>
   <string name="rating">Прогресс</string>
-  <string name="searchText">%1$s поиск</string>
   <string name="selected">выделено</string>
 
   <!-- Preferences -->
