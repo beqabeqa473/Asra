@@ -45,13 +45,13 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
     root.descendants.filter(_.rect.intersect(origin)).sortBy(_.rect.left)
   }
 
-  lazy val ancestors = {
+  lazy val classAncestors = {
     val nodeClass = utils.classForName(node.getClassName.toString, node.getPackageName.toString)
     nodeClass.map(utils.ancestors(_).map(_.getName)).getOrElse(Nil)
   }
 
   protected def isA_?(cls:String) =
-    node.getClassName == cls || ancestors.contains(cls)
+    node.getClassName == cls || classAncestors.contains(cls)
 
   lazy val label = {
     def isTextView(n:AccessibilityNodeInfo) =
