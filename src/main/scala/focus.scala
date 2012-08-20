@@ -60,7 +60,6 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
       List("android.widget.CheckBox", "android.widget.EditText", "android.widget.ProgressBar", "android.widget.RadioButton", "android.widget.RatingBar")
       .exists(isA_?(_))
     ) {
-      Log.d("spielcheck", "Row: "+row)
       row.find((v) => isTextView(v) && !v.interactive_? && v.getText != null && v.getText.length > 0)
       } .orElse {
         root.descendants.filter(_.rect.bottom <= rect.top)
