@@ -9,23 +9,27 @@ import AccessibilityNodeInfo._
 
 case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
 
+  lazy val parent = node.getParent
+
+  lazy val ancestors:List[AccessibilityNodeInfo] = Option(parent).map { p =>
+    parent :: parent.ancestors
+  }.getOrElse(Nil)
+
   lazy val root = {
-    def iterate(v:AccessibilityNodeInfo):AccessibilityNodeInfo = v.getParent match {
-      case null => v
-      case v2 => iterate(v2)
+    lazy val r = ancestors match {
+      case Nil => node
+      case v => v.reverse.head
     }
     if(VERSION.SDK_INT >= 16)
-      SpielService.rootInActiveWindow.getOrElse(iterate(node))
+      SpielService.rootInActiveWindow.getOrElse(r)
     else
-      iterate(node)
+      r
   }
-
-  lazy val parent = node.getParent
 
   lazy val children =
     (for(i <- 0 to node.getChildCount-1) yield(node.getChild(i))).toList.filterNot(_ == null)
 
-  lazy val siblings = parent.children
+  lazy val siblings = Option(parent).map(_.children).getOrElse(Nil)
 
   lazy val descendants:List[AccessibilityNodeInfo] = children++children.map { c =>
     c.descendants
