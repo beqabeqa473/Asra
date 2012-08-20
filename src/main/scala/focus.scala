@@ -26,12 +26,12 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
       r
   }
 
-  lazy val children =
+  def children =
     (for(i <- 0 to node.getChildCount-1) yield(node.getChild(i))).toList.filterNot(_ == null)
 
-  lazy val siblings = Option(parent).map(_.children).getOrElse(Nil)
+  def siblings = Option(parent).map(_.children).getOrElse(Nil)
 
-  lazy val descendants:List[AccessibilityNodeInfo] = children++children.map { c =>
+  def descendants:List[AccessibilityNodeInfo] = children++children.map { c =>
     c.descendants
   }.flatten
 
@@ -44,9 +44,12 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
     r
   }
 
-  lazy val row = {
+  def row = {
     val origin = new Rect(0, rect.top, Int.MaxValue, rect.bottom)
-    root.descendants.filter(_.rect.intersect(origin)).sortBy(_.rect.left)
+    val descendants = if(VERSION.SDK_INT >= 16)
+      root.descendants.filter(_.isVisibleToUser)
+    else root.descendants
+    descendants.filter(_.rect.intersect(origin)).sortBy(_.rect.left)
   }
 
   lazy val classAncestors = {
@@ -66,7 +69,10 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
     ) {
       row.find((v) => isTextView(v) && !v.interactive_? && v.getText != null && v.getText.length > 0)
       } .orElse {
-        root.descendants.filter(_.rect.bottom <= rect.top)
+        val descendants = if(VERSION.SDK_INT >= 16)
+          root.descendants.filter(_.isVisibleToUser)
+        else root.descendants
+        descendants.filter(_.rect.bottom <= rect.top)
         .sortBy(_.rect.bottom)
         .reverse.headOption.filter { c =>
           isTextView(c) && !c.interactive_? && c.getText != null && c.getText.length > 0
