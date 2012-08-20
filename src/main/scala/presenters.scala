@@ -616,20 +616,7 @@ class Presenters {
   }
 
   class ScrollView extends Presenter("android.widget.ScrollView") {
-
     onViewFocused { e:AccessibilityEvent => true }
-
-    onViewScrolled { e:AccessibilityEvent =>
-      val percent = (if(e.getMaxScrollX > 0 && e.getMaxScrollY == 0)
-        e.getScrollX.toFloat/e.getMaxScrollX
-      else if(e.getMaxScrollX == 0 && e.getMaxScrollY > 0)
-        e.getScrollY.toFloat/e.getMaxScrollY
-      else
-        0
-      )*100
-      TTS.presentPercentage(percent)
-    }
-
   }
 
   class TextView extends Presenter("android.widget.TextView") {
@@ -766,8 +753,16 @@ class Presenters {
       if(!utterances.isEmpty) {
         speak(utterances)
         nextShouldNotInterrupt()
+      } else {
+        val percent = (if(e.getMaxScrollX > 0 && e.getMaxScrollY == 0)
+          e.getScrollX.toFloat/e.getMaxScrollX
+        else if(e.getMaxScrollX == 0 && e.getMaxScrollY > 0)
+          e.getScrollY.toFloat/e.getMaxScrollY
+        else
+          0
+        )*100
+        TTS.presentPercentage(percent)
       }
-      true
     }
 
     onViewSelected { e:AccessibilityEvent =>
