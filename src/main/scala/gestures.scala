@@ -157,11 +157,11 @@ class Gestures {
             rv = s.performAction(ACTION_PREVIOUS_HTML_ELEMENT)
           if(!rv) {
             var n = s.prevAccessibilityFocus
-            val scrollableContainer = s.ancestors.find(_.isScrollable)
+            val scrollableContainer = s.ancestors.find(v => (v.getActions&ACTION_SCROLL_BACKWARD) != 0)
             scrollableContainer.foreach { sc =>
               if(!n.map(_.ancestors.contains(sc)).getOrElse(true)) {
                 sc.performAction(ACTION_SCROLL_BACKWARD)
-                return prev(scrollableContainer)
+                n = scrollableContainer
               }
             }
             while(!rv) {
@@ -188,11 +188,11 @@ class Gestures {
             rv = s.performAction(ACTION_NEXT_HTML_ELEMENT)
           if(!rv) {
             var n = s.nextAccessibilityFocus
-            val scrollableContainer = s.ancestors.find(_.isScrollable)
+            val scrollableContainer = s.ancestors.find(v => (v.getActions&ACTION_SCROLL_FORWARD) != 0)
             scrollableContainer.foreach { sc =>
               if(!n.map(_.ancestors.contains(sc)).getOrElse(true)) {
                 sc.performAction(ACTION_SCROLL_FORWARD)
-                return next(scrollableContainer)
+                n = scrollableContainer
               }
             }
             while(!rv) {
