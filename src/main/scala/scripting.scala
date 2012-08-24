@@ -274,7 +274,6 @@ object Scripter {
 
   def apply(svc:AContext) {
     service = svc
-    ContextFactory.getGlobal.enterContext(context)
     context.setOptimizationLevel(-1)
 
     // Inject some Spiel objects into the scripting environment.
