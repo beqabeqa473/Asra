@@ -105,11 +105,15 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
           } catch {
             case e:ClassNotFoundException => o
           }
-          val index = if(a.indexOf(target) == -1 && target.isInterface && target.isAssignableFrom(o))
+          val i = a.indexOf(target)
+          val index = if(i == -1 && target.isInterface && target.isAssignableFrom(o))
             0
-          else a.indexOf(target)
+          else if(i == -1)
+            -2
+          else i+1
           (index, h)
         }.filter(_._1 >= 0).sortBy((v:Tuple2[Int, _]) => v._1)
+        Log.d("spielcheck", "Candidates: "+candidates)
         Some(candidates.exists { v =>
           dispatchTo(v._2._2)
         })
