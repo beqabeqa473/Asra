@@ -136,7 +136,6 @@ class Gestures {
 
     private def setInitialFocus() =
       SpielService.rootInActiveWindow.map { root =>
-        Log.d("spielcheck", "Setting initial focus")
         val filtered = root.descendants.filter(_.isVisibleToUser)
         Option(root.findFocus(FOCUS_INPUT)).map(_.performAction(ACTION_ACCESSIBILITY_FOCUS)).getOrElse(false) ||
         filtered.exists(_.performAction(ACTION_ACCESSIBILITY_FOCUS)) ||
@@ -161,7 +160,10 @@ class Gestures {
             scrollableContainer.foreach { sc =>
               if(!n.map(_.ancestors.contains(sc)).getOrElse(true)) {
                 sc.performAction(ACTION_SCROLL_BACKWARD)
-                n = scrollableContainer
+                if(sc.descendants.contains(s))
+                  n = s.prevAccessibilityFocus
+                else
+                  n = scrollableContainer
               }
             }
             while(!rv) {
@@ -192,7 +194,10 @@ class Gestures {
             scrollableContainer.foreach { sc =>
               if(!n.map(_.ancestors.contains(sc)).getOrElse(true)) {
                 sc.performAction(ACTION_SCROLL_FORWARD)
-                n = scrollableContainer
+                if(sc.descendants.contains(s))
+                  n = s.nextAccessibilityFocus
+                else
+                  n = scrollableContainer
               }
             }
             while(!rv) {
