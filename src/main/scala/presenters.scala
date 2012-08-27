@@ -612,7 +612,9 @@ class Presenters {
     onViewFocused { e:AccessibilityEvent => true }
   }
 
-  class Switch extends Presenter("android.widget.Switch") with GenericButtonPresenter
+  class Switch extends Presenter("android.widget.Switch") with GenericButtonPresenter {
+    onViewClicked { e:AccessibilityEvent => Presenter.process(e, Some(TYPE_VIEW_FOCUSED)) }
+  }
 
   class TextView extends Presenter("android.widget.TextView") {
     onViewFocused { e:AccessibilityEvent => speak(utterancesFor(e, stripBlanks=true)) }
