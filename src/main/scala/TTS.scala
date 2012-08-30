@@ -55,7 +55,7 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
         tts.shutdown()
         tts = null
       }
-      val desiredEngine = if(failures >= 3)
+      val desiredEngine = if(failures >= 3 && !spokeSuccessfully)
         platformEngine
       else if(Preferences.speechEngine != "") {
         val enginePackages = engines.map(_._2)
@@ -63,6 +63,7 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
           Some(Preferences.speechEngine)
         else None
       } else None
+      spokeSuccessfully = false
       tts= desiredEngine.map(new TextToSpeech(service, this, _)).getOrElse(new TextToSpeech(service, this))
       TextToSpeech.SUCCESS
     }
@@ -247,6 +248,8 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
     }
   }
 
+  private var spokeSuccessfully = false
+
   /**
    * Speaks the specified text, optionally flushing current speech.
   */
@@ -260,16 +263,21 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
     val params = new java.util.HashMap[String, String]()
     val uid = utteranceID.getOrElse(java.util.UUID.randomUUID.toString)
     params.put(tts.Engine.KEY_PARAM_UTTERANCE_ID, uid)
-    guard { if(text.length == 0)
-      tts.speak(service.getString(R.string.blank), mode, params)
-    else if(text.length == 1 && Character.isUpperCase(text(0))) {
-      pitch = Preferences.pitchScale*1.5f
-      tts.speak(service.getString(R.string.cap, text), mode, params)
-      pitch = Preferences.pitchScale
-    } else if(text.length == 1 && Preferences.managePunctuationSpeech && managedPunctuations.get(text) != None)
-      tts.speak(service.getString(managedPunctuations(text)), mode, params)
-    else
-      tts.speak(text, mode, params)
+    guard {
+      val rv = if(text.length == 0)
+        tts.speak(service.getString(R.string.blank), mode, params)
+      else if(text.length == 1 && Character.isUpperCase(text(0))) {
+        pitch = Preferences.pitchScale*1.5f
+        val rv2 = tts.speak(service.getString(R.string.cap, text), mode, params)
+        pitch = Preferences.pitchScale
+        rv2
+      } else if(text.length == 1 && Preferences.managePunctuationSpeech && managedPunctuations.get(text) != None)
+        tts.speak(service.getString(managedPunctuations(text)), mode, params)
+      else
+        tts.speak(text, mode, params)
+      if(rv == TextToSpeech.SUCCESS)
+        spokeSuccessfully = true
+      rv
     }
   }
 
