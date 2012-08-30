@@ -540,7 +540,7 @@ class Events extends ListFragment with Refreshable {
 
   def refresh() {
     setListAdapter(
-      new ArrayAdapter[PrettyAccessibilityEvent](
+      new ArrayAdapter[AccessibilityEvent](
         getActivity,
         android.R.layout.simple_list_item_1,
         EventReviewQueue.toArray

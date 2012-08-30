@@ -4,8 +4,6 @@ package scripting
 import java.io.{File, FileInputStream, FileOutputStream, FileWriter, InputStream}
 import java.lang.Integer
 
-import presenters.PrettyAccessibilityEvent
-
 import android.content.{BroadcastReceiver, ContentValues, Context => AContext, Intent}
 import android.content.pm.PackageManager
 import android.database.Cursor
@@ -418,11 +416,11 @@ object Scripter {
    * Create or append to a script template for the specified <code>AccessibilityEvent</code>.
   */
 
-  def createTemplateFor(event:PrettyAccessibilityEvent) = {
+  def createTemplateFor(event:AccessibilityEvent) = {
     try {
-      val presenter = "on"+Presenter.dispatchers(event.e.getEventType).capitalize
-      val code = "forClass(\""+event.e.getClassName+"\", {\n  "+presenter+": function(e, activity) {\n    // "+event.toString+"\n    return false\n  }\n})\n"
-      val file = new File(scriptsDir, event.e.getPackageName+".js")
+      val presenter = "on"+Presenter.dispatchers(event.getEventType).capitalize
+      val code = "forClass(\""+event.getClassName+"\", {\n  "+presenter+": function(e, activity) {\n    // "+event.toString+"\n    return false\n  }\n})\n"
+      val file = new File(scriptsDir, event.getPackageName+".js")
       val writer = new FileWriter(file, true)
       writer.write(code)
       writer.close()

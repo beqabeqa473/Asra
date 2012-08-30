@@ -38,39 +38,16 @@ class NativeCallback(f:AccessibilityEvent => Boolean) extends Callback {
 }
 
 /**
- * Wrapper that pretty-prints <code>AccessibilityEvent</code>s.
-*/
-
-class PrettyAccessibilityEvent(val e:AccessibilityEvent) {
-
-  val activityName = Presenter.currentActivity
-
-  override val toString = {
-    val eventType = Presenter.dispatchers.get(e.getEventType).getOrElse("Unknown")
-    val text = if(e.getText.length == 0)
-      "no text: " 
-    else
-      "Text: "+e.getText.foldLeft("") ((acc, v) => acc+" "+v)+": "
-    val contentDescription = if(e.getContentDescription != null)
-      e.getContentDescription+": "
-    else ""
-    val className = e.getClassName
-    val packageName = e.getPackageName
-    eventType+": "+text+contentDescription+" index: "+e.getCurrentItemIndex+" count: "+e.getItemCount+" package: "+packageName+" activity: "+activityName+" class: "+className
-  }
-}
-
-/**
  * Singleton that stores the 50 most recent <code>AccessibilityEvent</code> objects for review.
 */
 
-object EventReviewQueue extends collection.mutable.Queue[PrettyAccessibilityEvent] {
+object EventReviewQueue extends collection.mutable.Queue[AccessibilityEvent] {
 
   /**
    * Adds an event to the queue, stripping excess items if necessary.
   */
 
-  def apply(e:PrettyAccessibilityEvent) = {
+  def apply(e:AccessibilityEvent) = {
     enqueue(e)
     while(length > 50) dequeue()
   }
@@ -927,7 +904,7 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
       return true
 
     if(eventType == None) {
-      EventReviewQueue(new PrettyAccessibilityEvent(e))
+      EventReviewQueue(e)
       Log.d("spiel", "Event "+e.toString+"; Activity: "+currentActivity)
     }
 
