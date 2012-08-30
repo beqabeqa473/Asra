@@ -170,58 +170,6 @@ class Presenter(directive:Option[HandlerDirective] = None) extends Handler[Event
 
   protected def byDefault(c:Callback) = dispatches("default") = c
 
-  /**
-   * Converts a given <code>AccessibilityEvent</code> to a list of 
-   * utterances incorporating text and content description, optionally 
-   * adding a blank utterance.
-  */
-
-  protected def utterancesFor(e:AccessibilityEvent, addBlank:Boolean = true, stripBlanks:Boolean = false, guessLabelIfTextMissing:Boolean = false, guessLabelIfContentDescriptionMissing:Boolean = false, guessLabelIfTextShorterThan:Option[Int] = None, providedText:Option[String] = None):List[String] = {
-    var rv = List[String]()
-    val txt = Option(e.getText).map(_.toList).getOrElse(Nil).filterNot(_ == null).map(_.toString).mkString("\n") match {
-      case "" => List()
-      case v => v.split("\n").toList
-    }
-    val text = if(stripBlanks)
-      txt.filterNot(_.trim.length == 0)
-    else txt
-    var blankAdded = false
-    providedText.map(rv ::= _).getOrElse {
-      if(text.size == 0 && e.getContentDescription == null && addBlank) {
-        blankAdded = true
-        rv ::= ""
-      }
-    }
-    rv :::= text
-    if(e.getContentDescription != null && e.getContentDescription != "")
-      rv match {
-        case hd :: Nil if(hd.toLowerCase.trim == e.getContentDescription.toString.toLowerCase.trim) =>
-        case _ =>
-          rv ::= e.getContentDescription.toString
-      }
-    def removeBlank() = if(blankAdded) rv = rv.tail
-    if(VERSION.SDK_INT >= 14) {
-      if(guessLabelIfTextMissing && e.getText.length == 0)
-        rv :::= Option(e.getSource).flatMap(_.label).map(_.getText.toString).map { v =>
-          removeBlank()
-          List(v)
-        }.getOrElse(Nil)
-      else if(guessLabelIfContentDescriptionMissing && e.getContentDescription == null)
-        rv :::= Option(e.getSource).flatMap(_.label).map(_.getText.toString).map { v =>
-          removeBlank()
-          List(v)
-        }.getOrElse(Nil)
-      else guessLabelIfTextShorterThan.foreach { v =>
-        if(VERSION.SDK_INT >= 16 || text.length < v)
-          rv :::= Option(e.getSource).flatMap(_.label).map(_.getText.toString).map { v =>
-            removeBlank()
-            List(v)
-          }.getOrElse(Nil)
-      }
-    }
-    rv
-  }
-
   protected def interactables(source:AccessibilityNodeInfo) = 
     (source :: source.descendants).filter(_.interactive_?)
 
@@ -252,7 +200,7 @@ class Presenter(directive:Option[HandlerDirective] = None) extends Handler[Event
 
 trait GenericButtonPresenter extends Presenter {
   onViewFocused { e:AccessibilityEvent =>
-    val text = utterancesFor(e, addBlank=false).mkString(": ")
+    val text = e.utterances(addBlank=false).mkString(": ")
     if(text == "") {
       if(VERSION.SDK_INT >= 14) {
         Option(e.getSource).flatMap { source =>
@@ -339,7 +287,7 @@ class Presenters {
   class ActionMenuItemView extends Presenter("com.android.internal.view.menu.ActionMenuItemView") {
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(utterancesFor(e, stripBlanks=true) ::: ("Menu item" :: Nil))
+      speak(e.utterances(stripBlanks=true) ::: ("Menu item" :: Nil))
     }
 
     onViewHoverEnter { e:AccessibilityEvent => Presenter.process(e, Some(TYPE_VIEW_FOCUSED)) }
@@ -349,7 +297,7 @@ class Presenters {
   class AdapterView extends Presenter("android.widget.AdapterView") {
 
     private def focusedOnList(e:AccessibilityEvent) = {
-      val utterances = utterancesFor(e, stripBlanks = true)
+      val utterances = e.utterances(stripBlanks = true)
       if(utterances != Nil && e.getCurrentItemIndex != -1)
         speak(getString(R.string.listItem, utterances.mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
       else
@@ -374,7 +322,7 @@ class Presenters {
 
     onViewSelected { e:AccessibilityEvent =>
       if(e.getCurrentItemIndex >= 0)
-        speak(getString(R.string.listItem, utterancesFor(e).mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
+        speak(getString(R.string.listItem, e.utterances.mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
       else if(e.getItemCount == 0)
         speak(getString(R.string.emptyList))
       true
@@ -396,7 +344,7 @@ class Presenters {
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(getString(R.string.checkbox, utterancesFor(e, addBlank=false, guessLabelIfTextShorterThan = Some(2)).mkString(": ")))
+      speak(getString(R.string.checkbox, e.utterances(addBlank=false, guessLabelIfTextShorterThan = Some(2)).mkString(": ")))
       if(VERSION.SDK_INT >= 16)
         speak(getString((if(e.isChecked) R.string.checked else R.string.notChecked)), false)
       true
@@ -406,7 +354,7 @@ class Presenters {
 
   class Dialog extends Presenter("android.app.Dialog") {
     onWindowStateChanged { e:AccessibilityEvent =>
-      speak(utterancesFor(e, stripBlanks=true).mkString(": "), true)
+      speak(e.utterances(stripBlanks=true).mkString(": "), true)
       nextShouldNotInterrupt()
     }
   }
@@ -414,7 +362,7 @@ class Presenters {
   class EditText extends Presenter("android.widget.EditText") {
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(utterancesFor(e, addBlank=false, guessLabelIfContentDescriptionMissing = true), false)
+      speak(e.utterances(addBlank=false, guessLabelIfContentDescriptionMissing = true), false)
       if(e.isPassword) {
         speak(getString(R.string.password))
         val length = if(e.getItemCount > 0)
@@ -478,7 +426,7 @@ class Presenters {
   class HomeView extends Presenter("com.android.internal.widget.ActionBarView$HomeView") {
 
     private def process(e:AccessibilityEvent) = {
-      val utterances = utterancesFor(e, addBlank = false)
+      val utterances = e.utterances(addBlank = false)
       if(utterances != Nil)
         speak(utterances.mkString(" "))
       true
@@ -496,7 +444,7 @@ class Presenters {
 
   class ImageView extends Presenter("android.widget.ImageView") {
     onViewFocused { e:AccessibilityEvent =>
-      val text = utterancesFor(e, addBlank=false).mkString(": ")
+      val text = e.utterances(addBlank=false).mkString(": ")
       if(text == "")
         if(e.getItemCount > 0 && e.getCurrentItemIndex >= 0)
           speak(getString(R.string.listItem, getString(R.string.image), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
@@ -520,7 +468,7 @@ class Presenters {
   class Menu extends Presenter("com.android.internal.view.menu.MenuView") {
 
     onViewSelected { e:AccessibilityEvent =>
-      speak(utterancesFor(e))
+      speak(e.utterances)
     }
 
     onWindowStateChanged { e:AccessibilityEvent =>
@@ -537,7 +485,7 @@ class Presenters {
 
     onViewFocused { e:AccessibilityEvent =>
       val percent = (e.getCurrentItemIndex.toDouble/e.getItemCount*100).toInt
-      speak(utterancesFor(e, addBlank = false, guessLabelIfContentDescriptionMissing = true, providedText=Some(percent+"%")))
+      speak(e.utterances(addBlank = false, guessLabelIfContentDescriptionMissing = true, providedText=Some(percent+"%")))
     }
 
     onViewSelected { e:AccessibilityEvent =>
@@ -557,7 +505,7 @@ class Presenters {
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(getString(R.string.radioButton, utterancesFor(e, guessLabelIfTextShorterThan = Some(2)).mkString(": ")))
+      speak(getString(R.string.radioButton, e.utterances(guessLabelIfTextShorterThan = Some(2)).mkString(": ")))
       if(VERSION.SDK_INT >= 16)
         speak(getString((if(e.isChecked) R.string.selected else R.string.notSelected)), false)
       true
@@ -570,7 +518,7 @@ class Presenters {
     onViewFocused { e:AccessibilityEvent =>
       val label = Option(e.getSource).flatMap(_.label).map(_.getText.toString).getOrElse(getString(R.string.rating))
       val rating = getString(R.string.listItem, label, e.getCurrentItemIndex.toString, e.getItemCount.toString)
-      speak(utterancesFor(e, addBlank = false, providedText=Some(rating)))
+      speak(e.utterances(addBlank = false, providedText=Some(rating)))
     }
 
     onViewSelected { e:AccessibilityEvent =>
@@ -594,14 +542,14 @@ class Presenters {
   }
 
   class TextView extends Presenter("android.widget.TextView") {
-    onViewFocused { e:AccessibilityEvent => speak(utterancesFor(e, stripBlanks=true)) }
+    onViewFocused { e:AccessibilityEvent => speak(e.utterances(stripBlanks=true)) }
   }
 
   class ViewGroup extends Presenter("android.view.ViewGroup") {
 
     onViewFocused { e:AccessibilityEvent => 
       if(VERSION.SDK_INT >= 14) {
-        val utterances = utterancesFor(e, stripBlanks = true, addBlank=false)
+        val utterances = e.utterances(stripBlanks = true, addBlank=false)
         if(utterances != Nil)
           speak(utterances)
         else
@@ -610,14 +558,14 @@ class Presenters {
               speak(utterances)
             else
               true
-          }.getOrElse(speak(utterancesFor(e, stripBlanks = true)))
+          }.getOrElse(speak(e.utterances(stripBlanks = true)))
       } else
-        speak(utterancesFor(e, stripBlanks = true))
+        speak(e.utterances(stripBlanks = true))
     }
 
     onViewHoverEnter { e:AccessibilityEvent =>
       Option(e.getSource).map { source=>
-        val utterances = utterancesFor(e, addBlank=false, stripBlanks=true)
+        val utterances = e.utterances(addBlank=false, stripBlanks=true)
         if(utterances != Nil) {
           val textCount = source.descendants.map { v =>
             if((v.getText != null && v.getText.length != 0) || (v.getContentDescription != null && v.getContentDescription.length != 0)) 1 else 0
@@ -686,10 +634,10 @@ class Presenters {
 
   class Default extends Presenter(Some(HandlerDirective(All, All))) {
 
-    onAnnouncement { e:AccessibilityEvent => speak(utterancesFor(e, addBlank = false, stripBlanks = true)) }
+    onAnnouncement { e:AccessibilityEvent => speak(e.utterances(addBlank = false, stripBlanks = true)) }
 
     onNotificationStateChanged { e:AccessibilityEvent =>
-      val utterances = utterancesFor(e, addBlank=false, stripBlanks=true)
+      val utterances = e.utterances(addBlank=false, stripBlanks=true)
       if(!utterances.isEmpty) {
         nextShouldNotInterrupt()
         speakNotification(utterances)
@@ -706,7 +654,7 @@ class Presenters {
     onViewAccessibilityFocused { e:AccessibilityEvent => Presenter.process(e, Some(TYPE_VIEW_FOCUSED)) }
 
     onViewFocused { e:AccessibilityEvent =>
-      val utterances = utterancesFor(e, addBlank=false, stripBlanks=true) match {
+      val utterances = e.utterances(addBlank=false, stripBlanks=true) match {
         case Nil if(!List(TYPE_VIEW_ACCESSIBILITY_FOCUSED, TYPE_VIEW_HOVER_ENTER).contains(e.getEventType)) => 
           e.getClassName.toString.split("\\.").last :: Nil
         case u => u
@@ -723,7 +671,7 @@ class Presenters {
     onViewLongClicked { e:AccessibilityEvent => true }
 
     onViewScrolled { e:AccessibilityEvent =>
-      val utterances = utterancesFor(e, addBlank=false, stripBlanks=true)
+      val utterances = e.utterances(addBlank=false, stripBlanks=true)
       if(!utterances.isEmpty) {
         speak(utterances)
         nextShouldNotInterrupt()
@@ -739,7 +687,7 @@ class Presenters {
     }
 
     onViewSelected { e:AccessibilityEvent =>
-      val utterances = utterancesFor(e, addBlank=false)
+      val utterances = e.utterances(addBlank=false)
       if(utterances.length > 0) {
         if(e.getCurrentItemIndex == -1)
           if(e.getItemCount == 1)
@@ -754,7 +702,7 @@ class Presenters {
         speak("")
     }
 
-    onViewTextChanged { e:AccessibilityEvent => speak(utterancesFor(e, addBlank = false, stripBlanks = true)) }
+    onViewTextChanged { e:AccessibilityEvent => speak(e.utterances(addBlank = false, stripBlanks = true)) }
 
     private var oldSelectionFrom:Option[Int] = None
     private var oldSelectionTo:Option[Int] = None
@@ -842,13 +790,13 @@ class Presenters {
     onWindowContentChanged { e:AccessibilityEvent => true }
 
     onWindowStateChanged { e:AccessibilityEvent =>
-      speak(utterancesFor(e, addBlank = false, stripBlanks = true), true)
+      speak(e.utterances(addBlank = false, stripBlanks = true), true)
       nextShouldNotInterrupt()
     }
 
     byDefault { e:AccessibilityEvent =>
       //Log.d("spiel", "Unhandled event: "+e.toString)
-      speak(utterancesFor(e, addBlank = false, stripBlanks = true))
+      speak(e.utterances(addBlank = false, stripBlanks = true))
     }
 
   }
