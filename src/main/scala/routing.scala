@@ -113,7 +113,7 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
           else i+1
           (index, h)
         }.filter(_._1 >= 0).sortBy((v:Tuple2[Int, _]) => v._1)
-        Log.d("spielcheck", "Candidates: "+candidates)
+        //Log.d("spielcheck", "Candidates: "+candidates)
         Some(candidates.exists { v =>
           dispatchTo(v._2._2)
         })
