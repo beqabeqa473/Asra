@@ -6,7 +6,7 @@ import collection.JavaConversions._
 import android.app.{ActivityManager, Service}
 import android.content.Context
 import android.os.Build.VERSION
-import android.os.{SystemClock, Vibrator}
+import android.os.SystemClock
 import android.util.Log
 import android.view.accessibility.{AccessibilityEvent, AccessibilityNodeInfo}
 import AccessibilityEvent._
@@ -104,12 +104,6 @@ class Presenter(directive:Option[HandlerDirective] = None) extends Handler[Event
     true
   }
 
-  def vibrate(millis:Long) = {
-    vibrator.vibrate(millis)
-    true
-  }
-
-  def shortVibration() = vibrate(20)
 
   /**
    * Indicates that the next <code>AccessibilityEvent</code> should not interrupt speech.
@@ -826,8 +820,6 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
     myNextShouldNotInterrupt = true
     true
   }
-
-  private lazy val vibrator:Vibrator = context.getSystemService(Context.VIBRATOR_SERVICE).asInstanceOf[Vibrator]
 
   /**
    * Initialize presenters for the given <code>Context</code>.

@@ -2,6 +2,7 @@ package info.spielproject.spiel
 package routing
 
 import android.content.Context
+import android.os.Vibrator
 import android.util.Log
 
 sealed trait Component
@@ -24,6 +25,14 @@ abstract class Handler[PayloadType](val directive:Option[HandlerDirective] = Non
 
   protected def getString(resID:Int, formatArgs:AnyRef*) = SpielService.context.getString(resID, formatArgs: _*)
 
+  private lazy val vibrator:Vibrator = SpielService.context.getSystemService(Context.VIBRATOR_SERVICE).asInstanceOf[Vibrator]
+
+  protected def vibrate(millis:Long) = {
+    vibrator.vibrate(millis)
+    true
+  }
+
+  protected def shortVibration() = vibrate(20)
 
   def apply(payload:PayloadType):Boolean
 
@@ -32,6 +41,7 @@ abstract class Handler[PayloadType](val directive:Option[HandlerDirective] = Non
 class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, after:Option[() => Handler[PayloadType]] = None) {
 
   var context:Context = null
+
 
   def apply(c:Context) {
     context = c
