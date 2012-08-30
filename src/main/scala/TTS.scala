@@ -259,7 +259,7 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
     if(text.length > 1 && text.contains("\n"))
       return speak(text.split("\n").toList, flush)
     Log.d("spiel", "Speaking "+text+": "+flush)
-    val mode = if(flush) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD
+    val mode = if(flush) 2 else TextToSpeech.QUEUE_ADD
     val params = new java.util.HashMap[String, String]()
     val uid = utteranceID.getOrElse(java.util.UUID.randomUUID.toString)
     params.put(tts.Engine.KEY_PARAM_UTTERANCE_ID, uid)
