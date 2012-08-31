@@ -131,7 +131,7 @@ class Gestures {
           case MOVEMENT_GRANULARITY_PAGE => R.string.page
         }
       }.getOrElse(R.string.none)
-      TTS.speak(getString(id), true)
+      speak(getString(id), true)
     }
 
     private def setInitialFocus() =
