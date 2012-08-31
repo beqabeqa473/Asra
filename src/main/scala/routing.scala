@@ -19,7 +19,45 @@ case class PayloadDirective(pkg:Value, cls:Value) {
   def this(p:String, c:String) = this(Value(p), Value(c))
 }
 
-abstract class Handler[PayloadType](val directive:Option[HandlerDirective] = None) {
+abstract class Handler[PayloadType](router:Router[_], val directive:Option[HandlerDirective] = None) {
+
+  // Convenience functions for calling TTS, used from scripting subsystem.
+
+  def speak(text:String, interrupt:Boolean) = {
+    TTS.speak(text, interrupt)
+    true
+  }
+
+  def speak(text:String):Boolean = speak(text, !router.myNextShouldNotInterrupt)
+
+  def speak(list:List[String], interrupt:Boolean) = {
+    TTS.speak(list, interrupt)
+    true
+  }
+
+  def speak(list:List[String]):Boolean = speak(list, !router.myNextShouldNotInterrupt)
+
+  def speakNotification(text:String) = {
+    TTS.speakNotification(text)
+    true
+  }
+
+  def speakNotification(text:List[String]) = {
+    TTS.speakNotification(text)
+    true
+  }
+
+  def stopSpeaking() = {
+    if(!router.nextShouldNotInterruptCalled)
+      TTS.stop()
+    true
+  }
+
+  /**
+   * Indicates that the next <code>AccessibilityEvent</code> should not interrupt speech.
+  */
+
+  def nextShouldNotInterrupt() = router.nextShouldNotInterrupt()
 
   protected def getString(resID:Int) = SpielService.context.getString(resID)
 
@@ -42,6 +80,24 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
 
   var context:Context = null
 
+  // Track and report state of whether next AccessibilityEvent should interrupt speech.
+  protected[routing] var myNextShouldNotInterrupt = false
+  def shouldNextInterrupt = !myNextShouldNotInterrupt
+
+  protected[routing] var nextShouldNotInterruptCalled = false
+
+  /**
+   * In some instances, speech for the next <code>AccessibilityEvent</code> 
+   * shouldn't interrupt. Calling this method from a presenter indicates this 
+   * to be the case.
+  */
+
+  def nextShouldNotInterrupt() = {
+    Log.d("spiel", "Next accessibility event should not interrupt speech.")
+    nextShouldNotInterruptCalled = true
+    myNextShouldNotInterrupt = true
+    true
+  }
 
   def apply(c:Context) {
     context = c

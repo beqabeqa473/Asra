@@ -30,7 +30,7 @@ object Gesture extends Enumeration {
 
 case class GesturePayload(gesture:Gesture.Value, source:Option[AccessibilityNodeInfo])
 
-class Listener(directive:Option[HandlerDirective] = None) extends Handler[GesturePayload](directive) {
+class Listener(directive:Option[HandlerDirective] = None) extends Handler[GesturePayload](GestureDispatcher, directive) {
 
   private type Callback = (Option[AccessibilityNodeInfo]) => Boolean
 

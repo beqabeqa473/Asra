@@ -63,7 +63,7 @@ case class EventPayload(event:AccessibilityEvent, eventType:Int)
  * Passing a blank string for either indicates events from all packages or all classes.
 */
 
-class Presenter(directive:Option[HandlerDirective] = None) extends Handler[EventPayload](directive) {
+class Presenter(directive:Option[HandlerDirective] = None) extends Handler[EventPayload](Presenter, directive) {
 
   def this(pkg:String, cls:String) = this(Some(new HandlerDirective(pkg, cls)))
   def this(c:String) = this(Some(new HandlerDirective(c)))
@@ -71,45 +71,6 @@ class Presenter(directive:Option[HandlerDirective] = None) extends Handler[Event
   import Presenter._
 
   Presenter.register(this)
-
-  // Convenience functions for calling TTS, used from scripting subsystem.
-
-  def speak(text:String, interrupt:Boolean) = {
-    TTS.speak(text, interrupt)
-    true
-  }
-
-  def speak(text:String):Boolean = speak(text, !myNextShouldNotInterrupt)
-
-  def speak(list:List[String], interrupt:Boolean) = {
-    TTS.speak(list, interrupt)
-    true
-  }
-
-  def speak(list:List[String]):Boolean = speak(list, !myNextShouldNotInterrupt)
-
-  def speakNotification(text:String) = {
-    TTS.speakNotification(text)
-    true
-  }
-
-  def speakNotification(text:List[String]) = {
-    TTS.speakNotification(text)
-    true
-  }
-
-  def stopSpeaking() = {
-    if(!nextShouldNotInterruptCalled)
-      TTS.stop()
-    true
-  }
-
-
-  /**
-   * Indicates that the next <code>AccessibilityEvent</code> should not interrupt speech.
-  */
-
-  def nextShouldNotInterrupt() = Presenter.nextShouldNotInterrupt()
 
   // Convenience method for converting functions to callbacks.
 
@@ -801,25 +762,6 @@ class Presenters {
 */
 
 object Presenter extends Router[EventPayload](Some(() => Before), Some(() => After)) {
-
-  // Track and report state of whether next AccessibilityEvent should interrupt speech.
-  private var myNextShouldNotInterrupt = false
-  def shouldNextInterrupt = !myNextShouldNotInterrupt
-
-  private var nextShouldNotInterruptCalled = false
-
-  /**
-   * In some instances, speech for the next <code>AccessibilityEvent</code> 
-   * shouldn't interrupt. Calling this method from a presenter indicates this 
-   * to be the case.
-  */
-
-  def nextShouldNotInterrupt() = {
-    Log.d("spiel", "Next accessibility event should not interrupt speech.")
-    nextShouldNotInterruptCalled = true
-    myNextShouldNotInterrupt = true
-    true
-  }
 
   /**
    * Initialize presenters for the given <code>Context</code>.
