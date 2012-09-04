@@ -276,11 +276,18 @@ class Presenters {
     }
 
     onViewSelected { e:AccessibilityEvent =>
-      if(e.getCurrentItemIndex >= 0)
-        speak(getString(R.string.listItem, e.utterances.mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
-      else if(e.getItemCount == 0)
-        speak(getString(R.string.emptyList))
-      true
+      Option(e.getSource).map { source =>
+        if(!source.isFocused)
+          true
+        else
+          false
+      }.getOrElse(false) || {
+        if(e.getCurrentItemIndex >= 0)
+          speak(getString(R.string.listItem, e.utterances.mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
+        else if(e.getItemCount == 0)
+          speak(getString(R.string.emptyList))
+        true
+      }
     }
 
     onWindowStateChanged { e:AccessibilityEvent => focusedOnList(e) }
