@@ -269,7 +269,7 @@ class Presenters {
 
     onViewScrolled { e:AccessibilityEvent =>
       if(e.getToIndex >= 0 && e.getItemCount > 0) {
-        val percentage = e.getToIndex.toDouble/e.getItemCount
+        val percentage = e.getToIndex.toDouble/e.getItemCount*100
         TTS.presentPercentage(percentage)
       }
       true
