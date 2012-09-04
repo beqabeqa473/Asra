@@ -356,7 +356,7 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   def stopRepeatedSpeech(key:String) = repeatedSpeech -= key
 
   private def performRepeatedSpeech(key:String):Unit = repeatedSpeech.get(key) match {
-    case Some(v) if(!shouldSpeakNotification) => actor {
+    case Some(v) if(!shouldSpeakNotification(true)) => actor {
       Thread.sleep(v._1*1000)
       performRepeatedSpeech(key)
     }
@@ -364,11 +364,14 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
     case None =>
   }
 
-  private def shouldSpeakNotification:Boolean = {
-    if(StateReactor.ringerOff_? || StateReactor.inCall_?) return false
-    if(!Preferences.speakNotificationsWhenScreenOff && StateReactor.screenOff_?) return false
-    true
-  }
+  private def shouldSpeakNotification(skipScreenCheck:Boolean = false):Boolean =
+    if(StateReactor.ringerOff_? || StateReactor.inCall_?)
+      false
+    else if(!skipScreenCheck && !Preferences.speakNotificationsWhenScreenOff && StateReactor.screenOff_?)
+      false
+    else true
+
+  private def shouldSpeakNotification:Boolean = shouldSpeakNotification()
 
   /**
    * Handle speaking of the specified notification string based on preferences 
