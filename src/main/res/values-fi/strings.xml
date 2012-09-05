@@ -2,7 +2,7 @@
 
 <resources>
   <string name="appName">Spiel</string>
-  <string name="appDescription">Joustava ja skriptattava Android-ruudunlukija</string>
+  <string name="appDescription">Joustava ja skriptattava Android-ruudunlukuohjelma</string>
 
   <!-- Initial welcome message-->
   <string name="welcomeMsg">Tervetuloa Spieliin!</string>
@@ -73,7 +73,7 @@
   <string name="onShakeTitle">Laitetta ravistettaessa</string>
   <string name="onShakeSummary">Valitse toiminto, joka suoritetaan, kun laitetta ravistetaan</string>
   <string name="onProximityNearTitle">Kun jotakin on lähellä</string>
-  <string name="onProximityNearSummary">Valitse toiminto, joka suoritetaan, kun läheisyyden tunnistin havaitsee lähellä jotakin</string>
+  <string name="onProximityNearSummary">Valitse toiminto, joka suoritetaan, kun läheisyysanturi havaitsee lähellä jotakin</string>
 
   <string name="notificationFiltersTitle">Ilmoitussuodattimet</string>
   <string name="notificationFiltersSummary">Suodata ilmoitusmuutosten lukemista äänekkäissä sovelluksissa</string>
@@ -82,7 +82,7 @@
   <string name="sendBacktracesTitle">Lähetä virheenjäljitystietoja Spielin kaatuessa</string>
   <string name="sendBacktracesSummary">Lähetä kehittäjälle nimettömiä kaatumisilmoituksia automaattisesti Spielin kaatuessa (edellyttää uudelleenkäynnistystä)</string>
   <string name="profilingTitle">Profilointi</string>
-  <string name="profilingSummary">Ota käyttöön vain kehitystarkoituksiin, sillä tämä vaikuttaa suorituskykyyn!</string>
+  <string name="profilingSummary">Ota käyttöön vain kehitystarkoituksessa, sillä tämä vaikuttaa suorituskykyyn!</string>
 
   <string name="events">Tapahtumat</string>
 
