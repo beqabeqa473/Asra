@@ -215,15 +215,17 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   private var failures = 0
 
   private def reInitOnFailure() {
-    val intent = new Intent()
-    intent.setAction(tts.Engine.ACTION_CHECK_TTS_DATA)
-    if(Preferences.speechEngine != "")
-      intent.setPackage(Preferences.speechEngine)
-    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    try {
-      service.startActivity(intent)
-    } catch {
-      case e:android.content.ActivityNotFoundException => Log.e("spiel", "Error reinitializing speech", e)
+    if(!spokeSuccessfully) {
+      val intent = new Intent()
+      intent.setAction(tts.Engine.ACTION_CHECK_TTS_DATA)
+      if(Preferences.speechEngine != "")
+        intent.setPackage(Preferences.speechEngine)
+      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      try {
+        service.startActivity(intent)
+      } catch {
+        case e:android.content.ActivityNotFoundException => Log.e("spiel", "Error reinitializing speech", e)
+      }
     }
     init()
     failures = 0
