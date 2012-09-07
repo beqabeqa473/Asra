@@ -59,6 +59,14 @@ object StateReactor {
     cursor.close()
   }
 
+  private def speakBatteryPercentage() {
+    utils.batteryPercentage(p => TTS.speak(p+"%", false))
+  }
+
+  onPowerConnected { () => speakBatteryPercentage() }
+
+  onPowerDisconnected { () => speakBatteryPercentage() }
+
   // Manage repeating of caller ID information, stopping when appropriate.
 
   var callerIDRepeaterID = ""
