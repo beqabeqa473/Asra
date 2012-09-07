@@ -58,6 +58,10 @@ object StateObserver {
 
     registerReceiver((c, i) => applicationRemoved(i), Intent.ACTION_PACKAGE_REMOVED :: Nil, Some("package"))
 
+    registerReceiver((c, i) => powerConnected(), Intent.ACTION_POWER_CONNECTED :: Nil)
+
+    registerReceiver((c, i) => powerDisconnected(), Intent.ACTION_POWER_DISCONNECTED :: Nil)
+
     registerReceiver({ (c, i) =>
       val extra = i.getIntExtra(AudioManager.EXTRA_RINGER_MODE, AudioManager.RINGER_MODE_NORMAL)
       val mode = extra match {
@@ -141,6 +145,52 @@ object StateObserver {
     if(!i.getBooleanExtra(Intent.EXTRA_REPLACING, false))
       applicationRemovedHandlers.foreach { f => f(i) }
   }
+
+  private var powerConnectedHandlers = List[() => Unit]()
+
+  /**
+   * Register handler to be run when power connects.
+  */
+
+  def onPowerConnected(h:() => Unit) = {
+    powerConnectedHandlers ::= h
+    h
+  }
+
+  /**
+   * Run registered handlers when power connects.
+  */
+
+  def powerConnected() = powerConnectedHandlers.foreach { f => f() }
+
+  /**
+   * Remove handler from being run when power is connected.
+  */
+
+  def removePowerConnected(h:() => Unit) = powerConnectedHandlers = powerConnectedHandlers.filterNot(_ == h)
+
+  private var powerDisconnectedHandlers = List[() => Unit]()
+
+  /**
+   * Register handler to be run when power disconnects.
+  */
+
+  def onPowerDisconnected(h:() => Unit) = {
+    powerDisconnectedHandlers ::= h
+    h
+  }
+
+  /**
+   * Run registered handlers when power disconnects.
+  */
+
+  def powerDisconnected() = powerDisconnectedHandlers.foreach { f => f() }
+
+  /**
+   * Remove handler from being run when power is disconnected.
+  */
+
+  def removePowerDisconnected(h:() => Unit) = powerDisconnectedHandlers = powerDisconnectedHandlers.filterNot(_ == h)
 
   private var bluetoothSCOHeadsetConnectedHandlers = List[() => Unit]()
 
