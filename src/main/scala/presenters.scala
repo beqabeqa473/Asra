@@ -638,12 +638,14 @@ class Presenters {
         speak(utterances)
         nextShouldNotInterrupt()
       } else if(e.getMaxScrollX != -1 || e.getMaxScrollY != -1) {
-        val percent = (if(e.getMaxScrollX > 0 && e.getMaxScrollY == 0)
-          e.getScrollX.toFloat/e.getMaxScrollX
-        else
-          e.getScrollY.toFloat/e.getMaxScrollY
-        )*100
-        TTS.presentPercentage(percent)
+        var percent = 0d
+        if(e.getMaxScrollX > 0 && e.getMaxScrollY == 0)
+          percent = e.getScrollX.toFloat/e.getMaxScrollX
+        else if(e.getMaxScrollX == 0 && e.getMaxScrollY > 0)
+          percent = e.getScrollY.toFloat/e.getMaxScrollY
+        percent = percent*100
+        if(percent > 0)
+          TTS.presentPercentage(percent)
       }
       true
     }
