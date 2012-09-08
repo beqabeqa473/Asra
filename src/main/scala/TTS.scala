@@ -330,6 +330,7 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   }
 
   def presentPercentage(percentage:Double) = {
+    Log.d("spiel", "Presenting "+percentage+"%")
     tick(Some(0.5+percentage/200))
     true
   }
