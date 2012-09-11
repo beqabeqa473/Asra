@@ -1,6 +1,7 @@
 package info.spielproject.spiel
 
 import actors.Actor.actor
+import collection.mutable.ListBuffer
 import collection.JavaConversions._
 
 import android.bluetooth.{BluetoothClass, BluetoothDevice}
@@ -128,34 +129,32 @@ object StateObserver {
 
   }
 
-  private var applicationAddedHandlers = List[(Intent) => Unit]()
+  private val applicationAddedHandlers = ListBuffer[(Intent) => Unit]()
 
-  def onApplicationAdded(h:(Intent) => Unit) = applicationAddedHandlers ::= h
+  def onApplicationAdded(h:(Intent) => Unit) = applicationAddedHandlers += h
 
   def applicationAdded(i:Intent) = {
     if(!i.getBooleanExtra(Intent.EXTRA_REPLACING, false))
       applicationAddedHandlers.foreach { f => f(i) }
   }
 
-  private var applicationRemovedHandlers = List[(Intent) => Unit]()
+  private val applicationRemovedHandlers = ListBuffer[(Intent) => Unit]()
 
-  def onApplicationRemoved(h:(Intent) => Unit) = applicationRemovedHandlers ::= h
+  def onApplicationRemoved(h:(Intent) => Unit) = applicationRemovedHandlers += h
 
   def applicationRemoved(i:Intent) = {
     if(!i.getBooleanExtra(Intent.EXTRA_REPLACING, false))
       applicationRemovedHandlers.foreach { f => f(i) }
   }
 
-  private var powerConnectedHandlers = List[() => Unit]()
+  private val powerConnectedHandlers = ListBuffer[() => Unit]()
 
   /**
    * Register handler to be run when power connects.
   */
 
-  def onPowerConnected(h:() => Unit) = {
-    powerConnectedHandlers ::= h
-    h
-  }
+  def onPowerConnected(h:() => Unit) =
+    powerConnectedHandlers += h
 
   /**
    * Run registered handlers when power connects.
@@ -167,18 +166,16 @@ object StateObserver {
    * Remove handler from being run when power is connected.
   */
 
-  def removePowerConnected(h:() => Unit) = powerConnectedHandlers = powerConnectedHandlers.filterNot(_ == h)
+  def removePowerConnected(h:() => Unit) = powerConnectedHandlers -= h
 
-  private var powerDisconnectedHandlers = List[() => Unit]()
+  private val powerDisconnectedHandlers = ListBuffer[() => Unit]()
 
   /**
    * Register handler to be run when power disconnects.
   */
 
-  def onPowerDisconnected(h:() => Unit) = {
-    powerDisconnectedHandlers ::= h
-    h
-  }
+  def onPowerDisconnected(h:() => Unit) =
+    powerDisconnectedHandlers += h
 
   /**
    * Run registered handlers when power disconnects.
@@ -190,18 +187,16 @@ object StateObserver {
    * Remove handler from being run when power is disconnected.
   */
 
-  def removePowerDisconnected(h:() => Unit) = powerDisconnectedHandlers = powerDisconnectedHandlers.filterNot(_ == h)
+  def removePowerDisconnected(h:() => Unit) = powerDisconnectedHandlers -= h
 
-  private var bluetoothSCOHeadsetConnectedHandlers = List[() => Unit]()
+  private val bluetoothSCOHeadsetConnectedHandlers = ListBuffer[() => Unit]()
 
   /**
    * Registers handler to be run if a bluetooth SCO headset connects.
   */
 
-  def onBluetoothSCOHeadsetConnected(h:() => Unit) = {
-    bluetoothSCOHeadsetConnectedHandlers ::= h
-    h
-  }
+  def onBluetoothSCOHeadsetConnected(h:() => Unit) =
+    bluetoothSCOHeadsetConnectedHandlers += h
 
   /**
    * Run handlers when bluetooth SCO headset connects.
@@ -213,20 +208,17 @@ object StateObserver {
    * Removes handler from being run when bluetooth SCO headset connects.
   */
 
-  def removeBluetoothSCOHeadsetConnected(h:() => Unit) = {
-    bluetoothSCOHeadsetConnectedHandlers = bluetoothSCOHeadsetConnectedHandlers.filterNot(_ == h)
-  }
+  def removeBluetoothSCOHeadsetConnected(h:() => Unit) =
+    bluetoothSCOHeadsetConnectedHandlers -= h
 
-  private var bluetoothSCOHeadsetDisconnectedHandlers = List[() => Unit]()
+  private val bluetoothSCOHeadsetDisconnectedHandlers = ListBuffer[() => Unit]()
 
   /**
    * Registers handler to be run if a bluetooth SCO headset disconnects.
   */
 
-  def onBluetoothSCOHeadsetDisconnected(h:() => Unit) = {
-    bluetoothSCOHeadsetDisconnectedHandlers ::= h
-    h
-  }
+  def onBluetoothSCOHeadsetDisconnected(h:() => Unit) =
+    bluetoothSCOHeadsetDisconnectedHandlers += h
 
   /**
    * Run handlers when bluetooth SCO headset disconnects.
@@ -238,20 +230,17 @@ object StateObserver {
    * Removes handler from being run when bluetooth SCO headset disconnects.
   */
 
-  def removeBluetoothSCOHeadsetDisconnected(h:() => Unit) = {
-    bluetoothSCOHeadsetDisconnectedHandlers = bluetoothSCOHeadsetDisconnectedHandlers.filterNot(_ == h)
-  }
+  def removeBluetoothSCOHeadsetDisconnected(h:() => Unit) =
+    bluetoothSCOHeadsetDisconnectedHandlers -= h
 
-  private var callAnsweredHandlers = List[() => Unit]()
+  private val callAnsweredHandlers = ListBuffer[() => Unit]()
 
   /**
    * Registers a handler to be run when a call is answered.
   */
 
-  def onCallAnswered(h:() => Unit) = {
-    callAnsweredHandlers ::= h
-    h
-  }
+  def onCallAnswered(h:() => Unit) =
+    callAnsweredHandlers += h
 
   /**
    * Executes registered handlers when a call is answered.
@@ -263,18 +252,16 @@ object StateObserver {
    * Removes handler from being run when call is answered.
   */
 
-  def removeOnCallAnswered(h:() => Unit) = callAnsweredHandlers = callAnsweredHandlers.filterNot(_ == h)
+  def removeOnCallAnswered(h:() => Unit) = callAnsweredHandlers -= h
 
-  private var callIdleHandlers = List[() => Unit]()
+  private val callIdleHandlers = ListBuffer[() => Unit]()
 
   /**
    * Registers a handler to be run when a call is idle.
   */
 
-  def onCallIdle(h:() => Unit) = {
-    callIdleHandlers ::= h
-    h
-  }
+  def onCallIdle(h:() => Unit) =
+    callIdleHandlers += h
 
   /**
    * Runs registered handlers when a call is idle.
@@ -286,9 +273,9 @@ object StateObserver {
    * Removes handler from being run when call is idle.
   */
 
-  def removeOnCallIdle(h:() => Unit) = callIdleHandlers = callIdleHandlers.filterNot(_ == h)
+  def removeOnCallIdle(h:() => Unit) = callIdleHandlers -= h
 
-  private var callRingingHandlers = List[(String) => Unit]()
+  private val callRingingHandlers = ListBuffer[(String) => Unit]()
 
   /**
    * Registers handler to be called when an incoming call is ringing.
@@ -296,10 +283,8 @@ object StateObserver {
    * @param number
   */
 
-  def onCallRinging(h:(String) => Unit) = {
-    callRingingHandlers ::= h
-    h
-  }
+  def onCallRinging(h:(String) => Unit) =
+    callRingingHandlers += h
 
   /**
    * Runs registered handlers when call is ringing.
@@ -313,18 +298,16 @@ object StateObserver {
    * Removes handler from list to be run when call is ringing.
   */
 
-  def removeCallRinging(h:(String) => Unit) = callRingingHandlers = callRingingHandlers.filterNot(_ == h)
+  def removeCallRinging(h:(String) => Unit) = callRingingHandlers -= h
 
-  private var messageNoLongerWaitingHandlers = List[() => Unit]()
+  private val messageNoLongerWaitingHandlers = ListBuffer[() => Unit]()
 
   /**
    * Registers handler to be run when voicemail indicator is canceled.
   */
 
-  def onMessageNoLongerWaiting(h:() => Unit) = {
-    messageNoLongerWaitingHandlers ::= h
-    h
-  }
+  def onMessageNoLongerWaiting(h:() => Unit) =
+    messageNoLongerWaitingHandlers += h
 
   /**
    * Runs handlers when voicemail indicator is canceled.
@@ -336,17 +319,17 @@ object StateObserver {
    * Removes handler from being run when voicemail indicator is canceled.
   */
 
-  def removeMessageNoLongerWaiting(h:() => Unit) = messageNoLongerWaitingHandlers = messageNoLongerWaitingHandlers.filterNot(_ == h)
+  def removeMessageNoLongerWaiting(h:() => Unit) =
+    messageNoLongerWaitingHandlers -= h
 
-  private var messageWaitingHandlers = List[() => Unit]()
+  private val messageWaitingHandlers = ListBuffer[() => Unit]()
 
   /**
    * Registers handler to be run when voicemail waiting indicator is active.
   */
 
-  def onMessageWaiting(h:() => Unit) = {
-    messageWaitingHandlers ::= h
-  }
+  def onMessageWaiting(h:() => Unit) =
+    messageWaitingHandlers += h
 
   /**
    * Runs registered handlers when voicemail indicator is active.
@@ -358,9 +341,9 @@ object StateObserver {
    * Removes handler from being run when voicemail indicator is active.
   */
 
-  def removeMessageWaiting(h:() => Unit) = messageWaitingHandlers = messageWaitingHandlers.filterNot(_ == h)
+  def removeMessageWaiting(h:() => Unit) = messageWaitingHandlers -= h
 
-  private var proximityFarHandlers = List[() => Unit]()
+  private val proximityFarHandlers = ListBuffer[() => Unit]()
 
   /**
    * Registers handler to be run when proximity sensor registers nothing 
@@ -369,7 +352,7 @@ object StateObserver {
   */
 
   def onProximityFar(h:() => Unit) = {
-    proximityFarHandlers ::= h
+    proximityFarHandlers += h
     proximitySensorEnabled = true
     h
   }
@@ -387,12 +370,12 @@ object StateObserver {
   */
 
   def removeProximityFar(h:() => Unit) = {
-    proximityFarHandlers = proximityFarHandlers.filterNot(_ == h)
+    proximityFarHandlers -= h
     if(proximityFarHandlers == Nil && proximityNearHandlers == Nil)
       proximitySensorEnabled = false
   }
 
-  private var proximityNearHandlers = List[() => Unit]()
+  private val proximityNearHandlers = ListBuffer[() => Unit]()
 
   /**
    * Registers handler to be run if the proximity sensor registers anything 
@@ -400,7 +383,7 @@ object StateObserver {
   */
 
   def onProximityNear(h:() => Unit) = {
-    proximityNearHandlers ::= h
+    proximityNearHandlers += h
     proximitySensorEnabled = true
     h
   }
@@ -417,12 +400,12 @@ object StateObserver {
   */
 
   def removeProximityNear(h:() => Unit) = {
-    proximityNearHandlers = proximityNearHandlers.filterNot(_ == h)
+    proximityNearHandlers -= h
     if(proximityFarHandlers == Nil && proximityNearHandlers == Nil)
       proximitySensorEnabled = false
   }
 
-  private var ringerModeChangedHandlers = List[(String) => Unit]()
+  private val ringerModeChangedHandlers = ListBuffer[(String) => Unit]()
 
   /**
    * Registers handler to be run when ringer mode is changed.
@@ -430,10 +413,8 @@ object StateObserver {
    @param mode Either "normal", "silent" or "vibrate"
   */
 
-  def onRingerModeChanged(h:(String) => Unit) = {
-    ringerModeChangedHandlers ::= h
-    h
-  }
+  def onRingerModeChanged(h:(String) => Unit) =
+    ringerModeChangedHandlers += h
 
   /**
    * Run registered handlers when ringer mode changes.
@@ -447,18 +428,17 @@ object StateObserver {
    * Remove handler from being run when ringer mode changes.
   */
 
-  def removeRingerModeChanged(h:(String) => Unit) = ringerModeChangedHandlers = ringerModeChangedHandlers.filterNot(_ == h)
+  def removeRingerModeChanged(h:(String) => Unit) =
+    ringerModeChangedHandlers -= h
 
-  private var headsetStateChangedHandlers = List[(Boolean, Boolean) => Unit]()
+  private val headsetStateChangedHandlers = ListBuffer[(Boolean, Boolean) => Unit]()
 
   /**
    * Registers handler to be run when headset state changes.
   */
 
-  def onHeadsetStateChanged(h:(Boolean, Boolean) => Unit) = {
-    headsetStateChangedHandlers ::= h
-    h
-  }
+  def onHeadsetStateChanged(h:(Boolean, Boolean) => Unit) =
+    headsetStateChangedHandlers += h
 
   /**
    * Run registered handlers when headset state changes.
@@ -470,18 +450,17 @@ object StateObserver {
    * Remove handler from being run when headset state changes.
   */
 
-  def removeHeadsetStateChanged(h:(Boolean, Boolean) => Unit) = headsetStateChangedHandlers = headsetStateChangedHandlers.filterNot(_ == h)
+  def removeHeadsetStateChanged(h:(Boolean, Boolean) => Unit) =
+    headsetStateChangedHandlers -= h
 
-  private var screenOffHandlers = List[() => Unit]()
+  private val screenOffHandlers = ListBuffer[() => Unit]()
 
   /**
    * Register handler to be run when screen is turned off.
   */
 
-  def onScreenOff(h:() => Unit) = {
-    screenOffHandlers ::= h
-    h
-  }
+  def onScreenOff(h:() => Unit) =
+    screenOffHandlers += h
 
   /**
    * Run registered handlers when screen is turned off.
@@ -493,18 +472,16 @@ object StateObserver {
    * Remove handler from being run when screen turns off.
   */
 
-  def removeScreenOff(h:() => Unit) = screenOffHandlers = screenOffHandlers.filterNot(_ == h)
+  def removeScreenOff(h:() => Unit) = screenOffHandlers -= h
 
-  private var screenOnHandlers = List[() => Unit]()
+  private val screenOnHandlers = ListBuffer[() => Unit]()
 
   /**
    * Register handler to be run when screen turns on.
   */
 
-  def onScreenOn(h:() => Unit) = {
-    screenOnHandlers ::= h
-    h
-  }
+  def onScreenOn(h:() => Unit) =
+    screenOnHandlers += h
 
   /**
    * Run registered handlers when screen turns on.
@@ -516,18 +493,16 @@ object StateObserver {
    * Remove handler from being run when screen turns off.
   */
 
-  def removeScreenOn(h:() => Unit) = screenOnHandlers = screenOnHandlers.filterNot(_ == h)
+  def removeScreenOn(h:() => Unit) = screenOnHandlers -= h
 
-  private var unlockedHandlers = List[() => Unit]()
+  private val unlockedHandlers = ListBuffer[() => Unit]()
 
   /**
    * Register handler to be run when device unlocks.
   */
 
-  def onUnlocked(h:() => Unit) = {
-    unlockedHandlers ::= h
-    h
-  }
+  def onUnlocked(h:() => Unit) =
+    unlockedHandlers += h
 
   /**
    * Run registered handlers when device unlocks.
@@ -539,9 +514,9 @@ object StateObserver {
    * Remove handler from being run when device unlocks.
   */
 
-  def removeUnlocked(h:() => Unit) = unlockedHandlers = unlockedHandlers.filterNot(_ == h)
+  def removeUnlocked(h:() => Unit) = unlockedHandlers -= h
 
-  private var shakingStartedHandlers = List[() => Unit]()
+  private val shakingStartedHandlers = ListBuffer[() => Unit]()
 
   /**
    * Register a handler to be run when device starts shaking. Activates or 
@@ -549,7 +524,7 @@ object StateObserver {
   */
 
   def onShakingStarted(h:() => Unit) = {
-    shakingStartedHandlers ::= h
+    shakingStartedHandlers += h
     shakerEnabled = true
     h
   }
@@ -566,12 +541,12 @@ object StateObserver {
   */
 
   def removeShakingStarted(h:() => Unit) = {
-    shakingStartedHandlers = shakingStartedHandlers.filterNot(_ == h)
+    shakingStartedHandlers -= h
     if(shakingStartedHandlers == Nil && shakingStoppedHandlers == Nil)
       shakerEnabled = false
   }
 
-  private var shakingStoppedHandlers = List[() => Unit]()
+  private val shakingStoppedHandlers = ListBuffer[() => Unit]()
 
   /**
    * Registers handler to be run when device stops shaking. Activates or 
@@ -579,7 +554,7 @@ object StateObserver {
   */
 
   def onShakingStopped(h:() => Unit) = {
-    shakingStoppedHandlers ::= h
+    shakingStoppedHandlers += h
     shakerEnabled = true
     h
   }
@@ -596,7 +571,7 @@ object StateObserver {
   */
 
   def removeShakingStopped(h:() => Unit) = {
-    shakingStoppedHandlers = shakingStoppedHandlers.filterNot(_ == h)
+    shakingStoppedHandlers -= h
     if(shakingStartedHandlers == Nil && shakingStoppedHandlers == Nil)
       shakerEnabled = false
   }
