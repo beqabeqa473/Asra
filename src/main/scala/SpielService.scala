@@ -52,6 +52,7 @@ class SpielService extends AccessibilityService {
     .setContentTitle(getString(R.string.appName))
     .setOngoing(true)
     .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this, classOf[ui.Spiel]), 0))
+    .setWhen(System.currentTimeMillis)
     .getNotification
     startForeground(1, notification)
     SpielService.initialized = true
