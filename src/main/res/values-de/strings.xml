@@ -14,6 +14,7 @@
   <string name="unlocked">entsperrt.</string>
   <string name="ringerOff">Klingelton aus.</string>
   <string name="ringerOn">Klingelton ein.</string>
+  <string name="newVoicemail">Neue Sprachnachricht</string>
 
   <!-- View names and actions -->
   <string name="button">Schalter</string>
@@ -77,14 +78,12 @@
   <string name="notificationFiltersSummary">Einstellungen zur Benachrichtigungsfilterung für Anwendungen mit häufiger Ausgabeaktualisierung</string>
 
   <string name="debuggingTitle">Debuggen</string>
-  <string name="sendBacktracesTitle">Problemberichte senden, beim Absturz von Spiel </string>
+  <string name="sendBacktracesTitle">Problemberichte beim Absturz von Spiel senden</string>
   <string name="sendBacktracesSummary">Automatisch anonyme Fehlerberichte an den Entwickler senden, wann immer Spiel abstürzt (macht einen Neustart erforderlich)</string>
   <string name="profilingTitle">Profiling</string>
-
   <string name="profilingSummary">sollte nur zu Entwicklungszwecken aktiviert werden, da hierdurch das Antwortverhalten verschlechtert wird</string>
 
   <string name="events">Ereignisse</string>
-
   <string name="createScriptTemplate">skript-Vorlage erstellen</string>
 
   <string name="scripts">Skripte</string>
@@ -115,6 +114,10 @@
   <string name="deselectAll">Alle Markierungen löschen</string>
   <string name="install">Installieren</string>
 
+  <!-- Spoken when script changes are detected -->
+  <string name="scriptInstalling">Installiere %1$s</string>
+  <string name="scriptUninstalling">Deinstalliere %1$s</string>
+  <string name="scriptUpdating">Aktualisiere %1$s</string>
   <!-- Menu items -->
   <string name="refresh">Aktualisieren</string>
 
@@ -165,5 +168,11 @@
 
   <!-- String returned when an unknown number calls. -->
   <string name="unknown">Unbekannt</string>
+  <!-- Granularities -->
+  <string name="character">Zeichen</string>
+  <string name="word">Wort</string>
+  <string name="line">Zeile</string>
+  <string name="paragraph">Absatz</string>
+  <string name="page">Seite</string>
 
 </resources>
