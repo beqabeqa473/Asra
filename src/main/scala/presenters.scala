@@ -222,11 +222,10 @@ object After extends Presenter {
   }
 
   onViewFocused { e:AccessibilityEvent =>
-    if(VERSION.SDK_INT >= 14)
-      Option(e.getSource).foreach { source =>
-        if(source.getChildCount == 0 && source.interactive_? && !e.isEnabled)
-          speak(getString(R.string.disabled), false)
-      }
+    Option(e.getSource).foreach { source =>
+      if(e.utterances(addBlank = false, stripBlanks = true) != Nil && source.getChildCount == 0 && source.interactive_? && !e.isEnabled)
+        speak(getString(R.string.disabled), false)
+    }
     false
   }
 
