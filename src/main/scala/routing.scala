@@ -103,18 +103,18 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
     context = c
   }
 
-  private var table = Map[HandlerDirective, Handler[PayloadType]]()
+  private val table = collection.mutable.Map[HandlerDirective, Handler[PayloadType]]()
 
   def register(h:Handler[PayloadType]) = h.directive.foreach { d =>
     table += (d -> h)
   }
 
   def unregister(h:Handler[PayloadType]) = {
-    table = table.filter(_._2 != h)
+    table.filter(_._2 != h)
   }
 
   def unregisterPackage(pkg:String) = {
-    table = table.filter(_._1.pkg != Value(pkg))
+    table.filter(_._1.pkg != Value(pkg))
   }
 
   def dispatch(payload:PayloadType, directive:PayloadDirective) = {
@@ -148,9 +148,9 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
     // Now check for just the class name.
     def dispatchToClass() = {
       Log.d("spiel", "Class match dispatch")
-      table.filter { v =>
+      table.find { v =>
         v._1.pkg == All && v._1.cls != All && v._1.cls == directive.cls
-      }.headOption.map { v =>
+      }.map { v =>
         dispatchTo(v._2)
       }.getOrElse(false)
     }
