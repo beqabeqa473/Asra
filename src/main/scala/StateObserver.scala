@@ -4,7 +4,7 @@ import actors.Actor.actor
 import collection.mutable.ListBuffer
 import collection.JavaConversions._
 
-import android.bluetooth.{BluetoothClass, BluetoothDevice}
+import android.bluetooth.{BluetoothAdapter, BluetoothClass, BluetoothDevice, BluetoothProfile}
 import android.content.{BroadcastReceiver, Context, Intent, IntentFilter}
 import android.database.ContentObserver
 import android.hardware.{Sensor, SensorEvent, SensorEventListener, SensorManager}
@@ -24,7 +24,7 @@ import android.util.Log
  * Methods which execute the given callbacks, run in response to some event.
 */
 
-object StateObserver {
+object StateObserver extends BluetoothProfile.ServiceListener {
 
   private lazy val sensorManager = service.getSystemService(Context.SENSOR_SERVICE).asInstanceOf[SensorManager]
 
@@ -73,12 +73,17 @@ object StateObserver {
       ringerModeChanged(mode)
     }, AudioManager.RINGER_MODE_CHANGED_ACTION :: Nil)
 
+    Option(BluetoothAdapter.getDefaultAdapter).foreach { adapter =>
+      adapter.getProfileProxy(service, this, BluetoothProfile.A2DP)
+    }
+
     registerReceiver({(c, i) =>
       val device = i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE).asInstanceOf[BluetoothDevice]
       device.getBluetoothClass.getDeviceClass match {
         case BluetoothClass.Device.AUDIO_VIDEO_WEARABLE_HEADSET => actor {
-          Thread.sleep(5000)
-          if(!audioManager.isBluetoothA2dpOn)
+          Thread.sleep(1000)
+          val isSCO = a2dp.map(!_.getConnectedDevices.contains(device)).getOrElse(true)
+          if(isSCO)
             bluetoothSCOHeadsetConnected()
         }
         case _ =>
@@ -719,6 +724,18 @@ object StateObserver {
 
   def removeTTSPitchChanged(h:() => Unit) = {
     ttsPitchChangedHandlers = ttsPitchChangedHandlers.filterNot(_ == h)
+  }
+
+  private var a2dp:Option[BluetoothProfile] = None
+
+  def onServiceConnected(profile:Int, proxy:BluetoothProfile) {
+    Log.d("spielcheck", "Connected: "+profile+", "+proxy)
+    a2dp = Some(proxy)
+  }
+
+  def onServiceDisconnected(profile:Int) {
+    Log.d("spielcheck", "Disconnected "+profile)
+    a2dp = None
   }
 
 }
