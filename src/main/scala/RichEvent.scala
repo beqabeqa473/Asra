@@ -9,6 +9,8 @@ class RichEvent(e:AccessibilityEvent) {
 
   lazy val text = Option(e.getText).map(_.toList).getOrElse(Nil).map(_.toString)
 
+  lazy val contentDescription = Option(e.getContentDescription).map(_.toString)
+
   def utterances(addBlank:Boolean = true, stripBlanks:Boolean = false, guessLabelIfTextMissing:Boolean = false, guessLabelIfContentDescriptionMissing:Boolean = false, guessLabelIfTextShorterThan:Option[Int] = None, providedText:Option[String] = None):List[String] = {
     var rv = List[String]()
     val t = text.filterNot(_ == null).mkString("\n") match {
@@ -26,12 +28,14 @@ class RichEvent(e:AccessibilityEvent) {
       }
     }
     rv :::= txt
-    if(e.getContentDescription != null && e.getContentDescription != "")
-      rv match {
-        case hd :: Nil if(hd.toLowerCase.trim == e.getContentDescription.toString.toLowerCase.trim) =>
-        case _ =>
-          rv ::= e.getContentDescription.toString
-      }
+    contentDescription.foreach { c =>
+      if(c != "")
+        rv match {
+          case hd :: Nil if(hd.toLowerCase.trim == c.toLowerCase.trim) =>
+          case _ =>
+            rv ::= c
+        }
+    }
     def removeBlank() = if(blankAdded) rv = rv.tail
     if(guessLabelIfTextMissing && e.getText.length == 0)
       rv :::= Option(e.getSource).flatMap(_.label).map(_.getText.toString).map { v =>
