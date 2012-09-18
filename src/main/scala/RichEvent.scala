@@ -3,6 +3,7 @@ package info.spielproject.spiel
 import collection.JavaConversions._
 
 import android.os.Build.VERSION
+import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 
 class RichEvent(e:AccessibilityEvent) {
@@ -29,12 +30,8 @@ class RichEvent(e:AccessibilityEvent) {
     }
     rv :::= txt
     contentDescription.foreach { c =>
-      if(c != "")
-        rv match {
-          case hd :: Nil if(hd.toLowerCase.trim == c.toLowerCase.trim) =>
-          case _ =>
-            rv ::= c
-        }
+      if(c != "" && rv.distinct != List(c))
+        rv ::= c
     }
     def removeBlank() = if(blankAdded) rv = rv.tail
     if(guessLabelIfTextMissing && e.getText.length == 0)
