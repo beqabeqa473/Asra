@@ -59,11 +59,11 @@ object StateReactor {
     cursor.close()
   }
 
-  private def speakBatteryPercentage() {
-    utils.batteryPercentage(p => TTS.speak(p+"%", false))
+  private def speakBatteryPercentage(ps:Option[String] = None) {
+    utils.batteryPercentage(p => TTS.speak(p+"%" :: ps.map(_ :: Nil).getOrElse(Nil), false))
   }
 
-  onPowerConnected { () => speakBatteryPercentage() }
+  onPowerConnected { () => speakBatteryPercentage(Some(service.getString(R.string.charging))) }
 
   onPowerDisconnected { () => speakBatteryPercentage() }
 
