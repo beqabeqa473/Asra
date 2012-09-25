@@ -181,4 +181,6 @@
   <string name="paragraph">Kappale</string>
   <string name="page">Sivu</string>
 
+    <string name="charging">akkua ladataan</string>
+
 </resources>
