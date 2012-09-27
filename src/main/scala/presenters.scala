@@ -216,12 +216,49 @@ object After extends Presenter {
     true
   }
 
+  private val listViews = collection.mutable.Map[AccessibilityNodeInfo, Tuple2[Int, Int]]()
+
   onViewFocused { e:AccessibilityEvent =>
     Option(e.getSource).foreach { source =>
+      val listViewIndex = source.ancestors.map(_.getClassName).indexOf("android.widget.ListView")
+      if(listViewIndex != -1) {
+        val listView = source.ancestors(listViewIndex)
+        val childWidgetIndex = listViewIndex-1
+        if(childWidgetIndex != -1) {
+          val positionOffset = listView.children.indexOf(source.ancestors(childWidgetIndex))+1
+          val position = listViews.get(listView).map(_._1+positionOffset).getOrElse(positionOffset)
+          val total = listViews.get(listView).map(_._2).getOrElse(listView.children.length)
+          speak(getString(R.string.listItem, "", position.toString, total.toString), false)
+        }
+      }
       if(e.utterances(addBlank = false, stripBlanks = true) != Nil && source.getChildCount == 0 && source.interactive_? && !e.isEnabled)
         speak(getString(R.string.disabled), false)
     }
     false
+  }
+
+  onViewScrolled { e:AccessibilityEvent =>
+    Option(e.getSource).foreach { source =>
+      val eventClass = utils.classForName(e.getClassName.toString, e.getPackageName.toString)
+      eventClass.foreach { cls =>
+        if(e.getClassName == "android.widget.ListView" || utils.ancestors(cls).contains(classOf[android.widget.ListView])) {
+          val min = e.getFromIndex
+          val total = e.getItemCount
+          if(min != -1 && total != -1) {
+            listViews += (source -> (min, total))
+          } else {
+            Log.d("spielcheck", "Removing "+source)
+            listViews -= source
+          }
+        }
+      }
+    }
+    true
+  }
+
+  onWindowStateChanged { e:AccessibilityEvent =>
+    listViews.clear()
+    true
   }
 
 }
