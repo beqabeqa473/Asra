@@ -157,17 +157,14 @@ trait GenericButtonPresenter extends Presenter {
   onViewFocused { e:AccessibilityEvent =>
     val text = e.utterances(addBlank=false).mkString(": ")
     if(text == "") {
-      if(VERSION.SDK_INT >= 14) {
-        Option(e.getSource).flatMap { source =>
-          val descendants = source.root.descendants
-          val index = descendants.indexOf(source)+1
-          if(index > 0)
-            Some(speak(getString(R.string.listItem, getString(R.string.button), index.toString, descendants.size.toString)))
-          else None
-        }.getOrElse(speak(getString(R.string.button).toString))
-        true
-      } else
-        speak(getString(R.string.button).toString)
+      Option(e.getSource).flatMap { source =>
+        val descendants = source.root.descendants
+        val index = descendants.indexOf(source)+1
+        if(index > 0)
+          Some(speak(getString(R.string.listItem, getString(R.string.button), index.toString, descendants.size.toString)))
+        else None
+      }.getOrElse(speak(getString(R.string.button).toString))
+      true
     } else
       speak(getString(R.string.labeledButton, text))
   }
@@ -193,12 +190,10 @@ object Before extends Presenter {
   }
 
   /*byDefault { e:AccessibilityEvent =>
-    if(VERSION.SDK_INT >= 14) {
-      if(e.getRecordCount > 0) {
-        Log.d("spielcheck", "E: "+e)
-        for(i <- 0 to e.getRecordCount-1) {
-          Log.d("spielcheck", e.getRecord(i).toString)
-        }
+    if(e.getRecordCount > 0) {
+      Log.d("spielcheck", "E: "+e)
+      for(i <- 0 to e.getRecordCount-1) {
+        Log.d("spielcheck", e.getRecord(i).toString)
       }
     }
     false
@@ -409,7 +404,7 @@ class Presenters {
       if(text == "")
         if(e.getItemCount > 0 && e.getCurrentItemIndex >= 0)
           speak(getString(R.string.listItem, getString(R.string.image), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
-        else if(VERSION.SDK_INT >= 14 && e.getSource != null) {
+        else if(e.getSource != null) {
           val source = e.getSource
           val descendants = source.root.descendants
           val index = descendants.indexOf(source)+1
@@ -483,13 +478,11 @@ class Presenters {
     }
 
     onViewSelected { e:AccessibilityEvent =>
-      if(VERSION.SDK_INT >= 14) {
-        Option(e.getSource).map { source =>
-          if(source.isFocused)
-            speak(e.getCurrentItemIndex.toString)
-          else true
-        }.getOrElse(true)
-      } else true
+      Option(e.getSource).map { source =>
+        if(source.isFocused)
+          speak(e.getCurrentItemIndex.toString)
+        else true
+      }.getOrElse(true)
     }
 
   }
@@ -509,19 +502,16 @@ class Presenters {
   class ViewGroup extends Presenter("android.view.ViewGroup") {
 
     onViewFocused { e:AccessibilityEvent => 
-      if(VERSION.SDK_INT >= 14) {
-        val utterances = e.utterances(stripBlanks = true, addBlank=false)
-        if(utterances != Nil)
-          speak(utterances)
-        else
-          Option(e.getSource).map { source =>
-            if(source.interactive_?)
-              speak(utterances)
-            else
-              true
-          }.getOrElse(speak(e.utterances(stripBlanks = true)))
-      } else
-        speak(e.utterances(stripBlanks = true))
+      val utterances = e.utterances(stripBlanks = true, addBlank=false)
+      if(utterances != Nil)
+        speak(utterances)
+      else
+        Option(e.getSource).map { source =>
+          if(source.interactive_?)
+            speak(utterances)
+          else
+            true
+        }.getOrElse(speak(e.utterances(stripBlanks = true)))
     }
 
     onViewHoverEnter { e:AccessibilityEvent =>
