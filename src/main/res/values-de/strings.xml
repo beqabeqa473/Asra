@@ -75,7 +75,7 @@
   <string name="onProximityNearTitle">Bei Annäherung</string>
   <string name="onProximityNearSummary">Aktion festlegen, die ausgeführt wird, sobald der Nähe-Ssensor eine Annäherung erkennt</string>
   <string name="notificationFiltersTitle">Benachrichtigungsfilter</string>
-  <string name="notificationFiltersSummary">Einstellungen zur Benachrichtigungsfilterung für Anwendungen mit häufiger Ausgabeaktualisierung</string>
+  <string name="notificationFiltersSummary">Einstellungen zur anwendungsspezifischen Benachrichtigungsausgabe</string>
 
   <string name="debuggingTitle">Debuggen</string>
   <string name="sendBacktracesTitle">Problemberichte beim Absturz von Spiel senden</string>
@@ -85,9 +85,7 @@
 
   <string name="events">Ereignisse</string>
   <string name="createScriptTemplate">skript-Vorlage erstellen</string>
-
   <string name="scripts">Skripte</string>
-
   <string name="system">System</string>
   <string name="user">Benutzer</string>
 
@@ -105,13 +103,11 @@
   <string name="changes_label">Änderungen (optional):</string>
   <string name="script_posted">Ihr Skript wurde erfolgreich  eingestellt. Vielen Dank für Ihren Beitrag.</string>
   <string name="script_posting_error">Beim Einstellen Ihres Skripts ist ein temporärer Netzwerk-Fehler aufgetreten. Bitte versuchen Sie es später noch einmal.</string>
-
   <string name="confirmDelete">Sind Sie sicher, dass Sie das Skript für %1$s löschen möchten?</string>
-	  <string name="scriptCopied">Skript nach %1$s kopiert.</string>
-
+  <string name="scriptCopied">Skript nach %1$s kopiert.</string>
   <string name="newOrUpdatedScripts">Es sind neue oder aktualisierte Skripte verfügbar. Bitte wählen Sie aus, welche Sie installieren möchten.</string>
   <string name="selectAll">Alle auswählen</string>
-  <string name="deselectAll">Alle Markierungen löschen</string>
+  <string name="deselectAll">Alle abwählen</string>
   <string name="install">Installieren</string>
 
   <!-- Spoken when script changes are detected -->
@@ -174,5 +170,5 @@
   <string name="line">Zeile</string>
   <string name="paragraph">Absatz</string>
   <string name="page">Seite</string>
-
+  <string name="charging">Akkustand</string>
 </resources>
