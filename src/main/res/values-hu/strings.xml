@@ -22,7 +22,7 @@
 <string name="emptyList">üres lista</string>
 <string name="image">kép</string>
 <string name="labeledImage">Kép</string>
-<string name="listItem">%1$s: %2$s per %3$s</string>
+<string name="listItem">%1$s per %2$s</string>
 <string name="menu">menü</string>
 <string name="notChecked">kijelölve</string>
 <string name="password">%1$s: Jelszó</string>

@@ -29,7 +29,7 @@
   <string name="image">kuva</string>
   <string name="labeledImage">%1$s: kuva</string>
   <string name="link">linkki</string>
-  <string name="listItem">%1$s: %2$s / %3$s</string>
+  <string name="listItem">%1$s / %2$s</string>
   <string name="listWithItem">lista jossa 1 kohde</string>
   <string name="listWithItems">lista jossa %1$s kohdetta</string>
   <string name="menu">valikko</string>

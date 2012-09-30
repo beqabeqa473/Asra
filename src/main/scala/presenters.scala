@@ -161,7 +161,7 @@ trait GenericButtonPresenter extends Presenter {
         val descendants = source.root.descendants
         val index = descendants.indexOf(source)+1
         if(index > 0)
-          Some(speak(getString(R.string.listItem, getString(R.string.button), index.toString, descendants.size.toString)))
+          Some(speak(getString(R.string.button) :: getString(R.string.listItem, index.toString, descendants.size.toString) :: Nil))
         else None
       }.getOrElse(speak(getString(R.string.button).toString))
       true
@@ -228,7 +228,7 @@ object After extends Presenter {
           val positionOffset = listView.children.indexOf(source.ancestors(childWidgetIndex))+1
           val position = listViews.get(listView).map(_._1+positionOffset).getOrElse(positionOffset)
           val total = listViews.get(listView).map(_._2).getOrElse(listView.children.length)
-          speak(getString(R.string.listItem, "", position.toString, total.toString), false)
+          speak(getString(R.string.listItem, position.toString, total.toString), false)
         }
       }
       if(e.utterances(addBlank = false, stripBlanks = true) != Nil && source.getChildCount == 0 && source.interactive_? && !e.isEnabled)
@@ -285,7 +285,7 @@ class Presenters {
     private def focusedOnList(e:AccessibilityEvent) = {
       val utterances = e.utterances(stripBlanks = true)
       if(utterances != Nil && e.getCurrentItemIndex != -1)
-        speak(getString(R.string.listItem, utterances.mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
+        speak(utterances.mkString(": ") :: getString(R.string.listItem, (e.getCurrentItemIndex+1).toString, e.getItemCount.toString) :: Nil)
       else
         if(e.getItemCount == 0)
           speak(getString(R.string.emptyList))
@@ -314,7 +314,7 @@ class Presenters {
           false
       }.getOrElse(false) || {
         if(e.getCurrentItemIndex >= 0)
-          speak(getString(R.string.listItem, e.utterances.mkString(": "), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
+          speak(e.utterances.mkString(": ") :: getString(R.string.listItem, (e.getCurrentItemIndex+1).toString, e.getItemCount.toString) :: Nil)
         else if(e.getItemCount == 0)
           speak(getString(R.string.emptyList))
         true
@@ -440,13 +440,13 @@ class Presenters {
       val text = e.utterances(addBlank=false).mkString(": ")
       if(text == "")
         if(e.getItemCount > 0 && e.getCurrentItemIndex >= 0)
-          speak(getString(R.string.listItem, getString(R.string.image), (e.getCurrentItemIndex+1).toString, e.getItemCount.toString))
+          speak(getString(R.string.image) :: getString(R.string.listItem, (e.getCurrentItemIndex+1).toString, e.getItemCount.toString) :: Nil)
         else if(e.getSource != null) {
           val source = e.getSource
           val descendants = source.root.descendants
           val index = descendants.indexOf(source)+1
           if(index > 0)
-            speak(getString(R.string.listItem, getString(R.string.image), index.toString, descendants.length.toString))
+            speak(getString(R.string.image) :: getString(R.string.listItem, index.toString, descendants.length.toString) :: Nil)
           else
             speak(getString(R.string.image).toString)
         } else
@@ -510,8 +510,8 @@ class Presenters {
 
     onViewFocused { e:AccessibilityEvent =>
       val label = Option(e.getSource).flatMap(_.label).map(_.getText.toString).getOrElse(getString(R.string.rating))
-      val rating = getString(R.string.listItem, label, e.getCurrentItemIndex.toString, e.getItemCount.toString)
-      speak(e.utterances(addBlank = false, providedText=Some(rating)))
+      val rating = getString(R.string.listItem, e.getCurrentItemIndex.toString, e.getItemCount.toString)
+      speak(e.utterances(addBlank = false, providedText=Some(label+": "+rating)))
     }
 
     onViewSelected { e:AccessibilityEvent =>

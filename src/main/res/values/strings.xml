@@ -29,7 +29,7 @@
   <string name="image">image</string>
   <string name="labeledImage">%1$s: image</string>
   <string name="link">link</string>
-  <string name="listItem">%1$s: %2$s of %3$s</string>
+  <string name="listItem">%1$s of %2$s</string>
   <string name="listWithItem">list with 1 item</string>
   <string name="listWithItems">list with %1$s items</string>
   <string name="menu">menu</string>

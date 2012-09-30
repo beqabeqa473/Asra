@@ -23,7 +23,7 @@
 <string name="emptyList">prázdný seznam</string>
 <string name="image">%1$s: obrázek</string>
 <string name="labeledImage">%1$s: obrázek</string>
-<string name="listItem">%1$s: %2$s z %3$s</string>
+<string name="listItem">%1$s z %2$s</string>
 <string name="menu">menu</string>
 <string name="notChecked">nezaškrtnuto</string>
 <string name="password">%1$s: heslo</string>
