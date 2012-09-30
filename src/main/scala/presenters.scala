@@ -220,12 +220,13 @@ object After extends Presenter {
 
   onViewFocused { e:AccessibilityEvent =>
     Option(e.getSource).foreach { source =>
-      val listViewIndex = source.ancestors.map(_.getClassName).indexOf("android.widget.ListView")
+      val all = source :: source.ancestors
+      val listViewIndex = all.map(_.getClassName).indexOf("android.widget.ListView")
       if(listViewIndex != -1) {
-        val listView = source.ancestors(listViewIndex)
+        val listView = all(listViewIndex)
         val childWidgetIndex = listViewIndex-1
         if(childWidgetIndex != -1) {
-          val positionOffset = listView.children.indexOf(source.ancestors(childWidgetIndex))+1
+          val positionOffset = listView.children.indexOf(all(childWidgetIndex))+1
           val position = listViews.get(listView).map(_._1+positionOffset).getOrElse(positionOffset)
           val total = listViews.get(listView).map(_._2).getOrElse(listView.children.length)
           speak(getString(R.string.listItem, position.toString, total.toString), false)
