@@ -8,7 +8,7 @@ import android.view.accessibility.AccessibilityEvent
 
 class RichEvent(e:AccessibilityEvent) {
 
-  lazy val text = Option(e.getText).map(_.toList).getOrElse(Nil).map(_.toString)
+  lazy val text = Option(e.getText).map(_.toList).getOrElse(Nil).filterNot(_ == null).map(_.toString)
 
   lazy val contentDescription = Option(e.getContentDescription).map(_.toString)
 
