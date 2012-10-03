@@ -116,6 +116,7 @@ class Script(
 
   def registerPresenterFor(cls:String, s:Object) {
     val scr = s.asInstanceOf[ScriptableObject]
+    Log.d("spiel", "Registering presenter for "+pkg+"/"+cls)
     val p = new Presenter(pkg, cls)
 
     scr.getIds.foreach { property =>
