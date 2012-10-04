@@ -427,7 +427,9 @@ object Scripter {
       writer.close()
       Some(scriptsDir+"/"+file.getName)
     } catch {
-      case _ => None
+      case e =>
+        Log.e("spiel", "Error writing script template", e)
+        None
     }
   }
 
