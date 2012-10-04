@@ -85,6 +85,12 @@
 
   </PreferenceScreen>
 
+  <CheckBoxPreference
+    android:key="hapticFeedback"
+    android:defaultValue="true"
+    android:title="@string/hapticFeedbackTitle"
+    android:summary="@string/hapticFeedbackSummary"/>
+
   <PreferenceScreen android:title="@string/triggersTitle" android:summary="@string/triggersSummary">
 
     <ListPreference

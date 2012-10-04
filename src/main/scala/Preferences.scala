@@ -184,6 +184,8 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
   def notificationFilters = prefs.getString("notificationFilters", "").split("\\|")
 
+  def hapticFeedback_? = prefs.getBoolean("hapticFeedback", true)
+
   def onSharedPreferenceChanged(p:SharedPreferences, key:String) {
     key match {
       case "pitchScale" => TTS.pitch = pitchScale

@@ -66,7 +66,8 @@ abstract class Handler[PayloadType](router:Router[_], val directive:Option[Handl
   private lazy val vibrator:Vibrator = SpielService.context.getSystemService(Context.VIBRATOR_SERVICE).asInstanceOf[Vibrator]
 
   protected def vibrate(millis:Long) = {
-    vibrator.vibrate(millis)
+    if(Preferences.hapticFeedback_?)
+      vibrator.vibrate(millis)
     true
   }
 

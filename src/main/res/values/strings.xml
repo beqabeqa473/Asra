@@ -68,6 +68,9 @@
   <string name="voicemailAlertsTitle">Voicemail alerts</string>
   <string name="voicemailAlertsSummary">Repeatedly announce availability of new voicemail</string>
 
+  <string name="hapticFeedbackTitle">Haptic feedback</string>
+  <string name="hapticFeedbackSummary">Emit vibrations whenever widget boundaries are crossed</string>
+
   <string name="triggersTitle">Triggers</string>
   <string name="triggersSummary">Set actions to run in response to physical events</string>
   <string name="onShakeTitle">On shake</string>
