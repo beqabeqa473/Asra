@@ -214,9 +214,49 @@ class Gestures {
 
     onRight { source => next(source) }
 
-    onUp { source => prev(source) }
+    def decreaseGranularity(source:Option[AccessibilityNodeInfo]) = {
+      source.map { s =>
+        val grans = s.getMovementGranularities
+        val candidates = granularities.filter(v => (grans & v) != 0)
+        granularity.map { g =>
+          candidates.indexOf(g) match {
+            case -1 => granularity = candidates.reverse.headOption
+            case 0 =>
+              granularity = None
+              granularity.size
+            case v => granularity = Some(candidates(v-1))
+          }
+        }.getOrElse {
+          granularity = candidates.reverse.headOption
+        }
+        describeGranularity()
+      }
+      true
+    }
 
-    onDown { source => next(source) }
+    def increaseGranularity(source:Option[AccessibilityNodeInfo]) = {
+      source.map { s =>
+        val grans = s.getMovementGranularities
+        val candidates = granularities.filter(v => (grans & v) != 0)
+        granularity.map { g =>
+          candidates.indexOf(g) match {
+            case -1 => granularity = candidates.headOption
+            case v if(v == candidates.size-1) =>
+              granularity = None
+              candidates.size
+            case v => granularity = Some(candidates(v+1))
+          }
+        }.getOrElse {
+          granularity = candidates.headOption
+        }
+        describeGranularity()
+      }
+      true
+    }
+
+    onUp { source => decreaseGranularity(source) }
+
+    onDown { source => increaseGranularity(source) }
 
     onUpLeft { source => SpielService.performGlobalAction(GLOBAL_ACTION_HOME) }
 
@@ -247,46 +287,9 @@ class Gestures {
 
     onRightLeft { source => true }
 
-    onUpDown { source =>
-      source.map { s =>
-        val grans = s.getMovementGranularities
-        val candidates = granularities.filter(v => (grans & v) != 0)
-        granularity.map { g =>
-          candidates.indexOf(g) match {
-            case -1 => granularity = candidates.reverse.headOption
-            case 0 =>
-              granularity = None
-              granularity.size
-            case v => granularity = Some(candidates(v-1))
-          }
-        }.getOrElse {
-          granularity = candidates.reverse.headOption
-        }
-        describeGranularity()
-      }
-      true
-    }
+    onUpDown { source => true }
 
-    onDownUp { source =>
-      source.map { s =>
-        val grans = s.getMovementGranularities
-        val candidates = granularities.filter(v => (grans & v) != 0)
-        granularity.map { g =>
-          candidates.indexOf(g) match {
-            case -1 => granularity = candidates.headOption
-            case v if(v == candidates.size-1) =>
-              granularity = None
-              candidates.size
-            case v => granularity = Some(candidates(v+1))
-          }
-        }.getOrElse {
-          granularity = candidates.headOption
-        }
-        describeGranularity()
-      }
-
-      true
-    }
+    onDownUp { source => true }
 
   }
 
