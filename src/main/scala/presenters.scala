@@ -216,19 +216,26 @@ object After extends Presenter {
     true
   }
 
-  private val listViews = collection.mutable.Map[AccessibilityNodeInfo, Tuple2[Int, Int]]()
+  private val absListViews = collection.mutable.Map[AccessibilityNodeInfo, Tuple2[Int, Int]]()
 
   onViewFocused { e:AccessibilityEvent =>
     Option(e.getSource).foreach { source =>
       val all = source :: source.ancestors
-      val listViewIndex = all.map(_.getClassName).indexOf("android.widget.ListView")
-      if(listViewIndex != -1) {
-        val listView = all(listViewIndex)
-        val childWidgetIndex = listViewIndex-1
+      var counter = -1
+      val view = all.map { n =>
+        counter += 1
+        (utils.classForName(n.getClassName.toString, n.getPackageName.toString).getOrElse(classOf[Any]), counter)
+      }.find { cls =>
+        utils.ancestors(cls._1).contains(classOf[android.widget.AbsListView])
+      }
+      view.map { v =>
+        val viewIndex = v._2
+        val absListView = all(viewIndex)
+        val childWidgetIndex = viewIndex-1
         if(childWidgetIndex != -1) {
-          val positionOffset = listView.children.indexOf(all(childWidgetIndex))+1
-          val position = listViews.get(listView).map(_._1+positionOffset).getOrElse(positionOffset)
-          val total = listViews.get(listView).map(_._2).getOrElse(listView.children.length)
+          val positionOffset = absListView.children.indexOf(all(childWidgetIndex))+1
+          val position = absListViews.get(absListView).map(_._1+positionOffset).getOrElse(positionOffset)
+          val total = absListViews.get(absListView).map(_._2).getOrElse(absListView.children.length)
           speak(getString(R.string.listItem, position.toString, total.toString), false)
         }
       }
@@ -242,15 +249,13 @@ object After extends Presenter {
     Option(e.getSource).foreach { source =>
       val eventClass = utils.classForName(e.getClassName.toString, e.getPackageName.toString)
       eventClass.foreach { cls =>
-        if(e.getClassName == "android.widget.ListView" || utils.ancestors(cls).contains(classOf[android.widget.ListView])) {
+        if(e.getClassName == "android.widget.ListView" || utils.ancestors(cls).contains(classOf[android.widget.AbsListView])) {
           val min = e.getFromIndex
           val total = e.getItemCount
           if(min != -1 && total != -1) {
-            listViews += (source -> (min, total))
-          } else {
-            Log.d("spielcheck", "Removing "+source)
-            listViews -= source
-          }
+            absListViews += (source -> (min, total))
+          } else
+            absListViews -= source
         }
       }
     }
@@ -258,7 +263,7 @@ object After extends Presenter {
   }
 
   onWindowStateChanged { e:AccessibilityEvent =>
-    listViews.filter(_._1.getPackageName != e.getPackageName)
+    absListViews.filter(_._1.getPackageName != e.getPackageName)
     true
   }
 
