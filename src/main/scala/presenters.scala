@@ -258,7 +258,7 @@ object After extends Presenter {
   }
 
   onWindowStateChanged { e:AccessibilityEvent =>
-    listViews.clear()
+    listViews.filter(_._1.getPackageName != e.getPackageName)
     true
   }
 
