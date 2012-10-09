@@ -68,6 +68,9 @@
   <string name="voicemailAlertsTitle">Vastaajaviestit</string>
   <string name="voicemailAlertsSummary">Ilmoittaa toistuvasti uusista vastaajaviesteistä</string>
 
+  <string name="hapticFeedbackTitle">Haptinen palaute</string>
+  <string name="hapticFeedbackSummary">Laite värisee, kun widgetin rajat ylitetään</string>
+
   <string name="triggersTitle">Toiminnot</string>
   <string name="triggersSummary">Valitse tietyille fyysisille tapahtumille suoritettavat toiminnot</string>
   <string name="onShakeTitle">Laitetta ravistettaessa</string>
