@@ -94,23 +94,30 @@ class SpielService extends AccessibilityService {
     val directive = source.map { s =>
       new PayloadDirective(s.getPackageName.toString, s.getClassName.toString)
     }.getOrElse(new PayloadDirective("", ""))
-    id match {
-      case GESTURE_SWIPE_UP => GestureDispatcher.dispatch(GesturePayload(Gesture.Up, source), directive)
-      case GESTURE_SWIPE_DOWN => GestureDispatcher.dispatch(GesturePayload(Gesture.Down, source), directive)
-      case GESTURE_SWIPE_LEFT => GestureDispatcher.dispatch(GesturePayload(Gesture.Left, source), directive)
-      case GESTURE_SWIPE_RIGHT => GestureDispatcher.dispatch(GesturePayload(Gesture.Right, source), directive)
-      case GESTURE_SWIPE_UP_AND_LEFT => GestureDispatcher.dispatch(GesturePayload(Gesture.UpLeft, source), directive)
-      case GESTURE_SWIPE_UP_AND_RIGHT => GestureDispatcher.dispatch(GesturePayload(Gesture.UpRight, source), directive)
-      case GESTURE_SWIPE_DOWN_AND_LEFT => GestureDispatcher.dispatch(GesturePayload(Gesture.DownLeft, source), directive)
-      case GESTURE_SWIPE_DOWN_AND_RIGHT => GestureDispatcher.dispatch(GesturePayload(Gesture.DownRight, source), directive)
-      case GESTURE_SWIPE_LEFT_AND_UP => GestureDispatcher.dispatch(GesturePayload(Gesture.LeftUp, source), directive)
-      case GESTURE_SWIPE_RIGHT_AND_UP => GestureDispatcher.dispatch(GesturePayload(Gesture.RightUp, source), directive)
-      case GESTURE_SWIPE_LEFT_AND_DOWN => GestureDispatcher.dispatch(GesturePayload(Gesture.LeftDown, source), directive)
-      case GESTURE_SWIPE_RIGHT_AND_DOWN => GestureDispatcher.dispatch(GesturePayload(Gesture.RightDown, source), directive)
-      case GESTURE_SWIPE_UP_AND_DOWN => GestureDispatcher.dispatch(GesturePayload(Gesture.UpDown, source), directive)
-      case GESTURE_SWIPE_DOWN_AND_UP => GestureDispatcher.dispatch(GesturePayload(Gesture.DownUp, source), directive)
-      case GESTURE_SWIPE_RIGHT_AND_LEFT => GestureDispatcher.dispatch(GesturePayload(Gesture.RightLeft, source), directive)
-      case GESTURE_SWIPE_LEFT_AND_RIGHT => GestureDispatcher.dispatch(GesturePayload(Gesture.LeftRight, source), directive)
+    val gesture = id match {
+      case GESTURE_SWIPE_UP => Gesture.Up
+      case GESTURE_SWIPE_DOWN => Gesture.Down
+      case GESTURE_SWIPE_LEFT => Gesture.Left
+      case GESTURE_SWIPE_RIGHT => Gesture.Right
+      case GESTURE_SWIPE_UP_AND_LEFT => Gesture.UpLeft
+      case GESTURE_SWIPE_UP_AND_RIGHT => Gesture.UpRight
+      case GESTURE_SWIPE_DOWN_AND_LEFT => Gesture.DownLeft
+      case GESTURE_SWIPE_DOWN_AND_RIGHT => Gesture.DownRight
+      case GESTURE_SWIPE_LEFT_AND_UP => Gesture.LeftUp
+      case GESTURE_SWIPE_RIGHT_AND_UP => Gesture.RightUp
+      case GESTURE_SWIPE_LEFT_AND_DOWN => Gesture.LeftDown
+      case GESTURE_SWIPE_RIGHT_AND_DOWN => Gesture.RightDown
+      case GESTURE_SWIPE_UP_AND_DOWN => Gesture.UpDown
+      case GESTURE_SWIPE_DOWN_AND_UP => Gesture.DownUp
+      case GESTURE_SWIPE_RIGHT_AND_LEFT => Gesture.RightLeft
+      case GESTURE_SWIPE_LEFT_AND_RIGHT => Gesture.LeftRight
+    }
+    try {
+      GestureDispatcher.dispatch(GesturePayload(gesture, source), directive)
+    } catch {
+      case e =>
+        Log.e("spiel", "Error in gesture dispatch", e)
+        false
     }
   }
 

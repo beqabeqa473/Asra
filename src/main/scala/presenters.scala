@@ -846,7 +846,12 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
     val payload = EventPayload(e, eType)
     val directive = new PayloadDirective(e.getPackageName.toString, e.getClassName.toString)
 
-    dispatch(payload, directive)
+    try {
+      dispatch(payload, directive)
+    } catch {
+      case e =>
+        Log.e("spiel", "Error in AccessibilityEvent dispatch", e)
+    }
 
     if(!nextShouldNotInterruptCalled && eventType == None)
       myNextShouldNotInterrupt = false

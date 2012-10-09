@@ -45,7 +45,14 @@ object StateObserver extends BluetoothProfile.ServiceListener {
       intents.foreach(f.addAction(_))
       dataScheme.foreach(f.addDataScheme(_))
       service.registerReceiver(new BroadcastReceiver {
-        override def onReceive(c:Context, i:Intent) = r(c, i)
+        override def onReceive(c:Context, i:Intent) {
+          try {
+            r(c, i)
+          } catch {
+            case e =>
+              Log.e("spiel", "Error in BroadcastReceiver", e)
+          }
+        }
       }, f)
     }
 
