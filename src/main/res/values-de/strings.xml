@@ -37,7 +37,7 @@
   <string name="notSelected">nicht gewählt</string>
   <string name="password">Passwort</string>
   <string name="radioButton">%1$s Auswahlschalter</string>
-  <string name="rating">Bewertung</string>
+  <string name="rating">Wert</string>
   <string name="selected">gewählt</string>
 
   <!-- Preferences -->
@@ -67,7 +67,8 @@
   <string name="talkingCallerIDSummary">Bei eingehenden Anrufen wiederholt Anruferdetails ansagen</string>
   <string name="voicemailAlertsTitle">Voicemail hinweis</string>
   <string name="voicemailAlertsSummary">Gibt wiederholt die Verfügbarkeit neuer Sprachnachrichten aus</string>
-
+  <string name="hapticFeedbackTitle">Haptisches Feedback</string>
+  <string name="hapticFeedbackSummary">Kurze Vibration, wenn die Umrandung eines Bildschirmobjektes berührt wird</string>
   <string name="triggersTitle">Aktionen</string>
   <string name="triggersSummary">Aktionen einstellen, die bei bestimmten physikalischen Ereignissen ausgeführt werden</string>
   <string name="onShakeTitle">Beim Schütteln</string>
