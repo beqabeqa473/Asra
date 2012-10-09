@@ -68,6 +68,9 @@
   <string name="voicemailAlertsTitle">Уведомления автоответчика</string>
   <string name="voicemailAlertsSummary">Уведомлять с повторением о новых доступных сообщениях автоответчика</string>
 
+  <string name="hapticFeedbackTitle">Виброотклик</string>
+  <string name="hapticFeedbackSummary">Вибрировать всякий раз, как пересекаются границы виджетов</string>
+
   <string name="triggersTitle">Датчики</string>
   <string name="triggersSummary">Настройка действий, выполняемых при физических событиях</string>
   <string name="onShakeTitle">При потряхивании</string>
