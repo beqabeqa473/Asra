@@ -33,6 +33,7 @@
   <string name="listWithItem">list with 1 item</string>
   <string name="listWithItems">list with %1$s items</string>
   <string name="menu">menu</string>
+  <string name="menuItem">menu item</string>
   <string name="notChecked">not checked</string>
   <string name="notSelected">not selected</string>
   <string name="password">password</string>

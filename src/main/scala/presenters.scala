@@ -279,7 +279,7 @@ class Presenters {
   class ActionMenuItemView extends Presenter("com.android.internal.view.menu.ActionMenuItemView") {
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(e.utterances(stripBlanks=true) ::: ("Menu item" :: Nil))
+      speak(e.utterances(stripBlanks=true) ::: (getString(R.string.menuItem) :: Nil))
     }
 
     onViewHoverEnter { e:AccessibilityEvent => Presenter.process(e, Some(TYPE_VIEW_FOCUSED)) }
