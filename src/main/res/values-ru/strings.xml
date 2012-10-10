@@ -33,6 +33,7 @@
   <string name="listWithItem">список с 1 элементом</string>
   <string name="listWithItems">список с %1$s элементами</string>
   <string name="menu">меню</string>
+  <string name="menuItem">пункт меню</string>
   <string name="notChecked">не отмечено</string>
   <string name="notSelected">не выделено</string>
   <string name="password">пароль</string>
