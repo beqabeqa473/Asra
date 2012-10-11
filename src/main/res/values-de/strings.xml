@@ -33,6 +33,7 @@
   <string name="listWithItem">Liste mit 1 Eintrag</string>
   <string name="listWithItems">Liste mit %1$s Einträgen</string>
   <string name="menu">Menü</string>
+  <string name="menuItem">Menüeintrag</string>
   <string name="notChecked">nicht aktiviert</string>
   <string name="notSelected">nicht gewählt</string>
   <string name="password">Passwort</string>
@@ -171,5 +172,5 @@
   <string name="line">Zeile</string>
   <string name="paragraph">Absatz</string>
   <string name="page">Seite</string>
-  <string name="charging">Akkustand</string>
+  <string name="charging">laden</string>
 </resources>
