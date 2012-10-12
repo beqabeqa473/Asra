@@ -33,6 +33,7 @@
   <string name="listWithItem">lista jossa 1 kohde</string>
   <string name="listWithItems">lista jossa %1$s kohdetta</string>
   <string name="menu">valikko</string>
+  <string name="menuItem">valikon kohde</string>
   <string name="notChecked">ei valittu</string>
   <string name="notSelected">ei valittu</string>
   <string name="password">salasana</string>
