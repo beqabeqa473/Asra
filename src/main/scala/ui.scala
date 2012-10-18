@@ -143,7 +143,7 @@ class AllPreferences extends PreferenceFragment with HasScriptPreferences {
 
     val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE).asInstanceOf[android.os.Vibrator]
     if(!vibrator.hasVibrator)
-      getPreferenceScreen.removePreference(findPreference("japticFeedback"))
+      getPreferenceScreen.removePreference(findPreference("hapticFeedback"))
 
 
     val pm = context.getPackageManager
