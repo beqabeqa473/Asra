@@ -66,7 +66,7 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
       List("android.widget.CheckBox", "android.widget.EditText", "android.widget.ProgressBar", "android.widget.RadioButton", "android.widget.RatingBar")
       .exists(isA_?(_))
     ) {
-      row.find((v) => isTextView(v) && !v.interactive_? && v.getText != null && v.getText.length > 0)
+      row.find((v) => isTextView(v) && v.getText != null && v.getText.length > 0)
       } .orElse {
         val descendants = if(VERSION.SDK_INT >= 16)
           root.descendants.filter(_.isVisibleToUser)
