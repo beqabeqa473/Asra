@@ -97,7 +97,7 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
       if(!isA_?("android.widget.TextView") || isA_?("android.widget.EditText") || isA_?("android.widget.Button")) {
         true
       }else {
-        val all = root.descendants
+        val all = root.descendants.filter(!_.interactive_?)
         val index = all.indexOf(node)
         var before:List[Option[AccessibilityNodeInfo]] = all.take(index).reverse.map(Some(_))
         var after:List[Option[AccessibilityNodeInfo]] = all.drop(index+1).map(Some(_))
