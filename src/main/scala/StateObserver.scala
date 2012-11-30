@@ -337,6 +337,48 @@ object StateObserver extends BluetoothProfile.ServiceListener {
 
   def removeMessageWaiting(h:() => Unit) = messageWaitingHandlers -= h
 
+  private val orientationLandscapeHandlers = ListBuffer[() => Unit]()
+
+  /**
+   * Register handler to be run when orientation becomes landscape.
+  */
+
+  def onOrientationLandscape(h:() => Unit) =
+    orientationLandscapeHandlers += h
+
+  /**
+   * Run registered handlers when orientation becomes landscape.
+  */
+
+  def orientationLandscape() = orientationLandscapeHandlers.foreach { f => f() }
+
+  /**
+   * Remove handler from being run when orientation becomes landscape.
+  */
+
+  def removeOrientationLandscape(h:() => Unit) = orientationLandscapeHandlers -= h
+
+  private val orientationPortraitHandlers = ListBuffer[() => Unit]()
+
+  /**
+   * Register handler to be run when orientation becomes portrait.
+  */
+
+  def onOrientationPortrait(h:() => Unit) =
+    orientationPortraitHandlers += h
+
+  /**
+   * Run registered handlers when orientation becomes portrait.
+  */
+
+  def orientationPortrait() = orientationPortraitHandlers.foreach { f => f() }
+
+  /**
+   * Remove handler from being run when orientation becomes portrait.
+  */
+
+  def removeOrientationPortrait(h:() => Unit) = orientationPortraitHandlers -= h
+
   private val proximityFarHandlers = ListBuffer[() => Unit]()
 
   /**

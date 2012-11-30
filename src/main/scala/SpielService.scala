@@ -4,6 +4,7 @@ import android.accessibilityservice._
 import AccessibilityService._
 import android.app.{Notification, NotificationManager, PendingIntent}
 import android.content.{Context, Intent}
+import android.content.res.Configuration
 import android.os.Debug
 import android.os.Build.VERSION
 import android.util.Log
@@ -23,7 +24,6 @@ import triggers.Triggers
 */
 
 class SpielService extends AccessibilityService {
-
 
   override def onCreate() {
     super.onCreate()
@@ -119,6 +119,14 @@ class SpielService extends AccessibilityService {
         Log.e("spiel", "Error in gesture dispatch", e)
         false
     }
+  }
+
+  override def onConfigurationChanged(c:Configuration) {
+    super.onConfigurationChanged(c)
+    if(c.orientation == Configuration.ORIENTATION_LANDSCAPE)
+      StateObserver.orientationLandscape()
+    else
+      StateObserver.orientationPortrait()
   }
 
 }

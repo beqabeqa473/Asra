@@ -243,6 +243,14 @@ object StateReactor {
         TTS.speak(service.getString(R.string.ringerOff), false)
   }
 
+  onOrientationLandscape { () =>
+    TTS.speak(service.getString(R.string.landscape), false)
+  }
+
+  onOrientationPortrait { () =>
+    TTS.speak(service.getString(R.string.portrait), false)
+  }
+
   // Note screen state, silencing notification speech if desired and speaking "Locked."
 
   private var screenOn = true
