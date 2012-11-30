@@ -166,6 +166,7 @@ class Gestures {
                   n = scrollableContainer
               }
             }
+            n.foreach(n2 => if(n2 == s) rv = true)
             while(!rv) {
               rv = n.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS)).getOrElse(false)
               if(!rv)
@@ -200,6 +201,7 @@ class Gestures {
                   n = scrollableContainer
               }
             }
+            n.foreach(n2 => if(n2 == s) rv = true)
             while(!rv) {
               rv = n.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS)).getOrElse(false)
               if(!rv)
