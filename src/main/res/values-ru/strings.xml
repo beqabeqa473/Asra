@@ -11,6 +11,8 @@
   <string name="spielOn">Spiel включён.</string>
   <string name="spielOff">Spiel выключен.</string>
   <string name="screenOff">Экран выключен.</string>
+  <string name="landscape">Альбомная</string>
+  <string name="portrait">Портретная</string>
   <string name="unlocked">Разблокировано.</string>
   <string name="ringerOff">Звонок выключен.</string>
   <string name="ringerOn">Звонок включён.</string>
@@ -83,8 +85,8 @@
   <string name="notificationFiltersSummary">Фильтр отображения уведомлений изменения для шумных приложений</string>
 
   <string name="debuggingTitle">Отладка</string>
-  <string name="sendBacktracesTitle">Отправлять обратную трассировку при падении Spiel</string>
-  <string name="sendBacktracesSummary">Автоматически отправлять анонимные отчёты об ошибках при каждом падении Spiel (требует перезапуска)</string>
+  <string name="sendBacktracesTitle">Отправлять обратную трассировку при сбое Spiel</string>
+  <string name="sendBacktracesSummary">Автоматически отправлять анонимные отчёты об ошибках при каждом сбое Spiel (требует перезапуска)</string>
   <string name="profilingTitle">Профилирование</string>
   <string name="profilingSummary">Включать только для разработки, поскольку это воздействует на производительность!</string>
 
