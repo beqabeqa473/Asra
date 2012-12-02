@@ -11,6 +11,8 @@
   <string name="spielOn">Spiel ein.</string>
   <string name="spielOff">Spiel aus.</string>
   <string name="screenOff">Bildschirm aus.</string>
+  <string name="landscape">Querformat</string>
+  <string name="portrait">Hochformat</string>
   <string name="unlocked">entsperrt.</string>
   <string name="ringerOff">Klingelton aus.</string>
   <string name="ringerOn">Klingelton ein.</string>
