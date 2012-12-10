@@ -1,5 +1,8 @@
 package info.spielproject.spiel
 
+import java.text.SimpleDateFormat
+import java.util.Date
+
 import actors.Actor._
 import collection.JavaConversions._
 
@@ -9,9 +12,8 @@ import android.media.AudioManager
 import android.net.Uri
 import android.os.Build.VERSION
 import android.os.Environment
-
 import android.telephony.PhoneNumberUtils
-import android.text.format.{DateFormat, DateUtils}
+import android.text.format.DateFormat
 import android.util.Log
 
 import scripting._
@@ -270,11 +272,13 @@ object StateReactor {
   onScreenOn { () =>
     if(!screenOn) {
       screenOn = true
-      var timeFlags = DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_CAP_NOON_MIDNIGHT
-      if(DateFormat.is24HourFormat(service))
-        timeFlags |= DateUtils.FORMAT_24HOUR
-      val time = DateUtils.formatDateTime(service, System.currentTimeMillis, timeFlags)
-      TTS.speak(time, false)
+      val sdf = new SimpleDateFormat(
+        if(DateFormat.is24HourFormat(service))
+          "H:mm"
+        else
+          "h:mm a"
+      )
+      TTS.speak(sdf.format(new Date(System.currentTimeMillis)), false)
     }
   }
 
