@@ -8,9 +8,17 @@ import android.view.accessibility.AccessibilityEvent
 
 class RichEvent(e:AccessibilityEvent) {
 
-  lazy val text = Option(e.getText).map(_.toList).getOrElse(Nil).filterNot(_ == null).map(_.toString)
+  lazy val records =
+    (for(r <- 0 to e.getRecordCount-1)
+      yield(e.getRecord(r))
+    ).toList
 
-  lazy val contentDescription = Option(e.getContentDescription).map(_.toString)
+  lazy val text =
+    Option(e.getText).map(_.toList).getOrElse(Nil) 
+    .filterNot(_ == null).map(_.toString)
+
+  lazy val contentDescription =
+    Option(e.getContentDescription).map(_.toString)
 
   def utterances(addBlank:Boolean = true, stripBlanks:Boolean = false, guessLabelIfTextMissing:Boolean = false, guessLabelIfContentDescriptionMissing:Boolean = false, guessLabelIfTextShorterThan:Option[Int] = None, providedText:Option[String] = None):List[String] = {
     var rv = List[String]()
