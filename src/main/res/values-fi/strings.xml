@@ -11,6 +11,8 @@
   <string name="spielOn">Spiel käytössä.</string>
   <string name="spielOff">Spiel pois käytöstä.</string>
   <string name="screenOff">Näyttö pois käytöstä.</string>
+  <string name="landscape">Vaaka</string>
+  <string name="portrait">Pysty</string>
   <string name="unlocked">Lukitus avattu.</string>
   <string name="ringerOff">Soittoääni pois käytöstä.</string>
   <string name="ringerOn">Soittoääni käytössä.</string>
