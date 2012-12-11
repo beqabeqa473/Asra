@@ -87,22 +87,22 @@ class Listener(directive:Option[HandlerDirective] = None) extends Handler[Gestur
   import Gesture._
 
   def apply(payload:GesturePayload) = payload.gesture match {
-    case Left => left.map(_(payload.source)).getOrElse(false)
-    case Right => right.map(_(payload.source)).getOrElse(false)
-    case Up => up.map(_(payload.source)).getOrElse(false)
-    case Down => down.map(_(payload.source)).getOrElse(false)
-    case UpLeft => upLeft.map(_(payload.source)).getOrElse(false)
-    case UpRight => upRight.map(_(payload.source)).getOrElse(false)
-    case DownLeft => downLeft.map(_(payload.source)).getOrElse(false)
-    case DownRight => downRight.map(_(payload.source)).getOrElse(false)
-    case LeftUp => leftUp.map(_(payload.source)).getOrElse(false)
-    case RightUp => rightUp.map(_(payload.source)).getOrElse(false)
-    case LeftDown => leftDown.map(_(payload.source)).getOrElse(false)
-    case RightDown => rightDown.map(_(payload.source)).getOrElse(false)
-    case LeftRight => leftRight.map(_(payload.source)).getOrElse(false)
-    case RightLeft => rightLeft.map(_(payload.source)).getOrElse(false)
-    case UpDown => upDown.map(_(payload.source)).getOrElse(false)
-    case DownUp => downUp.map(_(payload.source)).getOrElse(false)
+    case Left => left.exists(_(payload.source))
+    case Right => right.exists(_(payload.source))
+    case Up => up.exists(_(payload.source))
+    case Down => down.exists(_(payload.source))
+    case UpLeft => upLeft.exists(_(payload.source))
+    case UpRight => upRight.exists(_(payload.source))
+    case DownLeft => downLeft.exists(_(payload.source))
+    case DownRight => downRight.exists(_(payload.source))
+    case LeftUp => leftUp.exists(_(payload.source))
+    case RightUp => rightUp.exists(_(payload.source))
+    case LeftDown => leftDown.exists(_(payload.source))
+    case RightDown => rightDown.exists(_(payload.source))
+    case LeftRight => leftRight.exists(_(payload.source))
+    case RightLeft => rightLeft.exists(_(payload.source))
+    case UpDown => upDown.exists(_(payload.source))
+    case DownUp => downUp.exists(_(payload.source))
   }
 
 }
@@ -135,12 +135,12 @@ class Gestures {
     }
 
     private def setInitialFocus() =
-      SpielService.rootInActiveWindow.map { root =>
+      SpielService.rootInActiveWindow.exists { root =>
         val filtered = root.descendants.filter(_.isVisibleToUser)
-        Option(root.findFocus(FOCUS_INPUT)).map(_.performAction(ACTION_ACCESSIBILITY_FOCUS)).getOrElse(false) ||
+        Option(root.findFocus(FOCUS_INPUT)).exists(_.performAction(ACTION_ACCESSIBILITY_FOCUS)) ||
         filtered.exists(_.performAction(ACTION_ACCESSIBILITY_FOCUS)) ||
         filtered.exists(_.performAction(ACTION_FOCUS))
-      }.getOrElse(false)
+      }
 
     private def prev(source:Option[AccessibilityNodeInfo]):Boolean =
       source.flatMap { s =>
@@ -171,7 +171,7 @@ class Gestures {
                 n.map(_.performAction(ACTION_CLEAR_ACCESSIBILITY_FOCUS))
             }
             while(!rv) {
-              rv = n.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS)).getOrElse(false)
+              rv = n.exists(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
               if(rv)
                 if(n.exists(_.supports_?(ACTION_PREVIOUS_HTML_ELEMENT)))
                   prev(n)
@@ -212,7 +212,7 @@ class Gestures {
                 n.map(_.performAction(ACTION_CLEAR_ACCESSIBILITY_FOCUS))
             }
             while(!rv) {
-              rv = n.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS)).getOrElse(false)
+              rv = n.exists(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
               if(rv)
                 if(n.exists(_.supports_?(ACTION_NEXT_HTML_ELEMENT)))
                   next(n)
