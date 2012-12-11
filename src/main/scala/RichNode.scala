@@ -30,7 +30,7 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
 
   def siblings = Option(parent).map(_.children).getOrElse(Nil)
 
-  def descendants:List[AccessibilityNodeInfo] = children++children.map { c =>
+  def descendants:List[AccessibilityNodeInfo] =children++children.map { c =>
     c.descendants
   }.flatten
 
@@ -112,7 +112,7 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
     lazy val isLeafOrTextualNonHtmlViewGroup =
       if(isA_?("android.view.ViewGroup"))
         children == Nil &&
-        (!text.isEmpty || (node.getActions&ACTION_NEXT_HTML_ELEMENT) == 0)
+        (!text.isEmpty || (node.getActions&ACTION_NEXT_HTML_ELEMENT) != 0)
       else
         node.children == Nil
     Log.d("spielcheck", "Leaf: "+isLeafOrTextualNonHtmlViewGroup)
