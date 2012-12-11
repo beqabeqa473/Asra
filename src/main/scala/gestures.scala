@@ -145,18 +145,18 @@ class Gestures {
     private def prev(source:Option[AccessibilityNodeInfo]):Boolean =
       source.flatMap { s =>
         granularity.flatMap { g =>
-          if((s.getActions&ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY) != 0) {
+          if(s.supports_?(ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY)) {
             val b = new Bundle()
             b.putInt(ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, g)
             Some(s.performAction(ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY, b))
           } else None
         }.orElse {
           var rv = false
-          if((s.getActions&ACTION_PREVIOUS_HTML_ELEMENT) != 0)
+          if(s.supports_?(ACTION_PREVIOUS_HTML_ELEMENT))
             rv = s.performAction(ACTION_PREVIOUS_HTML_ELEMENT)
           if(!rv) {
             var n = s.prevAccessibilityFocus
-            val scrollableContainer = s.ancestors.find(v => (v.getActions&ACTION_SCROLL_BACKWARD) != 0)
+            val scrollableContainer = s.ancestors.find(v => v.supports_?(ACTION_SCROLL_BACKWARD))
             scrollableContainer.foreach { sc =>
               if(!n.map(_.ancestors.contains(sc)).getOrElse(true)) {
                 sc.performAction(ACTION_SCROLL_BACKWARD)
@@ -166,7 +166,10 @@ class Gestures {
                   n = scrollableContainer
               }
             }
-            n.foreach(n2 => if(n2 == s) rv = true)
+            n.foreach { n2 =>
+              if(n2 == s)
+                n.map(_.performAction(ACTION_CLEAR_ACCESSIBILITY_FOCUS))
+            }
             while(!rv) {
               rv = n.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS)).getOrElse(false)
               if(!rv)
@@ -180,18 +183,18 @@ class Gestures {
     private def next(source:Option[AccessibilityNodeInfo]):Boolean =
       source.flatMap { s =>
         granularity.flatMap { g =>
-          if((s.getActions&ACTION_NEXT_AT_MOVEMENT_GRANULARITY) != 0) {
+          if(s.supports_?(ACTION_NEXT_AT_MOVEMENT_GRANULARITY)) {
             val b = new Bundle()
             b.putInt(ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, g)
             Some(s.performAction(ACTION_NEXT_AT_MOVEMENT_GRANULARITY, b))
           } else None
         }.orElse {
           var rv = false
-          if((s.getActions&ACTION_NEXT_HTML_ELEMENT) != 0)
+          if(s.supports_?(ACTION_NEXT_HTML_ELEMENT))
             rv = s.performAction(ACTION_NEXT_HTML_ELEMENT)
           if(!rv) {
             var n = s.nextAccessibilityFocus
-            val scrollableContainer = s.ancestors.find(v => (v.getActions&ACTION_SCROLL_FORWARD) != 0)
+            val scrollableContainer = s.ancestors.find(v => v.supports_?(ACTION_SCROLL_FORWARD))
             scrollableContainer.foreach { sc =>
               if(!n.map(_.ancestors.contains(sc)).getOrElse(true)) {
                 sc.performAction(ACTION_SCROLL_FORWARD)
@@ -201,7 +204,10 @@ class Gestures {
                   n = scrollableContainer
               }
             }
-            n.foreach(n2 => if(n2 == s) rv = true)
+            n.foreach { n2 =>
+              if(n2 == s)
+                n.map(_.performAction(ACTION_CLEAR_ACCESSIBILITY_FOCUS))
+            }
             while(!rv) {
               rv = n.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS)).getOrElse(false)
               if(!rv)
@@ -278,7 +284,7 @@ class Gestures {
 
     onLeftRight { source =>
       source.foreach { s =>
-        if((s.getActions&ACTION_NEXT_AT_MOVEMENT_GRANULARITY) != 0) {
+        if(s.supports_?(ACTION_NEXT_AT_MOVEMENT_GRANULARITY)) {
           val b = new Bundle()
           b.putInt(ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, MOVEMENT_GRANULARITY_PAGE)
           s.performAction(ACTION_NEXT_AT_MOVEMENT_GRANULARITY, b)

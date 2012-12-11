@@ -81,6 +81,9 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
       None
   }
 
+  def supports_?(action:Int) =
+    (node.getActions&action) != 0
+
   protected def interestedInAccessibilityFocus = {
     Log.d("spielcheck", "Evaluating "+node)
     val text = Option(node.getText).map(_.toString).getOrElse("")+(Option(node.getContentDescription).map(": "+_).getOrElse(""))
@@ -112,7 +115,7 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
     lazy val isLeafOrTextualNonHtmlViewGroup =
       if(isA_?("android.view.ViewGroup"))
         children == Nil &&
-        (!text.isEmpty || (node.getActions&ACTION_NEXT_HTML_ELEMENT) != 0)
+        (!text.isEmpty || supports_?(ACTION_NEXT_HTML_ELEMENT))
       else
         node.children == Nil
     Log.d("spielcheck", "Leaf: "+isLeafOrTextualNonHtmlViewGroup)
