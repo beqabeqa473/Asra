@@ -172,7 +172,10 @@ class Gestures {
             }
             while(!rv) {
               rv = n.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS)).getOrElse(false)
-              if(!rv)
+              if(rv)
+                if(n.exists(_.supports_?(ACTION_PREVIOUS_HTML_ELEMENT)))
+                  prev(n)
+              else
                 n = n.flatMap(_.prevAccessibilityFocus)
             }
           }
@@ -210,7 +213,10 @@ class Gestures {
             }
             while(!rv) {
               rv = n.map(_.performAction(ACTION_ACCESSIBILITY_FOCUS)).getOrElse(false)
-              if(!rv)
+              if(rv)
+                if(n.exists(_.supports_?(ACTION_NEXT_HTML_ELEMENT)))
+                  next(n)
+              else
                 n = n.flatMap(_.nextAccessibilityFocus)
             }
           }
