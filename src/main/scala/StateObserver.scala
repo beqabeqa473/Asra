@@ -787,13 +787,13 @@ object StateObserver extends BluetoothProfile.ServiceListener {
     a2dp = None
   }
 
-  private var utteranceStartedHandlers = List[(String) => Unit]()
+  private var utteranceStartedHandlers = List[(Option[String]) => Unit]()
 
   /**
    * Registers handler to be run if the TTS utterance starts.
   */
 
-  def onUtteranceStarted(h:(String) => Unit) = {
+  def onUtteranceStarted(h:(Option[String]) => Unit) = {
     utteranceStartedHandlers ::= h
     h
   }
@@ -802,23 +802,23 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Run handlers when TTS utterance starts.
   */
 
-  def utteranceStarted(id:String) = utteranceStartedHandlers.foreach { f => f(id) }
+  def utteranceStarted(text:Option[String]) = utteranceStartedHandlers.foreach { f => f(text) }
 
   /**
    * Removes handler from being run when TTS utterance starts.
   */
 
-  def removeUtteranceStarted(h:(String) => Unit) = {
+  def removeUtteranceStarted(h:(Option[String]) => Unit) = {
     utteranceStartedHandlers = utteranceStartedHandlers.filterNot(_ == h)
   }
 
-  private var utteranceEndedHandlers = List[(String) => Unit]()
+  private var utteranceEndedHandlers = List[(Option[String]) => Unit]()
 
   /**
    * Registers handler to be run if the TTS utterance ends.
   */
 
-  def onUtteranceEnded(h:(String) => Unit) = {
+  def onUtteranceEnded(h:(Option[String]) => Unit) = {
     utteranceEndedHandlers ::= h
     h
   }
@@ -827,23 +827,23 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Run handlers when TTS utterance ends.
   */
 
-  def utteranceEnded(id:String) = utteranceEndedHandlers.foreach { f => f(id) }
+  def utteranceEnded(text:Option[String]) = utteranceEndedHandlers.foreach { f => f(text) }
 
   /**
    * Removes handler from being run when TTS utterance ends.
   */
 
-  def removeUtteranceEnded(h:(String) => Unit) = {
+  def removeUtteranceEnded(h:(Option[String]) => Unit) = {
     utteranceEndedHandlers = utteranceEndedHandlers.filterNot(_ == h)
   }
 
-  private var utteranceErrorHandlers = List[(String) => Unit]()
+  private var utteranceErrorHandlers = List[(Option[String]) => Unit]()
 
   /**
    * Registers handler to be run if the TTS utterance errors out.
   */
 
-  def onUtteranceError(h:(String) => Unit) = {
+  def onUtteranceError(h:(Option[String]) => Unit) = {
     utteranceErrorHandlers ::= h
     h
   }
@@ -852,13 +852,13 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Run handlers when TTS utterance errors out.
   */
 
-  def utteranceError(id:String) = utteranceErrorHandlers.foreach { f => f(id) }
+  def utteranceError(text:Option[String]) = utteranceErrorHandlers.foreach { f => f(text) }
 
   /**
    * Removes handler from being run when TTS utterance errors out.
   */
 
-  def removeUtteranceError(h:(String) => Unit) = {
+  def removeUtteranceError(h:(Option[String]) => Unit) = {
     utteranceErrorHandlers = utteranceErrorHandlers.filterNot(_ == h)
   }
 

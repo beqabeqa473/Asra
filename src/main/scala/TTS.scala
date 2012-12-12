@@ -163,19 +163,21 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
     audioManager.abandonAudioFocus(this)
   }
 
+  private var utterances:Map[String, String] = Map.empty
+
   def onStart(id:String) {
-    StateObserver.utteranceStarted(id)
+    StateObserver.utteranceStarted(utterances.get(id))
     if(Preferences.duckNonSpeechAudio)
       audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
   }
 
   def onError(id:String) {
-    StateObserver.utteranceError(id)
+    StateObserver.utteranceError(utterances.get(id))
     abandonFocus()
   }
 
   def onDone(id:String) {
-    StateObserver.utteranceEnded(id)
+    StateObserver.utteranceEnded(utterances.get(id))
     abandonFocus()
     repeatedSpeech.get(id).foreach { v =>
       actor {
@@ -183,6 +185,7 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
         performRepeatedSpeech(id)
       }
     }
+    utterances -= id
   }
 
   private val managedPunctuations = Map(
@@ -218,6 +221,7 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   private var failures = 0
 
   private def reInitOnFailure() {
+    utterances = Map.empty
     if(!spokeSuccessfully) {
       val intent = new Intent()
       intent.setAction(tts.Engine.ACTION_CHECK_TTS_DATA)
@@ -265,12 +269,15 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
       return speak(text.split("\n").toList, flush)
     Log.d("spiel", "Speaking "+text+": "+flush)
     val mode = if(flush) 2 else TextToSpeech.QUEUE_ADD
-    if(flush)
+    if(flush) {
       tts.speak("", TextToSpeech.QUEUE_FLUSH, null)
+      utterances = Map.empty
+    }
     val params = new java.util.HashMap[String, String]()
     val uid = utteranceID.getOrElse(java.util.UUID.randomUUID.toString)
     params.put(tts.Engine.KEY_PARAM_UTTERANCE_ID, uid)
     guard {
+      utterances += (uid -> text)
       val rv = if(text.length == 0)
         tts.speak(service.getString(R.string.blank), mode, params)
       else if(text.length == 1 && Character.isUpperCase(text(0))) {
