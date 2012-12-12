@@ -114,11 +114,11 @@ object StateObserver extends BluetoothProfile.ServiceListener {
     })
 
     service.getContentResolver.registerContentObserver(Secure.getUriFor(Secure.TTS_DEFAULT_RATE), false, new ContentObserver(new Handler) {
-      override def onChange(bySelf:Boolean) = ttsRateChanged()
+      override def onChange(bySelf:Boolean) = rateChanged()
     })
 
     service.getContentResolver.registerContentObserver(Secure.getUriFor(Secure.TTS_DEFAULT_PITCH), false, new ContentObserver(new Handler) {
-      override def onChange(bySelf:Boolean) = ttsPitchChanged()
+      override def onChange(bySelf:Boolean) = pitchChanged()
     })
 
   }
@@ -725,14 +725,14 @@ object StateObserver extends BluetoothProfile.ServiceListener {
     ttsEngineChangedHandlers = ttsEngineChangedHandlers.filterNot(_ == h)
   }
 
-  private var ttsRateChangedHandlers = List[() => Unit]()
+  private var rateChangedHandlers = List[() => Unit]()
 
   /**
    * Registers handler to be run if the TTS rate changes.
   */
 
-  def onTTSRateChanged(h:() => Unit) = {
-    ttsRateChangedHandlers ::= h
+  def onrateChanged(h:() => Unit) = {
+    rateChangedHandlers ::= h
     h
   }
 
@@ -740,24 +740,24 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Run handlers when TTS rate changes.
   */
 
-  def ttsRateChanged() = ttsRateChangedHandlers.foreach { f => f() }
+  def rateChanged() = rateChangedHandlers.foreach { f => f() }
 
   /**
    * Removes handler from being run when TTS rate changes.
   */
 
-  def removeTTSRateChanged(h:() => Unit) = {
-    ttsRateChangedHandlers = ttsRateChangedHandlers.filterNot(_ == h)
+  def removeRateChanged(h:() => Unit) = {
+    rateChangedHandlers = rateChangedHandlers.filterNot(_ == h)
   }
 
-  private var ttsPitchChangedHandlers = List[() => Unit]()
+  private var pitchChangedHandlers = List[() => Unit]()
 
   /**
    * Registers handler to be run if the TTS pitch changes.
   */
 
-  def onTTSPitchChanged(h:() => Unit) = {
-    ttsPitchChangedHandlers ::= h
+  def onPitchChanged(h:() => Unit) = {
+    pitchChangedHandlers ::= h
     h
   }
 
@@ -765,14 +765,14 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Run handlers when TTS pitch changes.
   */
 
-  def ttsPitchChanged() = ttsPitchChangedHandlers.foreach { f => f() }
+  def pitchChanged() = pitchChangedHandlers.foreach { f => f() }
 
   /**
    * Removes handler from being run when TTS pitch changes.
   */
 
-  def removeTTSPitchChanged(h:() => Unit) = {
-    ttsPitchChangedHandlers = ttsPitchChangedHandlers.filterNot(_ == h)
+  def removePitchChanged(h:() => Unit) = {
+    pitchChangedHandlers = pitchChangedHandlers.filterNot(_ == h)
   }
 
   private var a2dp:Option[BluetoothProfile] = None
