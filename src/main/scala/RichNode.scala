@@ -122,7 +122,7 @@ case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
     isNotDisabledWithNoText &&
     isNotAdapterView &&
     isNonLabel &&
-    isLeafOrTextualNonHtmlViewGroup
+    (isA_?("android.webkit.WebView") || isLeafOrTextualNonHtmlViewGroup)
   }
 
   private def findAccessibilityFocus(nodes:List[AccessibilityNodeInfo], from:Int, wrapped:Boolean = false):Option[AccessibilityNodeInfo] = {
