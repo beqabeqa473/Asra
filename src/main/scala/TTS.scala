@@ -164,15 +164,18 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   }
 
   def onStart(id:String) {
+    StateObserver.utteranceStarted(id)
     if(Preferences.duckNonSpeechAudio)
       audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
   }
 
   def onError(id:String) {
+    StateObserver.utteranceError(id)
     abandonFocus()
   }
 
   def onDone(id:String) {
+    StateObserver.utteranceEnded(id)
     abandonFocus()
     repeatedSpeech.get(id).foreach { v =>
       actor {
