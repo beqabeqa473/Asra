@@ -20,6 +20,8 @@ class RichEvent(e:AccessibilityEvent) {
   lazy val contentDescription =
     Option(e.getContentDescription).map(_.toString)
 
+  lazy val source = Option(e.getSource)
+
   def utterances(addBlank:Boolean = true, stripBlanks:Boolean = false, guessLabelIfTextMissing:Boolean = false, guessLabelIfContentDescriptionMissing:Boolean = false, guessLabelIfTextShorterThan:Option[Int] = None, providedText:Option[String] = None):List[String] = {
     var rv = List[String]()
     val t = text.filterNot(_ == null).mkString("\n") match {
@@ -43,18 +45,18 @@ class RichEvent(e:AccessibilityEvent) {
     }
     def removeBlank() = if(blankAdded) rv = rv.tail
     if(guessLabelIfTextMissing && e.getText.length == 0)
-      rv :::= Option(e.getSource).flatMap(_.label).map(_.getText.toString).map { v =>
+      rv :::= source.flatMap(_.label).map(_.getText.toString).map { v =>
         removeBlank()
         List(v)
       }.getOrElse(Nil)
     else if(guessLabelIfContentDescriptionMissing && e.getContentDescription == null)
-      rv :::= Option(e.getSource).flatMap(_.label).map(_.getText.toString).map { v =>
+      rv :::= source.flatMap(_.label).map(_.getText.toString).map { v =>
         removeBlank()
         List(v)
       }.getOrElse(Nil)
     else guessLabelIfTextShorterThan.foreach { v =>
       if(VERSION.SDK_INT >= 16 || text.length < v)
-        rv :::= Option(e.getSource).flatMap(_.label).map(_.getText.toString).map { v =>
+        rv :::= source.flatMap(_.label).map(_.getText.toString).map { v =>
           removeBlank()
           List(v)
         }.getOrElse(Nil)
