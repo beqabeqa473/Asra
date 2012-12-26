@@ -165,7 +165,7 @@ class AllPreferences extends PreferenceFragment with HasScriptPreferences {
         onProximityNear.setEntries(actions.map(_._1).toArray[CharSequence])
         onProximityNear.setEntryValues(actions.map(_._2).toArray[CharSequence])
       } else
-        getPreferenceScreen.getPreference(2).asInstanceOf[PreferenceScreen].removePreference(findPreference("onProximityNear"))
+        getPreferenceScreen.getPreference(3).asInstanceOf[PreferenceScreen].removePreference(findPreference("onProximityNear"))
 
     } else
       getPreferenceScreen.removePreference(getPreferenceScreen.getPreference(2))
