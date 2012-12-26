@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.accessibility._
 import AccessibilityNodeInfo._
 
-case class RichAccessibilityNode(node:AccessibilityNodeInfo) {
+case class RichNode(node:AccessibilityNodeInfo) {
 
   lazy val parent = node.getParent
 
