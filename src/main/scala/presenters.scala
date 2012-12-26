@@ -189,16 +189,6 @@ object Before extends Presenter {
     false
   }
 
-  /*byDefault { e:AccessibilityEvent =>
-    if(e.getRecordCount > 0) {
-      Log.d("spielcheck", "E: "+e)
-      for(i <- 0 to e.getRecordCount-1) {
-        Log.d("spielcheck", e.getRecord(i).toString)
-      }
-    }
-    false
-  }*/
-
 }
 
 /**
@@ -830,6 +820,8 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
     if(eventType == None) {
       EventReviewQueue(e)
       Log.d("spiel", "Event "+e.toString+"; Activity: "+currentActivity)
+      if(e.records != Nil)
+        Log.d("spiel", "Records: "+e.records.map(_.toString))
     }
 
     if(!StateReactor.screenOn_? && !List(TYPE_ANNOUNCEMENT, TYPE_NOTIFICATION_STATE_CHANGED, TYPE_VIEW_TEXT_TRAVERSED_AT_MOVEMENT_GRANULARITY
