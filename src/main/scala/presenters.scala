@@ -157,7 +157,7 @@ trait GenericButtonPresenter extends Presenter {
   onViewFocused { e:AccessibilityEvent =>
     val text = e.utterances(addBlank=false).mkString(": ")
     if(text == "") {
-      Option(e.getSource).flatMap { source =>
+      e.source.flatMap { source =>
         val descendants = source.root.descendants
         val index = descendants.indexOf(source)+1
         if(index > 0)
@@ -209,7 +209,7 @@ object After extends Presenter {
 
   onViewClicked { e:AccessibilityEvent =>
     if(VERSION.SDK_INT >= 16)
-      Option(e.getSource).foreach { source =>
+      e.source.foreach { source =>
         if(source.findFocus(FOCUS_ACCESSIBILITY) == null)
           source.performAction(ACTION_ACCESSIBILITY_FOCUS)
       }
@@ -219,7 +219,7 @@ object After extends Presenter {
   private val absListViews = collection.mutable.Map[AccessibilityNodeInfo, Tuple2[Int, Int]]()
 
   onViewFocused { e:AccessibilityEvent =>
-    Option(e.getSource).foreach { source =>
+    e.source.foreach { source =>
       val all = source :: source.ancestors
       var counter = -1
       val view = all.map { n =>
@@ -246,7 +246,7 @@ object After extends Presenter {
   }
 
   onViewScrolled { e:AccessibilityEvent =>
-    Option(e.getSource).foreach { source =>
+    e.source.foreach { source =>
       val eventClass = utils.classForName(e.getClassName.toString, e.getPackageName.toString)
       eventClass.foreach { cls =>
         if(e.getClassName == "android.widget.ListView" || utils.ancestors(cls).contains(classOf[android.widget.AbsListView])) {
@@ -313,7 +313,7 @@ class Presenters {
     }
 
     onViewSelected { e:AccessibilityEvent =>
-      Option(e.getSource).map { source =>
+      e.source.map { source =>
         if(!source.isFocused)
           true
         else
@@ -447,16 +447,17 @@ class Presenters {
       if(text == "")
         if(e.getItemCount > 0 && e.getCurrentItemIndex >= 0)
           speak(getString(R.string.image) :: getString(R.string.listItem, (e.getCurrentItemIndex+1).toString, e.getItemCount.toString) :: Nil)
-        else if(e.getSource != null) {
-          val source = e.getSource
+        else e.source.map { source =>
           val descendants = source.root.descendants
           val index = descendants.indexOf(source)+1
           if(index > 0)
             speak(getString(R.string.image) :: getString(R.string.listItem, index.toString, descendants.length.toString) :: Nil)
           else
             speak(getString(R.string.image).toString)
-        } else
+          true
+        }.getOrElse {
           speak(getString(R.string.image).toString)
+        }
       else
         speak(getString(R.string.labeledImage, text))
     }
@@ -515,13 +516,13 @@ class Presenters {
   class RatingBar extends Presenter("android.widget.RatingBar") {
 
     onViewFocused { e:AccessibilityEvent =>
-      val label = Option(e.getSource).flatMap(_.label).map(_.getText.toString).getOrElse(getString(R.string.rating))
+      val label = e.source.flatMap(_.label).map(_.getText.toString).getOrElse(getString(R.string.rating))
       val rating = getString(R.string.listItem, e.getCurrentItemIndex.toString, e.getItemCount.toString)
       speak(e.utterances(addBlank = false, providedText=Some(label+": "+rating)))
     }
 
     onViewSelected { e:AccessibilityEvent =>
-      Option(e.getSource).map { source =>
+      e.source.map { source =>
         if(source.isFocused)
           speak(e.getCurrentItemIndex.toString)
         else true
@@ -549,7 +550,7 @@ class Presenters {
       if(utterances != Nil)
         speak(utterances)
       else
-        Option(e.getSource).map { source =>
+        e.source.map { source =>
           if(source.interactive_?)
             speak(utterances)
           else
@@ -558,7 +559,7 @@ class Presenters {
     }
 
     onViewHoverEnter { e:AccessibilityEvent =>
-      Option(e.getSource).map { source=>
+      e.source.map { source=>
         val utterances = e.utterances(addBlank=false, stripBlanks=true)
         if(utterances != Nil) {
           val textCount = source.descendants.map { v =>
@@ -704,7 +705,7 @@ class Presenters {
     private var oldSelectionTo:Option[Int] = None
 
     onViewTextSelectionChanged { e:AccessibilityEvent =>
-      Option(e.getSource).map(_.getText).foreach { text =>
+      e.source.map(_.getText).foreach { text =>
         val txt = if(e.isPassword) Some("."*e.getItemCount) else Option(text)
         txt.map { t =>
           var from = e.getFromIndex
