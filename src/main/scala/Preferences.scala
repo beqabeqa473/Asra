@@ -1,5 +1,6 @@
 package info.spielproject.spiel
 
+import android.app.backup.BackupManager
 import android.content.{Context, SharedPreferences}
 import android.media.AudioManager
 import android.os.Debug
@@ -21,6 +22,8 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
   private lazy val audioManager:AudioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
 
+  private lazy val backupManager = new BackupManager(service)
+
   /**
    * Initialized based on the provided <code>SpielService</code>.
   */
@@ -28,6 +31,7 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
   def apply(svc:SpielService) {
     service = svc
     prefs.registerOnSharedPreferenceChangeListener(this)
+    backupManager.dataChanged()
   }
 
   /**
@@ -200,6 +204,7 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
         else StateReactor.stopVoicemailAlerts()
       case _ =>
     }
+    backupManager.dataChanged()
   }
 
 }
