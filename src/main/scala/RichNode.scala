@@ -38,7 +38,39 @@ case class RichNode(node:AccessibilityNodeInfo) {
   def children =
     (for(i <- 0 to node.getChildCount-1) yield(node.getChild(i))).toList.filterNot(_ == null)
 
+  def visibleChildren = children.filter(_.isVisibleToUser)
+
   def siblings = Option(parent).map(_.children).getOrElse(Nil)
+
+  def visibleSiblings = siblings.filter(_.isVisibleToUser)
+
+  def nextVisibleSibling = {
+    val vs = visibleSiblings
+    vs.indexOf(node) match {
+      case -1 => None
+      case v if(v == vs.length-1) => None
+      case v => Some(vs(v+1))
+    }
+  }
+
+  def prevVisibleSibling = {
+    val vs = visibleSiblings
+    vs.indexOf(node) match {
+      case v if(v <= 0) => None
+      case v => Some(vs(v-1))
+    }
+  }
+
+  def firstVisibleLeaf:AccessibilityNodeInfo = visibleChildren match {
+    case Nil => node
+    case hd :: tl => hd.firstVisibleLeaf
+  }
+
+  def lastVisibleLeaf:AccessibilityNodeInfo = visibleChildren match {
+    case Nil => node
+    case hd :: Nil => hd.lastVisibleLeaf
+    case hd :: tl => tl.last.lastVisibleLeaf
+  }
 
   def descendants:List[AccessibilityNodeInfo] =children++children.map { c =>
     c.descendants
@@ -135,34 +167,18 @@ case class RichNode(node:AccessibilityNodeInfo) {
     (isA_?("android.webkit.WebView") || isLeafOrTextualNonHtmlViewGroup)
   }
 
-  private def findAccessibilityFocus(nodes:List[AccessibilityNodeInfo], from:Int, wrapped:Boolean = false):Option[AccessibilityNodeInfo] = {
-    nodes.drop(from).find { n =>
-      n.interestedInAccessibilityFocus
-    }.orElse {
-      if(wrapped)
-        None
-      else
-        findAccessibilityFocus(nodes, 0, true)
-    }
+  def nextAccessibilityFocus:Option[AccessibilityNodeInfo] = {
+    nextVisibleSibling.map(_.firstVisibleLeaf)
+    .orElse(parent.nextAccessibilityFocus)
+    .orElse(Some(root.firstVisibleLeaf))
+    .orElse(None)
   }
 
-  def nextAccessibilityFocus = {
-    val nodes = root.descendants.filter(_.isVisibleToUser)
-    .sortBy(_.rect.top)
-    nodes.indexOf(node) match {
-      case -1 => findAccessibilityFocus(nodes, 0, true)
-      case v => findAccessibilityFocus(nodes, v+1)
-    }
+  def prevAccessibilityFocus:Option[AccessibilityNodeInfo] = {
+    prevVisibleSibling.map(_.lastVisibleLeaf)
+    .orElse(parent.prevAccessibilityFocus)
+    .orElse(Some(root.lastVisibleLeaf))
+    .orElse(None)
   }
-
-  def prevAccessibilityFocus = {
-    val nodes = root.descendants.filter(_.isVisibleToUser)
-    .sortBy(_.rect.top).reverse
-    nodes.indexOf(node) match {
-      case -1 => findAccessibilityFocus(nodes, 0, true)
-      case v => findAccessibilityFocus(nodes, v+1)
-    }
-  }
-
 
 }
