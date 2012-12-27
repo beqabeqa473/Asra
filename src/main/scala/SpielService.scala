@@ -46,15 +46,15 @@ class SpielService extends AccessibilityService {
     StateReactor(this)
     Triggers(this)
     TelephonyListener(this)
-    val notification = new Notification.Builder(this)
+    val nb = new Notification.Builder(this)
     .setSmallIcon(R.drawable.empty)
     .setTicker(getString(R.string.appName))
     .setContentTitle(getString(R.string.appName))
     .setOngoing(true)
     .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this, classOf[ui.Spiel]), 0))
-    .setWhen(System.currentTimeMillis)
-    .getNotification
-    startForeground(1, notification)
+    if(VERSION.SDK_INT >= 17)
+      nb.setShowWhen(false)
+    startForeground(1, nb.getNotification)
     SpielService.initialized = true
     SpielService.enabled = true
   }
