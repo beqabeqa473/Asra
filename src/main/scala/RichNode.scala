@@ -126,47 +126,6 @@ case class RichNode(node:AccessibilityNodeInfo) {
   def supports_?(action:Int) =
     (node.getActions&action) != 0
 
-  protected def interestedInAccessibilityFocus = {
-    Log.d("spielcheck", "Evaluating "+node)
-    val txt = text.map(_.toString).getOrElse("")+(contentDescription.map(": "+_).getOrElse(""))
-    Log.d("spielcheck", "Text: "+txt)
-    // TODO: These predicates are ugly, should clean this logic up later.
-    lazy val isNotDisabledWithNoText =
-      if(node.isEnabled)
-        true
-      else
-        !txt.isEmpty
-    lazy val isNotAdapterView = !node.isA_?("android.widget.AdapterView")
-    Log.d("spielcheck", "isNotAdapterView: "+isNotAdapterView)
-    lazy val isNonLabel =
-      if(!isA_?("android.widget.TextView") || isA_?("android.widget.EditText") || isA_?("android.widget.Button")) {
-        true
-      }else {
-        val all = root.descendants.filter(!_.interactive_?)
-        val index = all.indexOf(node)
-        var before:List[Option[AccessibilityNodeInfo]] = all.take(index).reverse.map(Some(_))
-        var after:List[Option[AccessibilityNodeInfo]] = all.drop(index+1).map(Some(_))
-        if(before.length < after.length)
-          before ++= (before.length to after.length-1).map(v => None)
-        if(after.length < before.length)
-          after ++= (after.length to before.length-1).map(v => None)
-        val pattern = before.zip(after).map(v => List(v._1, v._2)).flatten
-        !pattern.exists(_.map(_.label == Some(node)).getOrElse(false))
-      }
-    Log.d("spielcheck", "isNonLabel: "+isNonLabel)
-    lazy val isLeafOrTextualNonHtmlViewGroup =
-      if(isA_?("android.view.ViewGroup"))
-        children == Nil &&
-        (!txt.isEmpty || supports_?(ACTION_NEXT_HTML_ELEMENT))
-      else
-        node.children == Nil
-    Log.d("spielcheck", "Leaf: "+isLeafOrTextualNonHtmlViewGroup)
-    isNotDisabledWithNoText &&
-    isNotAdapterView &&
-    isNonLabel &&
-    (isA_?("android.webkit.WebView") || isLeafOrTextualNonHtmlViewGroup)
-  }
-
   def nextAccessibilityFocus:Option[AccessibilityNodeInfo] = {
     nextVisibleSibling.map(_.firstVisibleLeaf)
     .orElse(parent.nextAccessibilityFocus)
