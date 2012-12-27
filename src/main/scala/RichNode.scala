@@ -18,10 +18,10 @@ case class RichNode(node:AccessibilityNodeInfo) {
 
   def nonEmptyContentDescription = contentDescription.filterNot(_.isEmpty)
 
-  lazy val parent = node.getParent
+  lazy val parent = Option(node.getParent)
 
-  lazy val ancestors:List[AccessibilityNodeInfo] = Option(parent).map { p =>
-    parent :: parent.ancestors
+  lazy val ancestors:List[AccessibilityNodeInfo] = parent.map { p =>
+    p :: p.ancestors
   }.getOrElse(Nil)
 
   lazy val root = {
@@ -40,7 +40,7 @@ case class RichNode(node:AccessibilityNodeInfo) {
 
   def visibleChildren = children.filter(_.isVisibleToUser)
 
-  def siblings = Option(parent).map(_.children).getOrElse(Nil)
+  def siblings = parent.map(_.children).getOrElse(Nil)
 
   def visibleSiblings = siblings.filter(_.isVisibleToUser)
 
@@ -101,43 +101,46 @@ case class RichNode(node:AccessibilityNodeInfo) {
   protected def isA_?(cls:String) =
     node.getClassName == cls || classAncestors.contains(cls)
 
-  lazy val label = {
+  def label = {
     def isTextView(n:AccessibilityNodeInfo) =
       n.isA_?("android.widget.TextView") && !n.isA_?("android.widget.EditText") && !n.isA_?("android.widget.Button")
-    if(
-      List("android.widget.CheckBox", "android.widget.EditText", "android.widget.ProgressBar", "android.widget.RadioButton", "android.widget.RatingBar")
-      .exists(isA_?(_))
-    ) {
-      row.find(v => isTextView(v) && v.nonEmptyText_?)
-      } .orElse {
-        val descendants = if(VERSION.SDK_INT >= 16)
-          root.descendants.filter(_.isVisibleToUser)
-        else root.descendants
-        descendants.filter(_.rect.bottom <= rect.top)
-        .sortBy(_.rect.bottom)
-        .reverse.headOption.filter { c =>
-          isTextView(c) && !c.interactive_? && c.nonEmptyText_?
+    val explicitLabel = if(VERSION.SDK_INT >= 17)
+      Option(node.getLabeledBy)
+    else None
+    explicitLabel.orElse {
+      if(
+        List("android.widget.CheckBox", "android.widget.EditText", "android.widget.ProgressBar", "android.widget.RadioButton", "android.widget.RatingBar")
+        .exists(isA_?(_))
+      ) {
+        row.find(v => isTextView(v) && v.nonEmptyText_?)
+        } .orElse {
+          val descendants = if(VERSION.SDK_INT >= 16)
+            root.descendants.filter(_.isVisibleToUser)
+          else root.descendants
+          descendants.filter(_.rect.bottom <= rect.top)
+          .sortBy(_.rect.bottom)
+          .reverse.headOption.filter { c =>
+            isTextView(c) && !c.interactive_? && c.nonEmptyText_?
+          }
         }
-      }
-    else
-      None
+      else
+        None
+    }
   }
 
   def supports_?(action:Int) =
     (node.getActions&action) != 0
 
-  def nextAccessibilityFocus:Option[AccessibilityNodeInfo] = {
+  def nextAccessibilityFocus:Option[AccessibilityNodeInfo] =
     nextVisibleSibling.map(_.firstVisibleLeaf)
-    .orElse(parent.nextAccessibilityFocus)
+    .orElse(parent.flatMap(_.nextAccessibilityFocus))
     .orElse(Some(root.firstVisibleLeaf))
     .orElse(None)
-  }
 
-  def prevAccessibilityFocus:Option[AccessibilityNodeInfo] = {
+  def prevAccessibilityFocus:Option[AccessibilityNodeInfo] =
     prevVisibleSibling.map(_.lastVisibleLeaf)
-    .orElse(parent.prevAccessibilityFocus)
+    .orElse(parent.flatMap(_.prevAccessibilityFocus))
     .orElse(Some(root.lastVisibleLeaf))
     .orElse(None)
-  }
 
 }
