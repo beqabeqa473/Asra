@@ -31,8 +31,6 @@ class Spiel extends Activity with ActionBar.TabListener {
   override def onCreate(bundle:Bundle) {
     super.onCreate(bundle)
 
-    setContentView(R.layout.spiel)
-
     val bar = getActionBar
     bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS)
 
@@ -66,23 +64,19 @@ class Spiel extends Activity with ActionBar.TabListener {
   private var fragment:Option[Fragment] = None
 
   def onTabSelected(tab:ActionBar.Tab, ft:FragmentTransaction) {
-    val transaction = getFragmentManager.beginTransaction()
-    fragment.foreach(transaction.remove(_))
+    fragment.foreach(ft.remove(_))
     val frag = tab.getPosition match {
       case 0 => new AllPreferences
       case 1 => new Scripts
       case 2 => new Events
     }
     fragment = Some(frag)
-    transaction.add(R.id.tabContainer, frag)
-    transaction.commit()
+    ft.add(android.R.id.content, frag)
   }
 
   def onTabUnselected(tab:ActionBar.Tab, ft:FragmentTransaction) {
     fragment.foreach { frag =>
-      getFragmentManager.beginTransaction()
-      .remove(frag)
-      .commit()
+      ft.remove(frag)
       fragment = None
     }
   }
@@ -144,7 +138,6 @@ class AllPreferences extends PreferenceFragment with HasScriptPreferences {
     val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE).asInstanceOf[android.os.Vibrator]
     if(!vibrator.hasVibrator)
       getPreferenceScreen.removePreference(findPreference("hapticFeedback"))
-
 
     val pm = context.getPackageManager
 
