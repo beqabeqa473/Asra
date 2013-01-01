@@ -123,7 +123,7 @@ class AllPreferences extends PreferenceFragment with HasScriptPreferences {
     enginesPreference.setEntryValues(("" :: TTS.engines.map(_._2).toList).toArray[CharSequence])
 
     Option(BluetoothAdapter.getDefaultAdapter).getOrElse {
-      getPreferenceScreen.getPreference(0).asInstanceOf[PreferenceScreen].removePreference(findPreference("useBluetoothSCO"))
+      getPreferenceScreen.getPreference(0).asInstanceOf[PreferenceGroup].removePreference(findPreference("useBluetoothSCO"))
     }
 
     // Now set the shortcut to system-wide TTS settings.
@@ -151,14 +151,14 @@ class AllPreferences extends PreferenceFragment with HasScriptPreferences {
         onShake.setEntries(actions.map(_._1).toArray[CharSequence])
         onShake.setEntryValues(actions.map(_._2).toArray[CharSequence])
       } else
-        getPreferenceScreen.getPreference(2).asInstanceOf[PreferenceScreen].removePreference(findPreference("onShakingStarted"))
+        getPreferenceScreen.getPreference(2).asInstanceOf[PreferenceGroup].removePreference(findPreference("onShakingStarted"))
 
       if(pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_PROXIMITY)) {
         val onProximityNear = findPreference("onProximityNear").asInstanceOf[ListPreference]
         onProximityNear.setEntries(actions.map(_._1).toArray[CharSequence])
         onProximityNear.setEntryValues(actions.map(_._2).toArray[CharSequence])
       } else
-        getPreferenceScreen.getPreference(3).asInstanceOf[PreferenceScreen].removePreference(findPreference("onProximityNear"))
+        getPreferenceScreen.getPreference(3).asInstanceOf[PreferenceGroup].removePreference(findPreference("onProximityNear"))
 
     } else
       getPreferenceScreen.removePreference(getPreferenceScreen.getPreference(2))
@@ -181,7 +181,7 @@ class AllPreferences extends PreferenceFragment with HasScriptPreferences {
       }})
     }
 
-    val scripts = findPreference("scripts").asInstanceOf[PreferenceScreen]
+    val scripts = findPreference("scripts").asInstanceOf[PreferenceGroup]
     if(Scripter.preferences == Map.empty)
       getPreferenceScreen.removePreference(scripts)
     else {
