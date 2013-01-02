@@ -1,0 +1,23 @@
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:title="@string/alertsTitle">
+
+  <CheckBoxPreference
+    android:key="talkingCallerID"
+    android:defaultValue="true"
+    android:title="@string/talkingCallerIDTitle"
+    android:summary="@string/talkingCallerIDSummary"/>
+
+  <CheckBoxPreference
+    android:key="voicemailAlerts"
+    android:defaultValue="true"
+    android:title="@string/voicemailAlertsTitle"
+    android:summary="@string/voicemailAlertsSummary"/>
+
+  <CheckBoxPreference
+    android:key="hapticFeedback"
+    android:defaultValue="true"
+    android:title="@string/hapticFeedbackTitle"
+    android:summary="@string/hapticFeedbackSummary"/>
+
+</PreferenceScreen>

@@ -1,0 +1,17 @@
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:title="@string/triggersTitle"
+  android:summary="@string/triggersSummary">
+
+  <ListPreference
+    android:key="onShakingStarted"
+    android:title="@string/onShakeTitle"
+    android:summary="@string/onShakeSummary"/>
+
+  <ListPreference
+    android:key="onProximityNear"
+    android:title="@string/onProximityNearTitle"
+    android:summary="@string/onProximityNearSummary"
+    android:defaultValue="stopSpeech"/>
+
+</PreferenceScreen>

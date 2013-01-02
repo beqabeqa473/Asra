@@ -34,8 +34,6 @@ class Spiel extends Activity with ActionBar.TabListener {
     val bar = getActionBar
     bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS)
 
-    bar.addTab(bar.newTab.setText(R.string.preferences).setTabListener(this))
-
     bar.addTab(bar.newTab.setText(R.string.scripts).setTabListener(this))
 
     bar.addTab(bar.newTab.setText(R.string.events).setTabListener(this))
@@ -54,7 +52,7 @@ class Spiel extends Activity with ActionBar.TabListener {
       if(uri.getScheme == "spiel") {
         val parts = uri.getSchemeSpecificPart.split("?")
         if(!parts.isEmpty && parts.head == "scripts")
-          getActionBar.setSelectedNavigationItem(1)
+          getActionBar.setSelectedNavigationItem(0)
       }
     }
   }
@@ -66,9 +64,8 @@ class Spiel extends Activity with ActionBar.TabListener {
   def onTabSelected(tab:ActionBar.Tab, ft:FragmentTransaction) {
     fragment.foreach(ft.remove(_))
     val frag = tab.getPosition match {
-      case 0 => new AllPreferences
-      case 1 => new Scripts
-      case 2 => new Events
+      case 0 => new Scripts
+      case 1 => new Events
     }
     fragment = Some(frag)
     ft.add(android.R.id.content, frag)
@@ -79,6 +76,19 @@ class Spiel extends Activity with ActionBar.TabListener {
       ft.remove(frag)
       fragment = None
     }
+  }
+
+  override def onCreateOptionsMenu(menu:Menu) = {
+    getMenuInflater.inflate(R.menu.spiel, menu)
+    super.onCreateOptionsMenu(menu)
+  }
+
+  override def onOptionsItemSelected(item:MenuItem) = {
+    item.getItemId match {
+      case R.id.settings =>
+        startActivity(new Intent(this, classOf[PreferencesActivity]))
+    }
+    true
   }
 
 }
@@ -109,21 +119,24 @@ trait HasScriptPreferences {
 
 }
 
-class AllPreferences extends PreferenceFragment with HasScriptPreferences {
+class StockPreferenceFragment extends PreferenceFragment {
+  override def onCreate(bundle:Bundle) {
+    super.onCreate(bundle)
+    val res = getActivity.getResources.getIdentifier(getArguments.getString("resource"), "xml", getActivity.getPackageName)
+    addPreferencesFromResource(res)
+  }
+}
 
-  protected def context = getActivity
-
-  override def onActivityCreated(b:Bundle) {
-    super.onActivityCreated(b)
-    Option(getPreferenceScreen).foreach(_.removeAll())
-    addPreferencesFromResource(R.xml.preferences)
+class SpeechPreferenceFragment extends StockPreferenceFragment {
+  override def onCreate(b:Bundle) {
+    super.onCreate(b)
 
     val enginesPreference = findPreference("speechEngine").asInstanceOf[ListPreference]
     enginesPreference.setEntries((getString(R.string.systemDefault) :: TTS.engines.map(_._1).toList).toArray[CharSequence])
     enginesPreference.setEntryValues(("" :: TTS.engines.map(_._2).toList).toArray[CharSequence])
 
     Option(BluetoothAdapter.getDefaultAdapter).getOrElse {
-      getPreferenceScreen.getPreference(0).asInstanceOf[PreferenceGroup].removePreference(findPreference("useBluetoothSCO"))
+      getPreferenceScreen.removePreference(findPreference("useBluetoothSCO"))
     }
 
     // Now set the shortcut to system-wide TTS settings.
@@ -135,11 +148,22 @@ class AllPreferences extends PreferenceFragment with HasScriptPreferences {
       }
     })
 
-    val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE).asInstanceOf[android.os.Vibrator]
+  }
+}
+
+class AlertsPreferenceFragment extends StockPreferenceFragment {
+  override def onCreate(b:Bundle) {
+    super.onCreate(b)
+    val vibrator = getActivity.getSystemService(Context.VIBRATOR_SERVICE).asInstanceOf[android.os.Vibrator]
     if(!vibrator.hasVibrator)
       getPreferenceScreen.removePreference(findPreference("hapticFeedback"))
+  }
+}
 
-    val pm = context.getPackageManager
+class TriggersPreferenceFragment extends StockPreferenceFragment {
+  override def onCreate(b:Bundle) {
+    super.onCreate(b)
+    val pm = getActivity.getPackageManager
 
     if(pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER) || pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_PROXIMITY)) {
 
@@ -151,18 +175,22 @@ class AllPreferences extends PreferenceFragment with HasScriptPreferences {
         onShake.setEntries(actions.map(_._1).toArray[CharSequence])
         onShake.setEntryValues(actions.map(_._2).toArray[CharSequence])
       } else
-        getPreferenceScreen.getPreference(2).asInstanceOf[PreferenceGroup].removePreference(findPreference("onShakingStarted"))
+        getPreferenceScreen.asInstanceOf[PreferenceGroup].removePreference(findPreference("onShakingStarted"))
 
       if(pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_PROXIMITY)) {
         val onProximityNear = findPreference("onProximityNear").asInstanceOf[ListPreference]
         onProximityNear.setEntries(actions.map(_._1).toArray[CharSequence])
         onProximityNear.setEntryValues(actions.map(_._2).toArray[CharSequence])
       } else
-        getPreferenceScreen.getPreference(3).asInstanceOf[PreferenceGroup].removePreference(findPreference("onProximityNear"))
+        getPreferenceScreen.asInstanceOf[PreferenceGroup].removePreference(findPreference("onProximityNear"))
+    }
+  }
+}
 
-    } else
-      getPreferenceScreen.removePreference(getPreferenceScreen.getPreference(2))
-
+class NotificationFiltersPreferenceFragment extends StockPreferenceFragment {
+  override def onCreate(b:Bundle) {
+    super.onCreate(b)
+    val pm = getActivity.getPackageManager
     actor {
       val notificationFilters = findPreference("notificationFilters").asInstanceOf[MultiSelectListPreference]
       notificationFilters.setShouldDisableView(true)
@@ -180,19 +208,25 @@ class AllPreferences extends PreferenceFragment with HasScriptPreferences {
         notificationFilters.setEnabled(true)
       }})
     }
+  }
+}
 
-    val scripts = findPreference("scripts").asInstanceOf[PreferenceGroup]
-    if(Scripter.preferences == Map.empty)
-      getPreferenceScreen.removePreference(scripts)
-    else {
+class ScriptsPreferenceFragment extends StockPreferenceFragment with HasScriptPreferences {
+
+  lazy val context = getActivity
+
+  override def onCreate(b:Bundle) {
+    super.onCreate(b)
+    val scripts = getPreferenceScreen
+    if(Scripter.preferences == Map.empty) {
+      //getPreferenceScreen.removePreference(scripts)
+    } else {
       scripts.removeAll()
       Scripter.preferences.foreach { pkg =>
         scripts.addPreference(scriptPreferencesFor(pkg._1))
       }
     }
-
   }
-
 }
 
 /**
@@ -222,18 +256,14 @@ class PreferencesActivity extends PreferenceActivity with HasScriptPreferences {
 trait Refreshable extends Fragment {
   this: Fragment =>
 
-  override def onCreate(b:Bundle) {
-    super.onCreate(b)
+  override def onActivityCreated(b:Bundle) {
+    super.onActivityCreated(b)
     setHasOptionsMenu(true)
   }
 
-  private var menu:Option[Menu] = None
-
-  def onCreateOptionsMenu(m:Menu):Boolean = {
-    menu = Some(m)
-    val inflater = new MenuInflater(getActivity)
-    inflater.inflate(R.menu.refreshable, menu.get)
-    true
+  override def onCreateOptionsMenu(menu:Menu, inflater:MenuInflater) {
+    inflater.inflate(R.menu.refreshable, menu)
+    super.onCreateOptionsMenu(menu, inflater)
   }
 
   override def onOptionsItemSelected(item:MenuItem) = {

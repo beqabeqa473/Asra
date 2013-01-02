@@ -1,0 +1,17 @@
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:title="@string/debuggingTitle">
+
+  <CheckBoxPreference
+    android:key="sendBacktraces"
+    android:defaultValue="true"
+    android:title="@string/sendBacktracesTitle"
+    android:summary="@string/sendBacktracesSummary"/>
+
+  <CheckBoxPreference
+    android:key="profiling"
+    android:defaultValue="false"
+    android:title="@string/profilingTitle"
+    android:summary="@string/profilingSummary"/>
+
+</PreferenceScreen>

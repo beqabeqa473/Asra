@@ -1,0 +1,67 @@
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:title="@string/speechTitle">
+
+  <ListPreference
+    android:key="speechEngine"
+    android:title="@string/speechEngineTitle"
+    android:defaultValue=""/>
+
+  <EditTextPreference
+    android:key="rateScale"
+    android:inputType="numberDecimal"
+    android:title="@string/rateScaleTitle"
+    android:summary="@string/rateScaleSummary"
+    android:dialogTitle="@string/rateScaleTitle"
+    android:dialogMessage="@string/rateScaleSummary"
+    android:defaultValue="1"/>
+
+  <EditTextPreference
+    android:key="pitchScale"
+    android:inputType="numberDecimal"
+    android:title="@string/pitchScaleTitle"
+    android:summary="@string/pitchScaleSummary"
+    android:dialogTitle="@string/pitchScaleTitle"
+    android:dialogMessage="@string/pitchScaleSummary"
+    android:defaultValue="1"/>
+
+  <CheckBoxPreference
+    android:key="echoByChar"
+    android:defaultValue="true"
+    android:title="@string/echoByCharTitle"/>
+
+  <CheckBoxPreference
+    android:key="echoByWord"
+    android:defaultValue="false"
+    android:title="@string/echoByWordTitle"/>
+
+  <CheckBoxPreference
+    android:key="speakNotificationsWhenScreenOff"
+    android:defaultValue="true"
+    android:title="@string/speakNotificationsWhenScreenOffTitle"/>
+
+  <CheckBoxPreference
+    android:key="useBluetoothSCO"
+    android:defaultValue="false"
+    android:title="@string/useBluetoothSCOTitle"
+    android:summary="@string/useBluetoothSCOSummary"/>
+
+  <CheckBoxPreference
+    android:key="managePunctuationSpeech"
+    android:defaultValue="true"
+    android:title="@string/managePunctuationSpeechTitle"
+    android:summary="@string/managePunctuationSpeechSummary"/>
+
+  <CheckBoxPreference
+    android:key="duckNonSpeechAudio"
+    android:defaultValue="true"
+    android:title="@string/duckNonSpeechAudioTitle"
+    android:summary="@string/duckNonSpeechAudioSummary"/>
+
+  <Preference
+    android:key="textToSpeechSettings"
+    android:title="@string/textToSpeechTitle"
+    android:summary="@string/textToSpeechSummary"
+    android:persistent="false"/>
+
+</PreferenceScreen>

@@ -3,7 +3,50 @@
 <preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
 
   <header
-    android:title="@string/preferences"
-    android:fragment="info.spielproject.spiel.ui.AllPreferences"/>
+    android:title="@string/speechTitle"
+    android:fragment="info.spielproject.spiel.ui.SpeechPreferenceFragment">
+    <extra
+      android:name="resource"
+      android:value="speech"/>
+  </header>
+
+  <header
+    android:title="@string/alertsTitle"
+    android:fragment="info.spielproject.spiel.ui.AlertsPreferenceFragment">
+    <extra
+      android:name="resource"
+      android:value="alerts"/>
+  </header>
+
+  <header
+    android:title="@string/triggersTitle"
+    android:summary="@string/triggersSummary"
+    android:fragment="info.spielproject.spiel.ui.TriggersPreferenceFragment">
+    <extra
+      android:name="resource"
+      android:value="triggers"/>
+  </header>
+
+  <header
+    android:title="@string/notificationFiltersTitle"
+    android:summary="@string/notificationFiltersSummary"
+    android:fragment="info.spielproject.spiel.ui.NotificationFiltersPreferenceFragment">
+    <extra
+      android:name="resource"
+      android:value="filters"/>
+  </header>
+
+  <header
+    android:title="@string/scripts"
+    android:fragment="info.spielproject.spiel.ui.ScriptsPreferenceFragment">
+  </header>
+
+  <header
+    android:title="@string/debuggingTitle"
+    android:fragment="info.spielproject.spiel.ui.StockPreferenceFragment">
+    <extra
+      android:name="resource"
+      android:value="debugging"/>
+  </header>
 
 </preference-headers>
