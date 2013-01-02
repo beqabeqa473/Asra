@@ -44,7 +44,7 @@
   <string name="selected">selected</string>
 
   <!-- Preferences -->
-  <string name="preferences">Preferences</string>
+  <string name="settings">Settings</string>
 
   <string name="speechTitle">Speech</string>
   <string name="speechEngineTitle">Speech engine</string>

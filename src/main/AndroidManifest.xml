@@ -30,7 +30,7 @@
 
     <service
       android:name=".SpielService"
-      android:settingsActivity="info.spielproject.spiel.ui.PreferencesActivity"
+      android:settingsActivity="info.spielproject.spiel.ui.Settings"
       android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
       android:configChanges="orientation">
 
@@ -56,7 +56,8 @@
     </activity>
 
     <activity
-      android:name=".ui.PreferencesActivity"
+      android:name=".ui.Settings"
+      android:label="@string/settings"
       android:configChanges="orientation|keyboardHidden|screenSize">
       <intent-filter>    
         <action android:name="android.intent.action.MAIN"/>
