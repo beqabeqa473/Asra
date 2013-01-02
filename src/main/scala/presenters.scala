@@ -818,7 +818,7 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
       return true
 
     if(eventType == None) {
-      EventReviewQueue(e)
+      EventReviewQueue(AccessibilityEvent.obtain(e))
       Log.d("spiel", "Event "+e.toString+"; Activity: "+currentActivity)
       if(e.records != Nil)
         Log.d("spiel", "Records: "+e.records.map(_.toString))
