@@ -160,12 +160,15 @@ class AlertsPreferenceFragment extends StockPreferenceFragment {
   }
 }
 
-class TriggersPreferenceFragment extends StockPreferenceFragment {
+class TriggersPreferenceFragment extends PreferenceFragment {
   override def onCreate(b:Bundle) {
     super.onCreate(b)
     val pm = getActivity.getPackageManager
 
     if(pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER) || pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_PROXIMITY)) {
+
+      val res = getActivity.getResources.getIdentifier(getArguments.getString("resource"), "xml", getActivity.getPackageName)
+      addPreferencesFromResource(res)
 
       // Set up triggers. First add an action for "None," then concat others.
       val actions = (getString(R.string.none), "") :: Triggers.actions.map((v) => (v._2.name, v._1)).toList
