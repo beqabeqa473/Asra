@@ -207,17 +207,22 @@ class Gestures {
                   n = scrollableContainer
               }
             }
+            val sameSourceDest = n.map { v =>
+              if(v == s) true else false
+            }.getOrElse(false)
             n.foreach { n2 =>
-              if(n2 == s)
+              if(sameSourceDest && !n2.supports_?(ACTION_NEXT_HTML_ELEMENT))
                 n.map(_.performAction(ACTION_CLEAR_ACCESSIBILITY_FOCUS))
             }
             while(!rv) {
               rv = n.exists(_.performAction(ACTION_ACCESSIBILITY_FOCUS))
-              if(rv)
-                if(n.exists(_.supports_?(ACTION_NEXT_HTML_ELEMENT)))
-                  next(n)
-              else
-                n = n.flatMap(_.nextAccessibilityFocus)
+              if(sameSourceDest) rv = true
+              if(!sameSourceDest)
+                if(rv)
+                  if(n.exists(_.supports_?(ACTION_NEXT_HTML_ELEMENT)))
+                    next(n)
+                else
+                  n = n.flatMap(_.nextAccessibilityFocus)
             }
           }
           Some(rv)
