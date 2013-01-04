@@ -159,22 +159,17 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
     }
   }
 
-  private var duckedAudio = false
-
   private def abandonFocus() {
-    if(duckedAudio)
+    if(audioManager.isMusicActive)
       audioManager.abandonAudioFocus(this)
-    duckedAudio = false
   }
 
   private var utterances:Map[String, String] = Map.empty
 
   def onStart(id:String) {
     StateObserver.utteranceStarted(utterances.get(id))
-    if(Preferences.duckNonSpeechAudio && audioManager.isMusicActive) {
+    if(Preferences.duckNonSpeechAudio && audioManager.isMusicActive)
       audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
-      duckedAudio = true
-    }
   }
 
   def onError(id:String) {
