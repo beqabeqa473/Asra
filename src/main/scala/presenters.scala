@@ -641,7 +641,11 @@ class Presenters {
     onViewFocused { e:AccessibilityEvent =>
       val utterances = e.utterances(addBlank=false, stripBlanks=true) match {
         case Nil if(e.getEventType != TYPE_VIEW_HOVER_ENTER) => 
-          e.getClassName.toString.split("\\.").last :: Nil
+          val className = e.getClassName.toString.split("\\.").last
+          if(className == "View")
+            List("")
+          else
+            List(className)
         case u => u
       }
       if(!utterances.isEmpty)
