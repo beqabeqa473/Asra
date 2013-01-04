@@ -44,7 +44,7 @@
   <string name="selected">valittu</string>
 
   <!-- Preferences -->
-  <string name="preferences">Asetukset</string>
+  <string name="settings">Asetukset</string>
 
   <string name="speechTitle">Puhe</string>
   <string name="speechEngineTitle">Puhemoottori</string>
