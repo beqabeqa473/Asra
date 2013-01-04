@@ -88,7 +88,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
       val device = i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE).asInstanceOf[BluetoothDevice]
       device.getBluetoothClass.getDeviceClass match {
         case BluetoothClass.Device.AUDIO_VIDEO_WEARABLE_HEADSET => actor {
-          Thread.sleep(1000)
+          Thread.sleep(3000)
           val isSCO = a2dp.map(!_.getConnectedDevices.contains(device)).getOrElse(true)
           if(isSCO)
             bluetoothSCOHeadsetConnected()
