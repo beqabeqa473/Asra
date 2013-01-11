@@ -121,12 +121,17 @@ class SpielService extends AccessibilityService {
     }
   }
 
+  private var portrait = true
+
   override def onConfigurationChanged(c:Configuration) {
     super.onConfigurationChanged(c)
-    if(c.orientation == Configuration.ORIENTATION_LANDSCAPE)
+    if(portrait && c.orientation == Configuration.ORIENTATION_LANDSCAPE) {
       StateObserver.orientationLandscape()
-    else
+      portrait = false
+    } else if(!portrait && c.orientation == Configuration.ORIENTATION_PORTRAIT){
       StateObserver.orientationPortrait()
+      portrait = true
+    }
   }
 
 }
