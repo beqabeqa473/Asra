@@ -23,7 +23,7 @@ package object utils {
     iterate(cls).reverse
   }
 
-  def classForName(cls:String, pkg:String = "") = {
+  def classForName(cls:String, pkg:String = ""):Option[Class[_]] = {
     val context = SpielService.context
     try {
       Some(context.getClassLoader.loadClass(cls))
