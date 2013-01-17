@@ -28,12 +28,13 @@ package object utils {
     try {
       Some(context.getClassLoader.loadClass(cls))
     } catch {
-      case _ => try {
+      case _ if(pkg != "") => try {
         val pc = context.createPackageContext(pkg, Context.CONTEXT_INCLUDE_CODE|Context.CONTEXT_IGNORE_SECURITY)
         Some(Class.forName(cls, true, pc.getClassLoader))
       } catch {
         case _ => None
       }
+      case _ => None
     }
   }
 
