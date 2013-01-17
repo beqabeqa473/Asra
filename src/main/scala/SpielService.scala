@@ -89,6 +89,7 @@ class SpielService extends AccessibilityService {
           if(n.children == Nil && n.performAction(ACTION_ACCESSIBILITY_FOCUS))
             return
       }
+    AccessibilityEventReceived(event)
     Presenter.process(event)
   }
 

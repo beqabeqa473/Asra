@@ -4,6 +4,7 @@ package events
 import collection.mutable.ListBuffer
 
 import android.content._
+import android.view.accessibility._
 
 class Event[T] {
 
@@ -36,6 +37,8 @@ class Event[T] {
   def apply(arg:T) = handlers.foreach(_(arg))
 
 }
+
+object AccessibilityEventReceived extends Event[AccessibilityEvent]
 
 object ApplicationAdded extends Event[Intent]
 
