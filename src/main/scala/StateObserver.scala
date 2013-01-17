@@ -80,9 +80,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
       ringerModeChanged(mode)
     }, AudioManager.RINGER_MODE_CHANGED_ACTION :: Nil)
 
-    Option(BluetoothAdapter.getDefaultAdapter).foreach { adapter =>
-      adapter.getProfileProxy(service, this, BluetoothProfile.A2DP)
-    }
+    Option(BluetoothAdapter.getDefaultAdapter).foreach(_.getProfileProxy(service, this, BluetoothProfile.A2DP))
 
     registerReceiver({(c, i) =>
       val device = i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE).asInstanceOf[BluetoothDevice]
@@ -129,7 +127,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
 
   def applicationAdded(i:Intent) = {
     if(!i.getBooleanExtra(Intent.EXTRA_REPLACING, false))
-      applicationAddedHandlers.foreach { f => f(i) }
+      applicationAddedHandlers.foreach(_(i))
   }
 
   private val applicationRemovedHandlers = ListBuffer[(Intent) => Unit]()
@@ -138,7 +136,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
 
   def applicationRemoved(i:Intent) = {
     if(!i.getBooleanExtra(Intent.EXTRA_REPLACING, false))
-      applicationRemovedHandlers.foreach { f => f(i) }
+      applicationRemovedHandlers.foreach(_(i))
   }
 
   private val powerConnectedHandlers = ListBuffer[() => Unit]()
@@ -154,7 +152,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Run registered handlers when power connects.
   */
 
-  def powerConnected() = powerConnectedHandlers.foreach { f => f() }
+  def powerConnected() = powerConnectedHandlers.foreach(_())
 
   /**
    * Remove handler from being run when power is connected.
@@ -175,7 +173,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Run registered handlers when power disconnects.
   */
 
-  def powerDisconnected() = powerDisconnectedHandlers.foreach { f => f() }
+  def powerDisconnected() = powerDisconnectedHandlers.foreach(_())
 
   /**
    * Remove handler from being run when power is disconnected.
@@ -196,7 +194,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Run handlers when bluetooth SCO headset connects.
   */
 
-  def bluetoothSCOHeadsetConnected() = bluetoothSCOHeadsetConnectedHandlers.foreach { f => f() }
+  def bluetoothSCOHeadsetConnected() = bluetoothSCOHeadsetConnectedHandlers.foreach(_())
 
   /**
    * Removes handler from being run when bluetooth SCO headset connects.
@@ -218,7 +216,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Run handlers when bluetooth SCO headset disconnects.
   */
 
-  def bluetoothSCOHeadsetDisconnected() = bluetoothSCOHeadsetDisconnectedHandlers.foreach { f => f() }
+  def bluetoothSCOHeadsetDisconnected() = bluetoothSCOHeadsetDisconnectedHandlers.foreach (_())
 
   /**
    * Removes handler from being run when bluetooth SCO headset disconnects.
@@ -240,7 +238,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Executes registered handlers when a call is answered.
   */
 
-  def callAnswered() = callAnsweredHandlers.foreach { f => f() }
+  def callAnswered() = callAnsweredHandlers.foreach(_())
 
   /**
    * Removes handler from being run when call is answered.
@@ -261,7 +259,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Runs registered handlers when a call is idle.
   */
 
-  def callIdle = callIdleHandlers.foreach { f => f() }
+  def callIdle = callIdleHandlers.foreach(_())
 
   /**
    * Removes handler from being run when call is idle.
@@ -286,7 +284,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * @param number
   */
 
-  def callRinging(number:String) = callRingingHandlers.foreach { f => f(number) }
+  def callRinging(number:String) = callRingingHandlers.foreach(_(number))
 
   /**
    * Removes handler from list to be run when call is ringing.
@@ -307,7 +305,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Runs handlers when voicemail indicator is canceled.
   */
 
-  def messageNoLongerWaiting() = messageNoLongerWaitingHandlers.foreach { f=> f() }
+  def messageNoLongerWaiting() = messageNoLongerWaitingHandlers.foreach(_())
 
   /**
    * Removes handler from being run when voicemail indicator is canceled.
@@ -329,7 +327,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Runs registered handlers when voicemail indicator is active.
   */
 
-  def messageWaiting() = messageWaitingHandlers.foreach { f => f() }
+  def messageWaiting() = messageWaitingHandlers.foreach(_())
 
   /**
    * Removes handler from being run when voicemail indicator is active.
@@ -350,7 +348,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Run registered handlers when orientation becomes landscape.
   */
 
-  def orientationLandscape() = orientationLandscapeHandlers.foreach { f => f() }
+  def orientationLandscape() = orientationLandscapeHandlers.foreach(_())
 
   /**
    * Remove handler from being run when orientation becomes landscape.
@@ -371,7 +369,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Run registered handlers when orientation becomes portrait.
   */
 
-  def orientationPortrait() = orientationPortraitHandlers.foreach { f => f() }
+  def orientationPortrait() = orientationPortraitHandlers.foreach(_())
 
   /**
    * Remove handler from being run when orientation becomes portrait.
@@ -397,7 +395,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Runs registered handlers when proximity sensor registers nothing nearby.
   */
 
-  def proximityFar() = proximityFarHandlers.foreach { f => f() }
+  def proximityFar() = proximityFarHandlers.foreach(_())
 
   /**
    * Removes handler from being run when proximity sensor registers nothing 
@@ -428,7 +426,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Run handlers when proximity sensor registers something nearby.
   */
 
-  def proximityNear() = proximityNearHandlers.foreach { f => f() }
+  def proximityNear() = proximityNearHandlers.foreach(_())
 
   /**
    * Removes handler from being run when proximity sensor registers 
@@ -458,7 +456,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * @param mode Either "normal", "silent" or "vibrate"
   */
 
-  def ringerModeChanged(mode:String) = ringerModeChangedHandlers.foreach { f => f(mode) }
+  def ringerModeChanged(mode:String) = ringerModeChangedHandlers.foreach(_(mode))
 
   /**
    * Remove handler from being run when ringer mode changes.
@@ -480,7 +478,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Run registered handlers when headset state changes.
   */
 
-  def headsetStateChanged(on:Boolean, bluetooth:Boolean) = headsetStateChangedHandlers.foreach { f => f(on, bluetooth) }
+  def headsetStateChanged(on:Boolean, bluetooth:Boolean) = headsetStateChangedHandlers.foreach(_(on, bluetooth))
 
   /**
    * Remove handler from being run when headset state changes.
@@ -502,7 +500,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Run registered handlers when screen is turned off.
   */
 
-  def screenOff() = screenOffHandlers.foreach { f => f() }
+  def screenOff() = screenOffHandlers.foreach(_())
 
   /**
    * Remove handler from being run when screen turns off.
@@ -523,7 +521,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Run registered handlers when screen turns on.
   */
 
-  def screenOn() = screenOnHandlers.foreach { f => f() }
+  def screenOn() = screenOnHandlers.foreach(_())
 
   /**
    * Remove handler from being run when screen turns off.
@@ -544,7 +542,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Run registered handlers when device unlocks.
   */
 
-  def unlocked() = unlockedHandlers.foreach { f => f() }
+  def unlocked() = unlockedHandlers.foreach(_())
 
   /**
    * Remove handler from being run when device unlocks.
@@ -569,7 +567,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Runs registered handlers when device starts shaking.
   */
 
-  def shakingStarted() = shakingStartedHandlers.foreach { f => f() }
+  def shakingStarted() = shakingStartedHandlers.foreach(_())
 
   /**
    * Removes handler from being run when device starts shaking. Activates or 
@@ -599,7 +597,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Runs registered handlers when device stops shaking.
   */
 
-  def shakingStopped() = shakingStoppedHandlers.foreach { f => f() }
+  def shakingStopped() = shakingStoppedHandlers.foreach(_())
 
   /**
    * Removes handler from being run when device stops shaking. Activates or 
@@ -715,7 +713,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Run handlers when TTS engine changes.
   */
 
-  def ttsEngineChanged() = ttsEngineChangedHandlers.foreach { f => f() }
+  def ttsEngineChanged() = ttsEngineChangedHandlers.foreach(_())
 
   /**
    * Removes handler from being run when TTS engine changes.
@@ -740,7 +738,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Run handlers when TTS rate changes.
   */
 
-  def rateChanged() = rateChangedHandlers.foreach { f => f() }
+  def rateChanged() = rateChangedHandlers.foreach(_())
 
   /**
    * Removes handler from being run when TTS rate changes.
@@ -765,7 +763,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Run handlers when TTS pitch changes.
   */
 
-  def pitchChanged() = pitchChangedHandlers.foreach { f => f() }
+  def pitchChanged() = pitchChangedHandlers.foreach(_())
 
   /**
    * Removes handler from being run when TTS pitch changes.
@@ -802,7 +800,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Run handlers when TTS utterance starts.
   */
 
-  def utteranceStarted(text:Option[String]) = utteranceStartedHandlers.foreach { f => f(text) }
+  def utteranceStarted(text:Option[String]) = utteranceStartedHandlers.foreach(_(text))
 
   /**
    * Removes handler from being run when TTS utterance starts.
@@ -827,7 +825,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Run handlers when TTS utterance ends.
   */
 
-  def utteranceEnded(text:Option[String]) = utteranceEndedHandlers.foreach { f => f(text) }
+  def utteranceEnded(text:Option[String]) = utteranceEndedHandlers.foreach(_(text))
 
   /**
    * Removes handler from being run when TTS utterance ends.
@@ -852,7 +850,7 @@ object StateObserver extends BluetoothProfile.ServiceListener {
    * Run handlers when TTS utterance errors out.
   */
 
-  def utteranceError(text:Option[String]) = utteranceErrorHandlers.foreach { f => f(text) }
+  def utteranceError(text:Option[String]) = utteranceErrorHandlers.foreach(_(text))
 
   /**
    * Removes handler from being run when TTS utterance errors out.
