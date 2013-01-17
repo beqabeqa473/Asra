@@ -54,6 +54,8 @@ object CallIdle extends Event[Unit]
 
 object CallRinging extends Event[String]
 
+object Destroyed extends Event[Context]
+
 object Initialized extends Event[Context]
 
 object MessageNoLongerWaiting extends Event[Unit]

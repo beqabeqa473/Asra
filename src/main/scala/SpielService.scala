@@ -71,6 +71,7 @@ class SpielService extends AccessibilityService {
     Option(getSystemService(Context.NOTIFICATION_SERVICE).asInstanceOf[NotificationManager]).foreach(_.cancelAll())
     SpielService.initialized = false
     SpielService.enabled = false
+    Destroyed(this)
   }
 
   override protected def onServiceConnected {
