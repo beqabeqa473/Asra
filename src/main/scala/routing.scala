@@ -167,15 +167,16 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
         val candidates = table.filter { h =>
           h._1.pkg == All && h._1.cls != All && h._1.cls != Value("")
         }.toList.map { h =>
-          val target = utils.classForName(h._1.cls.asInstanceOf[Value].value).getOrElse(o)
-          val i = a.indexOf(target)
-          val index = if(i == -1 && target.isInterface && target.isAssignableFrom(o))
-            0
-          else if(i == -1)
-            -2
-          else i+1
-          (index, h)
-        }.filter(_._1 >= 0).sortBy((v:Tuple2[Int, _]) => v._1)
+          utils.classForName(h._1.cls.asInstanceOf[Value].value).map { target =>
+            val i = a.indexOf(target)
+            val index = if(i == -1 && target.isInterface && target.isAssignableFrom(o))
+              0
+            else if(i >= 0)
+              i+1
+            else i
+            (index, h)
+          }
+        }.flatten.filter(_._1 >= 0).sortBy((v:Tuple2[Int, _]) => v._1)
         //Log.d("spielcheck", "Candidates: "+candidates)
         Some(candidates.exists { v =>
           dispatchTo(v._2._2)
