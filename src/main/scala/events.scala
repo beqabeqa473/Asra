@@ -106,6 +106,8 @@ object ShakingStopped extends Event[Unit]
 
 object TTSEngineChanged extends Event[Unit]
 
+object UnhandledException extends Event[Exception]
+
 object Unlocked extends Event[Unit]
 
 object UtteranceStarted extends Event[Option[String]]
