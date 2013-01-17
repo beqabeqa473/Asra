@@ -46,31 +46,22 @@ object StateObserver extends BluetoothProfile.ServiceListener {
       val f = new IntentFilter
       intents.foreach(f.addAction(_))
       dataScheme.foreach(f.addDataScheme(_))
-      service.registerReceiver(new BroadcastReceiver {
-        override def onReceive(c:Context, i:Intent) {
-          try {
-            r(c, i)
-          } catch {
-            case e =>
-              Log.e("spiel", "Error in BroadcastReceiver", e)
-          }
-        }
-      }, f)
+      service.registerReceiver(r, f)
     }
 
-    registerReceiver((c, i) => ScreenOff(), Intent.ACTION_SCREEN_OFF :: Nil)
+    ScreenOff on Intent.ACTION_SCREEN_OFF
 
-    registerReceiver((c, i) => ScreenOn(), Intent.ACTION_SCREEN_ON :: Nil)
+    ScreenOn on Intent.ACTION_SCREEN_ON
 
-    registerReceiver((c, i) => Unlocked, Intent.ACTION_USER_PRESENT :: Nil)
+    Unlocked on Intent.ACTION_USER_PRESENT
 
     registerReceiver((c, i) => ApplicationAdded(i), Intent.ACTION_PACKAGE_ADDED :: Nil, Some("package"))
 
     registerReceiver((c, i) => ApplicationRemoved(i), Intent.ACTION_PACKAGE_REMOVED :: Nil, Some("package"))
 
-    registerReceiver((c, i) => PowerConnected(), Intent.ACTION_POWER_CONNECTED :: Nil)
+    PowerConnected on Intent.ACTION_POWER_CONNECTED
 
-    registerReceiver((c, i) => PowerDisconnected(), Intent.ACTION_POWER_DISCONNECTED :: Nil)
+    PowerDisconnected on Intent.ACTION_POWER_DISCONNECTED
 
     registerReceiver({ (c, i) =>
       val extra = i.getIntExtra(AudioManager.EXTRA_RINGER_MODE, AudioManager.RINGER_MODE_NORMAL)

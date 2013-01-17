@@ -4,6 +4,7 @@ package events
 import collection.mutable.ListBuffer
 
 import android.content._
+import android.util.Log
 import android.view.accessibility._
 
 class Event[T] {
@@ -35,6 +36,21 @@ class Event[T] {
     remove(h)
 
   def apply(arg:T) = handlers.foreach(_(arg))
+
+  def on(intents:List[String], arg:T):Any = {
+    val f = new IntentFilter
+    intents.foreach(f.addAction(_))
+    SpielService.context.registerReceiver(
+      { (c:Context, i:Intent) => Event.this(arg) },
+      f
+    )
+  }
+
+  def on(intents:List[String]):Any = on(intents, null.asInstanceOf[T])
+
+  def on(intent:String, arg:T):Any = on(intent :: Nil, arg)
+
+  def on(intent:String):Any = on(intent :: Nil)
 
 }
 
