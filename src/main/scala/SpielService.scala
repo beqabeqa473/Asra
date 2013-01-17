@@ -46,6 +46,7 @@ class SpielService extends AccessibilityService {
     StateReactor(this)
     Triggers(this)
     TelephonyListener(this)
+    plugins.PluginManager(this)
     val nb = new Notification.Builder(this)
     .setSmallIcon(R.drawable.empty)
     .setTicker(getString(R.string.appName))
