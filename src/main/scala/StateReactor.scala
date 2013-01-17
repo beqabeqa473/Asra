@@ -16,6 +16,7 @@ import android.telephony.PhoneNumberUtils
 import android.text.format.DateFormat
 import android.util.Log
 
+import events._
 import scripting._
 
 /**
@@ -41,11 +42,11 @@ object StateReactor {
 
   // Check Bazaar for new scripts on app installation.
 
-  onApplicationAdded { intent =>
+  ApplicationAdded += { intent:Intent =>
     BazaarProvider.checkRemoteScripts()
   }
 
-  onApplicationRemoved { intent =>
+  ApplicationRemoved += { intent:Intent =>
     val packageName = intent.getData().getSchemeSpecificPart
     val cursor = service.getContentResolver.query(Provider.uri, null, "pkg = ?", List(packageName).toArray, null)
     if(cursor.getCount > 0) {
@@ -65,15 +66,15 @@ object StateReactor {
     utils.batteryPercentage(p => TTS.speak(p+"%" :: ps.map(_ :: Nil).getOrElse(Nil), false))
   }
 
-  onPowerConnected { () => speakBatteryPercentage(Some(service.getString(R.string.charging))) }
+  PowerConnected += speakBatteryPercentage(Some(service.getString(R.string.charging)))
 
-  onPowerDisconnected { () => speakBatteryPercentage() }
+  PowerDisconnected += speakBatteryPercentage()
 
   // Manage repeating of caller ID information, stopping when appropriate.
 
   var callerIDRepeaterID = ""
 
-  onCallRinging { number =>
+  CallRinging += { number:String =>
     if(usingSco)
       btReceiver.foreach(_.connect())
     if(Preferences.talkingCallerID)
@@ -88,14 +89,14 @@ object StateReactor {
 
   def inCall_? = _inCall
 
-  onCallAnswered { () =>
+  CallAnswered += {
     _inCall = true
     TTS.stop
     TTS.stopRepeatedSpeech(callerIDRepeaterID)
     callerIDRepeaterID = ""
   }
 
-  onCallIdle { () =>
+  CallIdle += {
     _inCall = false
     TTS.stopRepeatedSpeech(callerIDRepeaterID)
     callerIDRepeaterID = ""
@@ -205,15 +206,15 @@ object StateReactor {
     }
   }
 
-  onBluetoothSCOHeadsetConnected { () => startBluetoothSCO() }
+  BluetoothSCOHeadsetConnected +=startBluetoothSCO()
 
-  onBluetoothSCOHeadsetDisconnected { () => stopBluetoothSCO() }
+  BluetoothSCOHeadsetDisconnected += stopBluetoothSCO()
 
   // Manage speaking of occasional voicemail notification.
 
   private var voicemailIndicator:Option[String] = None
 
-  onMessageWaiting { () => startVoicemailAlerts() }
+  MessageWaiting += startVoicemailAlerts()
 
   def startVoicemailAlerts() {
     if(Preferences.voicemailAlerts)
@@ -222,7 +223,7 @@ object StateReactor {
       }
   }
 
-  onMessageNoLongerWaiting { () => stopVoicemailAlerts() }
+  MessageNoLongerWaiting += stopVoicemailAlerts()
 
   def stopVoicemailAlerts() {
     voicemailIndicator.foreach { i => TTS.stopRepeatedSpeech(i) }
@@ -234,7 +235,7 @@ object StateReactor {
   def ringerOn_? = ringerOn.getOrElse(true)
   def ringerOff_? = !ringerOn_?
 
-  onRingerModeChanged { (mode) =>
+  RingerModeChanged += { mode:String =>
     val shouldSpeak = ringerOn != None
     val v = mode == "normal"
     ringerOn = Some(v)
@@ -245,11 +246,11 @@ object StateReactor {
         TTS.speak(service.getString(R.string.ringerOff), false)
   }
 
-  onOrientationLandscape { () =>
+  OrientationLandscape += {
     TTS.speak(service.getString(R.string.landscape), false)
   }
 
-  onOrientationPortrait { () =>
+  OrientationPortrait += {
     TTS.speak(service.getString(R.string.portrait), false)
   }
 
@@ -261,7 +262,7 @@ object StateReactor {
 
   private var locked = screenOff_?
 
-  onScreenOff { () =>
+  ScreenOff += {
     if(screenOn) {
       TTS.speak(service.getString(R.string.screenOff), false)
       screenOn = false
@@ -269,7 +270,7 @@ object StateReactor {
     }
   }
 
-  onScreenOn { () =>
+  ScreenOn += {
     if(!screenOn) {
       screenOn = true
       val sdf = new SimpleDateFormat(
@@ -282,7 +283,7 @@ object StateReactor {
     }
   }
 
-  onUnlocked { () =>
+  Unlocked += {
     if(locked) {
       TTS.speak(service.getString(R.string.unlocked), false)
       presenters.Presenter.nextShouldNotInterrupt
@@ -290,7 +291,7 @@ object StateReactor {
     }
   }
 
-  onTTSEngineChanged { () => 
+  TTSEngineChanged += {
     if(TTS.defaultEngine != Preferences.speechEngine)
       TTS.init() 
   }

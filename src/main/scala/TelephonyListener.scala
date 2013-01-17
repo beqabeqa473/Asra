@@ -7,6 +7,8 @@ import android.telephony.{PhoneStateListener, TelephonyManager}
 import TelephonyManager._
 import android.util.Log
 
+import events._
+
 /**
  * Singleton that listens to telephony state, calling relevant handlers.
 */
@@ -46,14 +48,14 @@ object TelephonyListener extends PhoneStateListener {
   }
 
   override def onCallStateChanged(state:Int, number:String) = state match {
-    case CALL_STATE_IDLE => StateObserver.callIdle
-    case CALL_STATE_RINGING => StateObserver.callRinging(resolve(number))
-    case CALL_STATE_OFFHOOK => StateObserver.callAnswered
+    case CALL_STATE_IDLE => CallIdle
+    case CALL_STATE_RINGING => CallRinging(resolve(number))
+    case CALL_STATE_OFFHOOK => CallAnswered
   }
 
   override def onMessageWaitingIndicatorChanged(mwi:Boolean) = mwi match {
-    case true => StateObserver.messageWaiting
-    case false => StateObserver.messageNoLongerWaiting
+    case true => MessageWaiting
+    case false => MessageNoLongerWaiting
   }
 
 }

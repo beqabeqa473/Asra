@@ -13,6 +13,7 @@ import AccessibilityEvent._
 import AccessibilityNodeInfo._
 import com.nullwire.trace.ExceptionHandler
 
+import events._
 import gestures.{Gesture, GestureDispatcher, GesturePayload}
 import presenters.Presenter
 import routing._
@@ -127,10 +128,10 @@ class SpielService extends AccessibilityService {
   override def onConfigurationChanged(c:Configuration) {
     super.onConfigurationChanged(c)
     if(portrait && c.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-      StateObserver.orientationLandscape()
+      OrientationLandscape()
       portrait = false
     } else if(!portrait && c.orientation == Configuration.ORIENTATION_PORTRAIT){
-      StateObserver.orientationPortrait()
+      OrientationPortrait()
       portrait = true
     }
   }

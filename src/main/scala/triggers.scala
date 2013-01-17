@@ -134,9 +134,9 @@ object Triggers {
 
 object ProximityNear extends Trigger {
 
-  def install() = action.foreach((a) => StateObserver.onProximityNear(a.function))
+  def install() = action.foreach((a) => events.ProximityNear += a.function)
 
-  def uninstall(f:() => Unit) = StateObserver.removeProximityNear(f)
+  def uninstall(f:() => Unit) = events.ProximityNear -= f
 
 }
 
@@ -148,8 +148,8 @@ object ShakingStarted extends Trigger {
 
   override def apply(a:Option[Action]) {
     super.apply(a)
-    StateObserver.onScreenOff { () => a.foreach(v => uninstall(v.function)) }
-    StateObserver.onScreenOn { () => install() }
+    events.ScreenOff += a.foreach(v => uninstall(v.function))
+    events.ScreenOn += install()
     if(StateReactor.screenOn_?) install()
   }
 
@@ -157,14 +157,14 @@ object ShakingStarted extends Trigger {
 
   def install() {
     if(!installed) {
-      action.foreach((a) => StateObserver.onShakingStarted(a.function))
+      action.foreach((a) => events.ShakingStarted += a.function)
       installed = true
     }
   }
 
   def uninstall(f:() => Unit) {
     if(installed) {
-      StateObserver.removeShakingStarted(f)
+      events.ShakingStarted -= f
       installed = false
     }
   }

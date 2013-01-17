@@ -12,6 +12,7 @@ import android.os.Environment
 import android.speech.tts.{TextToSpeech, UtteranceProgressListener}
 import android.util.Log
 
+import events._
 import presenters.Presenter
 
 /**
@@ -167,18 +168,18 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   private var utterances:Map[String, String] = Map.empty
 
   def onStart(id:String) {
-    StateObserver.utteranceStarted(utterances.get(id))
+    UtteranceStarted(utterances.get(id))
     if(Preferences.duckNonSpeechAudio && audioManager.isMusicActive)
       audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
   }
 
   def onError(id:String) {
-    StateObserver.utteranceError(utterances.get(id))
+    UtteranceError(utterances.get(id))
     abandonFocus()
   }
 
   def onDone(id:String) {
-    StateObserver.utteranceEnded(utterances.get(id))
+    UtteranceEnded(utterances.get(id))
     abandonFocus()
     repeatedSpeech.get(id).foreach { v =>
       actor {
