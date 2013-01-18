@@ -48,9 +48,9 @@ object TelephonyListener extends PhoneStateListener {
   }
 
   override def onCallStateChanged(state:Int, number:String) = state match {
-    case CALL_STATE_IDLE => CallIdle
+    case CALL_STATE_IDLE => CallIdle()
     case CALL_STATE_RINGING => CallRinging(resolve(number))
-    case CALL_STATE_OFFHOOK => CallAnswered
+    case CALL_STATE_OFFHOOK => CallAnswered()
   }
 
   override def onMessageWaitingIndicatorChanged(mwi:Boolean) = mwi match {
