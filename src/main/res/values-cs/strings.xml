@@ -30,8 +30,6 @@
 <string name="radioButton">%1$s: přepínač</string>
 
 <!-- Preferences -->
-<string name="preferences">Možnosti</string>
-
 <string name="speechTitle">řeč</string>
 <string name="speechEngineTitle">Nástroj řeči</string>
 <string name="rateScaleTitle">Rychlost</string>

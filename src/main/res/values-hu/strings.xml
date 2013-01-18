@@ -29,8 +29,6 @@
 <string name="radioButton">%1$s: választó gomb</string>
 
 <!-- Preferences -->
-<string name="preferences">beállítások</string>
-
 <string name="speechTitle">beszéd</string>
 <string name="speechEngineTitle">beszéd szintetizátor</string>
 <string name="rateScaleTitle">sebesség arány</string>

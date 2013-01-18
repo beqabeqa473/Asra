@@ -28,8 +28,6 @@
 <string name="radioButton">%1$s: botón radio</string>
 
 <!-- Preferences -->
-<string name="preferences">Preferencias</string>
-
 <string name="speechTitle">Voz</string>
 <string name="speechEngineTitle">Motor del sintetizador de voz</string>
 <string name="rateScaleTitle">Escala de velocidad</string>

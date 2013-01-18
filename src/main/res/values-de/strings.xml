@@ -44,8 +44,6 @@
   <string name="selected">gewählt</string>
 
   <!-- Preferences -->
-  <string name="preferences">Einstellungen</string>
-
   <string name="speechTitle">Sprachausgabe</string>
   <string name="speechEngineTitle">Sprachausgabe Stimme</string>
   <string name="systemDefault">Systemvoreinstellung</string>

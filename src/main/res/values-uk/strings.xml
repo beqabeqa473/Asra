@@ -16,8 +16,6 @@
 <string name="radioButton">радіоКнопка</string>
 
 <!-- Preferences -->
-<string name="preferences">Налаштування</string>
-
 <string name="speechTitle">Розмовляюча програма</string>
 <string name="speechEngineTitle">Голосовий модуль</string>
 <string name="textToSpeechTitle">Настройки голосових модулів</string>
