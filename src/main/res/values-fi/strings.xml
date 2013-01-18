@@ -130,12 +130,6 @@
   <!-- Menu items -->
   <string name="refresh">Päivitä</string>
 
-  <!-- Dialog buttons -->
-  <string name="ok">OK</string>
-  <string name="cancel">Peruuta</string>
-  <string name="yes">Kyllä</string>
-  <string name="no">Ei</string>
-
   <!-- Action names and related -->
 
   <string name="none">Ei mitään</string>

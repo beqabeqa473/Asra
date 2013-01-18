@@ -406,7 +406,7 @@ class Scripts extends Fragment with Refreshable with RadioGroup.OnCheckedChangeL
             val filename = s.writeToExternalStorage()
             new AlertDialog.Builder(getActivity)
             .setMessage(getString(R.string.scriptCopied, filename))
-            .setPositiveButton(getString(R.string.ok), null)
+            .setPositiveButton(getString(android.R.string.ok), null)
             .show()
             
           }
@@ -414,14 +414,14 @@ class Scripts extends Fragment with Refreshable with RadioGroup.OnCheckedChangeL
           script.foreach { s =>
             new AlertDialog.Builder(getActivity)
             .setMessage(getString(R.string.confirmDelete, s.pkg))
-            .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener {
+            .setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener {
               def onClick(i:DialogInterface, what:Int) {
                 getActivity.getContentResolver.delete(uri, null, null)
                 s.uninstall()
                 refreshSystem()
               }
             })
-            .setNegativeButton(getString(R.string.no), null)
+            .setNegativeButton(getString(android.R.string.no), null)
             .show()
           }
       }
@@ -442,20 +442,20 @@ class Scripts extends Fragment with Refreshable with RadioGroup.OnCheckedChangeL
           } else {
             new AlertDialog.Builder(getActivity)
             .setMessage(getString(R.string.script_reload_error))
-            .setPositiveButton(getString(R.string.ok), null)
+            .setPositiveButton(getString(android.R.string.ok), null)
             .show()
           }
         case R.id.delete =>
           new AlertDialog.Builder(getActivity)
           .setMessage(getString(R.string.confirmDelete, script.pkg))
-          .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener {
+          .setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener {
             def onClick(i:DialogInterface, what:Int) {
               script.delete()
               script.uninstall()
               refreshUser()
             }
           })
-          .setNegativeButton(getString(R.string.no), null)
+          .setNegativeButton(getString(android.R.string.no), null)
           .show()
       }
     }
@@ -543,7 +543,7 @@ class Scripts extends Fragment with Refreshable with RadioGroup.OnCheckedChangeL
 
   private def postToBazaar() = scriptToPost.foreach { script =>
     val dialog = new AlertDialog.Builder(getActivity)
-    dialog.setPositiveButton(getString(R.string.ok), null)
+    dialog.setPositiveButton(getString(android.R.string.ok), null)
     try {
       BazaarProvider.post(script, scriptChanges)
       scriptToPost = None
@@ -602,7 +602,7 @@ class Events extends ListFragment with Refreshable {
         }.getOrElse {
           dialog.setMessage(getString(R.string.templateCreationError))
         }
-        dialog.setPositiveButton(getString(R.string.ok), null)
+        dialog.setPositiveButton(getString(android.R.string.ok), null)
         dialog.show()
     }
     true

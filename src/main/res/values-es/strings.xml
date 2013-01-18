@@ -95,12 +95,6 @@
 <!-- Menu items -->
 <string name="refresh">Actualizar pantalla</string>
 
-<!-- Dialog buttons -->
-<string name="ok">Aceptar</string>
-<string name="cancel">Cancelar</string>
-<string name="yes">Sí</string>
-<string name="no">No</string>
-
 <!-- Action names and related -->
 
 <string name="createScriptTemplateAction">Crear  plantilla de script para el último evento de accesibilidad</string>

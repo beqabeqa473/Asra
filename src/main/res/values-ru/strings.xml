@@ -128,12 +128,6 @@
   <!-- Menu items -->
   <string name="refresh">Обновить</string>
 
-  <!-- Dialog buttons -->
-  <string name="ok">OK</string>
-  <string name="cancel">Отмена</string>
-  <string name="yes">Да</string>
-  <string name="no">Нет</string>
-
   <!-- Action names and related -->
 
   <string name="none">Ничего</string>

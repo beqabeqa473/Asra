@@ -10,7 +10,11 @@
     <EditText android:id="@+id/changes" android:contentDescription="@+string/changes_label" android:capitalize="sentences"/>
   </TableRow>
   <TableRow>
-    <Button android:id="@+id/ok" android:text="@string/ok"/>
-    <Button android:id="@+id/cancel" android:text="@string/cancel"/>
+    <Button
+      android:id="@+id/ok"
+      android:text="@android:string/ok"/>
+    <Button
+      android:id="@+id/cancel"
+      android:text="@android:string/cancel"/>
   </TableRow>
 </TableLayout>

@@ -70,12 +70,6 @@
 <!-- Menu items -->
 <string name="refresh">Uppdatera</string>
 
-<!-- Dialog buttons -->
-<string name="ok">OK</string>
-<string name="cancel">Avbryt</string>
-<string name="yes">Ja</string>
-<string name="no">Nej</string>
-
 <!-- Action names and related -->
 
 

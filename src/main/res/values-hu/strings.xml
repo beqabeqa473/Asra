@@ -96,12 +96,6 @@
 <!-- Menu items -->
 <string name="refresh">újra ellenőrzés</string>
 
-<!-- Dialog buttons -->
-<string name="ok">ok</string>
-<string name="cancel">mégsem</string>
-<string name="yes">igen</string>
-<string name="no">nem</string>
-
 <!-- Action names and related -->
 
 <string name="createScriptTemplateAction">Szkript sablon készítése a legfrissebb hozzáférhetőségi eseményhez</string>

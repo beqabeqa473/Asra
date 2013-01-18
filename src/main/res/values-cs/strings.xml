@@ -97,12 +97,6 @@
 <!-- Menu items -->
 <string name="refresh">Obnovit</string>
 
-<!-- Dialog buttons -->
-<string name="ok">OK</string>
-<string name="cancel">Zrušit</string>
-<string name="yes">Ano</string>
-<string name="no">Ne</string>
-
 <!-- Action names and related -->
 
 <string name="createScriptTemplateAction">Vytvořit šablonu skriptu pro nejnovější událost přístupnosti</string>

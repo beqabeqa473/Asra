@@ -119,12 +119,6 @@
   <!-- Menu items -->
   <string name="refresh">Aktualisieren</string>
 
-  <!-- Dialog buttons -->
-  <string name="ok">OK</string>
-  <string name="cancel">Abbrechen</string>
-  <string name="yes">Ja</string>
-  <string name="no">Nein</string>
-
   <!-- Action names and related -->
   <string name="none">keine Aktion</string>
   <string name="createScriptTemplateAction">Skript-Vorlage für das letzte accessibility event erstellen</string>
