@@ -244,7 +244,13 @@ class Settings extends PreferenceActivity with HasScriptPreferences {
     val intent = getIntent
     setIntent(intent)
     Option(intent.getStringExtra("package")).foreach { pkg =>
-      setPreferenceScreen(scriptPreferencesFor(pkg))
+      val frag = new PreferenceFragment {
+        override def onCreate(b:Bundle) {
+          super.onCreate(b)
+          setPreferenceScreen(scriptPreferencesFor(pkg))
+        }
+      }
+      startPreferenceFragment(frag, false)
       return super.onBuildHeaders(target)
     }
     loadHeadersFromResource(R.xml.preference_headers, target)
