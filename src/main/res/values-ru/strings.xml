@@ -44,6 +44,8 @@
   <string name="selected">выделено</string>
 
   <!-- Preferences -->
+  <string name="settings">Настройки</string>
+
   <string name="speechTitle">Речь</string>
   <string name="speechEngineTitle">Речевой движок</string>
   <string name="systemDefault">Система по умолчанию</string>
