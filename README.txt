@@ -1,7 +1,7 @@
 Build Instructions
 ==================
 
-Building Spiel requires [SBT](http://code.google.com/p/simple-build-tool/). Simply [download the latest release](https://github.com/harrah/xsbt/wiki/Getting-Started-Setup).
+Building Spiel requires [SBT](http://scala-sbt.org/). Simply [download the latest release](http://www.scala-sbt.org/release/docs/Getting-Started/Setup.html).
 
 Once SBT is successfully installed, you can work with the code in a number of ways. SBT can either be used as a normal command line tool by invoking it like so ("$ " indicates an OS shell):
 
@@ -13,11 +13,11 @@ You can run SBT without command line arguments and are then dropped into an SBT 
 
 will automatically and incrementally recompile the app upon source changes. With the basics of SBT introduced, here is how to build the app:
 
-First, set the ANDROID_SDK_HOME environment variable to the root directory of your Android SDK installation. Note that, as of this writing, the Android 2.2 SDK is needed to build Spiel. Once set, run the following command:
+First, set the ANDROID_SDK_HOME environment variable to the root directory of your Android SDK installation. Note that, as of this writing, the Android 4.0 SDK is needed to build Spiel. Once set, run the following command:
 
 $ sbt android:package-debug
 
-This leaves a spiel*.apk file in a subdirectory of target/ based on the Scala version against which Spiel has been built.
+This leaves a target/spiel*.apk file ready to be installed to your device or emulator.
 
 If you have a device plugged in and recognized by _adb_, you can also run:
 
