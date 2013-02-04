@@ -18,6 +18,11 @@
   <uses-permission android:name="android.permission.VIBRATE"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
+  <permission
+    android:name="info.spielproject.spiel.SEND_COMMANDS"
+    android:label="@string/sendCommandsLabel"
+    android:description="@string/sendCommandsDescription"/>
+
   <application
     android:label="@string/appName"
     android:icon="@drawable/empty"
@@ -82,6 +87,15 @@
     <provider android:name=".scripting.Provider" android:authorities="info.spielproject.spiel.scripting.Provider"/>
 
     <provider android:name=".scripting.BazaarProvider" android:authorities="info.spielproject.spiel.scripting.bazaar.Provider"/>
+
+    <receiver
+      android:name=".Commands"
+      android:permission="info.spielproject.spiel.SEND_COMMANDS">
+      <intent-filter>
+        <action android:name="info.spielproject.spiel.commands.SPEAK"/>
+      </intent-filter>
+    </receiver>
+
 
   </application>
 </manifest>

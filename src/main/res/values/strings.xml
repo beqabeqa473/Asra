@@ -4,6 +4,9 @@
   <string name="appName">Spiel</string>
   <string name="appDescription">A flexible, scriptable Android screen reader</string>
 
+  <string name="sendCommandsLabel">Send commands to Spiel</string>
+  <string name="sendCommandsDescription">Send commands to perform speech and other actions to the Spiel screen reader</string>
+
   <!-- Initial welcome message-->
   <string name="welcomeMsg">Welcome to Spiel!</string>
 
