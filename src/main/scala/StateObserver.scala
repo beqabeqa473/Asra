@@ -210,5 +210,4 @@ object StateObserver extends BluetoothProfile.ServiceListener {
     a2dp = None
   }
 
-
 }
