@@ -54,8 +54,8 @@ object TelephonyListener extends PhoneStateListener {
   }
 
   override def onMessageWaitingIndicatorChanged(mwi:Boolean) = mwi match {
-    case true => MessageWaiting
-    case false => MessageNoLongerWaiting
+    case true => MessageWaiting()
+    case false => MessageNoLongerWaiting()
   }
 
 }
