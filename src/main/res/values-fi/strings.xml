@@ -4,6 +4,9 @@
   <string name="appName">Spiel</string>
   <string name="appDescription">Joustava ja skriptattava Android-ruudunlukuohjelma</string>
 
+  <string name="sendCommandsLabel">Lähetä komentoja Spielille</string>
+  <string name="sendCommandsDescription">Lähetä puhe- ja muita toimintoja suorittavia komentoja Spiel-ruudunlukuohjelmalle</string>
+
   <!-- Initial welcome message-->
   <string name="welcomeMsg">Tervetuloa Spieliin!</string>
 
