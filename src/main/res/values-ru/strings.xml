@@ -4,6 +4,9 @@
   <string name="appName">Spiel</string>
   <string name="appDescription">Гибкая программа экранного доступа для операционной системы Android с возможностью скриптования</string>
 
+  <string name="sendCommandsLabel">Отправлять команды Spiel</string>
+  <string name="sendCommandsDescription">Отправлять команды для осуществления речи и других действий программе экранного доступа Spiel</string>
+
   <!-- Initial welcome message-->
   <string name="welcomeMsg">Добро пожаловать в Spiel!</string>
 
