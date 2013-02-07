@@ -26,5 +26,10 @@ libraryDependencies := Seq(
 
 proguardOption in Android := """
   -keep class info.spielproject.spiel.** { *; }
-  -keep class org.mozilla.javascript.** { *; }
+  -keep class org.mozilla.javascript.* { *; }
+  -keep class org.mozilla.javascript.ast.* { *; }
+  -keep class org.mozilla.javascript.json.* { *; }
+  -keep class org.mozilla.javascript.jdk15.* { *; }
+  -keep class org.mozilla.javascript.regexp.* { *; }
+  -keep class org.mozilla.javascript.resources.* { *; }
 """
