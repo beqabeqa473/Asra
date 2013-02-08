@@ -1,19 +1,20 @@
 package info.spielproject.spiel
 package scripting
 
-import java.io.{File, FileInputStream, FileOutputStream, FileWriter, InputStream}
+import java.io._
 import java.lang.Integer
 
 import android.content.{BroadcastReceiver, ContentValues, Context => AContext, Intent}
-import android.content.pm.PackageManager
-import android.database.Cursor
-import android.os.{Environment, FileObserver}
+import android.content.pm._
+import android.database._
+import android.os._
 import android.os.Build.VERSION
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 
 import org.mozilla.javascript.{Context, ContextFactory, Function, RhinoException, ScriptableObject}
 
+import events._
 import presenters.{Callback, Presenter}
 
 /**
@@ -781,6 +782,26 @@ object BazaarProvider {
     values.put("code", script.code)
     values.put("changes", changes)
     context.getContentResolver.insert(BazaarProvider.uri, values)
+  }
+
+  ApplicationAdded += { intent:Intent =>
+    checkRemoteScripts()
+  }
+
+  ApplicationRemoved += { intent:Intent =>
+    val packageName = intent.getData().getSchemeSpecificPart
+    val cursor = context.getContentResolver.query(Provider.uri, null, "pkg = ?", List(packageName).toArray, null)
+    if(cursor.getCount > 0) {
+      cursor.moveToFirst()
+      while(!cursor.isAfterLast) {
+        val script = new Script(context, cursor)
+        script.uninstall()
+        val scriptURI = ContentUris.withAppendedId(Provider.uri, script.id.get)
+        context.getContentResolver.delete(scriptURI, null, null)
+        cursor.moveToNext()
+      }
+    }
+    cursor.close()
   }
 
 }
