@@ -94,7 +94,13 @@ object ProximityNear extends Event[Unit]
 
 object RateChanged extends Event[Unit]
 
-object RingerModeChanged extends Event[String]
+object RingerMode extends Enumeration {
+  val Normal = Value
+  val Silent = Value
+  val Vibrate = Value
+}
+
+object RingerModeChanged extends Event[RingerMode.Value]
 
 object ScreenOff extends Event[Unit]
 

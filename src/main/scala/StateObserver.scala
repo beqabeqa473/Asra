@@ -66,9 +66,9 @@ object StateObserver extends BluetoothProfile.ServiceListener {
     registerReceiver({ (c, i) =>
       val extra = i.getIntExtra(AudioManager.EXTRA_RINGER_MODE, AudioManager.RINGER_MODE_NORMAL)
       val mode = extra match {
-        case AudioManager.RINGER_MODE_SILENT => "silent"
-        case AudioManager.RINGER_MODE_VIBRATE => "vibrate"
-        case _ => "normal"
+        case AudioManager.RINGER_MODE_SILENT => RingerMode.Silent
+        case AudioManager.RINGER_MODE_VIBRATE => RingerMode.Vibrate
+        case _ => RingerMode.Normal
       }
       RingerModeChanged(mode)
     }, AudioManager.RINGER_MODE_CHANGED_ACTION :: Nil)
