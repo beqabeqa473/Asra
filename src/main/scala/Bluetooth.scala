@@ -1,5 +1,7 @@
 package info.spielproject.spiel
 
+import actors.Actor._
+
 import android.bluetooth._
 import android.content._
 import android.media._
@@ -13,11 +15,9 @@ object Bluetooth {
 
   def apply() { }
 
-  private var _usingSco = false
+  private var usingSco = false
 
-  def usingSco = _usingSco
-
-  class BTReceiver extends BroadcastReceiver {
+  private class BTReceiver extends BroadcastReceiver {
 
     private var wasConnected = false
 
@@ -39,7 +39,7 @@ object Bluetooth {
 
     private def cleanupState() {
       Log.d("spielcheck", "Cleaning up state.")
-      _usingSco = false
+      usingSco = false
       wasConnected = false
       if(!Telephony.inCall_?) audioManager.setMode(AudioManager.MODE_NORMAL)
       musicVolume.foreach(
@@ -68,7 +68,7 @@ object Bluetooth {
       Log.d("spielcheck", "Got "+i+", "+state)
       if(state == AudioManager.SCO_AUDIO_STATE_CONNECTED) {
         Log.d("spielcheck", "here1")
-        _usingSco = true
+        usingSco = true
         musicVolume = Option(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC))
         voiceVolume = Option(audioManager.getStreamVolume(AudioManager.STREAM_VOICE_CALL))
         audioManager.setMode(AudioManager.MODE_IN_CALL)
@@ -76,7 +76,7 @@ object Bluetooth {
       } else if(state == AudioManager.SCO_AUDIO_STATE_ERROR) {
         Log.d("spielcheck", "here2")
         cleanupState()
-      } else if(_usingSco && wasConnected && state == AudioManager.SCO_AUDIO_STATE_DISCONNECTED) {
+      } else if(usingSco && wasConnected && state == AudioManager.SCO_AUDIO_STATE_DISCONNECTED) {
         Log.d("spielcheck", "here3")
         cleanupState()
         audioManager.startBluetoothSco()
@@ -94,7 +94,7 @@ object Bluetooth {
 
   }
 
-  var btReceiver:Option[BTReceiver] = None
+  private var btReceiver:Option[BTReceiver] = None
 
   private def startBluetoothSCO() {
     Log.d("spielcheck", "startBluetoothSCO()")
@@ -115,5 +115,15 @@ object Bluetooth {
   BluetoothSCOHeadsetConnected +=startBluetoothSCO()
 
   BluetoothSCOHeadsetDisconnected += stopBluetoothSCO()
+
+  def reconnectSCOIfNecessary() {
+    if(usingSco) {
+      actor {
+        // Wait until dialer sets audio mode so we can alter it for SCO reconnection.
+        Thread.sleep(1000)
+        btReceiver.foreach(_.connect())
+      }
+    }
+  }
 
 }

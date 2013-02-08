@@ -1,7 +1,5 @@
 package info.spielproject.spiel
 
-import actors.Actor._
-
 import android.content.{ContentResolver, Context}
 import android.net.Uri
 import android.provider.ContactsContract
@@ -85,8 +83,6 @@ object Telephony extends PhoneStateListener {
   var callerIDRepeaterID = ""
 
   CallRinging += { number:String =>
-    if(Bluetooth.usingSco)
-      Bluetooth.btReceiver.foreach(_.connect())
     if(Preferences.talkingCallerID)
       callerIDRepeaterID = TTS.speakEvery(3, PhoneNumberUtils.formatNumber(number))
   }
@@ -110,13 +106,7 @@ object Telephony extends PhoneStateListener {
     _inCall = false
     TTS.stopRepeatedSpeech(callerIDRepeaterID)
     callerIDRepeaterID = ""
-    if(Bluetooth.usingSco) {
-      actor {
-        // Wait until dialer sets audio mode so we can alter it for SCO reconnection.
-        Thread.sleep(1000)
-        Bluetooth.btReceiver.foreach(_.connect())
-      }
-    }
+    Bluetooth.reconnectSCOIfNecessary()
   }
 
 }
