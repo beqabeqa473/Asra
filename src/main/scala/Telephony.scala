@@ -85,8 +85,8 @@ object Telephony extends PhoneStateListener {
   var callerIDRepeaterID = ""
 
   CallRinging += { number:String =>
-    if(StateReactor.usingSco)
-      StateReactor.btReceiver.foreach(_.connect())
+    if(Bluetooth.usingSco)
+      Bluetooth.btReceiver.foreach(_.connect())
     if(Preferences.talkingCallerID)
       callerIDRepeaterID = TTS.speakEvery(3, PhoneNumberUtils.formatNumber(number))
   }
@@ -110,11 +110,11 @@ object Telephony extends PhoneStateListener {
     _inCall = false
     TTS.stopRepeatedSpeech(callerIDRepeaterID)
     callerIDRepeaterID = ""
-    if(StateReactor.usingSco) {
+    if(Bluetooth.usingSco) {
       actor {
         // Wait until dialer sets audio mode so we can alter it for SCO reconnection.
         Thread.sleep(1000)
-        StateReactor.btReceiver.foreach(_.connect())
+        Bluetooth.btReceiver.foreach(_.connect())
       }
     }
   }

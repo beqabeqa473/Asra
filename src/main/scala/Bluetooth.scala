@@ -1,0 +1,119 @@
+package info.spielproject.spiel
+
+import android.bluetooth._
+import android.content._
+import android.media._
+import android.util.Log
+
+import events._
+
+object Bluetooth {
+
+  private lazy val audioManager:AudioManager = SpielService.context.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
+
+  def apply() { }
+
+  private var _usingSco = false
+
+  def usingSco = _usingSco
+
+  class BTReceiver extends BroadcastReceiver {
+
+    private var wasConnected = false
+
+    private var musicVolume:Option[Int] = None
+    private var voiceVolume:Option[Int] = None
+
+    connect()
+
+    def connect() {
+      cleanupState()
+      if(audioManager.isBluetoothScoAvailableOffCall) {
+        Log.d("spielcheck", "Connecting")
+        val f = new IntentFilter
+        f.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED)
+        SpielService.context.registerReceiver(this, f)
+        audioManager.startBluetoothSco()
+      }
+    }
+
+    private def cleanupState() {
+      Log.d("spielcheck", "Cleaning up state.")
+      _usingSco = false
+      wasConnected = false
+      if(!Telephony.inCall_?) audioManager.setMode(AudioManager.MODE_NORMAL)
+      musicVolume.foreach(
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, _, 0)
+      )
+      musicVolume = None
+      voiceVolume.foreach(
+        audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, _, 0)
+      )
+      voiceVolume = None
+    }
+
+    private def cleanup() {
+      Log.d("spielcheck", "Cleaning up.")
+      audioManager.stopBluetoothSco()
+      cleanupState()
+      try {
+        SpielService.context.unregisterReceiver(this)
+      } catch {
+        case _ =>
+      }
+    }
+
+    override def onReceive(c:Context, i:Intent) {
+      val state = i.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, AudioManager.SCO_AUDIO_STATE_DISCONNECTED)
+      Log.d("spielcheck", "Got "+i+", "+state)
+      if(state == AudioManager.SCO_AUDIO_STATE_CONNECTED) {
+        Log.d("spielcheck", "here1")
+        _usingSco = true
+        musicVolume = Option(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC))
+        voiceVolume = Option(audioManager.getStreamVolume(AudioManager.STREAM_VOICE_CALL))
+        audioManager.setMode(AudioManager.MODE_IN_CALL)
+        wasConnected = true
+      } else if(state == AudioManager.SCO_AUDIO_STATE_ERROR) {
+        Log.d("spielcheck", "here2")
+        cleanupState()
+      } else if(_usingSco && wasConnected && state == AudioManager.SCO_AUDIO_STATE_DISCONNECTED) {
+        Log.d("spielcheck", "here3")
+        cleanupState()
+        audioManager.startBluetoothSco()
+      } else if(wasConnected) {
+        Log.d("spielcheck", "here4")
+        cleanup()
+      }
+    }
+
+    def disconnect() {
+      Log.d("spielcheck", "Disconnecting")
+      audioManager.stopBluetoothSco()
+      cleanup()
+    }
+
+  }
+
+  var btReceiver:Option[BTReceiver] = None
+
+  private def startBluetoothSCO() {
+    Log.d("spielcheck", "startBluetoothSCO()")
+    if(Preferences.useBluetoothSCO) {
+      val r = new BTReceiver()
+      r.connect()
+      btReceiver = Some(r)
+    }
+  }
+
+  private def stopBluetoothSCO() {
+    btReceiver.foreach { r =>
+      r.disconnect()
+      btReceiver = None
+    }
+  }
+
+  BluetoothSCOHeadsetConnected +=startBluetoothSCO()
+
+  BluetoothSCOHeadsetDisconnected += stopBluetoothSCO()
+
+}

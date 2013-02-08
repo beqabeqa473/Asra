@@ -5,10 +5,9 @@ import java.util.Date
 
 import collection.JavaConversions._
 
-import android.bluetooth.{BluetoothDevice, BluetoothHeadset}
 import android.content.{BroadcastReceiver, ContentUris, Context, Intent, IntentFilter}
-import android.media.AudioManager
 import android.net.Uri
+import android.media._
 import android.os.Build.VERSION
 import android.os.Environment
 import android.text.format.DateFormat
@@ -22,13 +21,10 @@ import scripting._
 */
 
 object StateReactor {
-  import StateObserver._
 
   private[spiel] var ringerOn:Option[Boolean] = None
 
   private var service:SpielService = null
-
-  private lazy val audioManager:AudioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
 
   /**
    * Initializes based on the specified <code>SpielService</code>, setting initial states.
@@ -67,109 +63,6 @@ object StateReactor {
   PowerConnected += speakBatteryPercentage(Some(service.getString(R.string.charging)))
 
   PowerDisconnected += speakBatteryPercentage()
-
-  private var _usingSco = false
-
-  def usingSco = _usingSco
-
-  class BTReceiver extends BroadcastReceiver {
-
-    private var wasConnected = false
-
-    private var musicVolume:Option[Int] = None
-    private var voiceVolume:Option[Int] = None
-
-    connect()
-
-    def connect() {
-      cleanupState()
-      if(audioManager.isBluetoothScoAvailableOffCall) {
-        Log.d("spielcheck", "Connecting")
-        val f = new IntentFilter
-        f.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED)
-        service.registerReceiver(this, f)
-        audioManager.startBluetoothSco()
-      }
-    }
-
-    private def cleanupState() {
-      Log.d("spielcheck", "Cleaning up state.")
-      _usingSco = false
-      wasConnected = false
-      if(!Telephony.inCall_?) audioManager.setMode(AudioManager.MODE_NORMAL)
-      musicVolume.foreach(
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, _, 0)
-      )
-      musicVolume = None
-      voiceVolume.foreach(
-        audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, _, 0)
-      )
-      voiceVolume = None
-    }
-
-    private def cleanup() {
-      Log.d("spielcheck", "Cleaning up.")
-      audioManager.stopBluetoothSco()
-      cleanupState()
-      try {
-        service.unregisterReceiver(this)
-      } catch {
-        case _ =>
-      }
-    }
-
-    override def onReceive(c:Context, i:Intent) {
-      val state = i.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, AudioManager.SCO_AUDIO_STATE_DISCONNECTED)
-      Log.d("spielcheck", "Got "+i+", "+state)
-      if(state == AudioManager.SCO_AUDIO_STATE_CONNECTED) {
-        Log.d("spielcheck", "here1")
-        _usingSco = true
-        musicVolume = Option(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC))
-        voiceVolume = Option(audioManager.getStreamVolume(AudioManager.STREAM_VOICE_CALL))
-        audioManager.setMode(AudioManager.MODE_IN_CALL)
-        wasConnected = true
-      } else if(state == AudioManager.SCO_AUDIO_STATE_ERROR) {
-        Log.d("spielcheck", "here2")
-        cleanupState()
-      } else if(_usingSco && wasConnected && state == AudioManager.SCO_AUDIO_STATE_DISCONNECTED) {
-        Log.d("spielcheck", "here3")
-        cleanupState()
-        audioManager.startBluetoothSco()
-      } else if(wasConnected) {
-        Log.d("spielcheck", "here4")
-        cleanup()
-      }
-    }
-
-    def disconnect() {
-      Log.d("spielcheck", "Disconnecting")
-      audioManager.stopBluetoothSco()
-      cleanup()
-    }
-
-  }
-
-  var btReceiver:Option[BTReceiver] = None
-
-  private def startBluetoothSCO() {
-    Log.d("spielcheck", "startBluetoothSCO()")
-    if(Preferences.useBluetoothSCO) {
-      val r = new BTReceiver()
-      r.connect()
-      btReceiver = Some(r)
-    }
-  }
-
-  private def stopBluetoothSCO() {
-    btReceiver.foreach { r =>
-      r.disconnect()
-      btReceiver = None
-    }
-  }
-
-  BluetoothSCOHeadsetConnected +=startBluetoothSCO()
-
-  BluetoothSCOHeadsetDisconnected += stopBluetoothSCO()
 
   RingerModeChangedIntent += { i:Intent =>
     val extra = i.getIntExtra(AudioManager.EXTRA_RINGER_MODE, AudioManager.RINGER_MODE_NORMAL)
