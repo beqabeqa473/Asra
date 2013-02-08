@@ -299,9 +299,4 @@ object StateReactor {
     }
   }
 
-  TTSEngineChanged += {
-    if(TTS.defaultEngine != Preferences.speechEngine)
-      TTS.init() 
-  }
-
 }
