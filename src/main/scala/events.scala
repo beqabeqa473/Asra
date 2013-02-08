@@ -132,8 +132,8 @@ object UnhandledException extends Event[Exception]
 
 object Unlocked extends Event[Unit]
 
-object UtteranceStarted extends Event[Option[String]]
-
 object UtteranceEnded extends Event[Option[String]]
 
 object UtteranceError extends Event[Option[String]]
+
+object UtteranceStarted extends Event[Option[String]]
