@@ -38,19 +38,6 @@ package object utils {
     }
   }
 
-  def batteryPercentage(callback:Int => Unit) = {
-    val receiver:BroadcastReceiver = new BroadcastReceiver {
-      override def onReceive(context:Context, intent:Intent) {
-        context.unregisterReceiver(this)
-        val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
-        val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
-        if(level >= 0 && scale > 0)
-          callback(level*100/scale)
-      }
-    }
-    SpielService.context.registerReceiver(receiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED))
-  }
-
   import xml.XML
   import java.io.{ByteArrayInputStream, ByteArrayOutputStream, OutputStreamWriter}
   import org.ccil.cowan.tagsoup._

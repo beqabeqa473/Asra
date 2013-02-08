@@ -4,7 +4,6 @@ import actors.Actor.actor
 import collection.mutable.ListBuffer
 import collection.JavaConversions._
 
-import android.bluetooth.{BluetoothAdapter, BluetoothClass, BluetoothDevice, BluetoothProfile}
 import android.content.{BroadcastReceiver, Context, Intent, IntentFilter}
 import android.database.ContentObserver
 import android.hardware.{Sensor, SensorEvent, SensorEventListener, SensorManager}
@@ -26,7 +25,7 @@ import events._
  * Methods which execute the given callbacks, run in response to some event.
 */
 
-object StateObserver extends BluetoothProfile.ServiceListener {
+object StateObserver {
 
   private lazy val sensorManager = service.getSystemService(Context.SENSOR_SERVICE).asInstanceOf[SensorManager]
 
@@ -42,48 +41,10 @@ object StateObserver extends BluetoothProfile.ServiceListener {
 
     val audioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
 
-    ScreenOff on Intent.ACTION_SCREEN_OFF
-
-    ScreenOn on Intent.ACTION_SCREEN_ON
-
-    Unlocked on Intent.ACTION_USER_PRESENT
-
     ApplicationAdded on(Intent.ACTION_PACKAGE_ADDED, dataScheme = Some("package"))
 
     ApplicationRemoved on(Intent.ACTION_PACKAGE_REMOVED, dataScheme = Some("package"))
 
-    PowerConnected on Intent.ACTION_POWER_CONNECTED
-
-    PowerDisconnected on Intent.ACTION_POWER_DISCONNECTED
-
-    RingerModeChangedIntent on AudioManager.RINGER_MODE_CHANGED_ACTION
-
-    Option(BluetoothAdapter.getDefaultAdapter).foreach(_.getProfileProxy(service, this, BluetoothProfile.A2DP))
-
-    BluetoothConnected on android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED
-
-    BluetoothConnected += { i:Intent =>
-      val device = i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE).asInstanceOf[BluetoothDevice]
-      device.getBluetoothClass.getDeviceClass match {
-        case BluetoothClass.Device.AUDIO_VIDEO_WEARABLE_HEADSET => actor {
-          Thread.sleep(3000)
-          val isSCO = a2dp.map(!_.getConnectedDevices.contains(device)).getOrElse(true)
-          if(isSCO)
-            BluetoothSCOHeadsetConnected()
-        }
-        case _ =>
-      }
-    }
-
-    BluetoothDisconnected on android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECTED
-
-    BluetoothDisconnected += { i:Intent =>
-      val device = i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE).asInstanceOf[BluetoothDevice]
-      device.getBluetoothClass.getDeviceClass match {
-        case BluetoothClass.Device.AUDIO_VIDEO_WEARABLE_HEADSET if(audioManager.isBluetoothScoOn()) => BluetoothSCOHeadsetDisconnected()
-        case _ =>
-      }
-    }
 
     service.getContentResolver.registerContentObserver(Secure.getUriFor(Secure.TTS_DEFAULT_SYNTH), false, new ContentObserver(new Handler) {
       override def onChange(bySelf:Boolean) = TTSEngineChanged()
@@ -185,18 +146,6 @@ object StateObserver extends BluetoothProfile.ServiceListener {
     } else if(!v && proximitySensorEnabled)
       sensorManager.unregisterListener(proximityListener)
     _proximitySensorEnabled = v
-  }
-
-  private var a2dp:Option[BluetoothProfile] = None
-
-  def onServiceConnected(profile:Int, proxy:BluetoothProfile) {
-    Log.d("spielcheck", "Connected: "+profile+", "+proxy)
-    a2dp = Some(proxy)
-  }
-
-  def onServiceDisconnected(profile:Int) {
-    Log.d("spielcheck", "Disconnected "+profile)
-    a2dp = None
   }
 
 }

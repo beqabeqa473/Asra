@@ -46,6 +46,7 @@ class SpielService extends AccessibilityService {
     StateObserver(this)
     StateReactor(this)
     Triggers(this)
+    Device()
     Bluetooth()
     Telephony(this)
     plugins.PluginManager(this)

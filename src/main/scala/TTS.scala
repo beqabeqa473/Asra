@@ -373,9 +373,9 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   }
 
   private def shouldSpeakNotification(skipScreenCheck:Boolean = false):Boolean =
-    if(StateReactor.ringerOff_? || Telephony.inCall_?)
+    if(Device.ringerOff_? || Telephony.inCall_?)
       false
-    else if(!skipScreenCheck && !Preferences.speakNotificationsWhenScreenOff && StateReactor.screenOff_?)
+    else if(!skipScreenCheck && !Preferences.speakNotificationsWhenScreenOff && Device.screenOff_?)
       false
     else true
 

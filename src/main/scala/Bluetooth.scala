@@ -9,11 +9,38 @@ import android.util.Log
 
 import events._
 
-object Bluetooth {
+object Bluetooth extends BluetoothProfile.ServiceListener {
 
   private lazy val audioManager:AudioManager = SpielService.context.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
 
-  def apply() { }
+  private var a2dp:Option[BluetoothProfile] = None
+
+  def apply() {
+    Option(BluetoothAdapter.getDefaultAdapter).foreach(_.getProfileProxy(SpielService.context, this, BluetoothProfile.A2DP))
+    BluetoothConnected on android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED
+    BluetoothDisconnected on android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECTED
+  }
+
+  BluetoothConnected += { i:Intent =>
+    val device = i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE).asInstanceOf[BluetoothDevice]
+    device.getBluetoothClass.getDeviceClass match {
+      case BluetoothClass.Device.AUDIO_VIDEO_WEARABLE_HEADSET => actor {
+        Thread.sleep(3000)
+        val isSCO = a2dp.map(!_.getConnectedDevices.contains(device)).getOrElse(true)
+        if(isSCO)
+          BluetoothSCOHeadsetConnected()
+      }
+      case _ =>
+    }
+  }
+
+  BluetoothDisconnected += { i:Intent =>
+    val device = i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE).asInstanceOf[BluetoothDevice]
+    device.getBluetoothClass.getDeviceClass match {
+      case BluetoothClass.Device.AUDIO_VIDEO_WEARABLE_HEADSET if(audioManager.isBluetoothScoOn()) => BluetoothSCOHeadsetDisconnected()
+      case _ =>
+    }
+  }
 
   private var usingSco = false
 
@@ -124,6 +151,16 @@ object Bluetooth {
         btReceiver.foreach(_.connect())
       }
     }
+  }
+
+  def onServiceConnected(profile:Int, proxy:BluetoothProfile) {
+    Log.d("spielcheck", "Connected: "+profile+", "+proxy)
+    a2dp = Some(proxy)
+  }
+
+  def onServiceDisconnected(profile:Int) {
+    Log.d("spielcheck", "Disconnected "+profile)
+    a2dp = None
   }
 
 }

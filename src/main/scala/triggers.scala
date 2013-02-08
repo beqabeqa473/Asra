@@ -150,7 +150,7 @@ object ShakingStarted extends Trigger {
     super.apply(a)
     events.ScreenOff += a.foreach(v => uninstall(v.function))
     events.ScreenOn += install()
-    if(StateReactor.screenOn_?) install()
+    if(Device.screenOn_?) install()
   }
 
   private var installed = false

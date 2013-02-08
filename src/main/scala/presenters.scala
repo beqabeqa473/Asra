@@ -828,7 +828,7 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
         Log.d("spiel", "Records: "+e.records.map(_.toString))
     }
 
-    if(!StateReactor.screenOn_? && !List(TYPE_ANNOUNCEMENT, TYPE_NOTIFICATION_STATE_CHANGED, TYPE_VIEW_TEXT_TRAVERSED_AT_MOVEMENT_GRANULARITY
+    if(!Device.screenOn_? && !List(TYPE_ANNOUNCEMENT, TYPE_NOTIFICATION_STATE_CHANGED, TYPE_VIEW_TEXT_TRAVERSED_AT_MOVEMENT_GRANULARITY
     ).contains(e.getEventType))
       return true
 
