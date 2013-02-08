@@ -246,12 +246,14 @@ object StateReactor {
   def ringerOff_? = !ringerOn_?
 
   RingerModeChanged += { mode:RingerMode.Value =>
+    val shouldSpeak = ringerOn != None
     ringerOn = Some(mode == RingerMode.Normal)
-    mode match {
-      case RingerMode.Normal => TTS.speak(service.getString(R.string.ringerOn), false)
-      case RingerMode.Silent => TTS.speak(service.getString(R.string.ringerOff), false)
-      case RingerMode.Vibrate => TTS.speak(service.getString(R.string.ringerVibrate), false)
-    }
+    if(shouldSpeak)
+      mode match {
+        case RingerMode.Normal => TTS.speak(service.getString(R.string.ringerOn), false)
+        case RingerMode.Silent => TTS.speak(service.getString(R.string.ringerOff), false)
+        case RingerMode.Vibrate => TTS.speak(service.getString(R.string.ringerVibrate), false)
+      }
   }
 
   OrientationLandscape += {
