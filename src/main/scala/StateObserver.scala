@@ -42,40 +42,27 @@ object StateObserver extends BluetoothProfile.ServiceListener {
 
     val audioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
 
-    def registerReceiver(r:(Context, Intent) => Unit, intents:List[String], dataScheme:Option[String] = None) {
-      val f = new IntentFilter
-      intents.foreach(f.addAction(_))
-      dataScheme.foreach(f.addDataScheme(_))
-      service.registerReceiver(r, f)
-    }
-
     ScreenOff on Intent.ACTION_SCREEN_OFF
 
     ScreenOn on Intent.ACTION_SCREEN_ON
 
     Unlocked on Intent.ACTION_USER_PRESENT
 
-    registerReceiver((c, i) => ApplicationAdded(i), Intent.ACTION_PACKAGE_ADDED :: Nil, Some("package"))
+    ApplicationAdded on(Intent.ACTION_PACKAGE_ADDED, dataScheme = Some("package"))
 
-    registerReceiver((c, i) => ApplicationRemoved(i), Intent.ACTION_PACKAGE_REMOVED :: Nil, Some("package"))
+    ApplicationRemoved on(Intent.ACTION_PACKAGE_REMOVED, dataScheme = Some("package"))
 
     PowerConnected on Intent.ACTION_POWER_CONNECTED
 
     PowerDisconnected on Intent.ACTION_POWER_DISCONNECTED
 
-    registerReceiver({ (c, i) =>
-      val extra = i.getIntExtra(AudioManager.EXTRA_RINGER_MODE, AudioManager.RINGER_MODE_NORMAL)
-      val mode = extra match {
-        case AudioManager.RINGER_MODE_SILENT => RingerMode.Silent
-        case AudioManager.RINGER_MODE_VIBRATE => RingerMode.Vibrate
-        case _ => RingerMode.Normal
-      }
-      RingerModeChanged(mode)
-    }, AudioManager.RINGER_MODE_CHANGED_ACTION :: Nil)
+    RingerModeChangedIntent on AudioManager.RINGER_MODE_CHANGED_ACTION
 
     Option(BluetoothAdapter.getDefaultAdapter).foreach(_.getProfileProxy(service, this, BluetoothProfile.A2DP))
 
-    registerReceiver({(c, i) =>
+    BluetoothConnected on android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED
+
+    BluetoothConnected += { i:Intent =>
       val device = i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE).asInstanceOf[BluetoothDevice]
       device.getBluetoothClass.getDeviceClass match {
         case BluetoothClass.Device.AUDIO_VIDEO_WEARABLE_HEADSET => actor {
@@ -86,15 +73,17 @@ object StateObserver extends BluetoothProfile.ServiceListener {
         }
         case _ =>
       }
-    }, android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED :: Nil)
+    }
 
-    registerReceiver({(c, i) =>
+    BluetoothDisconnected on android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECTED
+
+    BluetoothDisconnected += { i:Intent =>
       val device = i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE).asInstanceOf[BluetoothDevice]
       device.getBluetoothClass.getDeviceClass match {
         case BluetoothClass.Device.AUDIO_VIDEO_WEARABLE_HEADSET if(audioManager.isBluetoothScoOn()) => BluetoothSCOHeadsetDisconnected()
         case _ =>
       }
-    }, android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECTED :: Nil)
+    }
 
     service.getContentResolver.registerContentObserver(Secure.getUriFor(Secure.TTS_DEFAULT_SYNTH), false, new ContentObserver(new Handler) {
       override def onChange(bySelf:Boolean) = TTSEngineChanged()

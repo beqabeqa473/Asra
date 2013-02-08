@@ -230,6 +230,16 @@ object StateReactor {
     voicemailIndicator = None
   }
 
+  RingerModeChangedIntent += { i:Intent =>
+    val extra = i.getIntExtra(AudioManager.EXTRA_RINGER_MODE, AudioManager.RINGER_MODE_NORMAL)
+    val mode = extra match {
+      case AudioManager.RINGER_MODE_SILENT => RingerMode.Silent
+      case AudioManager.RINGER_MODE_VIBRATE => RingerMode.Vibrate
+      case _ => RingerMode.Normal
+    }
+    RingerModeChanged(mode)
+  }
+
   // Note ringer state, silencing spoken notifications if desired.
 
   def ringerOn_? = ringerOn.getOrElse(true)

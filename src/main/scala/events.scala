@@ -37,11 +37,14 @@ class Event[T] {
 
   def apply(arg:T) = handlers.foreach(_(arg))
 
-  def on(intents:List[String], arg:T):Any = {
+  def on(intents:List[String], arg:T, dataScheme:Option[String] = None):Any = {
     val f = new IntentFilter
     intents.foreach(f.addAction(_))
+    dataScheme.foreach(f.addDataScheme(_))
     SpielService.context.registerReceiver(
-      { (c:Context, i:Intent) => Event.this(arg) },
+      { (c:Context, i:Intent) =>
+        Event.this(Option(arg).getOrElse(i.asInstanceOf[T]))
+      },
       f
     )
   }
@@ -52,6 +55,9 @@ class Event[T] {
 
   def on(intent:String):Any = on(intent :: Nil)
 
+  def on(intent:String, dataScheme:Option[String]):Any = on(intent :: Nil, null.asInstanceOf[T], dataScheme = dataScheme)
+
+
 }
 
 object AccessibilityEventReceived extends Event[AccessibilityEvent]
@@ -59,6 +65,10 @@ object AccessibilityEventReceived extends Event[AccessibilityEvent]
 object ApplicationAdded extends Event[Intent]
 
 object ApplicationRemoved extends Event[Intent]
+
+object BluetoothConnected extends Event[Intent]
+
+object BluetoothDisconnected extends Event[Intent]
 
 object BluetoothSCOHeadsetConnected extends Event[Unit]
 
@@ -101,6 +111,8 @@ object RingerMode extends Enumeration {
 }
 
 object RingerModeChanged extends Event[RingerMode.Value]
+
+object RingerModeChangedIntent extends Event[Intent]
 
 object ScreenOff extends Event[Unit]
 
