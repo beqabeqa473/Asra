@@ -1,6 +1,6 @@
 package info.spielproject.spiel
 
-import android.content.{ContentResolver, Context}
+import android.content._
 import android.net.Uri
 import android.provider.ContactsContract
 import android.telephony._
@@ -30,7 +30,7 @@ object Telephony extends PhoneStateListener {
   // Resolve the number to a contact where possible.
 
   private def resolve(number:String) = {
-    if(number != null && number != "") {
+    Option(number).filter(!_.isEmpty).map { number =>
       val uri= Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number))
       val cursor = context.getContentResolver.query(uri, null, null, null, null)
       var name = number
@@ -42,9 +42,10 @@ object Telephony extends PhoneStateListener {
           name = cursor.getString(cursor.getColumnIndex("display_name"))
         }
       }
+      if(name == number)
+        name = PhoneNumberUtils.formatNumber(number)
       name
-    } else
-      context.getString(R.string.unknown)
+    }.getOrElse(context.getString(R.string.unknown))
   }
 
   override def onCallStateChanged(state:Int, number:String) = state match {
@@ -84,7 +85,7 @@ object Telephony extends PhoneStateListener {
 
   CallRinging += { number:String =>
     if(Preferences.talkingCallerID)
-      callerIDRepeaterID = TTS.speakEvery(3, PhoneNumberUtils.formatNumber(number))
+      callerIDRepeaterID = TTS.speakEvery(3, number)
   }
 
   private var _inCall = false
