@@ -3,13 +3,15 @@ package info.spielproject.spiel
 import actors.Actor._
 import collection.JavaConversions._
 
-import android.app.Service
-import android.content.{Context, Intent}
-import android.content.pm.ResolveInfo
-import android.media.{AudioManager, SoundPool}
+import android.app._
+import android.content._
+import android.content.pm._
+import android.database._
+import android.media._
 import android.os.Build.VERSION
-import android.os.Environment
-import android.speech.tts.{TextToSpeech, UtteranceProgressListener}
+import android.os._
+import android.provider.Settings.Secure
+import android.speech.tts._
 import android.util.Log
 
 import events._
@@ -41,6 +43,19 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
     service = s
     Sounds.tick = pool.load(service, R.raw.tick, 1)
     init()
+
+    service.getContentResolver.registerContentObserver(Secure.getUriFor(Secure.TTS_DEFAULT_SYNTH), false, new ContentObserver(new Handler) {
+      override def onChange(bySelf:Boolean) = TTSEngineChanged()
+    })
+
+    service.getContentResolver.registerContentObserver(Secure.getUriFor(Secure.TTS_DEFAULT_RATE), false, new ContentObserver(new Handler) {
+      override def onChange(bySelf:Boolean) = RateChanged()
+    })
+
+    service.getContentResolver.registerContentObserver(Secure.getUriFor(Secure.TTS_DEFAULT_PITCH), false, new ContentObserver(new Handler) {
+      override def onChange(bySelf:Boolean) = PitchChanged()
+    })
+
   }
 
   private var reinitializing = false

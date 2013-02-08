@@ -1,17 +1,8 @@
 package info.spielproject.spiel
 
-import actors.Actor.actor
-import collection.mutable.ListBuffer
-import collection.JavaConversions._
-
-import android.content.{BroadcastReceiver, Context, Intent, IntentFilter}
-import android.database.ContentObserver
-import android.hardware.{Sensor, SensorEvent, SensorEventListener, SensorManager}
-import android.media.AudioManager
-import android.net.Uri
-import android.os.Build.VERSION
+import android.content._
+import android.hardware._
 import android.os.Handler
-import android.provider.Settings.Secure
 import android.util.Log
 
 import events._
@@ -38,25 +29,6 @@ object StateObserver {
   def apply(_service:SpielService) {
 
     service = _service
-
-    val audioManager = service.getSystemService(Context.AUDIO_SERVICE).asInstanceOf[AudioManager]
-
-    ApplicationAdded on(Intent.ACTION_PACKAGE_ADDED, dataScheme = Some("package"))
-
-    ApplicationRemoved on(Intent.ACTION_PACKAGE_REMOVED, dataScheme = Some("package"))
-
-
-    service.getContentResolver.registerContentObserver(Secure.getUriFor(Secure.TTS_DEFAULT_SYNTH), false, new ContentObserver(new Handler) {
-      override def onChange(bySelf:Boolean) = TTSEngineChanged()
-    })
-
-    service.getContentResolver.registerContentObserver(Secure.getUriFor(Secure.TTS_DEFAULT_RATE), false, new ContentObserver(new Handler) {
-      override def onChange(bySelf:Boolean) = RateChanged()
-    })
-
-    service.getContentResolver.registerContentObserver(Secure.getUriFor(Secure.TTS_DEFAULT_PITCH), false, new ContentObserver(new Handler) {
-      override def onChange(bySelf:Boolean) = PitchChanged()
-    })
 
   }
 

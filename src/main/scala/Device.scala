@@ -13,6 +13,8 @@ import events._
 object Device {
 
   def apply() {
+    ApplicationAdded on(Intent.ACTION_PACKAGE_ADDED, dataScheme = Some("package"))
+    ApplicationRemoved on(Intent.ACTION_PACKAGE_REMOVED, dataScheme = Some("package"))
     BatteryChanged on Intent.ACTION_BATTERY_CHANGED
     PowerConnected on Intent.ACTION_POWER_CONNECTED
     PowerDisconnected on Intent.ACTION_POWER_DISCONNECTED
