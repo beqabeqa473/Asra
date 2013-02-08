@@ -183,14 +183,24 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   private var utterances:Map[String, String] = Map.empty
 
   def onStart(id:String) {
+    if(Preferences.duckNonSpeechAudio && audioManager.isMusicActive)
+      audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
     UtteranceStarted(utterances.get(id))
+    repeatedSpeech.get(id).foreach { v =>
+      actor {
+        Thread.sleep(v._1*1000)
+        performRepeatedSpeech(id)
+      }
+    }
   }
 
   def onError(id:String) {
+    abandonFocus()
     UtteranceError(utterances.get(id))
   }
 
   def onDone(id:String) {
+    abandonFocus()
     UtteranceEnded(utterances.get(id))
     utterances -= id
   }
@@ -425,25 +435,6 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   TTSEngineChanged += {
     if(TTS.defaultEngine != Preferences.speechEngine)
       TTS.init() 
-  }
-
-  UtteranceStarted += { id:Option[String] =>
-    if(Preferences.duckNonSpeechAudio && audioManager.isMusicActive)
-      audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
-  }
-
-  UtteranceError += { id:Option[String] => abandonFocus() }
-
-  UtteranceEnded += { id:Option[String] =>
-    abandonFocus()
-    id.foreach { i =>
-      repeatedSpeech.get(i).foreach { v =>
-        actor {
-          Thread.sleep(v._1*1000)
-          performRepeatedSpeech(i)
-        }
-      }
-    }
   }
 
 }
