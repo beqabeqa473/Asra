@@ -46,7 +46,7 @@ class SpielService extends AccessibilityService {
     StateObserver(this)
     StateReactor(this)
     Triggers(this)
-    TelephonyListener(this)
+    Telephony(this)
     plugins.PluginManager(this)
     Initialized(this)
     val nb = new Notification.Builder(this)

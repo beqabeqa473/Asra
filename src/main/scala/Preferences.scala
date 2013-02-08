@@ -200,8 +200,8 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
       case "profiling" if(profiling) => Debug.startMethodTracing("spiel")
       case "profiling" if(!profiling) => Debug.stopMethodTracing()
       case "voicemailAlerts" =>
-        if(voicemailAlerts) StateReactor.startVoicemailAlerts()
-        else StateReactor.stopVoicemailAlerts()
+        if(voicemailAlerts) Telephony.startVoicemailAlerts()
+        else Telephony.stopVoicemailAlerts()
       case _ =>
     }
     backupManager.dataChanged()

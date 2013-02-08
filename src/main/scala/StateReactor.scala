@@ -3,7 +3,6 @@ package info.spielproject.spiel
 import java.text.SimpleDateFormat
 import java.util.Date
 
-import actors.Actor._
 import collection.JavaConversions._
 
 import android.bluetooth.{BluetoothDevice, BluetoothHeadset}
@@ -12,7 +11,6 @@ import android.media.AudioManager
 import android.net.Uri
 import android.os.Build.VERSION
 import android.os.Environment
-import android.telephony.PhoneNumberUtils
 import android.text.format.DateFormat
 import android.util.Log
 
@@ -70,48 +68,11 @@ object StateReactor {
 
   PowerDisconnected += speakBatteryPercentage()
 
-  // Manage repeating of caller ID information, stopping when appropriate.
+  private var _usingSco = false
 
-  var callerIDRepeaterID = ""
+  def usingSco = _usingSco
 
-  CallRinging += { number:String =>
-    if(usingSco)
-      btReceiver.foreach(_.connect())
-    if(Preferences.talkingCallerID)
-      callerIDRepeaterID = TTS.speakEvery(3, PhoneNumberUtils.formatNumber(number))
-  }
-
-  private var _inCall = false
-
-  /**
-   * Returns <code>true</code> if in call, <code>false</code> otherwise.
-  */
-
-  def inCall_? = _inCall
-
-  CallAnswered += {
-    _inCall = true
-    TTS.stop
-    TTS.stopRepeatedSpeech(callerIDRepeaterID)
-    callerIDRepeaterID = ""
-  }
-
-  CallIdle += {
-    _inCall = false
-    TTS.stopRepeatedSpeech(callerIDRepeaterID)
-    callerIDRepeaterID = ""
-    if(usingSco) {
-      actor {
-        // Wait until dialer sets audio mode so we can alter it for SCO reconnection.
-        Thread.sleep(1000)
-        btReceiver.foreach(_.connect())
-      }
-    }
-  }
-
-  private var usingSco = false
-
-  private class BTReceiver extends BroadcastReceiver {
+  class BTReceiver extends BroadcastReceiver {
 
     private var wasConnected = false
 
@@ -133,9 +94,9 @@ object StateReactor {
 
     private def cleanupState() {
       Log.d("spielcheck", "Cleaning up state.")
-      usingSco = false
+      _usingSco = false
       wasConnected = false
-      if(!inCall_?) audioManager.setMode(AudioManager.MODE_NORMAL)
+      if(!Telephony.inCall_?) audioManager.setMode(AudioManager.MODE_NORMAL)
       musicVolume.foreach(
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, _, 0)
       )
@@ -162,7 +123,7 @@ object StateReactor {
       Log.d("spielcheck", "Got "+i+", "+state)
       if(state == AudioManager.SCO_AUDIO_STATE_CONNECTED) {
         Log.d("spielcheck", "here1")
-        usingSco = true
+        _usingSco = true
         musicVolume = Option(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC))
         voiceVolume = Option(audioManager.getStreamVolume(AudioManager.STREAM_VOICE_CALL))
         audioManager.setMode(AudioManager.MODE_IN_CALL)
@@ -170,7 +131,7 @@ object StateReactor {
       } else if(state == AudioManager.SCO_AUDIO_STATE_ERROR) {
         Log.d("spielcheck", "here2")
         cleanupState()
-      } else if(usingSco && wasConnected && state == AudioManager.SCO_AUDIO_STATE_DISCONNECTED) {
+      } else if(_usingSco && wasConnected && state == AudioManager.SCO_AUDIO_STATE_DISCONNECTED) {
         Log.d("spielcheck", "here3")
         cleanupState()
         audioManager.startBluetoothSco()
@@ -188,7 +149,7 @@ object StateReactor {
 
   }
 
-  private var btReceiver:Option[BTReceiver] = None
+  var btReceiver:Option[BTReceiver] = None
 
   private def startBluetoothSCO() {
     Log.d("spielcheck", "startBluetoothSCO()")
@@ -209,26 +170,6 @@ object StateReactor {
   BluetoothSCOHeadsetConnected +=startBluetoothSCO()
 
   BluetoothSCOHeadsetDisconnected += stopBluetoothSCO()
-
-  // Manage speaking of occasional voicemail notification.
-
-  private var voicemailIndicator:Option[String] = None
-
-  MessageWaiting += startVoicemailAlerts()
-
-  def startVoicemailAlerts() {
-    if(Preferences.voicemailAlerts)
-      voicemailIndicator.getOrElse {
-        voicemailIndicator = Some(TTS.speakEvery(180, service.getString(R.string.newVoicemail)))
-      }
-  }
-
-  MessageNoLongerWaiting += stopVoicemailAlerts()
-
-  def stopVoicemailAlerts() {
-    voicemailIndicator.foreach { i => TTS.stopRepeatedSpeech(i) }
-    voicemailIndicator = None
-  }
 
   RingerModeChangedIntent += { i:Intent =>
     val extra = i.getIntExtra(AudioManager.EXTRA_RINGER_MODE, AudioManager.RINGER_MODE_NORMAL)

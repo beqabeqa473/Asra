@@ -1,9 +1,11 @@
 package info.spielproject.spiel
 
+import actors.Actor._
+
 import android.content.{ContentResolver, Context}
 import android.net.Uri
 import android.provider.ContactsContract
-import android.telephony.{PhoneStateListener, TelephonyManager}
+import android.telephony._
 import TelephonyManager._
 import android.util.Log
 
@@ -13,7 +15,7 @@ import events._
  * Singleton that listens to telephony state, calling relevant handlers.
 */
 
-object TelephonyListener extends PhoneStateListener {
+object Telephony extends PhoneStateListener {
 
   private var context:Context = null
 
@@ -56,6 +58,65 @@ object TelephonyListener extends PhoneStateListener {
   override def onMessageWaitingIndicatorChanged(mwi:Boolean) = mwi match {
     case true => MessageWaiting()
     case false => MessageNoLongerWaiting()
+  }
+
+  // Manage speaking of occasional voicemail notification.
+
+  private var voicemailIndicator:Option[String] = None
+
+  MessageWaiting += startVoicemailAlerts()
+
+  def startVoicemailAlerts() {
+    if(Preferences.voicemailAlerts)
+      voicemailIndicator.getOrElse {
+        voicemailIndicator = Some(TTS.speakEvery(180, context.getString(R.string.newVoicemail)))
+      }
+  }
+
+  MessageNoLongerWaiting += stopVoicemailAlerts()
+
+  def stopVoicemailAlerts() {
+    voicemailIndicator.foreach { i => TTS.stopRepeatedSpeech(i) }
+    voicemailIndicator = None
+  }
+
+  // Manage repeating of caller ID information, stopping when appropriate.
+
+  var callerIDRepeaterID = ""
+
+  CallRinging += { number:String =>
+    if(StateReactor.usingSco)
+      StateReactor.btReceiver.foreach(_.connect())
+    if(Preferences.talkingCallerID)
+      callerIDRepeaterID = TTS.speakEvery(3, PhoneNumberUtils.formatNumber(number))
+  }
+
+  private var _inCall = false
+
+  /**
+   * Returns <code>true</code> if in call, <code>false</code> otherwise.
+  */
+
+  def inCall_? = _inCall
+
+  CallAnswered += {
+    _inCall = true
+    TTS.stop
+    TTS.stopRepeatedSpeech(callerIDRepeaterID)
+    callerIDRepeaterID = ""
+  }
+
+  CallIdle += {
+    _inCall = false
+    TTS.stopRepeatedSpeech(callerIDRepeaterID)
+    callerIDRepeaterID = ""
+    if(StateReactor.usingSco) {
+      actor {
+        // Wait until dialer sets audio mode so we can alter it for SCO reconnection.
+        Thread.sleep(1000)
+        StateReactor.btReceiver.foreach(_.connect())
+      }
+    }
   }
 
 }
