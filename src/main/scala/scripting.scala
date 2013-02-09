@@ -12,7 +12,7 @@ import android.os.Build.VERSION
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 
-import org.mozilla.javascript.{Context, ContextFactory, Function, RhinoException, ScriptableObject}
+import org.mozilla.javascript.{Callable, Context, ContextFactory, Function, RhinoException, ScriptableObject}
 
 import events._
 import presenters.{Callback, Presenter}
@@ -26,17 +26,18 @@ class RhinoCallback(f:Function) extends Callback {
     var args = new Array[Object](2)
     args(0) = e
     args(1) = Presenter.currentActivity
-    ContextFactory.getGlobal.enterContext(Scripter.context)
+    val cx = ContextFactory.getGlobal.enterContext()
+    cx.setOptimizationLevel(-1)
     try {
-      Scripter.scope.put("__pkg__", Scripter.scope, e.getPackageName)
-      Context.toBoolean(f.call(Scripter.context, Scripter.scope, Scripter.scope, args))
+      Scripter.global.put("__pkg__", Scripter.global, e.getPackageName)
+      Context.toBoolean(f.call(cx, Scripter.global, Scripter.global, args))
     } catch {
       case e =>
         TTS.speak("Script error: "+e.getMessage, true)
         Log.e("spiel", "Error running script: "+e.getMessage)
         false
     } finally {
-      Scripter.scope.put("__pkg__", Scripter.scope, null)
+      Scripter.global.put("__pkg__", Scripter.global, null)
       Context.exit()
     }
   }
@@ -92,17 +93,20 @@ class Script(
   def run() = {
     Log.d("spiel", "Running "+pkg)
     uninstall()
-    ContextFactory.getGlobal.enterContext(Scripter.context)
-    Scripter.scope.put("__pkg__", Scripter.scope, pkg)
+    val cx = ContextFactory.getGlobal.enterContext()
+    val scope = cx.newObject(Scripter.global)
+    scope.setPrototype(Scripter.global)
+    scope.setParentScope(null)
+    scope.put("__pkg__", scope, pkg)
     Scripter.script = Some(this)
     try {
-      Scripter.context.evaluateString(Scripter.scope, code, filename, 1, null)
+      cx.evaluateString(Scripter.global, code, filename, 1, null)
       successfullyRan = true
     } catch {
-      case e:RhinoException => Log.e("spiel", "Error creating script: "+e.getMessage)
+      case e:RhinoException => Log.e("spiel", "Error running script: "+e.getMessage)
       case e => Log.e("spiel", e.toString)
     }finally {
-      Scripter.scope.put("__pkg__", Scripter.scope, null)
+      scope.put("__pkg__", scope, null)
       Scripter.script = None
       Context.exit()
     }
@@ -133,7 +137,7 @@ class Script(
       // Check to ensure that the property name maps to a valid AccessibilityEvent type.
 
       if(Presenter.dispatchers.valuesIterator.contains(func)) {
-        val f = scr.get(id, Scripter.scope)
+        val f = scr.get(id, Scripter.global)
         if(f.isInstanceOf[Function])
           // Map the script to an Android AccessibilityEvent type.
           p.dispatches(func) = new RhinoCallback(f.asInstanceOf[Function])
@@ -254,9 +258,9 @@ class Observer(context:AContext, path:String) extends FileObserver(path) {
 
 object Scripter {
 
-  lazy val context = ContextFactory.getGlobal.enterContext()
+  private lazy val context = ContextFactory.getGlobal.enterContext()
 
-  lazy val scope = context.initStandardObjects()
+  lazy val global = context.initStandardObjects()
 
   private[scripting] var script:Option[Script] = None
 
@@ -277,21 +281,25 @@ object Scripter {
     context.setOptimizationLevel(-1)
 
     // Inject some Spiel objects into the scripting environment.
-    val wrappedPresenter = Context.javaToJS(Presenter, scope)
-    ScriptableObject.putProperty(scope, "Presenter", wrappedPresenter)
+    val wrappedPresenter = Context.javaToJS(Presenter, global)
+    ScriptableObject.putProperty(global, "Presenter", wrappedPresenter)
 
-    val wrappedScripter = Context.javaToJS(this, scope)
-    ScriptableObject.putProperty(scope, "Scripter", wrappedScripter)
+    val wrappedScripter = Context.javaToJS(this, global)
+    ScriptableObject.putProperty(global, "Scripter", wrappedScripter)
 
-    val wrappedTTS = Context.javaToJS(TTS, scope)
-    ScriptableObject.putProperty(scope, "TTS", wrappedTTS)
+    val wrappedTTS = Context.javaToJS(TTS, global)
+    ScriptableObject.putProperty(global, "TTS", wrappedTTS)
 
-    scope.put("ANDROID_PLATFORM_VERSION", scope, VERSION.SDK_INT)
+    ScriptableObject.putProperty(global, "ANDROID_PLATFORM_VERSION", VERSION.SDK_INT)
+    global.setAttributes("ANDROID_PLATFORM_VERSION", ScriptableObject.READONLY)
 
     val pm = svc.getPackageManager.asInstanceOf[PackageManager]
     val pi = pm.getPackageInfo(svc.getPackageName(), 0)
-    scope.put("SPIEL_VERSION_NAME", scope, pi.versionName)
-    scope.put("SPIEL_VERSION_CODE", scope, pi.versionCode)
+    ScriptableObject.putProperty(global, "SPIEL_VERSION_NAME", pi.versionName)
+    global.setAttributes("SPIEL_VERSION_NAME", ScriptableObject.READONLY)
+    ScriptableObject.putProperty(global, "SPIEL_VERSION_CODE", pi.versionCode)
+    global.setAttributes("SPIEL_VERSION_CODE", ScriptableObject.READONLY)
+
     new Script(service, "scripts/api.js", true).run()
     val assets = service.getAssets
     for(fn <- assets.list("scripts") if(fn != "api.js")) {
