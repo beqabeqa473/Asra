@@ -56,7 +56,7 @@ object Bluetooth extends BluetoothProfile.ServiceListener {
     def connect() {
       cleanupState()
       if(audioManager.isBluetoothScoAvailableOffCall) {
-        Log.d("spielcheck", "Connecting")
+        //Log.d("spielcheck", "Connecting")
         val f = new IntentFilter
         f.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED)
         SpielService.context.registerReceiver(this, f)
@@ -65,7 +65,7 @@ object Bluetooth extends BluetoothProfile.ServiceListener {
     }
 
     private def cleanupState() {
-      Log.d("spielcheck", "Cleaning up state.")
+      //Log.d("spielcheck", "Cleaning up state.")
       usingSco = false
       wasConnected = false
       if(!Telephony.inCall_?) audioManager.setMode(AudioManager.MODE_NORMAL)
@@ -80,7 +80,7 @@ object Bluetooth extends BluetoothProfile.ServiceListener {
     }
 
     private def cleanup() {
-      Log.d("spielcheck", "Cleaning up.")
+      //Log.d("spielcheck", "Cleaning up.")
       audioManager.stopBluetoothSco()
       cleanupState()
       try {
@@ -92,29 +92,29 @@ object Bluetooth extends BluetoothProfile.ServiceListener {
 
     override def onReceive(c:Context, i:Intent) {
       val state = i.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, AudioManager.SCO_AUDIO_STATE_DISCONNECTED)
-      Log.d("spielcheck", "Got "+i+", "+state)
+      //Log.d("spielcheck", "Got "+i+", "+state)
       if(state == AudioManager.SCO_AUDIO_STATE_CONNECTED) {
-        Log.d("spielcheck", "here1")
+        //Log.d("spielcheck", "here1")
         usingSco = true
         musicVolume = Option(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC))
         voiceVolume = Option(audioManager.getStreamVolume(AudioManager.STREAM_VOICE_CALL))
         audioManager.setMode(AudioManager.MODE_IN_CALL)
         wasConnected = true
       } else if(state == AudioManager.SCO_AUDIO_STATE_ERROR) {
-        Log.d("spielcheck", "here2")
+        //Log.d("spielcheck", "here2")
         cleanupState()
       } else if(usingSco && wasConnected && state == AudioManager.SCO_AUDIO_STATE_DISCONNECTED) {
-        Log.d("spielcheck", "here3")
+        //Log.d("spielcheck", "here3")
         cleanupState()
         audioManager.startBluetoothSco()
       } else if(wasConnected) {
-        Log.d("spielcheck", "here4")
+        //Log.d("spielcheck", "here4")
         cleanup()
       }
     }
 
     def disconnect() {
-      Log.d("spielcheck", "Disconnecting")
+      //Log.d("spielcheck", "Disconnecting")
       audioManager.stopBluetoothSco()
       cleanup()
     }
@@ -124,7 +124,7 @@ object Bluetooth extends BluetoothProfile.ServiceListener {
   private var btReceiver:Option[BTReceiver] = None
 
   private def startBluetoothSCO() {
-    Log.d("spielcheck", "startBluetoothSCO()")
+    //Log.d("spielcheck", "startBluetoothSCO()")
     if(Preferences.useBluetoothSCO) {
       val r = new BTReceiver()
       r.connect()
@@ -154,12 +154,10 @@ object Bluetooth extends BluetoothProfile.ServiceListener {
   }
 
   def onServiceConnected(profile:Int, proxy:BluetoothProfile) {
-    Log.d("spielcheck", "Connected: "+profile+", "+proxy)
     a2dp = Some(proxy)
   }
 
   def onServiceDisconnected(profile:Int) {
-    Log.d("spielcheck", "Disconnected "+profile)
     a2dp = None
   }
 
