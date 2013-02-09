@@ -43,7 +43,7 @@ class SpielService extends AccessibilityService {
     GestureDispatcher(this)
     Scripter(this)
     BazaarProvider(this)
-    StateObserver(this)
+    Sensors(this)
     Triggers(this)
     Device()
     Bluetooth()
