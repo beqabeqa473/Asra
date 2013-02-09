@@ -19,6 +19,7 @@
   <string name="unlocked">Разблокировано.</string>
   <string name="ringerOff">Звонок выключен.</string>
   <string name="ringerOn">Звонок включён.</string>
+  <string name="ringerVibrate">Виброзвонок</string>
   <string name="newVoicemail">Новая голосовая почта</string>
 
   <!-- View names and actions -->
