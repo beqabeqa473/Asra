@@ -111,16 +111,13 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
 
   def engines = {
     val pm = service.getPackageManager
-    val intent = new Intent(if(VERSION.SDK_INT < 14) "android.intent.action.START_TTS_ENGINE" else tts.Engine.INTENT_ACTION_TTS_SERVICE)
+    val intent = new Intent(tts.Engine.INTENT_ACTION_TTS_SERVICE)
     def iter(engine:ResolveInfo):Tuple2[String, String] = {
       var label = engine.loadLabel(pm).toString()
       if(label == "") label = Option(engine.activityInfo).getOrElse(engine.serviceInfo).name.toString()
       (label, Option(engine.serviceInfo).getOrElse(engine.activityInfo).packageName)
     }
-    if(VERSION.SDK_INT >= 14)
-      pm.queryIntentServices(intent, 0).map (iter)
-    else
-      pm.queryIntentActivities(intent, 0).map (iter)
+    pm.queryIntentServices(intent, 0).map (iter)
   }
 
   def platformEngine =
