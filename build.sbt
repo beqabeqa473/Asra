@@ -25,6 +25,7 @@ libraryDependencies := Seq(
 )
 
 proguardOption in Android := """
+  -keep class scala.collection.SeqLike { public protected *; }
   -keep class info.spielproject.spiel.** { *; }
   -keep class org.mozilla.javascript.* { *; }
   -keep class org.mozilla.javascript.ast.* { *; }
