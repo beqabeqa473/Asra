@@ -4,6 +4,10 @@ AndroidProject.androidSettings
 
 AndroidMarketPublish.settings
 
+site.settings
+
+site.sphinxSupport()
+
 name := "Spiel"
 
 version := "3.0.0"
