@@ -353,6 +353,7 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   def stop() {
     if(!SpielService.enabled) return
     Log.d("spiel", "Stopping speech")
+    utterances = Map.empty
     guard { tts.stop() }
   }
 
