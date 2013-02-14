@@ -22,9 +22,14 @@ keystorePath in Android := Path.userHome / ".keystore" / "spiel.keystore"
 
 keyalias in Android := "spiel"
 
+resolvers ++= Seq(
+  "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
+)
+
 libraryDependencies := Seq(
   "rhino" % "js" % "1.7R2" from "http://android-scripting.googlecode.com/hg/rhino/rhino1_7R2.jar",
-  "net.databinder" % "dispatch-lift-json_2.9.1" % "0.7.8",
+  "com.ning" % "async-http-client" % "1.7.11-SNAPSHOT" force(),
+  "net.databinder.dispatch" %% "json4s-native" % "0.9.5",
   "org.ccil.cowan.tagsoup" % "tagsoup" % "1.2.1"
 )
 

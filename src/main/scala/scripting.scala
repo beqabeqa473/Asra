@@ -12,6 +12,7 @@ import android.os.Build.VERSION
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 
+import com.ning.http.client._
 import org.mozilla.javascript.{Callable, Context, ContextFactory, Function, RhinoException, ScriptableObject}
 
 import events._
@@ -277,6 +278,10 @@ object Scripter {
   */
 
   def apply(svc:AContext) {
+    import com.ning.http.client._
+    new providers.netty.NettyAsyncHttpProvider(
+      new AsyncHttpClientConfig.Builder().build
+    )
     service = svc
     context.setOptimizationLevel(-1)
 
@@ -652,11 +657,9 @@ import actors.Actor._
 import android.content.pm.PackageManager
 import android.database.MatrixCursor
 import dispatch._
-import dispatch.liftjson.Js._
-import net.liftweb.json._
-import JsonAST._
-import JsonParser._
-import Serialization.{read, write}
+import dispatch.as.json4s
+import org.json4s._
+import org.json4s.native._
 
 class AuthorizationFailed extends Exception
 
@@ -669,27 +672,26 @@ class BazaarProvider extends ContentProvider with AbstractProvider {
 
   def onCreate() = true
 
-  private var http = new Http
-  private val apiRoot = :/("bazaar.spielproject.info") / "api" / "v1" <:< Map("Accept" -> "application/json")
+  private val apiRoot = url("http://bazaar.spielproject.info") / "api" / "v1" <:< Map("Accept" -> "application/json")
 
-  private def request(req:Request)(f:(JValue) => Unit) = {
-    try {
-      http(req ># { v => f(v) } )
-    } catch {
-      case e =>
-        Log.d("spiel", e.getMessage)
-        http = new Http
+  private def request(req:Req)(f:(JValue) => Unit) {
+    Http(req OK as.json4s.Json).either.foreach { r =>
+      r match {
+        case Left(e) => Log.e("spiel", "Error in scripting subsystem", e)
+        case Right(r) => f(r)
+      }
     }
   }
 
   override def query(uri:Uri, projection:Array[String], where:String, whereArgs:Array[String], sort:String) = {
     val cursor = if(collectionURI_?(uri)) {
       val c = new MatrixCursor(List(Provider.columns.remoteID, Provider.columns.pkg, Provider.columns.owner, Provider.columns.description, Provider.columns.code, Provider.columns.version).toArray)
+      implicit val formats = DefaultFormats
       request(
         apiRoot / "scripts" <<
         Map("q" -> where)
       ) { response =>
-        response.values.asInstanceOf[List[Map[String, Any]]].foreach { r =>
+        response.extract[List[Map[String, String]]].foreach { r =>
           val rb = c.newRow()
           rb.add(r("id"))
           rb.add(r("package"))
@@ -697,6 +699,7 @@ class BazaarProvider extends ContentProvider with AbstractProvider {
           rb.add(r("description"))
           rb.add(r("code"))
           rb.add(r("version"))
+          Log.d("spielcheck3", "RV: "+r)
         }
       }
       c
@@ -711,15 +714,18 @@ class BazaarProvider extends ContentProvider with AbstractProvider {
     val parameters = collection.mutable.Map[String, String]()
     parameters("code") = values.getAsString("code")
     parameters("changes") = values.getAsString("changes")
-    try {
-      http((
-        apiRoot / "script" / values.getAsString("package") << parameters as (Preferences.bazaarUsername, Preferences.bazaarPassword)
-      ) >~ { response =>
-      })
-      null
-    } catch {
-      case e@StatusCode(401, _) => throw new AuthorizationFailed
+    Http((
+      apiRoot / "script" / values.getAsString("package") << parameters as (Preferences.bazaarUsername, Preferences.bazaarPassword)
+    ) OK  as.String).either.foreach { r =>
+      r match {
+        case Left(e) => e match {
+          case e@StatusCode(401) => throw new AuthorizationFailed
+          case _ => Log.e("spiel", "Error posting script", e)
+        }
+        case Right(str) => null
+      }
     }
+    null
   }
 
   override def update(u:Uri, values:ContentValues, where:String, whereArgs:Array[String]) = 0
