@@ -435,4 +435,23 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
       TTS.init() 
   }
 
+  private var mutedForSpeech = false
+
+  UtteranceStarted += { text:Option[String] =>
+    if(!audioManager.isMicrophoneMute && (!Telephony.inCall_? || !audioManager.isSpeakerphoneOn)) {
+      audioManager.setMicrophoneMute(true)
+      mutedForSpeech = true
+    }
+  }
+
+  private def unmuteIfNecessary() {
+    if(mutedForSpeech)
+      audioManager.setMicrophoneMute(false)
+    mutedForSpeech = false
+  }
+
+  UtteranceEnded += { text:Option[String] => unmuteIfNecessary() }
+
+  UtteranceError += { text:Option[String] => unmuteIfNecessary() }
+
 }
