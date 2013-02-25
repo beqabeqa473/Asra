@@ -1,6 +1,7 @@
 package info.spielproject.spiel
 
-import actors.Actor._
+import actors._
+import Actor._
 import collection.JavaConversions._
 
 import android.app._
@@ -253,21 +254,25 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   }
 
   def guard(f: => Int) {
-    try {
-      if(f == TextToSpeech.SUCCESS)
-        failures = 0
-      else
-        if(!reinitializing)
-          failures += 1
-    } catch {
-      case e =>
-        abandonFocus()
-        if(!reinitializing)
-          failures += 1
-        Log.e("spiel", "TTS error:", e)
-    } finally {
-      if(failures >= 3)
-        reInitOnFailure()
+    Futures.future {
+      try {
+        if(f == TextToSpeech.SUCCESS)
+          failures = 0
+        else {
+          abandonFocus()
+          if(!reinitializing)
+            failures += 1
+        }
+      } catch {
+        case e =>
+          abandonFocus()
+          if(!reinitializing)
+            failures += 1
+          Log.e("spiel", "TTS error:", e)
+      } finally {
+        if(failures >= 3)
+          reInitOnFailure()
+      }
     }
   }
 
