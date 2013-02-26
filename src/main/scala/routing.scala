@@ -129,6 +129,7 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
       } else {
         Log.d("spiel", "Dispatching to "+h.getClass.getName)
         alreadyCalled ::= h
+        table += HandlerDirective(directive.pkg, directive.cls) -> h
         h(payload)
       }
     }
