@@ -38,8 +38,8 @@ class SpielService extends AccessibilityService {
     } catch {
       case e:VerifyError => // We've almost certainly handled this, so ignore.
     }
-    presenters.Presenter(this)
-    GestureDispatcher(this)
+    presenters.Presenter()
+    GestureDispatcher()
     Scripter(this)
     BazaarProvider(this)
     Sensors(this)

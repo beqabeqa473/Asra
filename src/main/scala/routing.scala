@@ -79,8 +79,6 @@ abstract class Handler[PayloadType](router:Router[_], val directive:Option[Handl
 
 class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, after:Option[() => Handler[PayloadType]] = None) {
 
-  var context:Context = null
-
   // Track and report state of whether next AccessibilityEvent should interrupt speech.
   protected[routing] var myNextShouldNotInterrupt = false
   def shouldNextInterrupt = !myNextShouldNotInterrupt
@@ -100,9 +98,7 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
     true
   }
 
-  def apply(c:Context) {
-    context = c
-  }
+  def apply() { }
 
   private val table = collection.mutable.Map[HandlerDirective, Handler[PayloadType]]()
 

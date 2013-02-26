@@ -798,16 +798,7 @@ class Presenters {
 
 object Presenter extends Router[EventPayload](Some(() => Before), Some(() => After)) {
 
-  /**
-   * Initialize presenters for the given <code>Context</code>.
-  */
-
-  override def apply(c:Context) {
-    super.apply(c)
-    // By iterating through the members of this class, we can add presenters
-    // without manual registration.
-    utils.instantiateAllMembers(classOf[Presenters])
-  }
+  utils.instantiateAllMembers(classOf[Presenters])
 
   private[presenters] def process(e:AccessibilityEvent, eventType:Option[Int] = None):Boolean = {
 
@@ -887,7 +878,7 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
   */
 
   def currentActivity = {
-    val manager = context.getSystemService(Context.ACTIVITY_SERVICE).asInstanceOf[ActivityManager]
+    val manager = SpielService.context.getSystemService(Context.ACTIVITY_SERVICE).asInstanceOf[ActivityManager]
     val tasks = manager.getRunningTasks(1)
     if(!tasks.isEmpty)
       tasks.head.topActivity.getClassName
