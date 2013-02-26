@@ -1,7 +1,6 @@
 package info.spielproject.spiel
 
-import android.content.{BroadcastReceiver, Context, Intent, IntentFilter}
-import android.os.BatteryManager
+import android.content._
 import android.util.Log
 
 package object utils {
@@ -23,19 +22,33 @@ package object utils {
     iterate(cls).reverse
   }
 
+  private var classes:Map[(String, String), Class[_]] = Map.empty
+
   def classForName(cls:String, pkg:String = ""):Option[Class[_]] = {
-    val context = SpielService.context
-    try {
-      Some(context.getClassLoader.loadClass(cls))
-    } catch {
-      case _ if(pkg != "") => try {
-        val pc = context.createPackageContext(pkg, Context.CONTEXT_INCLUDE_CODE|Context.CONTEXT_IGNORE_SECURITY)
-        Some(Class.forName(cls, true, pc.getClassLoader))
+    classes.get((cls, pkg)).orElse {
+      val context = SpielService.context
+      try {
+        val rv = context.getClassLoader.loadClass(cls)
+        classes += (cls, pkg) -> rv
+        Some(rv)
       } catch {
+        case _ if(pkg != "") => try {
+          val pc = context.createPackageContext(pkg, Context.CONTEXT_INCLUDE_CODE|Context.CONTEXT_IGNORE_SECURITY)
+          val rv = Class.forName(cls, true, pc.getClassLoader)
+          classes += (cls, pkg) -> rv
+          Some(rv)
+        } catch {
+          case _ => None
+        }
         case _ => None
       }
-      case _ => None
     }
+  }
+
+  events.ApplicationRemoved += { i:Intent =>
+    val packageName = i
+    .getData().getSchemeSpecificPart
+    classes = classes.filter(_._1._2 != packageName)
   }
 
   import xml.XML
