@@ -98,8 +98,6 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
     true
   }
 
-  def apply() { }
-
   private val table = collection.mutable.Map[HandlerDirective, Handler[PayloadType]]()
 
   def register(h:Handler[PayloadType]) = h.directive.foreach { d =>
@@ -125,8 +123,10 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
       } else {
         Log.d("spiel", "Dispatching to "+h.getClass.getName)
         alreadyCalled ::= h
-        table += HandlerDirective(directive.pkg, directive.cls) -> h
-        h(payload)
+        val rv = h(payload)
+        if(rv)
+          table += HandlerDirective(directive.pkg, directive.cls) -> h
+        rv
       }
     }
 

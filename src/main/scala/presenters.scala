@@ -798,7 +798,9 @@ class Presenters {
 
 object Presenter extends Router[EventPayload](Some(() => Before), Some(() => After)) {
 
-  utils.instantiateAllMembers(classOf[Presenters])
+  def apply() {
+    utils.instantiateAllMembers(classOf[Presenters])
+  }
 
   private[presenters] def process(e:AccessibilityEvent, eventType:Option[Int] = None):Boolean = {
 

@@ -109,7 +109,9 @@ class Listener(directive:Option[HandlerDirective] = None) extends Handler[Gestur
 
 object GestureDispatcher extends Router[GesturePayload] {
 
-  utils.instantiateAllMembers(classOf[Gestures])
+  def apply() {
+    utils.instantiateAllMembers(classOf[Gestures])
+  }
 
 }
 
