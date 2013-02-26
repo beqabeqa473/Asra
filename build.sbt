@@ -22,6 +22,10 @@ keystorePath in Android := Path.userHome / ".keystore" / "spiel.keystore"
 
 keyalias in Android := "spiel"
 
+PasswordManager.settings
+
+cachePasswords in Android := true
+
 resolvers ++= Seq(
   "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
 )
