@@ -203,22 +203,21 @@ object After extends Presenter {
         if(source.findFocus(FOCUS_ACCESSIBILITY) == null)
           source.performAction(ACTION_ACCESSIBILITY_FOCUS)
       }
-    true
+    false
   }
 
-  private val absListViews = collection.mutable.Map[AccessibilityNodeInfo, Tuple2[Int, Int]]()
+  private val absListViews = collection.mutable.Map[AccessibilityNodeInfo, Tuple3[Int, Int, Long]]()
 
   onViewFocused { e:AccessibilityEvent =>
     e.source.foreach { source =>
       val all = source :: source.ancestors
       var counter = -1
-      val view = all.map { n =>
+      all.map { n =>
         counter += 1
         (utils.classForName(n.getClassName.toString, n.getPackageName.toString).getOrElse(classOf[Any]), counter)
       }.find { cls =>
         utils.ancestors(cls._1).contains(classOf[android.widget.AbsListView])
-      }
-      view.map { v =>
+      }.map { v =>
         val viewIndex = v._2
         val absListView = all(viewIndex)
         val childWidgetIndex = viewIndex-1
@@ -243,17 +242,17 @@ object After extends Presenter {
           val min = e.getFromIndex
           val total = e.getItemCount
           if(min != -1 && total != -1) {
-            absListViews += (source -> (min, total))
+            absListViews += (source -> (min, total, System.currentTimeMillis))
           } else
             absListViews -= source
         }
       }
     }
-    true
+    false
   }
 
-  onWindowStateChanged { e:AccessibilityEvent =>
-    absListViews.filter(_._1.getPackageName != e.getPackageName)
+  byDefault { e:AccessibilityEvent =>
+    absListViews.filter(System.currentTimeMillis-_._2._3 <= 3600000)
     true
   }
 
@@ -810,7 +809,7 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
     utils.instantiateAllMembers(classOf[Presenters])
   }
 
-  def process(e:AccessibilityEvent, eventType:Option[Int] = None):Boolean = {
+  private[presenters] def process(e:AccessibilityEvent, eventType:Option[Int] = None):Boolean = {
 
     if(e == null || e.getClassName == null || e.getPackageName == null)
       return true
@@ -855,6 +854,8 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
 
     true
   }
+
+  events.AccessibilityEventReceived += { e:AccessibilityEvent => process(e) }
 
   /**
    * Map of <code>AccessibilityEvent</code> types to more human-friendly strings.

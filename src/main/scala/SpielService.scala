@@ -15,7 +15,6 @@ import com.nullwire.trace.ExceptionHandler
 
 import events._
 import gestures.{Gesture, GestureDispatcher, GesturePayload}
-import presenters.Presenter
 import routing._
 import scripting._
 import triggers.Triggers
@@ -39,7 +38,7 @@ class SpielService extends AccessibilityService {
     } catch {
       case e:VerifyError => // We've almost certainly handled this, so ignore.
     }
-    Presenter(this)
+    presenters.Presenter(this)
     GestureDispatcher(this)
     Scripter(this)
     BazaarProvider(this)
@@ -92,7 +91,6 @@ class SpielService extends AccessibilityService {
             return
       }
     AccessibilityEventReceived(event)
-    Presenter.process(event)
   }
 
   override protected def onGesture(id:Int) = {
