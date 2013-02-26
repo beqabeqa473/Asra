@@ -10,7 +10,7 @@ site.sphinxSupport()
 
 name := "Spiel"
 
-version := "3.0.0"
+version := "3.0.0-SNAPSHOT"
 
 scalaVersion := "2.9.2"
 
