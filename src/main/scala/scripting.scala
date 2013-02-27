@@ -283,6 +283,7 @@ object Scripter {
       new AsyncHttpClientConfig.Builder().build
     )
     service = svc
+    ContextFactory.getGlobal.enterContext(context)
     context.setOptimizationLevel(-1)
 
     // Inject some Spiel objects into the scripting environment.
