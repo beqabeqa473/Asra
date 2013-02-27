@@ -1,7 +1,8 @@
 package info.spielproject.spiel
 
 import android.graphics.Rect
-import android.os.Build.VERSION
+import android.os._
+import Build.VERSION
 import android.util.Log
 import android.view.accessibility._
 import AccessibilityNodeInfo._
@@ -148,6 +149,13 @@ case class RichNode(node:AccessibilityNodeInfo) {
 
   def supports_?(action:Action.Value) =
     (node.getActions&action.id) != 0
+
+  def perform(action:Action.Value) =
+    node.performAction(action.id)
+
+  def perform(action:Action.Value, bundle:Bundle) =
+    node.performAction(action.id, bundle)
+
 
   def nextAccessibilityFocus:Option[AccessibilityNodeInfo] =
     nextVisibleSibling.map(_.firstVisibleLeaf)

@@ -219,7 +219,7 @@ object After extends Presenter {
     if(VERSION.SDK_INT >= 16)
       e.source.foreach { source =>
         if(source.findFocus(FOCUS_ACCESSIBILITY) == null)
-          source.performAction(ACTION_ACCESSIBILITY_FOCUS)
+          source.perform(Action.AccessibilityFocus)
       }
     false
   }
