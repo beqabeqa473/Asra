@@ -209,11 +209,12 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
       after.map(_()(payload)).getOrElse(false)
     }
 
-    val rv = dispatchToBefore() || dispatchToExact() || dispatchToClass() || dispatchToSubclass() || dispatchToDefault() || dispatchToAfter()
+    val rv = dispatchToBefore() || dispatchToExact() || dispatchToClass() || dispatchToSubclass() || dispatchToDefault()
+    dispatchToAfter()
 
     val elapsed = System.currentTimeMillis-start
     processingTimes += elapsed.toInt
-    if(processingTimes.length >= 1000) {
+    if(processingTimes.length >= 100) {
       val longest = processingTimes.max
       val shortest = processingTimes.min
       val average = processingTimes.sum/processingTimes.length
