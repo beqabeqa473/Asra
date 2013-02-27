@@ -42,4 +42,7 @@ object PluginManager {
     plugins ++= foundPlugins.map(_.newInstance().asInstanceOf[Plugin])
   }
 
+  def plugin[T <: Plugin:ClassManifest]:List[T] =
+    plugins.filter(classManifest[T].erasure.isInstance(_)).toList.asInstanceOf[List[T]]
+
 }
