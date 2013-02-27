@@ -182,12 +182,8 @@ object Before extends Presenter {
 
   private def setAccessibilityFocus(event:AccessibilityEvent) = {
     event.source.map { n =>  
-      Log.d("spielcheck", "Considering "+n+": "+n.children)
       if(VERSION.SDK_INT >= 16)
-        if(n.children == Nil && n.performAction(ACTION_ACCESSIBILITY_FOCUS)) {
-          Log.d("spielcheck", "Did it")
-          true
-        } else false
+        n.children == Nil && n.perform(Action.AccessibilityFocus)
       else false
     }.getOrElse(false)
   }
