@@ -10,16 +10,12 @@ sealed trait Component
 case object All extends Component
 case class Value(value:String) extends Component
 
-case class HandlerDirective(pkg:Component, cls:Component) {
+case class Directive(pkg:Component, cls:Component) {
   def this(pkg:String, cls:String) = this(Value(pkg), Value(cls))
   def this(cls:String) = this(All, Value(cls))
 }
 
-case class PayloadDirective(pkg:Value, cls:Value) {
-  def this(p:String, c:String) = this(Value(p), Value(c))
-}
-
-abstract class Handler[PayloadType](router:Router[_], val directive:Option[HandlerDirective] = None) {
+abstract class Handler[PayloadType](router:Router[_], val directive:Option[Directive] = None) {
 
   // Convenience functions for calling TTS, used from scripting subsystem.
 
@@ -98,7 +94,7 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
     true
   }
 
-  private val table = collection.mutable.Map[HandlerDirective, Handler[PayloadType]]()
+  private val table = collection.mutable.Map[Directive, Handler[PayloadType]]()
 
   def register(h:Handler[PayloadType]) = h.directive.foreach { d =>
     table += (d -> h)
@@ -114,7 +110,7 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
 
   private val processingTimes = collection.mutable.ListBuffer[Int]()
 
-  def dispatch(payload:PayloadType, directive:PayloadDirective) = {
+  def dispatch(payload:PayloadType, directive:Directive) = {
 
     val start = System.currentTimeMillis
 
@@ -129,7 +125,7 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
         alreadyCalled ::= h
         val rv = h(payload)
         if(rv)
-          table += HandlerDirective(directive.pkg, directive.cls) -> h
+          table += directive -> h
         rv
       }
     }
@@ -144,7 +140,7 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
     // class.
     def dispatchToExact() = {
       Log.d("spiel", "Exact match dispatch")
-      table.get(HandlerDirective(directive.pkg, directive.cls)).map(dispatchTo(_)).getOrElse(false)
+      table.get(directive).map(dispatchTo(_)).getOrElse(false)
     }
 
     // Now check for just the class name.
@@ -158,10 +154,20 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
     }
 
     // Check Handler superclasses.
-    def dispatchToSubclass() = {
+    def dispatchToSubclass():Boolean = {
+
+      if(directive.cls == All)
+        return false
+
       Log.d("spiel", "Subclass match dispatch")
 
-      val originator = utils.classForName(directive.cls.value, directive.pkg.value)
+      val cls = directive.cls.asInstanceOf[Value].value
+      val pkg = directive.pkg match {
+        case All => ""
+        case Value(v) => v
+      }
+
+      val originator = utils.classForName(cls, pkg)
       originator.flatMap { o =>
         val a = utils.ancestors(o)
         //Log.d("spiel", "Ancestors: "+a.mkString(", "))
@@ -188,9 +194,8 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
     // Now dispatch to the default, catch-all Handler.
     def dispatchToDefault() = {
       Log.d("spiel", "Default dispatch")
-      val handler = table.get(HandlerDirective(All, All))
-      .orElse(table.get(new HandlerDirective("", "")))
-      
+      val handler = table.get(Directive(All, All))
+      .orElse(table.get(new Directive("", "")))
       handler.map { h =>
         if(!alreadyCalled.contains(h))
           h(payload)

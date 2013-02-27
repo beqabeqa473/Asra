@@ -96,8 +96,8 @@ class SpielService extends AccessibilityService {
   override protected def onGesture(id:Int) = {
     val source = Option(getRootInActiveWindow).flatMap(v => Option(v.findFocus(FOCUS_ACCESSIBILITY)))
     val directive = source.map { s =>
-      new PayloadDirective(s.getPackageName.toString, s.getClassName.toString)
-    }.getOrElse(new PayloadDirective("", ""))
+      new Directive(s.getPackageName.toString, s.getClassName.toString)
+    }.getOrElse(new Directive("", ""))
     val gesture = id match {
       case GESTURE_SWIPE_UP => Gesture.Up
       case GESTURE_SWIPE_DOWN => Gesture.Down

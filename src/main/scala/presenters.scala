@@ -63,10 +63,10 @@ case class EventPayload(event:AccessibilityEvent, eventType:Int)
  * Passing a blank string for either indicates events from all packages or all classes.
 */
 
-class Presenter(directive:Option[HandlerDirective] = None) extends Handler[EventPayload](Presenter, directive) {
+class Presenter(directive:Option[Directive] = None) extends Handler[EventPayload](Presenter, directive) {
 
-  def this(pkg:String, cls:String) = this(Some(new HandlerDirective(pkg, cls)))
-  def this(c:String) = this(Some(new HandlerDirective(c)))
+  def this(pkg:String, cls:String) = this(Some(new Directive(pkg, cls)))
+  def this(c:String) = this(Some(new Directive(c)))
 
   import Presenter._
 
@@ -624,7 +624,7 @@ class Presenters {
    * Default catch-all Presenter which catches unresolved <code>AccessibilityEvent</code>s.
   */
 
-  class Default extends Presenter(Some(HandlerDirective(All, All))) {
+  class Default extends Presenter(Some(Directive(All, All))) {
 
     onAnnouncement { e:AccessibilityEvent => speak(e.utterances(addBlank = false, stripBlanks = true)) }
 
@@ -842,9 +842,13 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
     val eType = eventType.getOrElse(e.getEventType)
 
     val payload = EventPayload(e, eType)
-    val directive = new PayloadDirective(
-      Option(e.getPackageName).map(_.toString).getOrElse(""),
-      Option(e.getClassName).map (_.toString).getOrElse("")
+    val directive = Directive(
+      Option(e.getPackageName).map { v =>
+        Value(v.toString)
+      }.getOrElse(All),
+      Option(e.getClassName).map { v =>
+        Value(v.toString)
+      }.getOrElse(All)
     )
 
     try {

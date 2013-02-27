@@ -30,7 +30,7 @@ object Gesture extends Enumeration {
 
 case class GesturePayload(gesture:Gesture.Value, source:Option[AccessibilityNodeInfo])
 
-class Listener(directive:Option[HandlerDirective] = None) extends Handler[GesturePayload](GestureDispatcher, directive) {
+class Listener(directive:Option[Directive] = None) extends Handler[GesturePayload](GestureDispatcher, directive) {
 
   private type Callback = (Option[AccessibilityNodeInfo]) => Boolean
 
@@ -117,7 +117,7 @@ object GestureDispatcher extends Router[GesturePayload] {
 
 class Gestures {
 
-  class Default extends Listener(Some(HandlerDirective(Value(""), Value("")))) {
+  class Default extends Listener(Some(Directive(Value(""), Value("")))) {
 
     private val granularities = List(MOVEMENT_GRANULARITY_CHARACTER, MOVEMENT_GRANULARITY_WORD, MOVEMENT_GRANULARITY_LINE, MOVEMENT_GRANULARITY_PARAGRAPH, MOVEMENT_GRANULARITY_PAGE)
 
