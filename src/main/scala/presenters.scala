@@ -180,11 +180,25 @@ trait GenericButtonPresenter extends Presenter {
 
 object Before extends Presenter {
 
+  private def setAccessibilityFocus(event:AccessibilityEvent) = {
+    event.source.map { n =>  
+      Log.d("spielcheck", "Considering "+n+": "+n.children)
+      if(VERSION.SDK_INT >= 16)
+        if(n.children == Nil && n.performAction(ACTION_ACCESSIBILITY_FOCUS)) {
+          Log.d("spielcheck", "Did it")
+          true
+        } else false
+      else false
+    }.getOrElse(false)
+  }
+
+  onViewFocused { e:AccessibilityEvent => setAccessibilityFocus(e) }
+
   onViewHoverEnter { e:AccessibilityEvent =>
     stopSpeaking()
     if(SystemClock.uptimeMillis-e.getEventTime <= 100)
       shortVibration()
-    false
+    setAccessibilityFocus(e)
   }
 
   onViewHoverExit { e:AccessibilityEvent =>
