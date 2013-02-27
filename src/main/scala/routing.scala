@@ -130,10 +130,10 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
       }
     }
 
-    // Always run this Handler before an event. This cannot block others from executing.
-    def dispatchToBefore() {
+    // Always run this Handler before an event.
+    def dispatchToBefore() = {
       Log.d("spiel", "Before dispatch")
-      before.foreach(_()(payload))
+      before.map(_()(payload)).getOrElse(false)
     }
 
     // Let's check if there's a Presenter for this exact package and 
@@ -204,14 +204,12 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
       }.getOrElse(false)
     }
 
-    def dispatchToAfter() {
+    def dispatchToAfter() = {
       Log.d("spiel", "After dispatch")
-      after.foreach(_()(payload))
+      after.map(_()(payload)).getOrElse(false)
     }
 
-    dispatchToBefore()
-    val rv = dispatchToExact() || dispatchToClass() || dispatchToSubclass() || dispatchToDefault()
-    dispatchToAfter()
+    val rv = dispatchToBefore() || dispatchToExact() || dispatchToClass() || dispatchToSubclass() || dispatchToDefault() || dispatchToAfter()
 
     val elapsed = System.currentTimeMillis-start
     processingTimes += elapsed.toInt

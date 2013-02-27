@@ -178,10 +178,6 @@ trait GenericButtonPresenter extends Presenter {
   }
 }
 
-/**
- * Run before every event. Cannot pre-empt other Presenters.
-*/
-
 object Before extends Presenter {
 
   onViewHoverEnter { e:AccessibilityEvent =>
