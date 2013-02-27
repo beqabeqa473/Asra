@@ -214,8 +214,9 @@ object After extends Presenter {
   onViewClicked { e:AccessibilityEvent =>
     if(VERSION.SDK_INT >= 16)
       e.source.foreach { source =>
-        if(source.findFocus(FOCUS_ACCESSIBILITY) == null)
+        source.find(Focus.Accessibility).getOrElse {
           source.perform(Action.AccessibilityFocus)
+        }
       }
     false
   }

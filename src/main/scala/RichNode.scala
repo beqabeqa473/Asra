@@ -25,6 +25,11 @@ object Action extends Enumeration {
   
 }
 
+object Focus extends Enumeration {
+  val Accessibility = Value(FOCUS_ACCESSIBILITY)
+  val Input = Value(FOCUS_INPUT)
+}
+
 case class RichNode(node:AccessibilityNodeInfo) {
 
   def text = Option(node.getText).map(_.toString)
@@ -156,6 +161,7 @@ case class RichNode(node:AccessibilityNodeInfo) {
   def perform(action:Action.Value, bundle:Bundle) =
     node.performAction(action.id, bundle)
 
+  def find(focus:Focus.Value) = Option(node.findFocus(focus.id))
 
   def nextAccessibilityFocus:Option[AccessibilityNodeInfo] =
     nextVisibleSibling.map(_.firstVisibleLeaf)

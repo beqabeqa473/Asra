@@ -139,7 +139,7 @@ class Gestures {
     private def setInitialFocus() =
       SpielService.rootInActiveWindow.exists { root =>
         val filtered = root.descendants.filter(_.isVisibleToUser)
-        Option(root.findFocus(FOCUS_INPUT)).exists(_.perform(Action.AccessibilityFocus)) ||
+        root.find(Focus.Input).exists(_.perform(Action.AccessibilityFocus)) ||
         filtered.exists(_.perform(Action.AccessibilityFocus)) ||
         filtered.exists(_.perform(Action.Focus))
       }
