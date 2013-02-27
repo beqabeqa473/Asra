@@ -112,7 +112,11 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
     table.filter(_._1.pkg != Value(pkg))
   }
 
+  private val processingTimes = collection.mutable.ListBuffer[Int]()
+
   def dispatch(payload:PayloadType, directive:PayloadDirective) = {
+
+    val start = System.currentTimeMillis
 
     var alreadyCalled:List[Handler[PayloadType]] = Nil
 
@@ -203,6 +207,17 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
     dispatchToBefore()
     val rv = dispatchToExact() || dispatchToClass() || dispatchToSubclass() || dispatchToDefault()
     dispatchToAfter()
+
+    val elapsed = System.currentTimeMillis-start
+    processingTimes += elapsed.toInt
+    if(processingTimes.length >= 1000) {
+      val longest = processingTimes.max
+      val shortest = processingTimes.min
+      val average = processingTimes.sum/processingTimes.length
+      Log.d("spiel", "Router performance for "+this.getClass.getName+": longest = "+longest+", shortest = "+shortest+", average = "+average)
+      processingTimes.clear()
+    }
+
     rv
   }
 

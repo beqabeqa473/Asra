@@ -87,11 +87,19 @@ class Presenter(directive:Option[HandlerDirective] = None) extends Handler[Event
 
   protected def onAnnouncement(c:Callback) = dispatches(dispatchers(TYPE_ANNOUNCEMENT)) = c
 
+  protected def onGestureDetectionEnd(c:Callback) = dispatches(dispatchers(TYPE_GESTURE_DETECTION_END)) = c
+
+  protected def onGestureDetectionStart(c:Callback) = dispatches(dispatchers(TYPE_GESTURE_DETECTION_START)) = c
+
   protected def onNotificationStateChanged(c:Callback) = dispatches(dispatchers(TYPE_NOTIFICATION_STATE_CHANGED)) = c
 
   protected def onTouchExplorationGestureEnd(c:Callback) = dispatches(dispatchers(TYPE_TOUCH_EXPLORATION_GESTURE_END)) = c
 
   protected def onTouchExplorationGestureStart(c:Callback) = dispatches(dispatchers(TYPE_TOUCH_EXPLORATION_GESTURE_START)) = c
+
+  protected def onTouchInteractionEnd(c:Callback) = dispatches(dispatchers(TYPE_TOUCH_INTERACTION_END)) = c
+
+  protected def onTouchInteractionStart(c:Callback) = dispatches(dispatchers(TYPE_TOUCH_INTERACTION_START)) = c
 
   protected def onViewAccessibilityFocusCleared(c:Callback) = dispatches(dispatchers(TYPE_VIEW_ACCESSIBILITY_FOCUS_CLEARED)) = c
 
@@ -804,6 +812,8 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
 
   private[presenters] def process(e:AccessibilityEvent, eventType:Option[Int] = None):Boolean = {
 
+    Log.d("spiel", "Event "+e.toString+"; Activity: "+currentActivity)
+
     if(e == null || e.getClassName == null || e.getPackageName == null)
       return true
 
@@ -815,7 +825,6 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
 
     if(eventType == None) {
       EventReviewQueue(AccessibilityEvent.obtain(e))
-      Log.d("spiel", "Event "+e.toString+"; Activity: "+currentActivity)
       if(e.records != Nil)
         Log.d("spiel", "Records: "+e.records.map(_.toString))
     }
@@ -833,7 +842,10 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
     val eType = eventType.getOrElse(e.getEventType)
 
     val payload = EventPayload(e, eType)
-    val directive = new PayloadDirective(e.getPackageName.toString, e.getClassName.toString)
+    val directive = new PayloadDirective(
+      Option(e.getPackageName).map(_.toString).getOrElse(""),
+      Option(e.getClassName).map (_.toString).getOrElse("")
+    )
 
     try {
       dispatch(payload, directive)
@@ -856,9 +868,13 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
 
   val dispatchers = Map(
     TYPE_ANNOUNCEMENT -> "announcement",
+    TYPE_GESTURE_DETECTION_END -> "gestureDetectionEnd",
+    TYPE_GESTURE_DETECTION_START -> "gestureDetectionStart",
     TYPE_NOTIFICATION_STATE_CHANGED -> "notificationStateChanged",
     TYPE_TOUCH_EXPLORATION_GESTURE_END -> "touchExplorationGestureEnd",
     TYPE_TOUCH_EXPLORATION_GESTURE_START -> "touchExplorationGestureStart",
+    TYPE_TOUCH_INTERACTION_END -> "touchInteractionEnd",
+    TYPE_TOUCH_INTERACTION_START -> "touchInteractionStart",
     TYPE_VIEW_ACCESSIBILITY_FOCUS_CLEARED -> "viewAccessibilityFocusCleared",
     TYPE_VIEW_ACCESSIBILITY_FOCUSED -> "viewAccessibilityFocused",
     TYPE_VIEW_CLICKED -> "viewClicked",
