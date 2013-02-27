@@ -6,6 +6,24 @@ import android.util.Log
 import android.view.accessibility._
 import AccessibilityNodeInfo._
 
+object Action extends Enumeration {
+  val AccessibilityFocus = Value(ACTION_ACCESSIBILITY_FOCUS)
+  val ClearAccessibilityFocus = Value(ACTION_CLEAR_ACCESSIBILITY_FOCUS)
+  val ClearFocus = Value(ACTION_CLEAR_FOCUS)
+  val ClearSelection = Value(ACTION_CLEAR_SELECTION)
+  val Click = Value(ACTION_CLICK)
+  val Focus = Value(ACTION_FOCUS)
+  val LongClick = Value(ACTION_LONG_CLICK)
+  val NextAtMovementGranularity = Value(ACTION_NEXT_AT_MOVEMENT_GRANULARITY)
+  val NextHtmlElement = Value(ACTION_NEXT_HTML_ELEMENT)
+  val PreviousAtMovementGranularity = Value(ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY)
+  val PreviousHtmlElement = Value(ACTION_PREVIOUS_HTML_ELEMENT)
+  val ScrollBackward = Value(ACTION_SCROLL_BACKWARD)
+  val ScrollForward = Value(ACTION_SCROLL_FORWARD)
+  val Select = Value(ACTION_SELECT)
+  
+}
+
 case class RichNode(node:AccessibilityNodeInfo) {
 
   def text = Option(node.getText).map(_.toString)
@@ -128,8 +146,8 @@ case class RichNode(node:AccessibilityNodeInfo) {
     }
   }
 
-  def supports_?(action:Int) =
-    (node.getActions&action) != 0
+  def supports_?(action:Action.Value) =
+    (node.getActions&action.id) != 0
 
   def nextAccessibilityFocus:Option[AccessibilityNodeInfo] =
     nextVisibleSibling.map(_.firstVisibleLeaf)
