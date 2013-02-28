@@ -5,7 +5,7 @@
   <string name="appDescription">Joustava ja skriptattava Android-ruudunlukuohjelma</string>
 
   <string name="sendCommandsLabel">Lähetä komentoja Spielille</string>
-  <string name="sendCommandsDescription">Lähetä puhe- ja muita toimintoja suorittavia komentoja Spiel-ruudunlukuohjelmalle</string>
+  <string name="sendCommandsDescription">Lähetä puhetta ja muita toimintoja suorittavia komentoja Spiel-ruudunlukuohjelmalle</string>
 
   <!-- Initial welcome message-->
   <string name="welcomeMsg">Tervetuloa Spieliin!</string>
@@ -16,9 +16,9 @@
   <string name="screenOff">Näyttö pois käytöstä</string>
   <string name="landscape">Vaaka</string>
   <string name="portrait">Pysty</string>
-  <string name="unlocked">Lukitus avattu.</string>
-  <string name="ringerOff">Soittoääni pois käytöstä.</string>
-  <string name="ringerOn">Soittoääni käytössä.</string>
+  <string name="unlocked">Lukitus avattu</string>
+  <string name="ringerOff">Soittoääni pois käytöstä</string>
+  <string name="ringerOn">Soittoääni käytössä</string>
   <string name="ringerVibrate">Soittoääni: värinä</string>
   <string name="newVoicemail">Uusi vastaajaviesti</string>
 
@@ -72,8 +72,8 @@
   <string name="alertsTitle">Ilmoitukset</string>
   <string name="talkingCallerIDTitle">Lue soittajan tiedot</string>
   <string name="talkingCallerIDSummary">Lukee toistuvasti soittajan tiedot saapuville puheluille</string>
-  <string name="voicemailAlertsTitle">Vastaajaviestit</string>
-  <string name="voicemailAlertsSummary">Ilmoittaa toistuvasti uusista vastaajaviesteistä</string>
+  <string name="voicemailAlertsTitle">Ääniviestit</string>
+  <string name="voicemailAlertsSummary">Ilmoittaa toistuvasti uusista ääniviesteistä</string>
 
   <string name="hapticFeedbackTitle">Haptinen palaute</string>
   <string name="hapticFeedbackSummary">Laite värisee, kun widgetin rajat ylitetään</string>
@@ -115,7 +115,7 @@
   <string name="signup">Rekisteröi</string>
   <string name="script_reload_error">Tämä skripti on virheellinen. Korjaa lokeissa mahdollisesti ilmoitetut virheet ja yritä uudelleen.</string>
   <string name="changes_label">Muutokset (valinnainen):</string>
-  <string name="script_posted">Skripti on lähetetty onnistuneesti. Kiitos panoksestasi.</string>
+  <string name="script_posted">Skripti lähetettiin onnistuneesti. Kiitos panoksestasi.</string>
   <string name="script_posting_error">Tilapäinen verkkovirhe lähetettäessä skriptiä. Yritä myöhemmin uudelleen.</string>
 
   <string name="confirmDelete">Haluatko varmasti poistaa paketin %1$s skriptin?</string>
