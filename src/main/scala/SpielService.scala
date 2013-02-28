@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.accessibility.{AccessibilityEvent, AccessibilityNodeInfo}
 import AccessibilityEvent._
 import AccessibilityNodeInfo._
-import com.nullwire.trace.ExceptionHandler
 
 import events._
 import gestures.{Gesture, GestureDispatcher, GesturePayload}
@@ -31,8 +30,6 @@ class SpielService extends AccessibilityService {
     Preferences(this)
     if(Preferences.profiling)
       Debug.startMethodTracing("spiel")
-    if(Preferences.sendBacktraces)
-      ExceptionHandler.register(this, "http://stacktrace.thewordnerd.info/stacktrace")
     try {
       TTS(this)
     } catch {
