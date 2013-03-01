@@ -303,6 +303,7 @@ class Presenters {
           speak(getString(R.string.listWithItem))
         else if(e.getItemCount > 1)
           speak(getString(R.string.listWithItems, e.getItemCount.toString))
+      nextShouldNotInterrupt()
       true
     }
 
@@ -886,6 +887,7 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
       myNextShouldNotInterrupt = false
     }
 
+    spoke = false
     true
   }
 
