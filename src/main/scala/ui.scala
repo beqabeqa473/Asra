@@ -83,12 +83,11 @@ class Spiel extends Activity with ActionBar.TabListener {
     super.onCreateOptionsMenu(menu)
   }
 
-  override def onOptionsItemSelected(item:MenuItem) = {
-    item.getItemId match {
-      case R.id.settings =>
-        startActivity(new Intent(this, classOf[Settings]))
-    }
-    true
+  override def onOptionsItemSelected(item:MenuItem) = item.getItemId match {
+    case R.id.settings =>
+      startActivity(new Intent(this, classOf[Settings]))
+      true
+    case _ => super.onOptionsItemSelected(item)
   }
 
 }
