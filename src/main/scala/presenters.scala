@@ -881,7 +881,7 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
         Log.e("spiel", "Error in AccessibilityEvent dispatch", e)
     }
 
-    if(spoke && !nextShouldNotInterruptCalled && eventType == None) {
+    if(myNextShouldNotInterrupt && spoke && !nextShouldNotInterruptCalled && eventType == None) {
       Log.d("spiel", "Next event can interrupt speech")
       myNextShouldNotInterrupt = false
     }
