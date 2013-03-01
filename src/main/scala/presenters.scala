@@ -811,9 +811,15 @@ class Presenters {
 
     onWindowContentChanged { e:AccessibilityEvent => true }
 
+    private var lastWindow:AccessibilityNodeInfo = null
+
     onWindowStateChanged { e:AccessibilityEvent =>
-      speak(e.utterances(addBlank = false, stripBlanks = true), true)
-      nextShouldNotInterrupt()
+      if(e.getSource != lastWindow) {
+        speak(e.utterances(addBlank = false, stripBlanks = true), true)
+        lastWindow = e.getSource
+        nextShouldNotInterrupt()
+      }
+      true
     }
 
     byDefault { e:AccessibilityEvent =>
