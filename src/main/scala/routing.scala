@@ -21,6 +21,7 @@ abstract class Handler[PayloadType](router:Router[_], val directive:Option[Direc
 
   def speak(text:String, interrupt:Boolean) = {
     TTS.speak(text, interrupt)
+    router.spoke = true
     true
   }
 
@@ -28,6 +29,7 @@ abstract class Handler[PayloadType](router:Router[_], val directive:Option[Direc
 
   def speak(list:List[String], interrupt:Boolean) = {
     TTS.speak(list, interrupt)
+    router.spoke = true
     true
   }
 
@@ -93,6 +95,8 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
     myNextShouldNotInterrupt = true
     true
   }
+
+  private[spiel] var spoke = false
 
   private val table = collection.mutable.Map[Directive, Handler[PayloadType]]()
 
