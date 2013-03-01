@@ -543,6 +543,22 @@ class Presenters {
     onViewClicked { e:AccessibilityEvent => Presenter.process(e, Some(TYPE_VIEW_FOCUSED)) }
   }
 
+  class TabWidget extends Presenter("android.widget.TabWidget") {
+
+    private def present(e:AccessibilityEvent) = {
+      e.text.headOption.map { t =>
+        speak(getString(R.string.tabWidget, t))
+        speak(getString(R.string.listItem, (e.getCurrentItemIndex+1).toString, e.getItemCount.toString), false)
+        nextShouldNotInterrupt()
+      }.getOrElse(false)
+    }
+
+    onViewFocused { e:AccessibilityEvent => present(e) }
+
+    onViewSelected { e:AccessibilityEvent => present(e) }
+
+  }
+
   class TextView extends Presenter("android.widget.TextView") {
     onViewFocused { e:AccessibilityEvent => speak(e.utterances(stripBlanks=true)) }
   }
@@ -865,7 +881,7 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
         Log.e("spiel", "Error in AccessibilityEvent dispatch", e)
     }
 
-    if(!nextShouldNotInterruptCalled && eventType == None)
+    if(spoke && !nextShouldNotInterruptCalled && eventType == None)
       myNextShouldNotInterrupt = false
 
     true
