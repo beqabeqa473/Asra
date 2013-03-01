@@ -120,7 +120,7 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
 
     var alreadyCalled:List[Handler[PayloadType]] = Nil
 
-    def dispatchTo(h:Handler[PayloadType]):Boolean = {
+    def dispatchTo(h:Handler[PayloadType], cache:Boolean = true):Boolean = {
       if(alreadyCalled.contains(h)) {
         Log.d("spiel", "Already called "+h.getClass.getName+", skipping.")
         false
@@ -128,7 +128,7 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
         Log.d("spiel", "Dispatching to "+h.getClass.getName)
         alreadyCalled ::= h
         val rv = h(payload)
-        if(rv && table.get(directive) == None) {
+        if(rv && table.get(directive) == None && cache) {
           Log.d("spiel", "Caching "+h.getClass.getName)
           table += directive -> h
         }
@@ -202,12 +202,7 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
       Log.d("spiel", "Default dispatch")
       val handler = table.get(Directive(All, All))
       .orElse(table.get(new Directive("", "")))
-      handler.map { h =>
-        if(!alreadyCalled.contains(h))
-          h(payload)
-        else
-          false
-      }.getOrElse(false)
+      handler.map(dispatchTo(_, false)).getOrElse(false)
     }
 
     def dispatchToAfter() = {
