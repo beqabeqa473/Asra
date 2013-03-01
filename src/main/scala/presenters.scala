@@ -293,7 +293,7 @@ class Presenters {
   class AdapterView extends Presenter("android.widget.AdapterView") {
 
     private def focusedOnList(e:AccessibilityEvent) = {
-      val utterances = e.utterances(stripBlanks = true)
+      val utterances = e.utterances(addBlank = false, stripBlanks = true)
       if(utterances != Nil && e.getCurrentItemIndex != -1)
         speak(utterances.mkString(": ") :: getString(R.string.listItem, (e.getCurrentItemIndex+1).toString, e.getItemCount.toString) :: Nil)
       else
