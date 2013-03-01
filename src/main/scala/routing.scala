@@ -124,8 +124,10 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
         Log.d("spiel", "Dispatching to "+h.getClass.getName)
         alreadyCalled ::= h
         val rv = h(payload)
-        if(rv)
+        if(rv) {
+          Log.d("spiel", "Caching "+h.getClass.getName)
           table += directive -> h
+        }
         rv
       }
     }
