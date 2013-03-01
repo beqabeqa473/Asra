@@ -68,10 +68,8 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   def init() {
     guard {
       reinitializing = true
-      if(tts != null) {
+      if(tts != null)
         tts.shutdown()
-        tts = null
-      }
       val desiredEngine = if(failures >= 3 && !spokeSuccessfully)
         platformEngine
       else if(Preferences.speechEngine != "") {
