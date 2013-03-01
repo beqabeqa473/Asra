@@ -20,7 +20,7 @@
   <string name="ringerOff">Soittoääni pois käytöstä</string>
   <string name="ringerOn">Soittoääni käytössä</string>
   <string name="ringerVibrate">Soittoääni: värinä</string>
-  <string name="newVoicemail">Uusi vastaajaviesti</string>
+  <string name="newVoicemail">Uusi ääniviesti</string>
 
   <!-- View names and actions -->
   <string name="button">painike</string>
