@@ -180,21 +180,24 @@ trait GenericButtonPresenter extends Presenter {
 
 object Before extends Presenter {
 
+  onViewAccessibilityFocused { e:AccessibilityEvent => Presenter.process(e, Some(TYPE_VIEW_FOCUSED)) }
+
   private def setAccessibilityFocus(event:AccessibilityEvent) = {
     event.source.map { n =>  
       if(VERSION.SDK_INT >= 16)
-        n.children == Nil && n.perform(Action.AccessibilityFocus)
+        n.children == Nil && !n.isAccessibilityFocused && n.perform(Action.AccessibilityFocus)
       else false
     }.getOrElse(false)
   }
 
-  onViewFocused { e:AccessibilityEvent => setAccessibilityFocus(e) }
+  // onViewFocused { e:AccessibilityEvent => setAccessibilityFocus(e) }
 
   onViewHoverEnter { e:AccessibilityEvent =>
     stopSpeaking()
     if(SystemClock.uptimeMillis-e.getEventTime <= 100)
       shortVibration()
     setAccessibilityFocus(e)
+    true
   }
 
   onViewHoverExit { e:AccessibilityEvent =>
@@ -436,8 +439,6 @@ class Presenters {
       true
     }
 
-    onViewAccessibilityFocused { e:AccessibilityEvent => process(e) }
-
     onViewFocused { e:AccessibilityEvent => process(e) }
 
     onViewHoverEnter { e:AccessibilityEvent => process(e) }
@@ -667,7 +668,7 @@ class Presenters {
 
     onViewClicked { e:AccessibilityEvent => true }
 
-    onViewAccessibilityFocused { e:AccessibilityEvent => Presenter.process(e, Some(TYPE_VIEW_FOCUSED)) }
+    onViewAccessibilityFocused { e:AccessibilityEvent => true }
 
     onViewFocused { e:AccessibilityEvent =>
       val utterances = e.utterances(addBlank=false, stripBlanks=true) match {
