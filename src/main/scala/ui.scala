@@ -213,7 +213,7 @@ class NotificationFiltersPreferenceFragment extends StockPreferenceFragment {
   }
 }
 
-class ScriptsPreferenceFragment extends StockPreferenceFragment with HasScriptPreferences {
+class ScriptsPreferenceFragment extends PreferenceFragment with HasScriptPreferences {
 
   lazy val context = getActivity
 
