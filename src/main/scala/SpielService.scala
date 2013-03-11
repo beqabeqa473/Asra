@@ -107,6 +107,7 @@ class SpielService extends AccessibilityService {
       case GESTURE_SWIPE_RIGHT_AND_LEFT => Gesture.RightLeft
       case GESTURE_SWIPE_LEFT_AND_RIGHT => Gesture.LeftRight
     }
+    TTS.stop()
     try {
       GestureDispatcher.dispatch(GesturePayload(gesture, source), directive)
     } catch {
