@@ -228,6 +228,8 @@ object After extends Presenter {
 
   onViewFocused { e:AccessibilityEvent =>
     e.source.foreach { source =>
+      if(e.utterances(addBlank = false, stripBlanks = true) != Nil && source.getChildCount == 0 && source.interactive_? && !e.isEnabled)
+        speak(getString(R.string.disabled), false)
       val all = source :: source.ancestors
       var counter = -1
       all.map { n =>
@@ -246,8 +248,6 @@ object After extends Presenter {
           speak(getString(R.string.listItem, position.toString, total.toString), false)
         }
       }
-      if(e.utterances(addBlank = false, stripBlanks = true) != Nil && source.getChildCount == 0 && source.interactive_? && !e.isEnabled)
-        speak(getString(R.string.disabled), false)
     }
     false
   }
