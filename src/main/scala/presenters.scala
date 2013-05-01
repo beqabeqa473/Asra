@@ -345,9 +345,9 @@ class Presenters {
 
     onViewClicked { e:AccessibilityEvent =>
       if(e.isChecked)
-        speak(getString(R.string.checked))
+        speak(getString(R.string.checked), true)
       else
-        speak(getString(R.string.notChecked))
+        speak(getString(R.string.notChecked), true)
     }
 
     onViewFocused { e:AccessibilityEvent =>
