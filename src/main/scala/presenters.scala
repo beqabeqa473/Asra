@@ -657,7 +657,12 @@ class Presenters {
       val utterances = e.utterances(addBlank=false, stripBlanks=true)
       if(!utterances.isEmpty) {
         nextShouldNotInterrupt()
-        speakNotification(utterances)
+        if(VERSION.SDK_INT >= 16)
+          e.source.filter(_.isVisibleToUser).map { source =>
+            speakNotification(utterances)
+          }.getOrElse(speakNotification(utterances))
+        else
+          speakNotification(utterances)
       }
       true
     }
