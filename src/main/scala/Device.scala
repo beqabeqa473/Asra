@@ -6,6 +6,7 @@ import java.util.Date
 import android.content._
 import android.media._
 import android.os._
+import Build.VERSION
 import android.text.format.DateFormat
 
 import events._
@@ -111,7 +112,7 @@ object Device {
   }
 
   Unlocked += {
-    if(locked) {
+    if(VERSION.SDK_INT < 16 && locked) {
       TTS.speak(SpielService.context.getString(R.string.unlocked), false)
       presenters.Presenter.nextShouldNotInterrupt
       locked = false
