@@ -651,7 +651,10 @@ class Presenters {
 
   class Default extends Presenter(Some(Directive(All, All))) {
 
-    onAnnouncement { e:AccessibilityEvent => speak(e.utterances(addBlank = false, stripBlanks = true)) }
+    onAnnouncement { e:AccessibilityEvent =>
+      speak(e.utterances(addBlank = false, stripBlanks = true), false)
+      nextShouldNotInterrupt()
+    }
 
     onNotificationStateChanged { e:AccessibilityEvent =>
       val utterances = e.utterances(addBlank=false, stripBlanks=true)
