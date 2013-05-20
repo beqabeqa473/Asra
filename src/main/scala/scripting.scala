@@ -36,7 +36,7 @@ class RhinoCallback(f:Function) extends Callback {
       Scripter.global.put("__pkg__", Scripter.global, e.getPackageName)
       Context.toBoolean(f.call(cx, Scripter.global, Scripter.global, args))
     } catch {
-      case e =>
+      case e:Throwable =>
         TTS.speak("Script error: "+e.getMessage, true)
         Log.e("spiel", "Error running script: "+e.getMessage)
         false
@@ -108,7 +108,7 @@ class Script(
       successfullyRan = true
     } catch {
       case e:RhinoException => Log.e("spiel", "Error running script: "+e.getMessage)
-      case e => Log.e("spiel", e.toString)
+      case e:Throwable => Log.e("spiel", e.toString)
     }finally {
       scope.put("__pkg__", scope, null)
       Scripter.script = None
@@ -150,8 +150,6 @@ class Script(
     }
 
     presenters ::= p
-
-    p
   }
 
   def save() {
@@ -234,7 +232,7 @@ object Script {
       val pm = c.getPackageManager
       pm.getApplicationInfo(pkg, 0).loadLabel(pm).toString
     } catch {
-      case _ => pkg
+      case _:Throwable => pkg
     }
   }
 
@@ -445,7 +443,7 @@ object Scripter {
       writer.close()
       Some(scriptsDir+"/"+file.getName)
     } catch {
-      case e =>
+      case e:Throwable =>
         Log.e("spiel", "Error writing script template", e)
         None
     }
