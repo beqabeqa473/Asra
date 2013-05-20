@@ -10,7 +10,7 @@ package object utils {
     cls.getDeclaredClasses.foreach { cls =>
       try {
         Option(cls.getConstructor(c.getClass)).foreach(_.newInstance(c))
-      } catch { case _ => }
+      } catch { case _:Throwable => }
     }
   }
 
@@ -38,9 +38,9 @@ package object utils {
           classes += (cls, pkg) -> rv
           Some(rv)
         } catch {
-          case _ => None
+          case _:Throwable => None
         }
-        case _ => None
+        case _:Throwable => None
       }
     }
   }
