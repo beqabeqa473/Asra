@@ -111,7 +111,7 @@ class SpielService extends AccessibilityService {
     try {
       GestureDispatcher.dispatch(GesturePayload(gesture, source), directive)
     } catch {
-      case e =>
+      case e:Throwable =>
         Log.e("spiel", "Error in gesture dispatch", e)
         false
     }
