@@ -28,7 +28,7 @@ object Sensors extends SensorEventListener {
   // This may need tweaking, but this seems like a good value for an intentional shake.
   private val shakerThreshold = 1.2
 
-  def onSensorChanged(e:SensorEvent) = Option(e.sensor) match {
+  def onSensorChanged(e:SensorEvent) = e.sensor match {
     case Accelerometer =>
       val netForce = math.sqrt(math.pow(e.values(0)/SensorManager.GRAVITY_EARTH, 2)
       +math.pow(e.values(1)/SensorManager.GRAVITY_EARTH, 2)
