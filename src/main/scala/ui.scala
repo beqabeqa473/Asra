@@ -201,7 +201,7 @@ class NotificationFiltersPreferenceFragment extends StockPreferenceFragment {
         (pkg.packageName, try {
           pm.getApplicationInfo(pkg.packageName, 0).loadLabel(pm).toString
         } catch {
-          case _ => pkg.packageName
+          case _:Throwable => pkg.packageName
         })
       }.sortWith((v1, v2) => v1._2 < v2._2)
       getActivity.runOnUiThread(new Runnable { def run() {
@@ -553,7 +553,7 @@ class Scripts extends Fragment with Refreshable with RadioGroup.OnCheckedChangeL
       case e:scripting.AuthorizationFailed =>
         Preferences.bazaarPassword = ""
         (new CredentialsDialog).show(getFragmentManager, "credentials")
-      case e =>
+      case e:Throwable =>
         scriptToPost = None
         dialog.setMessage(getString(R.string.script_posting_error))
         dialog.show()
