@@ -13,6 +13,9 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 
 import com.ning.http.client._
+import dispatch._
+import Defaults._
+import org.json4s._
 import org.mozilla.javascript.{Callable, Context, ContextFactory, Function, RhinoException, ScriptableObject}
 
 import events._
@@ -657,10 +660,6 @@ import actors.Actor._
 
 import android.content.pm.PackageManager
 import android.database.MatrixCursor
-import dispatch._
-import dispatch.as.json4s
-import org.json4s._
-import org.json4s.native._
 
 class AuthorizationFailed extends Exception
 

@@ -12,7 +12,7 @@ name := "Spiel"
 
 version := "3.0.0-SNAPSHOT"
 
-scalaVersion := "2.9.2"
+scalaVersion := "2.10.1"
 
 scalacOptions ++= Seq("-deprecation")
 
@@ -31,9 +31,9 @@ resolvers ++= Seq(
 )
 
 libraryDependencies := Seq(
+  "org.scala-lang" % "scala-actors" % "2.10.1",
   "rhino" % "js" % "1.7R2" from "http://android-scripting.googlecode.com/hg/rhino/rhino1_7R2.jar",
-  "com.ning" % "async-http-client" % "1.7.11" force(),
-  "net.databinder.dispatch" % "json4s-native_2.9.1" % "0.9.5",
+  "net.databinder.dispatch" %% "dispatch-json4s-native" % "0.10.0",
   "org.ccil.cowan.tagsoup" % "tagsoup" % "1.2.1",
   "ch.acra" % "acra" % "4.4.0"
 )
