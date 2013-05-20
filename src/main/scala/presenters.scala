@@ -622,7 +622,7 @@ class Presenters {
       try {
         recurse(x.descendant)
       } catch {
-        case e =>
+        case e:Throwable =>
           Log.e("spiel", "Error parsing HTML", e)
           Nil
       }
@@ -761,7 +761,7 @@ class Presenters {
             val selection = try {
               t.subSequence(from, to).toString
             } catch {
-              case e =>
+              case e:Throwable =>
                 Log.d("spiel", "Error determining selection", e)
                 ""
             }
@@ -782,7 +782,7 @@ class Presenters {
                   text.subSequence(to, math.min(osf, text.length-1))
                 ).toString
               } catch {
-                case _ => selection
+                case _:Throwable => selection
               }
               if(interval.contains("\n")) {
                 val ending = t.subSequence(from, t.length).toString
@@ -893,7 +893,7 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
     try {
       dispatch(payload, directive)
     } catch {
-      case e =>
+      case e:Throwable =>
         Log.e("spiel", "Error in AccessibilityEvent dispatch", e)
     }
 
