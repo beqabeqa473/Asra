@@ -9,6 +9,7 @@ import java.util.Collections
 
 import collection.JavaConversions._
 import collection.mutable.ListBuffer
+import reflect._
 
 import android.content.Context
 import android.util.Log
@@ -35,14 +36,14 @@ object PluginManager {
         }.toList
       }.toList.flatten
     } catch {
-      case e =>
+      case e:Throwable =>
         Log.d("spielcheck", "Automatic plugin loading failed", e)
         Nil
     }
     plugins ++= foundPlugins.map(_.newInstance().asInstanceOf[Plugin])
   }
 
-  def plugin[T <: Plugin:ClassManifest]:List[T] =
-    plugins.filter(classManifest[T].erasure.isInstance(_)).toList.asInstanceOf[List[T]]
+  def plugin[T <: Plugin:ClassTag]:List[T] =
+    plugins.filter(classTag[T].runtimeClass.isInstance(_)).toList.asInstanceOf[List[T]]
 
 }
