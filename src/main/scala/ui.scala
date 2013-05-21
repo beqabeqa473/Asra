@@ -1,8 +1,9 @@
 package info.spielproject.spiel
 package ui
 
-import actors.Actor.actor
 import collection.JavaConversions._
+import concurrent._
+import ExecutionContext.Implicits.global
 
 import android.app._
 import android.bluetooth._
@@ -193,7 +194,7 @@ class NotificationFiltersPreferenceFragment extends StockPreferenceFragment {
   override def onCreate(b:Bundle) {
     super.onCreate(b)
     val pm = getActivity.getPackageManager
-    actor {
+    future {
       val notificationFilters = findPreference("notificationFilters").asInstanceOf[MultiSelectListPreference]
       notificationFilters.setShouldDisableView(true)
       notificationFilters.setEnabled(false)
