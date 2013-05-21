@@ -18,7 +18,7 @@ package object spiel {
         try {
           f(c, i)
         } catch {
-          case e =>
+          case e:Throwable =>
             Log.e("spiel", "Error receiving broadcast", e)
         }
       }
