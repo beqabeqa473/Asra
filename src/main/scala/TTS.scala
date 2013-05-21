@@ -1,8 +1,8 @@
 package info.spielproject.spiel
 
-import actors._
-import Actor._
 import collection.JavaConversions._
+import concurrent._
+import ExecutionContext.Implicits.global
 
 import android.app._
 import android.content._
@@ -183,7 +183,7 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
       audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
     UtteranceStarted(utterances.get(id))
     repeatedSpeech.get(id).foreach { v =>
-      actor {
+      future {
         Thread.sleep(v._1*1000)
         performRepeatedSpeech(id)
       }
@@ -252,7 +252,7 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   }
 
   def guard(f: => Int) {
-    Futures.future {
+    future {
       try {
         if(f == TextToSpeech.SUCCESS)
           failures = 0
@@ -390,7 +390,7 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   def stopRepeatedSpeech(key:String) = repeatedSpeech -= key
 
   private def performRepeatedSpeech(key:String):Unit = repeatedSpeech.get(key) match {
-    case Some(v) if(!shouldSpeakNotification(true)) => actor {
+    case Some(v) if(!shouldSpeakNotification(true)) => future {
       Thread.sleep(v._1*1000)
       performRepeatedSpeech(key)
     }
