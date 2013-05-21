@@ -653,8 +653,7 @@ class Provider extends ContentProvider with AbstractProvider {
   }
 
 }
-
-import actors.Actor._
+import concurrent._
 
 import android.content.pm.PackageManager
 import android.database.MatrixCursor
@@ -752,7 +751,7 @@ object BazaarProvider {
   private var _newOrUpdatedScripts:List[Script] = Nil
   def newOrUpdatedScripts = _newOrUpdatedScripts
 
-  def checkRemoteScripts() = actor {
+  def checkRemoteScripts() = future {
     val installedPackages = utils.installedPackages.map { i => i.packageName }
     val userPackages = Scripter.userScripts.map(_.pkg)
     val packages = installedPackages.filterNot(userPackages.contains(_))
