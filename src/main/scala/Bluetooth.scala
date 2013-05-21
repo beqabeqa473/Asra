@@ -86,7 +86,7 @@ object Bluetooth extends BluetoothProfile.ServiceListener {
       try {
         SpielService.context.unregisterReceiver(this)
       } catch {
-        case _ =>
+        case _:Throwable =>
       }
     }
 
