@@ -1,6 +1,7 @@
 package info.spielproject.spiel
 
-import actors.Actor._
+import concurrent._
+import ExecutionContext.Implicits.global
 
 import android.bluetooth._
 import android.content._
@@ -24,7 +25,7 @@ object Bluetooth extends BluetoothProfile.ServiceListener {
   BluetoothConnected += { i:Intent =>
     val device = i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE).asInstanceOf[BluetoothDevice]
     device.getBluetoothClass.getDeviceClass match {
-      case BluetoothClass.Device.AUDIO_VIDEO_WEARABLE_HEADSET => actor {
+      case BluetoothClass.Device.AUDIO_VIDEO_WEARABLE_HEADSET => future {
         Thread.sleep(3000)
         val isSCO = a2dp.map(!_.getConnectedDevices.contains(device)).getOrElse(true)
         if(isSCO)
@@ -145,7 +146,7 @@ object Bluetooth extends BluetoothProfile.ServiceListener {
 
   def reconnectSCOIfNecessary() {
     if(usingSco) {
-      actor {
+      future {
         // Wait until dialer sets audio mode so we can alter it for SCO reconnection.
         Thread.sleep(1000)
         btReceiver.foreach(_.connect())
