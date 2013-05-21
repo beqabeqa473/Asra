@@ -14,7 +14,7 @@ version := "3.0.0-SNAPSHOT"
 
 scalaVersion := "2.10.1"
 
-scalacOptions ++= Seq("-deprecation")
+scalacOptions ++= Seq("-deprecation", "-feature", "-language:implicitConversions")
 
 platformName in Android := "android-17"
 
