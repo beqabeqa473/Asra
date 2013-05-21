@@ -31,7 +31,6 @@ resolvers ++= Seq(
 )
 
 libraryDependencies := Seq(
-  "org.scala-lang" % "scala-actors" % "2.10.1",
   "rhino" % "js" % "1.7R2" from "http://android-scripting.googlecode.com/hg/rhino/rhino1_7R2.jar",
   "net.databinder.dispatch" %% "dispatch-json4s-native" % "0.10.0",
   "org.ccil.cowan.tagsoup" % "tagsoup" % "1.2.1",
