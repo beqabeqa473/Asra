@@ -81,7 +81,7 @@ class SpielService extends AccessibilityService {
 
   override def onAccessibilityEvent(event:AccessibilityEvent) {
     if(!SpielService.enabled) return
-    AccessibilityEventReceived(event)
+    AccessibilityEventReceived(AccessibilityEvent.obtain(event))
   }
 
   override protected def onGesture(id:Int) = {
