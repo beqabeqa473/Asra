@@ -2,6 +2,8 @@ package info.spielproject.spiel
 package events
 
 import collection.mutable.ListBuffer
+import concurrent._
+import ExecutionContext.Implicits.global
 
 import android.content._
 import android.util.Log
@@ -35,7 +37,8 @@ class Event[T] {
   def -=(h: => Any) =
     remove(h)
 
-  def apply(arg:T) = handlers.foreach(_(arg))
+  def apply(arg:T) =
+    handlers.foreach { h => future(h(arg)) }
 
   def on(intents:List[String], arg:T, dataScheme:Option[String] = None):Any = {
     val f = new IntentFilter
