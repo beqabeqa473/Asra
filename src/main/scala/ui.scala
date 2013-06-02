@@ -18,6 +18,7 @@ import android.view._
 import android.view.accessibility._
 import android.widget._
 import org.droidparts.preference.MultiSelectListPreference
+import org.scaloid.common.{Preferences => _, _}
 
 import presenters._
 import scripting._
@@ -27,10 +28,9 @@ import triggers.Triggers
  * Activity that serves as a host for other tabs.
 */
 
-class Spiel extends Activity with ActionBar.TabListener {
+class Spiel extends SActivity with ActionBar.TabListener {
 
-  override def onCreate(bundle:Bundle) {
-    super.onCreate(bundle)
+  onCreate {
 
     val bar = getActionBar
     bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS)
@@ -43,8 +43,7 @@ class Spiel extends Activity with ActionBar.TabListener {
 
   }
 
-  override def onResume() {
-    super.onResume()
+  onResume {
     handleCustomUri()
   }
 
