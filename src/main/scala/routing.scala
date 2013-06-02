@@ -98,7 +98,7 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
 
   private[spiel] var spoke = false
 
-  private val table = collection.mutable.Map[Directive, Handler[PayloadType]]()
+  private val table = collection.mutable.Map[Directive, Handler[PayloadType]]().par
 
   def register(h:Handler[PayloadType]) = h.directive.foreach { d =>
     table += (d -> h)
