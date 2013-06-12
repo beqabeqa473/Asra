@@ -98,7 +98,7 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
 
   private[spiel] var spoke = false
 
-  private val table = collection.mutable.Map[Directive, Handler[PayloadType]]().par
+  private val table = collection.mutable.Map[Directive, Handler[PayloadType]]()
 
   def register(h:Handler[PayloadType]) = h.directive.foreach { d =>
     table += (d -> h)
@@ -111,8 +111,6 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
   def unregisterPackage(pkg:String) = {
     table.filter(_._1.pkg != Value(pkg))
   }
-
-  private val processingTimes = collection.mutable.ListBuffer[Int]()
 
   def dispatch(payload:PayloadType, directive:Directive) = {
 
@@ -212,16 +210,6 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
 
     val rv = dispatchToBefore() || dispatchToExact() || dispatchToClass() || dispatchToSubclass() || dispatchToDefault()
     dispatchToAfter()
-
-    val elapsed = System.currentTimeMillis-start
-    processingTimes += elapsed.toInt
-    if(processingTimes.length >= 100) {
-      val longest = processingTimes.max
-      val shortest = processingTimes.min
-      val average = processingTimes.sum/processingTimes.length
-      Log.d("spiel", "Router performance for "+this.getClass.getName+": longest = "+longest+", shortest = "+shortest+", average = "+average)
-      processingTimes.clear()
-    }
 
     rv
   }
