@@ -114,8 +114,6 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
 
   def dispatch(payload:PayloadType, directive:Directive) = {
 
-    val start = System.currentTimeMillis
-
     var alreadyCalled:List[Handler[PayloadType]] = Nil
 
     def dispatchTo(h:Handler[PayloadType], cache:Boolean = true):Boolean = {
