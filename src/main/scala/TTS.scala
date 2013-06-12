@@ -164,6 +164,7 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
       case e:Throwable =>
         if(!reinitializing)
           failures += 1
+        UnhandledException(e)
         Log.e("spiel", "TTS error:", e)
         if(failures >= 3)
           reInitOnFailure()
@@ -266,6 +267,7 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
           abandonFocus()
           if(!reinitializing)
             failures += 1
+          UnhandledException(e)
           Log.e("spiel", "TTS error:", e)
       } finally {
         if(failures >= 3)
