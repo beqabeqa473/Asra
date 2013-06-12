@@ -37,8 +37,16 @@ class Event[T] {
   def -=(h: => Any) =
     remove(h)
 
-  def apply(arg:T) =
-    handlers.foreach { h => future(h(arg)) }
+  def apply(arg:T) {
+    handlers.foreach { h =>
+      val f = future(h(arg))
+      f.onFailure { 
+        case t =>
+          Log.e("spiel", "Error handling event", t)
+          UnhandledException(t)
+      }
+    }
+  }
 
   def on(intents:List[String], arg:T, dataScheme:Option[String] = None):Any = {
     val f = new IntentFilter
@@ -131,7 +139,7 @@ object ShakingStopped extends Event[Unit]
 
 object TTSEngineChanged extends Event[Unit]
 
-object UnhandledException extends Event[Exception]
+object UnhandledException extends Event[Throwable]
 
 object Unlocked extends Event[Unit]
 
