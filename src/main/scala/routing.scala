@@ -5,6 +5,8 @@ import android.content.Context
 import android.os.Vibrator
 import android.util.Log
 
+import events._
+
 sealed trait Component
 
 case object All extends Component
@@ -123,12 +125,19 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
       } else {
         Log.d("spiel", "Dispatching to "+h.getClass.getName)
         alreadyCalled ::= h
-        val rv = h(payload)
-        if(rv && table.get(directive) == None && cache) {
-          Log.d("spiel", "Caching "+h.getClass.getName)
-          table += directive -> h
+        try {
+          val rv = h(payload)
+          if(rv && table.get(directive) == None && cache) {
+            Log.d("spiel", "Caching "+h.getClass.getName)
+            table += directive -> h
+          }
+          rv
+        } catch {
+          case t:Throwable =>
+            UnhandledException(t)
+            Log.e("spiel", "Error routing payload", t)
+            false
         }
-        rv
       }
     }
 
