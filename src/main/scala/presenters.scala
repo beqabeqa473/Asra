@@ -184,20 +184,20 @@ object Before extends Presenter {
 
   private def setAccessibilityFocus(event:AccessibilityEvent) = {
     event.source.map { n =>  
-      if(VERSION.SDK_INT >= 16)
-        n.children == Nil && !n.isAccessibilityFocused && n.perform(Action.AccessibilityFocus)
-      else false
+      if(VERSION.SDK_INT >= 16) {
+        if(n.isAccessibilityFocused)
+          n.perform(Action.ClearAccessibilityFocus)
+        n.children == Nil && n.perform(Action.AccessibilityFocus)
+      } else false
     }.getOrElse(false)
   }
-
-  // onViewFocused { e:AccessibilityEvent => setAccessibilityFocus(e) }
 
   onViewHoverEnter { e:AccessibilityEvent =>
     stopSpeaking()
     if(SystemClock.uptimeMillis-e.getEventTime <= 100)
       shortVibration()
     setAccessibilityFocus(e)
-    true
+    false
   }
 
   onViewHoverExit { e:AccessibilityEvent =>
@@ -288,8 +288,6 @@ class Presenters {
     onViewFocused { e:AccessibilityEvent =>
       speak(e.utterances(stripBlanks=true) ::: (getString(R.string.menuItem) :: Nil))
     }
-
-    onViewHoverEnter { e:AccessibilityEvent => Presenter.process(e, Some(TYPE_VIEW_FOCUSED)) }
 
   }
 
@@ -678,6 +676,8 @@ class Presenters {
 
     onViewAccessibilityFocused { e:AccessibilityEvent => true }
 
+    onViewAccessibilityFocusCleared { e:AccessibilityEvent => true }
+
     onViewFocused { e:AccessibilityEvent =>
       val utterances = e.utterances(addBlank=false, stripBlanks=true) match {
         case Nil if(e.getEventType != TYPE_VIEW_HOVER_ENTER) => 
@@ -692,8 +692,6 @@ class Presenters {
         speak(utterances)
       true
     }
-
-    onViewHoverEnter { e:AccessibilityEvent => Presenter.process(e, Some(TYPE_VIEW_FOCUSED)) }
 
     onViewHoverExit { e:AccessibilityEvent => true }
 
