@@ -699,10 +699,7 @@ class Presenters {
 
     onViewScrolled { e:AccessibilityEvent =>
       val utterances = e.utterances(addBlank=false, stripBlanks=true)
-      if(!utterances.isEmpty) {
-        speak(utterances)
-        nextShouldNotInterrupt()
-      } else if(e.getMaxScrollX != -1 || e.getMaxScrollY != -1) {
+      if(e.getMaxScrollX != -1 || e.getMaxScrollY != -1) {
         var percent = 0d
         if(e.getMaxScrollX > 0 && e.getMaxScrollY == 0)
           percent = e.getScrollX.toFloat/e.getMaxScrollX
@@ -711,6 +708,9 @@ class Presenters {
         percent = percent*100
         if(percent > 0)
           TTS.presentPercentage(percent)
+      } else if(!utterances.isEmpty) {
+        speak(utterances)
+        nextShouldNotInterrupt()
       }
       true
     }
