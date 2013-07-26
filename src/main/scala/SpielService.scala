@@ -77,8 +77,6 @@ class SpielService extends AccessibilityService {
 
   override def onInterrupt = TTS.stop
 
-  private var accessibilityFocusCandidate:Option[AccessibilityNodeInfo] = None
-
   override def onAccessibilityEvent(event:AccessibilityEvent) {
     if(!SpielService.enabled) return
     AccessibilityEventReceived(AccessibilityEvent.obtain(event))
