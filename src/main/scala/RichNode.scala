@@ -42,13 +42,13 @@ case class RichNode(node:AccessibilityNodeInfo) {
 
   def nonEmptyContentDescription = contentDescription.filterNot(_.isEmpty)
 
-  lazy val parent = Option(node.getParent)
+  def parent = Option(node.getParent)
 
-  lazy val ancestors:List[AccessibilityNodeInfo] = parent.map { p =>
+  def ancestors:List[AccessibilityNodeInfo] = parent.map { p =>
     p :: p.ancestors
   }.getOrElse(Nil)
 
-  lazy val root = {
+  def root = {
     lazy val r = ancestors match {
       case Nil => node
       case v => v.reverse.head
@@ -100,10 +100,10 @@ case class RichNode(node:AccessibilityNodeInfo) {
     c.descendants
   }.flatten
 
-  lazy val interactive_? =
+  def interactive_? =
     node.isCheckable || node.isClickable || node.isLongClickable || node.isFocusable
 
-  lazy val rect = {
+  def rect = {
     val r = new Rect()
     node.getBoundsInScreen(r)
     r
@@ -117,7 +117,7 @@ case class RichNode(node:AccessibilityNodeInfo) {
     descendants.filter(_.rect.intersect(origin)).sortBy(_.rect.left)
   }
 
-  lazy val classAncestors = {
+  def classAncestors = {
     val nodeClass = utils.classForName(node.getClassName.toString, node.getPackageName.toString)
     nodeClass.map(utils.ancestors(_).map(_.getName)).getOrElse(Nil)
   }
