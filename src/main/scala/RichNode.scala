@@ -7,27 +7,38 @@ import android.util.Log
 import android.view.accessibility._
 import AccessibilityNodeInfo._
 
-object Action extends Enumeration {
-  val AccessibilityFocus = Value(ACTION_ACCESSIBILITY_FOCUS)
-  val ClearAccessibilityFocus = Value(ACTION_CLEAR_ACCESSIBILITY_FOCUS)
-  val ClearFocus = Value(ACTION_CLEAR_FOCUS)
-  val ClearSelection = Value(ACTION_CLEAR_SELECTION)
-  val Click = Value(ACTION_CLICK)
-  val Focus = Value(ACTION_FOCUS)
-  val LongClick = Value(ACTION_LONG_CLICK)
-  val NextAtMovementGranularity = Value(ACTION_NEXT_AT_MOVEMENT_GRANULARITY)
-  val NextHtmlElement = Value(ACTION_NEXT_HTML_ELEMENT)
-  val PreviousAtMovementGranularity = Value(ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY)
-  val PreviousHtmlElement = Value(ACTION_PREVIOUS_HTML_ELEMENT)
-  val ScrollBackward = Value(ACTION_SCROLL_BACKWARD)
-  val ScrollForward = Value(ACTION_SCROLL_FORWARD)
-  val Select = Value(ACTION_SELECT)
-  
+case class Action(val id:Int)
+
+object Action {
+  val AccessibilityFocus = Action(ACTION_ACCESSIBILITY_FOCUS)
+  val ClearAccessibilityFocus = Action(ACTION_CLEAR_ACCESSIBILITY_FOCUS)
+  val ClearFocus = Action(ACTION_CLEAR_FOCUS)
+  val ClearSelection = Action(ACTION_CLEAR_SELECTION)
+  val Click = Action(ACTION_CLICK)
+  val Focus = Action(ACTION_FOCUS)
+  val LongClick = Action(ACTION_LONG_CLICK)
+  val NextAtMovementGranularity = Action(ACTION_NEXT_AT_MOVEMENT_GRANULARITY)
+  val NextHtmlElement = Action(ACTION_NEXT_HTML_ELEMENT)
+  val PreviousAtMovementGranularity = Action(ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY)
+  val PreviousHtmlElement = Action(ACTION_PREVIOUS_HTML_ELEMENT)
+  val ScrollBackward = Action(ACTION_SCROLL_BACKWARD)
+  val ScrollForward = Action(ACTION_SCROLL_FORWARD)
+  val Select = Action(ACTION_SELECT)
 }
 
 object Focus extends Enumeration {
   val Accessibility = Value(FOCUS_ACCESSIBILITY)
   val Input = Value(FOCUS_INPUT)
+}
+
+case class Granularity(val id:Int)
+
+object Granularity {
+  val Character = Granularity(MOVEMENT_GRANULARITY_CHARACTER)
+  val Line = Granularity(MOVEMENT_GRANULARITY_LINE)
+  val Page = Granularity(MOVEMENT_GRANULARITY_PAGE)
+  val Paragraph = Granularity(MOVEMENT_GRANULARITY_PARAGRAPH)
+  val Word = Granularity(MOVEMENT_GRANULARITY_WORD)
 }
 
 case class RichNode(node:AccessibilityNodeInfo) {
@@ -152,13 +163,16 @@ case class RichNode(node:AccessibilityNodeInfo) {
     }
   }
 
-  def supports_?(action:Action.Value) =
+  def supports_?(action:Action) =
     (node.getActions&action.id) != 0
 
-  def perform(action:Action.Value) =
+  def supports_?(granularity:Granularity) =
+    (node.getMovementGranularities&granularity.id) != 0
+
+  def perform(action:Action) =
     node.performAction(action.id)
 
-  def perform(action:Action.Value, bundle:Bundle) =
+  def perform(action:Action, bundle:Bundle) =
     node.performAction(action.id, bundle)
 
   def find(focus:Focus.Value) = Option(node.findFocus(focus.id))
