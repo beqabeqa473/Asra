@@ -12,7 +12,7 @@ name := "Spiel"
 
 version := "3.0.0-SNAPSHOT"
 
-scalaVersion := "2.10.1"
+scalaVersion := "2.10.2"
 
 scalacOptions ++= Seq("-deprecation", "-feature", "-language:implicitConversions", "-target:jvm-1.6")
 
