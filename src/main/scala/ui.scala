@@ -407,18 +407,15 @@ class Scripts extends Fragment with Refreshable with RadioGroup.OnCheckedChangeL
             .setMessage(getString(R.string.scriptCopied, filename))
             .setPositiveButton(getString(android.R.string.ok), null)
             .show()
-            
           }
         case R.id.delete =>
           script.foreach { s =>
             new AlertDialog.Builder(getActivity)
             .setMessage(getString(R.string.confirmDelete, s.pkg))
-            .setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener {
-              def onClick(i:DialogInterface, what:Int) {
-                getActivity.getContentResolver.delete(uri, null, null)
-                s.uninstall()
-                refreshSystem()
-              }
+            .setPositiveButton(getString(android.R.string.yes), {
+              getActivity.getContentResolver.delete(uri, null, null)
+              s.uninstall()
+              refreshSystem()
             })
             .setNegativeButton(getString(android.R.string.no), null)
             .show()
@@ -447,12 +444,10 @@ class Scripts extends Fragment with Refreshable with RadioGroup.OnCheckedChangeL
         case R.id.delete =>
           new AlertDialog.Builder(getActivity)
           .setMessage(getString(R.string.confirmDelete, script.pkg))
-          .setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener {
-            def onClick(i:DialogInterface, what:Int) {
-              script.delete()
-              script.uninstall()
-              refreshUser()
-            }
+          .setPositiveButton(getString(android.R.string.yes), {
+            script.delete()
+            script.uninstall()
+            refreshUser()
           })
           .setNegativeButton(getString(android.R.string.no), null)
           .show()
