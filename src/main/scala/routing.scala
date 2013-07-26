@@ -181,7 +181,7 @@ class Router[PayloadType](before:Option[() => Handler[PayloadType]] = None, afte
       val originator = utils.classForName(cls, pkg)
       originator.flatMap { o =>
         val a = utils.ancestors(o)
-        //Log.d("spiel", "Ancestors: "+a.mkString(", "))
+        Log.d("spiel", "Ancestors: "+a.mkString(", "))
         val candidates = table.filter { h =>
           h._1.pkg == All && h._1.cls != All && h._1.cls != Value("")
         }.toList.map { h =>
