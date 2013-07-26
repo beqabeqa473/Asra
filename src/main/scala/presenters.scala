@@ -853,7 +853,7 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
 
     Log.d("spiel", "Event "+e.toString+"; Activity: "+currentActivity)
 
-    if(e == null || e.getClassName == null || e.getPackageName == null)
+    if(e == null)
       return true
 
     if(
