@@ -1,16 +1,12 @@
-import AndroidKeys._
+import sbtandroid._
 
-AndroidProject.androidSettings
-
-AndroidMarketPublish.settings
-
-site.settings
-
-site.sphinxSupport()
+androidDefaults
 
 name := "Spiel"
 
 version := "3.0.0-SNAPSHOT"
+
+versionCode := 13
 
 scalaVersion := "2.10.2"
 
@@ -18,15 +14,15 @@ scalacOptions ++= Seq("-deprecation", "-feature", "-language:implicitConversions
 
 javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
 
-platformName in Android := "android-17"
+platformName := "android-17"
 
-keystorePath in Android := Path.userHome / ".keystore" / "spiel.keystore"
+keystorePath  := Path.userHome / ".keystore" / "spiel.keystore"
 
-keyalias in Android := "spiel"
+keyalias := "spiel"
 
 PasswordManager.settings
 
-cachePasswords in Android := true
+cachePasswords := true
 
 resolvers ++= Seq(
   "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
@@ -40,7 +36,7 @@ libraryDependencies := Seq(
   "ch.acra" % "acra" % "4.4.0"
 )
 
-proguardOption in Android := """
+proguardOptions += """
   -keep class scala.collection.SeqLike { public protected *; }
   -keep class info.spielproject.spiel.** { *; }
   -keep class org.mozilla.javascript.* { *; }
