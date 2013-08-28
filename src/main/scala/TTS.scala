@@ -360,6 +360,7 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
     Log.d("spiel", "Stopping speech")
     utterances = Map.empty
     guard { tts.stop() }
+    SpeechStopped()
   }
 
   def presentPercentage(percentage:Double) = {

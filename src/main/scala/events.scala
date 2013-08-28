@@ -137,6 +137,8 @@ object ShakingStarted extends Event[Unit]
 
 object ShakingStopped extends Event[Unit]
 
+object SpeechStopped extends Event[Unit]
+
 object TTSEngineChanged extends Event[Unit]
 
 object UnhandledException extends Event[Throwable]
