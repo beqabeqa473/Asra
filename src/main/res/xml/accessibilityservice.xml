@@ -3,7 +3,10 @@
   android:accessibilityEventTypes="typeAllMask"
   android:accessibilityFeedbackType="feedbackSpoken|feedbackAudible"
   android:notificationTimeout="0"
-  android:accessibilityFlags="flagDefault|flagRequestTouchExplorationMode"
+  android:accessibilityFlags="flagDefault|flagReportViewIds|flagRequestEnhancedWebAccessibility|flagRequestFilterKeyEvents|flagRequestTouchExplorationMode|"
   android:canRetrieveWindowContent="true"
+  android:canRequestFilterKeyEvents="true"
+  android:canRequestEnhancedWebAccessibility="true"
+  android:canRequestTouchExplorationMode="true"
   android:settingsActivity=".ui.Settings"
   android:description="@string/appDescription"/>
