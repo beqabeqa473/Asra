@@ -259,26 +259,24 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   }
 
   def guard(f: => Int) {
-    future {
-      try {
-        if(f == TextToSpeech.SUCCESS)
-          failures = 0
-        else {
-          abandonFocus()
-          if(!reinitializing)
-            failures += 1
-        }
-      } catch {
-        case e:Throwable =>
-          abandonFocus()
-          if(!reinitializing)
-            failures += 1
+    try {
+      if(f == TextToSpeech.SUCCESS)
+        failures = 0
+      else {
+        abandonFocus()
+        if(!reinitializing)
+          failures += 1
+      }
+    } catch {
+      case e:Throwable =>
+        abandonFocus()
+        if(!reinitializing)
+          failures += 1
           UnhandledException(e)
           Log.e("spiel", "TTS error:", e)
-      } finally {
-        if(failures >= 3)
-          reInitOnFailure()
-      }
+    } finally {
+      if(failures >= 3)
+        reInitOnFailure()
     }
   }
 
