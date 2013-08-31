@@ -177,12 +177,13 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
       audioManager.abandonAudioFocus(this)
   }
 
-  private var utterances:Map[String, String] = Map.empty
+  private val utterances = collection.mutable.Set[String]()
 
   def onStart(id:String) {
     if(Preferences.duckNonSpeechAudio && audioManager.isMusicActive)
       audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
-    UtteranceStarted(utterances.get(id))
+    utterances += id
+    UtteranceStarted(id)
     repeatedSpeech.get(id).foreach { v =>
       future {
         Thread.sleep(v._1*1000)
@@ -193,13 +194,16 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
 
   def onError(id:String) {
     abandonFocus()
-    UtteranceError(utterances.get(id))
+    UtteranceError(id)
+    utterances -= id
+    if(utterances.isEmpty) SpeechQueueEmpty()
   }
 
   def onDone(id:String) {
     abandonFocus()
-    UtteranceEnded(utterances.get(id))
+    UtteranceEnded(id)
     utterances -= id
+    if(utterances.isEmpty) SpeechQueueEmpty()
   }
 
   private val managedPunctuations = Map(
@@ -235,7 +239,9 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   private var failures = 0
 
   private def reInitOnFailure() {
-    utterances = Map.empty
+    val wasEmpty = utterances.isEmpty
+    utterances.clear()
+    if(!wasEmpty) SpeechQueueEmpty()
     if(!spokeSuccessfully) {
       val intent = new Intent()
       intent.setAction(tts.Engine.ACTION_CHECK_TTS_DATA)
@@ -278,6 +284,8 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
 
   private var spokeSuccessfully = false
 
+  var noFlush = false
+
   /**
    * Speaks the specified text, optionally flushing current speech.
   */
@@ -287,16 +295,17 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
     if(text.length > 1 && text.contains("\n"))
       return speak(text.split("\n").toList, flush)
     Log.d("spiel", "Speaking "+text+": "+flush)
-    val mode = if(flush) 2 else TextToSpeech.QUEUE_ADD
+    val mode = if(flush && !noFlush) 2 else TextToSpeech.QUEUE_ADD
     val params = new java.util.HashMap[String, String]()
     val uid = utteranceID.getOrElse(java.util.UUID.randomUUID.toString)
     params.put(tts.Engine.KEY_PARAM_UTTERANCE_ID, uid)
     guard {
       if(flush) {
         tts.speak("", mode, null)
-        utterances = Map.empty
+        val wasEmpty = utterances.isEmpty
+        utterances.clear()
+        if(!wasEmpty) SpeechQueueEmpty()
       }
-      utterances += (uid -> text)
       pitch = Preferences.pitchScale
       val rv = if(text.length == 0)
         tts.speak(service.getString(R.string.blank), mode, params)
@@ -356,11 +365,13 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   */
 
   def stop() {
-    if(!SpielService.enabled) return
+    if(noFlush || !SpielService.enabled) return
     Log.d("spiel", "Stopping speech")
-    utterances = Map.empty
+    val wasEmpty = utterances.isEmpty
+    utterances.clear()
     guard { tts.stop() }
     SpeechStopped()
+    if(!wasEmpty) SpeechQueueEmpty()
   }
 
   def presentPercentage(percentage:Double) = {
@@ -443,7 +454,7 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
 
   private var mutedForSpeech = false
 
-  UtteranceStarted += { text:Option[String] =>
+  UtteranceStarted += { text:String =>
     if(!audioManager.isMicrophoneMute && (!Telephony.inCall_? || !audioManager.isSpeakerphoneOn)) {
       audioManager.setMicrophoneMute(true)
       mutedForSpeech = true

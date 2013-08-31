@@ -4,9 +4,11 @@ package gestures
 import android.accessibilityservice.AccessibilityService._
 import android.os.Bundle
 import android.util.Log
-import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility._
+import AccessibilityEvent._
 import AccessibilityNodeInfo._
 
+import events._
 import routing._
 
 object Gesture extends Enumeration {
@@ -295,16 +297,26 @@ class Gestures {
 
     onRightDown { source => true }
 
-    onLeftRight { source =>
-      source.foreach { s =>
-        if(s.supports_?(Action.NextAtMovementGranularity)) {
-          val b = new Bundle()
-          b.putInt(ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, MOVEMENT_GRANULARITY_PAGE)
-          s.perform(Action.NextAtMovementGranularity, b)
-        }
+    def continuousRead() {
+    val continue = { (Unit):Any =>
+      SpielService.rootInActiveWindow.foreach { root =>
+        TTS.noFlush = true
+        next(root.find(Focus.Accessibility))
       }
-      true
     }
+    val stop = { (e:AccessibilityEvent) =>
+      if(List(TYPE_TOUCH_EXPLORATION_GESTURE_START, TYPE_TOUCH_INTERACTION_START).contains(e.getEventType)) {
+        TTS.noFlush = false
+        SpeechQueueEmpty -= continue
+        AccessibilityEventReceived -= this
+      }
+    }
+      SpeechQueueEmpty += continue
+      AccessibilityEventReceived += stop
+      continue()
+    }
+
+    onLeftRight { source => continuousRead(); true }
 
     onRightLeft { source => true }
 

@@ -1,7 +1,7 @@
 package info.spielproject.spiel
 package events
 
-import collection.mutable.ListBuffer
+import collection.mutable.Set
 import concurrent._
 import ExecutionContext.Implicits.global
 
@@ -11,7 +11,7 @@ import android.view.accessibility._
 
 class Event[T] {
 
-  private val handlers = ListBuffer[(T) => Any]()
+  private val handlers = Set[(T) => Any]()
 
   def add(h:(T) => Any) =
     handlers += h
@@ -38,6 +38,7 @@ class Event[T] {
     remove(h)
 
   def apply(arg:T) {
+    Log.d("spiel", "Firing "+this.getClass.getName)
     handlers.foreach { h =>
       val f = future(h(arg))
       f.onFailure { 
@@ -67,7 +68,6 @@ class Event[T] {
   def on(intent:String):Any = on(intent :: Nil)
 
   def on(intent:String, dataScheme:Option[String]):Any = on(intent :: Nil, null.asInstanceOf[T], dataScheme = dataScheme)
-
 
 }
 
@@ -137,6 +137,8 @@ object ShakingStarted extends Event[Unit]
 
 object ShakingStopped extends Event[Unit]
 
+object SpeechQueueEmpty extends Event[Unit]
+
 object SpeechStopped extends Event[Unit]
 
 object TTSEngineChanged extends Event[Unit]
@@ -145,8 +147,8 @@ object UnhandledException extends Event[Throwable]
 
 object Unlocked extends Event[Unit]
 
-object UtteranceEnded extends Event[Option[String]]
+object UtteranceEnded extends Event[String]
 
-object UtteranceError extends Event[Option[String]]
+object UtteranceError extends Event[String]
 
-object UtteranceStarted extends Event[Option[String]]
+object UtteranceStarted extends Event[String]
