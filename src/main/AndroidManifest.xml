@@ -4,7 +4,7 @@
   android:versionName="3.0.0-SNAPSHOT"
   android:versionCode = "13">
 
-  <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="17"/>
+  <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="18"/>
   <uses-feature android:name="android.hardware.bluetooth" android:required="false"/>
   <uses-feature android:name="android.hardware.telephony" android:required="false"/>
   <uses-feature android:name="android.hardware.touchscreen" android:required="false"/>

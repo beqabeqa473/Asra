@@ -14,7 +14,7 @@ scalacOptions ++= Seq("-deprecation", "-feature", "-language:implicitConversions
 
 javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
 
-platformName := "android-17"
+platformName := "android-18"
 
 keystorePath  := Path.userHome / ".keystore" / "spiel.keystore"
 
