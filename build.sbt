@@ -31,9 +31,9 @@ resolvers ++= Seq(
 libraryDependencies := Seq(
   "rhino" % "js" % "1.7R2" from "http://android-scripting.googlecode.com/hg/rhino/rhino1_7R2.jar",
   "net.databinder.dispatch" %% "dispatch-json4s-native" % "0.10.0",
-  "org.scaloid" % "scaloid" % "1.1_8_2.10",
+  "org.scaloid" %% "scaloid" % "2.3-8",
   "org.ccil.cowan.tagsoup" % "tagsoup" % "1.2.1",
-  "ch.acra" % "acra" % "4.4.0"
+  "ch.acra" % "acra" % "4.5.0"
 )
 
 proguardOptions += """
