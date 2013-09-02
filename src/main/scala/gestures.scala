@@ -146,7 +146,7 @@ class Gestures {
         filtered.exists(_.perform(Action.Focus))
       }
 
-    private def prev(source:Option[AccessibilityNodeInfo]):Boolean =
+    private def prev(source:Option[AccessibilityNodeInfo], wrap:Boolean = true):Boolean =
       source.flatMap { s =>
         granularity.flatMap { g =>
           if(s.supports_?(Action.PreviousAtMovementGranularity)) {
@@ -159,13 +159,13 @@ class Gestures {
           if(s.supports_?(Action.PreviousHtmlElement))
             rv = s.perform(Action.PreviousHtmlElement)
           if(!rv) {
-            var n = s.prevAccessibilityFocus
+            var n = s.prevAccessibilityFocus(wrap)
             val scrollableContainer = s.ancestors.find(v => v.supports_?(Action.ScrollBackward))
             scrollableContainer.foreach { sc =>
               if(!n.map(_.ancestors.contains(sc)).getOrElse(true)) {
                 sc.perform(Action.ScrollBackward)
                 if(sc.descendants.contains(s))
-                  n = s.prevAccessibilityFocus
+                  n = s.prevAccessibilityFocus(wrap)
                 else
                   n = scrollableContainer
               }
@@ -180,14 +180,14 @@ class Gestures {
                 if(n.exists(_.supports_?(Action.PreviousHtmlElement)))
                   prev(n)
               else
-                n = n.flatMap(_.prevAccessibilityFocus)
+                n = n.flatMap(_.prevAccessibilityFocus(wrap))
             }
           }
           Some(rv)
         }
       }.getOrElse(setInitialFocus())
 
-    private def next(source:Option[AccessibilityNodeInfo]):Boolean =
+    private def next(source:Option[AccessibilityNodeInfo], wrap:Boolean = true):Boolean =
       source.flatMap { s =>
         granularity.flatMap { g =>
           if(s.supports_?(Action.NextAtMovementGranularity)) {
@@ -200,13 +200,13 @@ class Gestures {
           if(s.supports_?(Action.NextHtmlElement))
             rv = s.perform(Action.NextHtmlElement)
           if(!rv) {
-            var n = s.nextAccessibilityFocus
+            var n = s.nextAccessibilityFocus(wrap)
             val scrollableContainer = s.ancestors.find(v => v.supports_?(Action.ScrollForward))
             scrollableContainer.foreach { sc =>
               if(!n.map(_.ancestors.contains(sc)).getOrElse(true)) {
                 sc.perform(Action.ScrollForward)
                 if(sc.descendants.contains(s))
-                  n = s.nextAccessibilityFocus
+                  n = s.nextAccessibilityFocus(wrap)
                 else
                   n = scrollableContainer
               }
@@ -226,7 +226,7 @@ class Gestures {
                   if(n.exists(_.supports_?(Action.NextHtmlElement)))
                     next(n)
                 else
-                  n = n.flatMap(_.nextAccessibilityFocus)
+                  n = n.flatMap(_.nextAccessibilityFocus(wrap))
             }
           }
           Some(rv)
@@ -298,19 +298,19 @@ class Gestures {
     onRightDown { source => true }
 
     def continuousRead() {
-    val continue = { (Unit):Any =>
-      SpielService.rootInActiveWindow.foreach { root =>
-        TTS.noFlush = true
-        next(root.find(Focus.Accessibility))
+      val continue = { (Unit):Any =>
+        SpielService.rootInActiveWindow.foreach { root =>
+          TTS.noFlush = true
+          next(root.find(Focus.Accessibility), false)
+        }
       }
-    }
-    val stop = { (e:AccessibilityEvent) =>
-      if(List(TYPE_TOUCH_EXPLORATION_GESTURE_START, TYPE_TOUCH_INTERACTION_START).contains(e.getEventType)) {
-        TTS.noFlush = false
-        SpeechQueueEmpty -= continue
-        AccessibilityEventReceived -= this
+      val stop = { (e:AccessibilityEvent) =>
+        if(List(TYPE_TOUCH_EXPLORATION_GESTURE_START, TYPE_TOUCH_INTERACTION_START).contains(e.getEventType)) {
+          TTS.noFlush = false
+          SpeechQueueEmpty -= continue
+          AccessibilityEventReceived -= this
+        }
       }
-    }
       SpeechQueueEmpty += continue
       AccessibilityEventReceived += stop
       continue()
