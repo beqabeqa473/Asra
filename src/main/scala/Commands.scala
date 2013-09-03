@@ -147,17 +147,28 @@ trait Commands {
         navigate(Direction.Next, wrap = false)
       }
     }
+    def clear() {
+      granularity = oldGranularity
+      wl.release()
+      TTS.noFlush = false
+      SpeechQueueEmpty -= continue
+    }
     val stop = { (e:AccessibilityEvent) =>
-      if(List(TYPE_TOUCH_EXPLORATION_GESTURE_START, TYPE_TOUCH_INTERACTION_START).contains(e.getEventType)) {
-        granularity = oldGranularity
-        wl.release()
-        TTS.noFlush = false
-        SpeechQueueEmpty -= continue
+      if(List(TYPE_TOUCH_EXPLORATION_GESTURE_START, TYPE_TOUCH_INTERACTION_START, TYPE_WINDOW_STATE_CHANGED).contains(e.getEventType)) {
+        clear()
         AccessibilityEventReceived -= this
       }
     }
     SpeechQueueEmpty += continue
     AccessibilityEventReceived += stop
+    CallAnswered += { () =>
+      clear()
+      CallAnswered -= this
+    }
+    CallRinging += { () =>
+      clear()
+      CallRinging -= this
+    }
     continue()
   }
 
