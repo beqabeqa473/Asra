@@ -69,7 +69,7 @@ class Spiel extends SActivity with ActionBar.TabListener {
 
   override def onOptionsItemSelected(item:MenuItem) = item.getItemId match {
     case R.id.settings =>
-      startActivity(new Intent(this, classOf[Settings]))
+      startActivity[Settings]
       true
     case _ => super.onOptionsItemSelected(item)
   }
@@ -300,7 +300,7 @@ class Scripts extends ListFragment with Refreshable {
     val script = Scripter.userScripts(item.getMenuInfo.asInstanceOf[AdapterView.AdapterContextMenuInfo].position)
     item.getItemId match {
       case R.id.preferences =>
-        val intent = new Intent(getActivity, classOf[Settings])
+        val intent = SIntent(getActivity, reflect.ClassTag(classOf[Settings]))
         intent.putExtra("package", script.pkg)
         startActivity(intent)
       case R.id.delete =>
