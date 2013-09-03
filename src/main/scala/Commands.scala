@@ -75,26 +75,39 @@ trait Commands {
       filtered.exists(_.perform(Action.Focus))
     }
 
-  protected def navigateNext(source:Option[AccessibilityNodeInfo] = None, wrap:Boolean = true):Boolean =
+  object Direction extends Enumeration {
+    val Prev = Value
+    val Next = Value
+  }
+
+  protected def navigate(direction:Direction.Value, source:Option[AccessibilityNodeInfo] = None, wrap:Boolean = true):Boolean =
     source.orElse(SpielService.rootInActiveWindow.flatMap(_.find(Focus.Accessibility))).flatMap { s =>
       granularity.flatMap { g =>
-        if(s.supports_?(Action.NextAtMovementGranularity)) {
+        val action = if(direction == Direction.Next) Action.NextAtMovementGranularity else Action.PreviousAtMovementGranularity
+        if(s.supports_?(action)) {
           val b = new Bundle()
           b.putInt(ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, g)
-          Some(s.perform(Action.NextAtMovementGranularity, b))
+          Some(s.perform(action, b))
         } else None
       }.orElse {
         var rv = false
-        if(s.supports_?(Action.NextHtmlElement))
-          rv = s.perform(Action.NextHtmlElement)
+        val htmlAction = if(direction == Direction.Next) Action.NextHtmlElement else Action.PreviousHtmlElement
+        if(s.supports_?(htmlAction))
+          rv = s.perform(htmlAction)
         if(!rv) {
-          var n = s.nextAccessibilityFocus(wrap)
-          val scrollableContainer = s.ancestors.find(v => v.supports_?(Action.ScrollForward))
+          def getNew(s:AccessibilityNodeInfo):Option[AccessibilityNodeInfo] =
+            if(direction == Direction.Next)
+              s.nextAccessibilityFocus(wrap)
+            else
+              s.prevAccessibilityFocus(wrap)
+          val scrollAction = if(direction == Direction.Next) Action.ScrollForward else Action.ScrollBackward
+          var n = getNew(s)
+          val scrollableContainer = s.ancestors.find(v => v.supports_?(scrollAction))
           scrollableContainer.foreach { sc =>
             if(!n.map(_.ancestors.contains(sc)).getOrElse(true)) {
-              sc.perform(Action.ScrollForward)
+              sc.perform(scrollAction)
               if(sc.descendants.contains(s))
-                n = s.nextAccessibilityFocus(wrap)
+                n = getNew(s)
               else
                 n = scrollableContainer
             }
@@ -103,7 +116,7 @@ trait Commands {
             if(v == s) true else false
           }.getOrElse(!wrap)
           n.foreach { n2 =>
-            if(sameSourceDest && !n2.supports_?(Action.NextHtmlElement))
+            if(sameSourceDest && !n2.supports_?(htmlAction))
               n.map(_.perform(Action.ClearAccessibilityFocus))
           }
           while(!rv) {
@@ -111,54 +124,10 @@ trait Commands {
             if(sameSourceDest) rv = true
             if(!sameSourceDest)
               if(rv)
-                if(n.exists(_.supports_?(Action.NextHtmlElement)))
-                  navigateNext(n)
+                if(n.exists(_.supports_?(htmlAction)))
+                  navigate(direction, n)
               else
-                n = n.flatMap(_.nextAccessibilityFocus(wrap))
-          }
-        }
-        Some(rv)
-      }
-    }.getOrElse(setInitialFocus())
-
-  protected def navigatePrev(source:Option[AccessibilityNodeInfo] = None, wrap:Boolean = true):Boolean =
-    source.orElse(SpielService.rootInActiveWindow.flatMap(_.find(Focus.Accessibility))).flatMap { s =>
-      granularity.flatMap { g =>
-        if(s.supports_?(Action.PreviousAtMovementGranularity)) {
-          val b = new Bundle()
-          b.putInt(ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, g)
-          Some(s.perform(Action.PreviousAtMovementGranularity, b))
-        } else None
-      }.orElse {
-        var rv = false
-        if(s.supports_?(Action.PreviousHtmlElement))
-          rv = s.perform(Action.PreviousHtmlElement)
-        if(!rv) {
-          var n = s.prevAccessibilityFocus(wrap)
-          val scrollableContainer = s.ancestors.find(v => v.supports_?(Action.ScrollBackward))
-          scrollableContainer.foreach { sc =>
-            if(!n.map(_.ancestors.contains(sc)).getOrElse(true)) {
-              sc.perform(Action.ScrollBackward)
-              if(sc.descendants.contains(s))
-                n = s.prevAccessibilityFocus(wrap)
-              else
-                n = scrollableContainer
-            }
-          }
-          val sameSourceDest = n.map { v =>
-            if(v == s) true else false
-          }.getOrElse(!wrap)
-          n.foreach { n2 =>
-            if(sameSourceDest && n2 == s)
-              n.map(_.perform(Action.ClearAccessibilityFocus))
-          }
-          while(!rv) {
-            rv = n.exists(_.perform(Action.AccessibilityFocus))
-            if(rv)
-              if(n.exists(_.supports_?(Action.PreviousHtmlElement)))
-                navigatePrev(n)
-            else
-              n = n.flatMap(_.prevAccessibilityFocus(wrap))
+                n = n.flatMap(s => getNew(s))
           }
         }
         Some(rv)
@@ -175,7 +144,7 @@ trait Commands {
       wl.acquire()
       SpielService.rootInActiveWindow.foreach { root =>
         TTS.noFlush = true
-        navigateNext(wrap = false)
+        navigate(Direction.Next, wrap = false)
       }
     }
     val stop = { (e:AccessibilityEvent) =>

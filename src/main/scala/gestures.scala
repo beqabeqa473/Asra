@@ -121,9 +121,9 @@ class Gestures {
 
   class Default extends Listener(Some(Directive(Value(""), Value("")))) with Commands {
 
-    onLeft { source => navigatePrev() }
+    onLeft { source => navigate(Direction.Prev) }
 
-    onRight { source => navigateNext() }
+    onRight { source => navigate(Direction.Next) }
 
     onUp { source => decreaseGranularity() }
 
