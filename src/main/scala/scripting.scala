@@ -14,10 +14,10 @@ import android.os.Build.VERSION
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 
-import com.ning.http.client._
-import dispatch._
-import Defaults._
-import org.json4s._
+//import com.ning.http.client._
+//import dispatch._
+//import Defaults._
+//import org.json4s._
 import org.mozilla.javascript.{Callable, Context, ContextFactory, Function, RhinoException, ScriptableObject}
 
 import events._
@@ -234,10 +234,10 @@ object Scripter {
   */
 
   def apply(svc:AContext) {
-    import com.ning.http.client._
+    /*import com.ning.http.client._
     new providers.netty.NettyAsyncHttpProvider(
       new AsyncHttpClientConfig.Builder().build
-    )
+    )*/
     service = svc
     ContextFactory.getGlobal.enterContext(context)
     context.setOptimizationLevel(-1)
