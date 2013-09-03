@@ -2,7 +2,8 @@ package info.spielproject.spiel
 package gestures
 
 import android.accessibilityservice.AccessibilityService._
-import android.os.Bundle
+import android.content._
+import android.os.{Bundle, PowerManager}
 import android.util.Log
 import android.view.accessibility._
 import AccessibilityEvent._
@@ -299,8 +300,11 @@ class Gestures {
 
     def continuousRead() {
       val oldGranularity = granularity
+      val pm = SpielService.context.getSystemService(Context.POWER_SERVICE).asInstanceOf[PowerManager]
+      val wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "spiel")
       val continue = { (Unit):Any =>
         granularity = None
+        wl.acquire()
         SpielService.rootInActiveWindow.foreach { root =>
           TTS.noFlush = true
           next(root.find(Focus.Accessibility), false)
@@ -309,6 +313,7 @@ class Gestures {
       val stop = { (e:AccessibilityEvent) =>
         if(List(TYPE_TOUCH_EXPLORATION_GESTURE_START, TYPE_TOUCH_INTERACTION_START).contains(e.getEventType)) {
           granularity = oldGranularity
+          wl.release()
           TTS.noFlush = false
           SpeechQueueEmpty -= continue
           AccessibilityEventReceived -= this
