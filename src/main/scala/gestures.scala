@@ -298,7 +298,9 @@ class Gestures {
     onRightDown { source => true }
 
     def continuousRead() {
+      val oldGranularity = granularity
       val continue = { (Unit):Any =>
+        granularity = None
         SpielService.rootInActiveWindow.foreach { root =>
           TTS.noFlush = true
           next(root.find(Focus.Accessibility), false)
@@ -306,6 +308,7 @@ class Gestures {
       }
       val stop = { (e:AccessibilityEvent) =>
         if(List(TYPE_TOUCH_EXPLORATION_GESTURE_START, TYPE_TOUCH_INTERACTION_START).contains(e.getEventType)) {
+          granularity = oldGranularity
           TTS.noFlush = false
           SpeechQueueEmpty -= continue
           AccessibilityEventReceived -= this
