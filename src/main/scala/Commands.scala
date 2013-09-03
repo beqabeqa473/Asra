@@ -1,0 +1,195 @@
+package info.spielproject.spiel
+
+import android.content._
+import android.os._
+import android.view.accessibility._
+import AccessibilityEvent._
+import AccessibilityNodeInfo._
+
+import events._
+
+trait Commands {
+
+  private val granularities = List(MOVEMENT_GRANULARITY_CHARACTER, MOVEMENT_GRANULARITY_WORD, MOVEMENT_GRANULARITY_LINE, MOVEMENT_GRANULARITY_PARAGRAPH, MOVEMENT_GRANULARITY_PAGE)
+
+  private var granularity:Option[Int] = None
+
+  private def describeGranularity() {
+    val id = granularity.map { g =>
+      g match {
+        case MOVEMENT_GRANULARITY_CHARACTER => R.string.character
+        case MOVEMENT_GRANULARITY_WORD => R.string.word
+        case MOVEMENT_GRANULARITY_LINE => R.string.line
+        case MOVEMENT_GRANULARITY_PARAGRAPH => R.string.paragraph
+        case MOVEMENT_GRANULARITY_PAGE => R.string.page
+      }
+    }.getOrElse(R.string.none)
+    TTS.speak(SpielService.context.getString(id), true)
+  }
+
+  def decreaseGranularity() = {
+    SpielService.rootInActiveWindow.flatMap(_.find(Focus.Accessibility)).map { s =>
+      val grans = s.getMovementGranularities
+      val candidates = granularities.filter(v => (grans & v) != 0)
+      granularity.map { g =>
+        candidates.indexOf(g) match {
+          case -1 => granularity = candidates.reverse.headOption
+          case 0 =>
+            granularity = None
+            granularity.size
+          case v => granularity = Some(candidates(v-1))
+        }
+      }.getOrElse {
+        granularity = candidates.reverse.headOption
+      }
+      describeGranularity()
+    }
+    true
+  }
+
+  def increaseGranularity() = {
+    SpielService.rootInActiveWindow.flatMap(_.find(Focus.Accessibility)).map { s =>
+      val grans = s.getMovementGranularities
+      val candidates = granularities.filter(v => (grans & v) != 0)
+      granularity.map { g =>
+        candidates.indexOf(g) match {
+          case -1 => granularity = candidates.headOption
+          case v if(v == candidates.size-1) =>
+            granularity = None
+            candidates.size
+          case v => granularity = Some(candidates(v+1))
+        }
+      }.getOrElse {
+        granularity = candidates.headOption
+      }
+      describeGranularity()
+    }
+    true
+  }
+
+  private def setInitialFocus() =
+    SpielService.rootInActiveWindow.exists { root =>
+      val filtered = root.descendants.filter(_.isVisibleToUser)
+      root.find(Focus.Input).exists(_.perform(Action.AccessibilityFocus)) ||
+      filtered.exists(_.perform(Action.AccessibilityFocus)) ||
+      filtered.exists(_.perform(Action.Focus))
+    }
+
+  protected def navigateNext(source:Option[AccessibilityNodeInfo] = None, wrap:Boolean = true):Boolean =
+    source.orElse(SpielService.rootInActiveWindow.flatMap(_.find(Focus.Accessibility))).flatMap { s =>
+      granularity.flatMap { g =>
+        if(s.supports_?(Action.NextAtMovementGranularity)) {
+          val b = new Bundle()
+          b.putInt(ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, g)
+          Some(s.perform(Action.NextAtMovementGranularity, b))
+        } else None
+      }.orElse {
+        var rv = false
+        if(s.supports_?(Action.NextHtmlElement))
+          rv = s.perform(Action.NextHtmlElement)
+        if(!rv) {
+          var n = s.nextAccessibilityFocus(wrap)
+          val scrollableContainer = s.ancestors.find(v => v.supports_?(Action.ScrollForward))
+          scrollableContainer.foreach { sc =>
+            if(!n.map(_.ancestors.contains(sc)).getOrElse(true)) {
+              sc.perform(Action.ScrollForward)
+              if(sc.descendants.contains(s))
+                n = s.nextAccessibilityFocus(wrap)
+              else
+                n = scrollableContainer
+            }
+          }
+          val sameSourceDest = n.map { v =>
+            if(v == s) true else false
+          }.getOrElse(!wrap)
+          n.foreach { n2 =>
+            if(sameSourceDest && !n2.supports_?(Action.NextHtmlElement))
+              n.map(_.perform(Action.ClearAccessibilityFocus))
+          }
+          while(!rv) {
+            rv = n.exists(_.perform(Action.AccessibilityFocus))
+            if(sameSourceDest) rv = true
+            if(!sameSourceDest)
+              if(rv)
+                if(n.exists(_.supports_?(Action.NextHtmlElement)))
+                  navigateNext(n)
+              else
+                n = n.flatMap(_.nextAccessibilityFocus(wrap))
+          }
+        }
+        Some(rv)
+      }
+    }.getOrElse(setInitialFocus())
+
+  protected def navigatePrev(source:Option[AccessibilityNodeInfo] = None, wrap:Boolean = true):Boolean =
+    source.orElse(SpielService.rootInActiveWindow.flatMap(_.find(Focus.Accessibility))).flatMap { s =>
+      granularity.flatMap { g =>
+        if(s.supports_?(Action.PreviousAtMovementGranularity)) {
+          val b = new Bundle()
+          b.putInt(ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, g)
+          Some(s.perform(Action.PreviousAtMovementGranularity, b))
+        } else None
+      }.orElse {
+        var rv = false
+        if(s.supports_?(Action.PreviousHtmlElement))
+          rv = s.perform(Action.PreviousHtmlElement)
+        if(!rv) {
+          var n = s.prevAccessibilityFocus(wrap)
+          val scrollableContainer = s.ancestors.find(v => v.supports_?(Action.ScrollBackward))
+          scrollableContainer.foreach { sc =>
+            if(!n.map(_.ancestors.contains(sc)).getOrElse(true)) {
+              sc.perform(Action.ScrollBackward)
+              if(sc.descendants.contains(s))
+                n = s.prevAccessibilityFocus(wrap)
+              else
+                n = scrollableContainer
+            }
+          }
+          val sameSourceDest = n.map { v =>
+            if(v == s) true else false
+          }.getOrElse(!wrap)
+          n.foreach { n2 =>
+            if(sameSourceDest && n2 == s)
+              n.map(_.perform(Action.ClearAccessibilityFocus))
+          }
+          while(!rv) {
+            rv = n.exists(_.perform(Action.AccessibilityFocus))
+            if(rv)
+              if(n.exists(_.supports_?(Action.PreviousHtmlElement)))
+                navigatePrev(n)
+            else
+              n = n.flatMap(_.prevAccessibilityFocus(wrap))
+          }
+        }
+        Some(rv)
+      }
+    }.getOrElse(setInitialFocus())
+
+  protected def continuousRead() {
+    val oldGranularity = granularity
+    val pm = SpielService.context.getSystemService(Context.POWER_SERVICE).asInstanceOf[PowerManager]
+    val wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "spiel")
+    wl.setReferenceCounted(false)
+    val continue = { (Unit):Any =>
+      granularity = None
+      wl.acquire()
+      SpielService.rootInActiveWindow.foreach { root =>
+        TTS.noFlush = true
+        navigateNext(wrap = false)
+      }
+    }
+    val stop = { (e:AccessibilityEvent) =>
+      if(List(TYPE_TOUCH_EXPLORATION_GESTURE_START, TYPE_TOUCH_INTERACTION_START).contains(e.getEventType)) {
+        granularity = oldGranularity
+        wl.release()
+        TTS.noFlush = false
+        SpeechQueueEmpty -= continue
+        AccessibilityEventReceived -= this
+      }
+    }
+    SpeechQueueEmpty += continue
+    AccessibilityEventReceived += stop
+    continue()
+  }
+
+}
