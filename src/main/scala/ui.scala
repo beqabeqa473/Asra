@@ -320,15 +320,14 @@ class Scripts extends ListFragment with Refreshable {
         intent.putExtra("package", script.pkg)
         startActivity(intent)
       case R.id.delete =>
-        new AlertDialog.Builder(getActivity)
-        .setMessage(getString(R.string.confirmDelete, script.pkg))
-        .setPositiveButton(getString(android.R.string.yes), {
-          script.delete()
-          script.uninstall()
-          refresh()
-        })
-        .setNegativeButton(getString(android.R.string.no), null)
-        .show()
+        new AlertDialogBuilder("", getString(R.string.confirmDelete, script.pkg))(getActivity) {
+          positiveButton(android.R.string.yes, {
+            script.delete()
+            script.uninstall()
+            refresh()
+          })
+          negativeButton(android.R.string.no)
+        }.show()
     }
     true
   }
@@ -368,14 +367,14 @@ class Events extends ListFragment with Refreshable {
     item.getItemId match {
       case R.id.createTemplate =>
         val filename = Scripter.createTemplateFor(event)
-        val dialog = new AlertDialog.Builder(getActivity)
-        filename.map { fn =>
-          dialog.setMessage(getString(R.string.templateCreated, fn))
-        }.getOrElse {
-          dialog.setMessage(getString(R.string.templateCreationError))
-        }
-        dialog.setPositiveButton(getString(android.R.string.ok), null)
-        dialog.show()
+        alert(
+          "",
+          filename.map { fn =>
+            getString(R.string.templateCreated, fn)
+          }.getOrElse {
+            getString(R.string.templateCreationError)
+          }
+        )(getActivity)
     }
     true
   }
