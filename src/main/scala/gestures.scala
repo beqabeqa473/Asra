@@ -305,6 +305,7 @@ class Gestures {
       val oldGranularity = granularity
       val pm = SpielService.context.getSystemService(Context.POWER_SERVICE).asInstanceOf[PowerManager]
       val wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "spiel")
+      wl.setReferenceCounted(false)
       val continue = { (Unit):Any =>
         granularity = None
         wl.acquire()
