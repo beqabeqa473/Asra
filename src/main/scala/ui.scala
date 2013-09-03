@@ -290,7 +290,7 @@ class Scripts extends ListFragment with Refreshable {
     new MenuInflater(getActivity).inflate(R.menu.scripts_context, menu)
     val script = Scripter.userScripts(info.asInstanceOf[AdapterView.AdapterContextMenuInfo].position)
     if(!script.preferences_?) {
-      val item = menu.findItem(R.id.preferences)
+      val item = menu.findItem(R.id.settings)
       item.setEnabled(false)
       item.setVisible(false)
     }
@@ -299,7 +299,7 @@ class Scripts extends ListFragment with Refreshable {
   override def onContextItemSelected(item:MenuItem) = {
     val script = Scripter.userScripts(item.getMenuInfo.asInstanceOf[AdapterView.AdapterContextMenuInfo].position)
     item.getItemId match {
-      case R.id.preferences =>
+      case R.id.settings =>
         val intent = SIntent(getActivity, reflect.ClassTag(classOf[Settings]))
         intent.putExtra("package", script.pkg)
         startActivity(intent)
