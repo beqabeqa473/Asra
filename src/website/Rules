@@ -27,7 +27,7 @@ compile "*" do
   else
     case item[:extension]
       when "md"
-        filter :rdiscount
+        filter :kramdown
       when "asciidoc"
         filter :asciidoc
       when "slim"
