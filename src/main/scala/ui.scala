@@ -39,22 +39,6 @@ class Spiel extends SActivity with ActionBar.TabListener {
 
     bar.addTab(bar.newTab.setText(R.string.events).setTabListener(this))
 
-    handleCustomUri()
-
-  }
-
-  onResume {
-    handleCustomUri()
-  }
-
-  private def handleCustomUri() {
-    Option(getIntent).flatMap((i) => Option(i.getData)).foreach { uri =>
-      if(uri.getScheme == "spiel") {
-        val parts = uri.getSchemeSpecificPart.split("?")
-        if(!parts.isEmpty && parts.head == "scripts")
-          getActionBar.setSelectedNavigationItem(0)
-      }
-    }
   }
 
   def onTabReselected(tab:ActionBar.Tab, ft:FragmentTransaction) { }
