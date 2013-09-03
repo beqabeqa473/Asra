@@ -92,7 +92,7 @@
     <provider android:name=".scripting.BazaarProvider" android:authorities="info.spielproject.spiel.scripting.bazaar.Provider"/>
 
     <receiver
-      android:name=".Commands"
+      android:name=".Intents"
       android:permission="info.spielproject.spiel.SEND_COMMANDS">
       <intent-filter>
         <action android:name="info.spielproject.spiel.commands.SPEAK"/>

@@ -3,9 +3,9 @@ package info.spielproject.spiel
 import android.content._
 import android.util.Log
 
-class Commands extends BroadcastReceiver {
+class Intents extends BroadcastReceiver {
 
-  val Speak = "info.spielproject.spiel.commands.SPEAK"
+  val Speak = "info.spielproject.spiel.intents.SPEAK"
 
   def onReceive(c:Context, i:Intent) {
     if(i.getAction == Speak)
