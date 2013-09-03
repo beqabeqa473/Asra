@@ -171,8 +171,11 @@ class Gestures {
                   n = scrollableContainer
               }
             }
+            val sameSourceDest = n.map { v =>
+              if(v == s) true else false
+            }.getOrElse(!wrap)
             n.foreach { n2 =>
-              if(n2 == s)
+              if(sameSourceDest && n2 == s)
                 n.map(_.perform(Action.ClearAccessibilityFocus))
             }
             while(!rv) {
