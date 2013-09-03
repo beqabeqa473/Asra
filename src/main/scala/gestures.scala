@@ -214,7 +214,7 @@ class Gestures {
             }
             val sameSourceDest = n.map { v =>
               if(v == s) true else false
-            }.getOrElse(false)
+            }.getOrElse(!wrap)
             n.foreach { n2 =>
               if(sameSourceDest && !n2.supports_?(Action.NextHtmlElement))
                 n.map(_.perform(Action.ClearAccessibilityFocus))
