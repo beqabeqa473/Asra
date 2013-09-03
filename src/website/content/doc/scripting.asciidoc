@@ -1,0 +1,35 @@
+Scripting Spiel
+===============
+
+:doctype: book
+
+Note that this document is merely a specification. None of this is currently implemented.
+
+[preface]
+Preface
+-------
+
+Spiel's scripting subsystem is based on a number of existing technologies:
+
+Conventions
+-----------
+
+Location and Filename
+~~~~~~~~~~~~~~~~~~~~~
+
+Installing and Removing
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Events
+------
+
+Sources
+-------
+
+Labeling Items
+~~~~~~~~~~~~~~
+
+Attaching Keybindings
+~~~~~~~~~~~~~~~~~~~~~
+
+

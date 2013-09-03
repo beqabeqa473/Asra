@@ -1,0 +1,12 @@
+source "https://rubygems.org"
+
+gem "nanoc"
+gem "slim"
+gem "rdiscount"
+gem "builder"
+gem "systemu"
+
+group :development do
+  gem "adsf"
+  gem "guard-nanoc"
+end
