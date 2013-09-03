@@ -69,30 +69,10 @@
 
 <string name="scripts">Skripty</string>
 
-<string name="system">Systém</string>
-<string name="user">Uživatel</string>
-
 <!-- Script context menu -->
 <string name="delete">Smazat</string>
-<string name="copyToExternalStorage">Kopírovat na externí úložiště</string>
-<string name="postToBazaar">Odeslat na bazar</string>
-
-<string name="bazaar_credentials">Níže prosím zadejte své Spiel bazar údaje.</string>
-<string name="bazaar_credentials_invalid">Vaše uživatelské jméno nebo heslo je neplatné. Prosím, níže jej zadejte znovu a akci opakujte.</string>
-<string name="bazaar_username_label">Uživatelské jméno</string>
-<string name="bazaar_password_label">Heslo</string>
-<string name="script_reload_error">Tento skript je neplatný. Prosím, opravte případné chyby zaznamenané v protokolech a zkuste to znovu.</string>
-<string name="changes_label">Změny (volitelné):</string>
-<string name="script_posted">Váš skript byl úspěšně odeslán. Děkujeme za spolupráci.</string>
-<string name="script_posting_error">Během odesílání skriptu došlo k dočasné chybě sítě. Prosím, opakujte akci později.</string>
 
 <string name="confirmDelete">Jste si jisti, že chcete smazat skript pro balíček %1$s?</string>
-<string name="scriptCopied">Skript zkopírován do %1$s.</string>
-
-<string name="newOrUpdatedScripts">Nové nebo aktualizované skripty jsou k dispozici. Prosím, vyberte ty, které si přejete nainstalovat.</string>
-<string name="selectAll">Označit vše</string>
-<string name="deselectAll">Odoznačit vše</string>
-<string name="install">Instalovat</string>
 
 <!-- Menu items -->
 <string name="refresh">Obnovit</string>

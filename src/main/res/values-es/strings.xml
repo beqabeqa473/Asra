@@ -67,30 +67,10 @@
 
 <string name="scripts">Script</string>
 
-<string name="system">Sistema</string>
-<string name="user">Usuario</string>
-
 <!-- Script context menu -->
 <string name="delete">Eliminar</string>
-<string name="copyToExternalStorage">Copiar a almacenamiento externo</string>
-<string name="postToBazaar">Publicar en bazaar</string>
-
-<string name="bazaar_credentials">Please enter your Spiel Bazaar credentials below.</string>
-<string name="bazaar_credentials_invalid">Your username and/or password are invalid. Please re-enter them below and try again.</string>
-<string name="bazaar_username_label">Username</string>
-<string name="bazaar_password_label">Password</string>
-<string name="script_reload_error">This script is invalid. Please fix any errors reported in the logs and try again.</string>
-<string name="changes_label">Changes (optional):</string>
-<string name="script_posted">Your script was posted successfully. Thank you for your contribution.</string>
-<string name="script_posting_error">There was a temporary network error posting your script. Please try again later.</string>
 
 <string name="confirmDelete">¿Está seguro que desea eliminar el script de package %1$s?</string>
-<string name="scriptCopied">Script copiado a %1$s.</string>
-
-<string name="newOrUpdatedScripts">Hay nuevos o actualizados script. Favor de escoger los que desea instalar.</string>
-<string name="selectAll">Seleccionar todo</string>
-<string name="deselectAll">Seleccionar ninguno</string>
-<string name="install">Instalar</string>
 
 <!-- Menu items -->
 <string name="refresh">Actualizar pantalla</string>

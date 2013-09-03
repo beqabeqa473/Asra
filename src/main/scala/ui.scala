@@ -285,65 +285,15 @@ trait Refreshable extends Fragment {
 
 }
 
-class Scripts extends Fragment with Refreshable with RadioGroup.OnCheckedChangeListener with LoaderManager.LoaderCallbacks[Cursor] {
-
-  private lazy val listView = getView.findViewById(R.id.scripts).asInstanceOf[ListView]
-
-  private var system = true
-
-  override def onCreateView(inflater:LayoutInflater, container:ViewGroup, bundle:Bundle) = {
-    inflater.inflate(R.layout.scripts, container, false)
-  }
+class Scripts extends ListFragment with Refreshable {
 
   override def onViewCreated(v:View, b:Bundle) {
     super.onViewCreated(v, b)
-    registerForContextMenu(listView)
-    val mode = getView.findViewById(R.id.mode).asInstanceOf[RadioGroup]
-    mode.setOnCheckedChangeListener(this)
-    mode.check(R.id.system)
+    registerForContextMenu(getListView)
   }
 
-  def onCheckedChanged(group:RadioGroup, id:Int) {
-    system = id == R.id.system
-    refresh()
-  }
-
-  def refresh() = {
-    if(system)
-      refreshSystem()
-    else
-      refreshUser()
-  }
-
-  private lazy val adapter = new SimpleCursorAdapter(
-    getActivity,
-    R.layout.script_row,
-    null,
-    List(Provider.columns.label).toArray,
-    List(R.id.script_title).toArray,
-    0
-  )
-
-  def onCreateLoader(id:Int, bundle:Bundle) = {
-    new CursorLoader(getActivity, Provider.uri, Provider.columns.projection, null, null, null)
-  }
-
-  def onLoaderReset(loader:Loader[Cursor]) {
-    adapter.swapCursor(null)
-  }
-
-  def onLoadFinished(loader:Loader[Cursor], cursor:Cursor) {
-    adapter.swapCursor(cursor)
-  }
-
-  private def refreshSystem() {
-    getLoaderManager.initLoader(0, null, this)
-    listView.setAdapter(adapter)
-    BazaarProvider.checkRemoteScripts()
-  }
-
-  private def refreshUser() {
-    listView.setAdapter(
+  def refresh() {
+    setListAdapter(
       new ArrayAdapter[Script](
         getActivity,
         android.R.layout.simple_list_item_1,
@@ -353,206 +303,34 @@ class Scripts extends Fragment with Refreshable with RadioGroup.OnCheckedChangeL
   }
 
   override def onCreateContextMenu(menu:ContextMenu, v:View, info:ContextMenu.ContextMenuInfo) {
-    val menuID = if(system) R.menu.system_scripts_context else R.menu.user_scripts_context
-    new MenuInflater(getActivity).inflate(menuID, menu)
-    if(system) {
-      val selection = info.asInstanceOf[AdapterView.AdapterContextMenuInfo].id
-      val uri = ContentUris.withAppendedId(Provider.uri, selection)
-      val c = getActivity.getContentResolver.query(uri, null, null, null, null)
-      c.moveToFirst()
-      val script:Option[Script] = if(c.isAfterLast)
-        None
-      else
-        Some(new Script(getActivity, c))
-      c.close()
-      script.foreach { scr =>
-        if(!scr.preferences_?) {
-          val item = menu.findItem(R.id.preferences)
-          item.setEnabled(false)
-          item.setVisible(false)
-        }
-      }
-    } else {
-      val script = Scripter.userScripts(info.asInstanceOf[AdapterView.AdapterContextMenuInfo].position)
-      if(!script.preferences_?) {
-        val item = menu.findItem(R.id.preferences)
-        item.setEnabled(false)
-        item.setVisible(false)
-      }
+    new MenuInflater(getActivity).inflate(R.menu.scripts_context, menu)
+    val script = Scripter.userScripts(info.asInstanceOf[AdapterView.AdapterContextMenuInfo].position)
+    if(!script.preferences_?) {
+      val item = menu.findItem(R.id.preferences)
+      item.setEnabled(false)
+      item.setVisible(false)
     }
   }
 
   override def onContextItemSelected(item:MenuItem) = {
-    if(system) {
-      val selection = item.getMenuInfo.asInstanceOf[AdapterView.AdapterContextMenuInfo].id
-      val uri = ContentUris.withAppendedId(Provider.uri, selection)
-      val c = getActivity.getContentResolver.query(uri, null, null, null, null)
-      c.moveToFirst()
-      val script:Option[Script] = if(c.isAfterLast)
-        None
-      else
-        Some(new Script(getActivity, c))
-      c.close()
-      item.getItemId match {
-        case R.id.preferences =>
-          script.foreach { s =>
-            val intent = new Intent(getActivity, classOf[Settings])
-            intent.putExtra("package", s.pkg)
-            startActivity(intent)
-          }
-        case R.id.copyToExternalStorage =>
-          script.foreach { s =>
-            val filename = s.writeToExternalStorage()
-            new AlertDialog.Builder(getActivity)
-            .setMessage(getString(R.string.scriptCopied, filename))
-            .setPositiveButton(getString(android.R.string.ok), null)
-            .show()
-          }
-        case R.id.delete =>
-          script.foreach { s =>
-            new AlertDialog.Builder(getActivity)
-            .setMessage(getString(R.string.confirmDelete, s.pkg))
-            .setPositiveButton(getString(android.R.string.yes), {
-              getActivity.getContentResolver.delete(uri, null, null)
-              s.uninstall()
-              refreshSystem()
-            })
-            .setNegativeButton(getString(android.R.string.no), null)
-            .show()
-          }
-      }
-    } else {
-      val script = Scripter.userScripts(item.getMenuInfo.asInstanceOf[AdapterView.AdapterContextMenuInfo].position)
-      item.getItemId match {
-        case R.id.preferences =>
-          val intent = new Intent(getActivity, classOf[Settings])
-          intent.putExtra("package", script.pkg)
-          startActivity(intent)
-        case R.id.postToBazaar =>
-          if(script.reload()) {
-            scriptToPost = Some(script)
-            if(Preferences.bazaarUsername == "" || Preferences.bazaarPassword == "")
-              (new CredentialsDialog).show(getFragmentManager, "credentials")
-            else
-              (new PostDialog).show(getFragmentManager, "post")
-          } else {
-            new AlertDialog.Builder(getActivity)
-            .setMessage(getString(R.string.script_reload_error))
-            .setPositiveButton(getString(android.R.string.ok), null)
-            .show()
-          }
-        case R.id.delete =>
-          new AlertDialog.Builder(getActivity)
-          .setMessage(getString(R.string.confirmDelete, script.pkg))
-          .setPositiveButton(getString(android.R.string.yes), {
-            script.delete()
-            script.uninstall()
-            refreshUser()
-          })
-          .setNegativeButton(getString(android.R.string.no), null)
-          .show()
-      }
+    val script = Scripter.userScripts(item.getMenuInfo.asInstanceOf[AdapterView.AdapterContextMenuInfo].position)
+    item.getItemId match {
+      case R.id.preferences =>
+        val intent = new Intent(getActivity, classOf[Settings])
+        intent.putExtra("package", script.pkg)
+        startActivity(intent)
+      case R.id.delete =>
+        new AlertDialog.Builder(getActivity)
+        .setMessage(getString(R.string.confirmDelete, script.pkg))
+        .setPositiveButton(getString(android.R.string.yes), {
+          script.delete()
+          script.uninstall()
+          refresh()
+        })
+        .setNegativeButton(getString(android.R.string.no), null)
+        .show()
     }
     true
-  }
-
-  private class CredentialsDialog extends DialogFragment {
-    override def onCreateDialog(bundle:Bundle) = {
-      val dialog = new Dialog(getActivity)
-      dialog.setContentView(R.layout.bazaar_credentials)
-      val message = dialog.findViewById(R.id.message).asInstanceOf[TextView]
-      if(Preferences.bazaarUsername != "" || Preferences.bazaarPassword != "")
-        message.setText(getString(R.string.bazaar_credentials_invalid))
-      else
-        message.setText(getString(R.string.bazaar_credentials))
-      val username = dialog.findViewById(R.id.username).asInstanceOf[EditText]
-      username.setText(Preferences.bazaarUsername)
-      val password = dialog.findViewById(R.id.password).asInstanceOf[EditText]
-      password.setText(Preferences.bazaarPassword)
-      def clearValues() {
-        username.setText("")
-        password.setText("")
-      }
-      dialog.findViewById(R.id.ok).asInstanceOf[Button].setOnClickListener(new View.OnClickListener {
-        def onClick(v:View) {
-          if(username.getText.toString != "" && password.getText.toString != "") {
-            Preferences.bazaarUsername = username.getText.toString
-            Preferences.bazaarPassword = password.getText.toString
-            dialog.dismiss()
-            postToBazaar()
-          } else
-            dialog.show()
-        }
-      })
-      dialog.findViewById(R.id.signup).asInstanceOf[Button].setOnClickListener(new View.OnClickListener {
-        def onClick(v:View) {
-          val url = "http://bazaar.spielproject.info/signup?returnTo=spiel:scripts"
-          val intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
-          intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-          startActivity(intent)
-          dialog.dismiss()
-        }
-      })
-      dialog.findViewById(R.id.cancel).asInstanceOf[Button].setOnClickListener(new View.OnClickListener {
-        def onClick(v:View) {
-          clearValues()
-          scriptToPost = None
-          dialog.dismiss()
-        }
-      })
-      dialog
-    }
-  }
-
-  private class PostDialog extends DialogFragment {
-    override def onCreateDialog(bundle:Bundle) = {
-      val dialog = new Dialog(getActivity)
-      dialog.setContentView(R.layout.post_script)
-      val changesField = dialog.findViewById(R.id.changes).asInstanceOf[EditText]
-      changesField.setText(scriptChanges)
-      def clearValues() {
-        changesField.setText("")
-      }
-      dialog.findViewById(R.id.ok).asInstanceOf[Button].setOnClickListener(new View.OnClickListener {
-        def onClick(v:View) {
-          scriptChanges = changesField.getText.toString
-          dialog.dismiss()
-          postToBazaar()
-        }
-      })
-      dialog.findViewById(R.id.cancel).asInstanceOf[Button].setOnClickListener(new View.OnClickListener {
-        def onClick(v:View) {
-          clearValues()
-          scriptToPost = None
-          scriptChanges = ""
-          dialog.dismiss()
-        }
-      })
-      dialog
-    }
-  }
-
-  private var scriptToPost:Option[Script] = None
-  private var scriptChanges = ""
-
-  private def postToBazaar() = scriptToPost.foreach { script =>
-    val dialog = new AlertDialog.Builder(getActivity)
-    dialog.setPositiveButton(getString(android.R.string.ok), null)
-    try {
-      BazaarProvider.post(script, scriptChanges)
-      scriptToPost = None
-      scriptChanges = ""
-      dialog.setMessage(getString(R.string.script_posted))
-      dialog.show()
-    } catch {
-      case e:scripting.AuthorizationFailed =>
-        Preferences.bazaarPassword = ""
-        (new CredentialsDialog).show(getFragmentManager, "credentials")
-      case e:Throwable =>
-        scriptToPost = None
-        dialog.setMessage(getString(R.string.script_posting_error))
-        dialog.show()
-    }
   }
 
 }
@@ -600,101 +378,6 @@ class Events extends ListFragment with Refreshable {
         dialog.show()
     }
     true
-  }
-
-}
-
-/**
- * Activity that handles the installation of scripts.
-*/
-
-class ScriptInstaller extends Activity with AdapterView.OnItemClickListener {
-
-  private var scripts:List[Script] = Nil
-
-  override def onCreate(bundle:Bundle) {
-    super.onCreate(bundle)
-    setContentView(R.layout.script_installer)
-
-    val scriptsList = findViewById(R.id.scripts).asInstanceOf[ListView]
-    scripts = BazaarProvider.newOrUpdatedScripts
-    scriptsList.setAdapter(
-      new ArrayAdapter[Script](
-        this,
-        android.R.layout.simple_list_item_multiple_choice,
-        scripts.toArray
-      )
-    )
-    scriptsList.setOnItemClickListener(this)
-    // Pre-ICS compatibility: CHOICE_MODE_MULTIPLE moved from ListView to AbsListView
-    import android.widget.AbsListView._
-    import android.widget.ListView._
-    scriptsList.setChoiceMode(CHOICE_MODE_MULTIPLE)
-
-    def selectAll() {
-      var seen:List[String] = Nil
-      for(p <- 0.to(scriptsList.getCount-1)) {
-        val script = scripts(p)
-        if(!seen.contains(script.pkg)) {
-          seen ::= script.pkg
-          scriptsList.setItemChecked(p, true)
-        }
-      }
-    }
-
-    selectAll()
-
-    findViewById(R.id.selectAll).asInstanceOf[Button].setOnClickListener(
-      new View.OnClickListener {
-        def onClick(v:View) {
-          selectAll()
-        }
-      }
-    )
-
-    findViewById(R.id.deselectAll).asInstanceOf[Button].setOnClickListener(
-      new View.OnClickListener {
-        def onClick(v:View) = scriptsList.clearChoices()
-      }
-    )
-
-    findViewById(R.id.install).asInstanceOf[Button].setOnClickListener(
-      new View.OnClickListener {
-        def onClick(v:View) {
-          val checked = scriptsList.getCheckedItemPositions()
-          for(scriptID <- 0.to(scripts.size-1)) {
-            if(checked.get(scriptID)) {
-              val script = scripts(scriptID)
-              script.run()
-              script.save()
-            }
-          }
-          finish()
-        }
-      }
-    )
-
-    findViewById(R.id.cancel).asInstanceOf[Button].setOnClickListener(
-      new View.OnClickListener {
-        def onClick(v:View) = finish()
-      }
-    )
-
-  }
-
-  def onItemClick(parent:AdapterView[_], view:View, position:Int, id:Long) {
-    val list = parent.asInstanceOf[ListView]
-    // Needed because clicking a list without a listener doesn't raise AccessibilityEvents.
-    if(list.isItemChecked(position)) {
-      TTS.speak(getString(R.string.checked), true)
-      val current = scripts(position)
-      for(i <- 0.to(list.getCount-1)) {
-        val script = scripts(position)
-        if(script != current && script.pkg == current.pkg)
-          list.setItemChecked(i, false)
-      }
-    } else
-      TTS.speak(getString(R.string.notChecked), true)
   }
 
 }

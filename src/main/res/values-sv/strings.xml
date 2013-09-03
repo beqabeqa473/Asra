@@ -53,19 +53,8 @@
 
 <!-- Script context menu -->
 <string name="delete">Radera</string>
-<string name="copyToExternalStorage">Kopiera till extern lagring</string>
-
-<string name="bazaar_credentials_invalid">Ditt användarnamn och/eller lösenord är fel. Vänligen ange dem på nytt nedan och försök igen.</string>
-<string name="bazaar_username_label">Användarnamn</string>
-<string name="bazaar_password_label">Lösenord</string>
-<string name="script_reload_error">Detta script är felaktigt. Vänligen korrigera några fel rapporterade i loggarna och försök igen</string>
 
 <string name="confirmDelete">Är du säker på att du vill ta bort scriptet för paketet %1$s?</string>
-<string name="scriptCopied">Scriptet kopierat till %1$s.</string>
-
-<string name="newOrUpdatedScripts">Nya uppdaterade scripts är tillgängliga. Vänligen välj vilket du önskar installera.</string>
-<string name="selectAll">Välj alla</string>
-<string name="install">Installera</string>
 
 <!-- Menu items -->
 <string name="refresh">Uppdatera</string>

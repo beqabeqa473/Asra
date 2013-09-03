@@ -100,32 +100,11 @@
 
   <string name="scripts">Skriptit</string>
 
-  <string name="system">Järjestelmä</string>
-  <string name="user">Käyttäjä</string>
-
   <!-- Script context menu -->
   <string name="delete">Poista</string>
-  <string name="copyToExternalStorage">Kopioi ulkoiseen muistiin</string>
-  <string name="postToBazaar">Lähetä Bazaariin</string>
-
-  <string name="bazaar_credentials">Syötä Spiel Bazaar -käyttäjätietosi.</string>
-  <string name="bazaar_credentials_invalid">Käyttäjätunnus ja/tai salasana ovat virheellisiä. Syötä ne uudestaan alle ja yritä uudelleen.</string>
-  <string name="bazaar_username_label">Käyttäjätunnus</string>
-  <string name="bazaar_password_label">Salasana</string>
-  <string name="signup">Rekisteröi</string>
-  <string name="script_reload_error">Tämä skripti on virheellinen. Korjaa lokeissa mahdollisesti ilmoitetut virheet ja yritä uudelleen.</string>
-  <string name="changes_label">Muutokset (valinnainen):</string>
-  <string name="script_posted">Skripti lähetettiin onnistuneesti. Kiitos panoksestasi.</string>
-  <string name="script_posting_error">Tilapäinen verkkovirhe lähetettäessä skriptiä. Yritä myöhemmin uudelleen.</string>
 
   <string name="confirmDelete">Haluatko varmasti poistaa paketin %1$s skriptin?</string>
-  <string name="scriptCopied">Skripti kopioitu kohteeseen %1$s.</string>
 
-  <string name="newOrUpdatedScripts">Uusia tai päivitettyjä skriptejä on saatavilla. Valitse, mitkä haluat asentaa.</string>
-  <string name="selectAll">Valitse kaikki</string>
-  <string name="deselectAll">Poista kaikki valinnat</string>
-  <string name="install">Asenna</string>
-                                                     
   <!-- Spoken when script changes are detected -->
   <string name="scriptInstalling">Asennetaan %1$s</string>
   <string name="scriptUninstalling">Poistetaan %1$s</string>

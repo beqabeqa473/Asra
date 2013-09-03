@@ -101,31 +101,10 @@
 
   <string name="scripts">Scripts</string>
 
-  <string name="system">System</string>
-  <string name="user">User</string>
-
   <!-- Script context menu -->
   <string name="delete">Delete</string>
-  <string name="copyToExternalStorage">Copy to external storage</string>
-  <string name="postToBazaar">Post to Bazaar</string>
-
-  <string name="bazaar_credentials">Please enter your Spiel Bazaar credentials below.</string>
-  <string name="bazaar_credentials_invalid">Your username and/or password are invalid. Please re-enter them below and try again.</string>
-  <string name="bazaar_username_label">Username</string>
-  <string name="bazaar_password_label">Password</string>
-  <string name="signup">Signup</string>
-  <string name="script_reload_error">This script is invalid. Please fix any errors reported in the logs and try again.</string>
-  <string name="changes_label">Changes (optional):</string>
-  <string name="script_posted">Your script was posted successfully. Thank you for your contribution.</string>
-  <string name="script_posting_error">There was a temporary network error posting your script. Please try again later.</string>
 
   <string name="confirmDelete">Are you sure you wish to delete the script for package %1$s?</string>
-  <string name="scriptCopied">Script copied to %1$s.</string>
-
-  <string name="newOrUpdatedScripts">New or updated scripts are available. Please choose which you wish to install.</string>
-  <string name="selectAll">Select all</string>
-  <string name="deselectAll">Deselect all</string>
-  <string name="install">Install</string>
 
   <!-- Spoken when script changes are detected -->
   <string name="scriptInstalling">Installing %1$s</string>

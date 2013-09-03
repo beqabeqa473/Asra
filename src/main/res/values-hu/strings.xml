@@ -68,30 +68,10 @@
 
 <string name="scripts">Szkriptek</string>
 
-<string name="system">Rendszer</string>
-<string name="user">Használó</string>
-
 <!-- Script context menu -->
 <string name="delete">Törlés</string>
-<string name="copyToExternalStorage">Másolás külső eszközre</string>
-<string name="postToBazaar">Elküldés a Bazárra</string>
-
-<string name="bazaar_credentials">írja be a Spiel bazaar hitelesítő adatait</string>
-<string name="bazaar_credentials_invalid">A megadott felhasználónév és / vagy jelszó érvénytelen. Kérjük adja meg újra ezeket, és próbálja meg újra.</string>
-<string name="bazaar_username_label">Felhasználónév</string>
-<string name="bazaar_password_label">Jelszó</string>
-<string name="script_reload_error">Ez a szkript érvénytelen. A naplóban rögzitett  híbákat ellenőrizze, majd ez alapján javítsa ki.</string>
-<string name="changes_label">Változások (nem szükséges):</string>
-<string name="script_posted">A szkriptje sikeresen fel lett töltve. Köszönjük hozzájárulását.</string>
-<string name="script_posting_error">Ideiglenes hálózati hiba történt a feltöltés közben. Kérjük, próbálja újra később.</string>
 
 <string name="confirmDelete">Biztosan törölni szeretné a %1$s szkriptjeit?</string>
-<string name="scriptCopied">Szkript másolva a %1$sre</string>
-
-<string name="newOrUpdatedScripts">Új vagy frissített scriptek állnak rendelkezésre. Kérjük, válassza ki a kivántakat a telepítéshez</string>
-<string name="selectAll">Összes kiválasztása</string>
-<string name="deselectAll">Összes végrehagyása</string>
-<string name="install">Telepítés</string>
 
 <!-- Menu items -->
 <string name="refresh">újra ellenőrzés</string>

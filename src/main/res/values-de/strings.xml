@@ -88,29 +88,11 @@
   <string name="events">Ereignisse</string>
   <string name="createScriptTemplate">skript-Vorlage erstellen</string>
   <string name="scripts">Skripte</string>
-  <string name="system">System</string>
-  <string name="user">Benutzer</string>
 
   <!-- Script context menu -->
   <string name="delete">Löschen</string>
-  <string name="copyToExternalStorage">In externen Speicher kopieren</string>
-  <string name="postToBazaar">In Bazaar einstellen</string>
 
-  <string name="bazaar_credentials">Bitte geben Sie nachfolgend Ihren Benutzernamen sowie Ihr Passwort für den Spiel Bazaar ein.</string>
-  <string name="bazaar_credentials_invalid">Ihr Benutzername und/oder das Passwort ist ungültig. Bitte geben Sie nachfolgend beides neu ein und versuchen Sie es erneut.</string>
-  <string name="bazaar_username_label">Benutzername</string>
-  <string name="bazaar_password_label">Passwort</string>
-  <string name="signup">Anmelden</string>
-  <string name="script_reload_error">Dieses Skript ist ungültig. Bitte korrigieren Sie alle Fehler, die in den logs aufgelistet sind, und versuchen Sie es erneut.</string>
-  <string name="changes_label">Änderungen (optional):</string>
-  <string name="script_posted">Ihr Skript wurde erfolgreich  eingestellt. Vielen Dank für Ihren Beitrag.</string>
-  <string name="script_posting_error">Beim Einstellen Ihres Skripts ist ein temporärer Netzwerk-Fehler aufgetreten. Bitte versuchen Sie es später noch einmal.</string>
   <string name="confirmDelete">Sind Sie sicher, dass Sie das Skript für %1$s löschen möchten?</string>
-  <string name="scriptCopied">Skript nach %1$s kopiert.</string>
-  <string name="newOrUpdatedScripts">Es sind neue oder aktualisierte Skripte verfügbar. Bitte wählen Sie aus, welche Sie installieren möchten.</string>
-  <string name="selectAll">Alle auswählen</string>
-  <string name="deselectAll">Alle abwählen</string>
-  <string name="install">Installieren</string>
 
   <!-- Spoken when script changes are detected -->
   <string name="scriptInstalling">Installiere %1$s</string>

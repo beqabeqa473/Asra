@@ -100,31 +100,10 @@
 
   <string name="scripts">Скрипты</string>
 
-  <string name="system">Система</string>
-  <string name="user">Пользователь</string>
-
   <!-- Script context menu -->
   <string name="delete">Удалить</string>
-  <string name="copyToExternalStorage">Скопировать на внешний носитель информации</string>
-  <string name="postToBazaar">Отправить в Bazaar</string>
-
-  <string name="bazaar_credentials">Пожалуйста, введите ваши данные в Spiel Bazaar ниже.</string>
-  <string name="bazaar_credentials_invalid">Неверное имя пользователя и/или пароль. Пожалуйста, введите данные ещё раз.</string>
-  <string name="bazaar_username_label">Имя пользователя</string>
-  <string name="bazaar_password_label">Пароль</string>
-  <string name="signup">Регистрация</string>
-  <string name="script_reload_error">Этот скрипт некорректен. Пожалуйста, устраните ошибки, сообщение о которых вы можете найти в логах, и попробуйте снова.</string>
-  <string name="changes_label">Изменения (необязательно):</string>
-  <string name="script_posted">Ваш скрипт был успешно отправлен. Спасибо за сотрудничество.</string>
-  <string name="script_posting_error">Во время отправки скрипта произошла временная ошибка сети. Пожалуйста, попробуйте снова позднее.</string>
 
   <string name="confirmDelete">Вы действительно хотите удалить скрипт для пакета %1$s?</string>
-  <string name="scriptCopied">Скрипт скопирован в %1$s.</string>
-
-  <string name="newOrUpdatedScripts">Доступны новые или обновлённые скрипты. Пожалуйста, выделите те, которые хотите установить.</string>
-  <string name="selectAll">Выделить все</string>
-  <string name="deselectAll">Снять выделение со всех</string>
-  <string name="install">Установить</string>
 
   <!-- Spoken when script changes are detected -->
   <string name="scriptInstalling">Установка %1$s</string>

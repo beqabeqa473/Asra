@@ -38,7 +38,6 @@ class SpielService extends AccessibilityService {
     presenters.Presenter()
     GestureDispatcher()
     Scripter(this)
-    BazaarProvider(this)
     Sensors(this)
     Triggers(this)
     Device()
