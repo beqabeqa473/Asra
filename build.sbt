@@ -16,7 +16,7 @@ javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
 
 platformName := "android-18"
 
-keystorePath  := Path.userHome / ".keystore" / "spiel.keystore"
+keystorePath in Release := file(".") / "spiel.keystore"
 
 keyalias := "spiel"
 
