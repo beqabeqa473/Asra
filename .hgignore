@@ -3,3 +3,4 @@ tmp
 src/website/crash.log
 src/website/Gemfile.lock
 src/website/output
+spiel.keystore
