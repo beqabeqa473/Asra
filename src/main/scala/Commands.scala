@@ -75,15 +75,15 @@ trait Commands {
       filtered.exists(_.perform(Action.Focus))
     }
 
-  object Direction extends Enumeration {
+  object NavigationDirection extends Enumeration {
     val Prev = Value
     val Next = Value
   }
 
-  protected def navigate(direction:Direction.Value, source:Option[AccessibilityNodeInfo] = None, wrap:Boolean = true):Boolean =
+  protected def navigate(direction:NavigationDirection.Value, source:Option[AccessibilityNodeInfo] = None, wrap:Boolean = true):Boolean =
     source.orElse(SpielService.rootInActiveWindow.flatMap(_.find(Focus.Accessibility))).flatMap { s =>
       granularity.flatMap { g =>
-        val action = if(direction == Direction.Next) Action.NextAtMovementGranularity else Action.PreviousAtMovementGranularity
+        val action = if(direction == NavigationDirection.Next) Action.NextAtMovementGranularity else Action.PreviousAtMovementGranularity
         if(s.supports_?(action)) {
           val b = new Bundle()
           b.putInt(ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, g)
@@ -91,16 +91,16 @@ trait Commands {
         } else None
       }.orElse {
         var rv = false
-        val htmlAction = if(direction == Direction.Next) Action.NextHtmlElement else Action.PreviousHtmlElement
+        val htmlAction = if(direction == NavigationDirection.Next) Action.NextHtmlElement else Action.PreviousHtmlElement
         if(s.supports_?(htmlAction))
           rv = s.perform(htmlAction)
         if(!rv) {
           def getNew(s:AccessibilityNodeInfo):Option[AccessibilityNodeInfo] =
-            if(direction == Direction.Next)
+            if(direction == NavigationDirection.Next)
               s.nextAccessibilityFocus(wrap)
             else
               s.prevAccessibilityFocus(wrap)
-          val scrollAction = if(direction == Direction.Next) Action.ScrollForward else Action.ScrollBackward
+          val scrollAction = if(direction == NavigationDirection.Next) Action.ScrollForward else Action.ScrollBackward
           var n = getNew(s)
           val scrollableContainer = s.ancestors.find(v => v.supports_?(scrollAction))
           scrollableContainer.foreach { sc =>
@@ -144,7 +144,7 @@ trait Commands {
       wl.acquire()
       SpielService.rootInActiveWindow.foreach { root =>
         TTS.noFlush = true
-        navigate(Direction.Next, wrap = false)
+        navigate(NavigationDirection.Next, wrap = false)
       }
     }
     def clear() {
