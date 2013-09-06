@@ -134,16 +134,18 @@ trait Commands {
         navigate(NavigationDirection.Next, wrap = false)
       }
     }
+    var stop:AccessibilityEvent => Unit = null
     def clear() {
       granularity = oldGranularity
       wl.release()
       TTS.noFlush = false
       SpeechQueueEmpty -= continue
+      AccessibilityEventReceived -= stop
     }
-    val stop = { (e:AccessibilityEvent) =>
+    stop = { e:AccessibilityEvent =>
       if(List(TYPE_TOUCH_EXPLORATION_GESTURE_START, TYPE_TOUCH_INTERACTION_START, TYPE_WINDOW_STATE_CHANGED).contains(e.getEventType)) {
+        Log.d("spielcheck", "Stopping continuous read due to accessibilityevent trigger: "+this)
         clear()
-        AccessibilityEventReceived -= this
       }
     }
     SpeechQueueEmpty += continue
