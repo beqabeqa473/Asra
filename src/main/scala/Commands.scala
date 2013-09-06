@@ -5,6 +5,7 @@ import android.os._
 import android.view.accessibility._
 import AccessibilityEvent._
 import AccessibilityNodeInfo._
+import android.util._
 
 import events._
 
@@ -27,40 +28,26 @@ trait Commands {
     TTS.speak(SpielService.context.getString(id), true)
   }
 
-  def decreaseGranularity() = {
-    SpielService.rootInActiveWindow.flatMap(_.find(Focus.Accessibility)).map { s =>
-      val grans = s.getMovementGranularities
-      val candidates = granularities.filter(v => (grans & v) != 0)
-      granularity.map { g =>
-        candidates.indexOf(g) match {
-          case -1 => granularity = candidates.reverse.headOption
-          case 0 =>
-            granularity = None
-            granularity.size
-          case v => granularity = Some(candidates(v-1))
-        }
-      }.getOrElse {
-        granularity = candidates.reverse.headOption
-      }
-      describeGranularity()
-    }
-    true
+  object GranularityDirection extends Enumeration {
+    val Decrease, Increase = Value
   }
 
-  def increaseGranularity() = {
+  def changeGranularity(direction:GranularityDirection.Value) = {
     SpielService.rootInActiveWindow.flatMap(_.find(Focus.Accessibility)).map { s =>
       val grans = s.getMovementGranularities
       val candidates = granularities.filter(v => (grans & v) != 0)
       granularity.map { g =>
         candidates.indexOf(g) match {
-          case -1 => granularity = candidates.headOption
-          case v if(v == candidates.size-1) =>
+          case -1 => granularity = if(direction == GranularityDirection.Decrease) candidates.reverse.headOption else candidates.headOption
+          case 0 if(direction == GranularityDirection.Decrease) =>
             granularity = None
-            candidates.size
-          case v => granularity = Some(candidates(v+1))
+            granularity.size
+          case v if(v == candidates.size-1 && direction == GranularityDirection.Increase) =>
+            granularity = None
+          case v => granularity = if(direction == GranularityDirection.Decrease) Some(candidates(v-1)) else Some(candidates(v+1))
         }
       }.getOrElse {
-        granularity = candidates.headOption
+        granularity = if(direction == GranularityDirection.Decrease) candidates.reverse.headOption else candidates.headOption
       }
       describeGranularity()
     }

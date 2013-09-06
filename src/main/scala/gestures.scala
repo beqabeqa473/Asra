@@ -125,9 +125,9 @@ class Gestures {
 
     onRight { source => navigate(NavigationDirection.Next) }
 
-    onUp { source => decreaseGranularity() }
+    onUp { source => changeGranularity(GranularityDirection.Decrease) }
 
-    onDown { source => increaseGranularity() }
+    onDown { source => changeGranularity(GranularityDirection.Increase) }
 
     onUpLeft { source => SpielService.performGlobalAction(GLOBAL_ACTION_HOME) }
 
