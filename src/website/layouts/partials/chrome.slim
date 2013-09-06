@@ -8,19 +8,22 @@ html lang = "en"
     link rel="alternate" type="application/atom+xml" title=@config[:title] href="#{@config[:base_url]}/feed.xml"
   body
     .container
-      header
-        h1: a href = "/" =@config[:title]
-      nav
-        ul.nav.nav-tabs
+      header.row
+        h1.col-md-6.col-md-offset-3: a href = "/" =@config[:title]
+      nav.row
+        ul.nav.nav-tabs.col-md-6.col-md-offset-3
           li: a href = "/" Home
           li: a href = "/download" Download
           li: a href = "/doc" Documentation
           li: a href = "/support" Support/Community
           li: a href = "/dev" Develop
-      section
-        == render "partials/donations"
-      section
-        h2=item[:title]
-        == yield
-      footer Copyright &copy; 2009-2013 Nolan Darilek.
+      section.row
+        div.col-md-6.col-md-offset-3
+          == render "partials/donations"
+      section.row
+        div.col-md-6.col-md-offset-3
+          h2=item[:title]
+          == yield
+      footer.row
+        div.col-md-6.col-md-offset-3: Copyright &copy; 2009-2013 Nolan Darilek.
     == render "partials/analytics"
