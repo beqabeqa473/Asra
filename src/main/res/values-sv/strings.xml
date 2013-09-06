@@ -48,9 +48,6 @@
 
 <string name="scripts">Scripts</string>
 
-<string name="system">System</string>
-<string name="user">Användare</string>
-
 <!-- Script context menu -->
 <string name="delete">Radera</string>
 
