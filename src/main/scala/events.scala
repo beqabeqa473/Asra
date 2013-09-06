@@ -37,16 +37,29 @@ class Event[T] {
   def -=(h: => Any) =
     remove(h)
 
-  def apply(arg:T) {
+  def apply(arg:T, asynchronous:Boolean = true) {
     Log.d("spiel", "Firing "+this.getClass.getName)
     handlers.foreach { h =>
-      val f = future(h(arg))
-      f.onFailure { 
-        case t =>
+      def fail:PartialFunction[Throwable, Any] = {
+        case t:Throwable =>
           Log.e("spiel", "Error handling event", t)
           UnhandledException(t)
       }
+      if(asynchronous) {
+        val f = future(h(arg))
+        f.onFailure(fail)
+      } else {
+        try {
+          h(arg)
+          } catch {
+            fail
+          }
+      }
     }
+  }
+
+  def apply() {
+    apply(null.asInstanceOf[T], true)
   }
 
   def on(intents:List[String], arg:T, dataScheme:Option[String] = None):Any = {
