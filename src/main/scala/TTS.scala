@@ -465,8 +465,8 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
     mutedForSpeech = false
   }
 
-  UtteranceEnded += { text:Option[String] => unmuteIfNecessary() }
+  UtteranceEnded += { text:String => unmuteIfNecessary() }
 
-  UtteranceError += { text:Option[String] => unmuteIfNecessary() }
+  UtteranceError += { text:String => unmuteIfNecessary() }
 
 }

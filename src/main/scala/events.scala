@@ -11,36 +11,36 @@ import android.view.accessibility._
 
 class Event[T] {
 
-  private val handlers = Set[(T) => Any]()
+  private val handlers = Set[(T) => Unit]()
 
-  def add(h:(T) => Any) =
+  def add(h:(T) => Unit) =
     handlers += h
 
-  def +=(h:(T) => Any) =
+  def +=(h:(T) => Unit) =
     add(h)
 
-  def add(h: => Any) =
+  def add(h: => Unit) =
     handlers += { (Unit) => h }
 
-  def +=(h: => Any) =
+  def +=(h: => Unit) =
     add(h)
 
-  def remove(h:(T) => Any) =
+  def remove(h:(T) => Unit) =
     handlers -= h
 
-  def -=(h:(T) => Any) =
+  def -=(h:(T) => Unit) =
     remove(h)
 
-  def remove(h: => Any) =
+  def remove(h: => Unit) =
     handlers -= { (Unit) => h }
 
-  def -=(h: => Any) =
+  def -=(h: => Unit) =
     remove(h)
 
   def apply(arg:T, asynchronous:Boolean = true) {
     Log.d("spiel", "Firing "+this.getClass.getName)
     handlers.foreach { h =>
-      def fail:PartialFunction[Throwable, Any] = {
+      def fail:PartialFunction[Throwable, Unit] = {
         case t:Throwable =>
           Log.e("spiel", "Error handling event", t)
           UnhandledException(t)
@@ -62,7 +62,7 @@ class Event[T] {
     apply(null.asInstanceOf[T], true)
   }
 
-  def on(intents:List[String], arg:T, dataScheme:Option[String] = None):Any = {
+  def on(intents:List[String], arg:T, dataScheme:Option[String] = None):Unit = {
     val f = new IntentFilter
     intents.foreach(f.addAction(_))
     dataScheme.foreach(f.addDataScheme(_))
@@ -74,13 +74,13 @@ class Event[T] {
     )
   }
 
-  def on(intents:List[String]):Any = on(intents, null.asInstanceOf[T])
+  def on(intents:List[String]):Unit = on(intents, null.asInstanceOf[T])
 
-  def on(intent:String, arg:T):Any = on(intent :: Nil, arg)
+  def on(intent:String, arg:T):Unit = on(intent :: Nil, arg)
 
-  def on(intent:String):Any = on(intent :: Nil)
+  def on(intent:String):Unit = on(intent :: Nil)
 
-  def on(intent:String, dataScheme:Option[String]):Any = on(intent :: Nil, null.asInstanceOf[T], dataScheme = dataScheme)
+  def on(intent:String, dataScheme:Option[String]):Unit = on(intent :: Nil, null.asInstanceOf[T], dataScheme = dataScheme)
 
 }
 

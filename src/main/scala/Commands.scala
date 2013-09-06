@@ -150,14 +150,18 @@ trait Commands {
     }
     SpeechQueueEmpty += continue
     AccessibilityEventReceived += stop
-    CallAnswered += { () =>
+    var callAnswered:(Unit) => Unit = null
+    callAnswered = { (Unit) =>
       clear()
-      CallAnswered -= this
+      CallAnswered -= callAnswered
     }
-    CallRinging += { () =>
+    CallAnswered += callAnswered
+    var callRinging:(String) => Unit = null
+    callRinging = { number:String =>
       clear()
-      CallRinging -= this
+      CallRinging -= callRinging
     }
+    CallRinging += callRinging
     continue()
   }
 
