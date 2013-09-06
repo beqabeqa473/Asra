@@ -43,7 +43,7 @@
   <string name="notChecked">не отмечено</string>
   <string name="notSelected">не выделено</string>
   <string name="password">пароль</string>
-  <string name="radioButton">%1$s радиокнопка</string>
+  <string name="radioButton">радиокнопка</string>
   <string name="rating">Прогресс</string>
   <string name="selected">выделено</string>
 

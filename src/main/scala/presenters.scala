@@ -509,7 +509,9 @@ class Presenters {
     }
 
     onViewFocused { e:AccessibilityEvent =>
-      speak(getString(R.string.radioButton, e.utterances(guessLabelIfTextShorterThan = Some(2)).mkString(": ")))
+      var text = e.utterances(guessLabelIfTextShorterThan = Some(2)).mkString(": ")
+      if(!text.isEmpty) text += ": "
+      speak(text+getString(R.string.radioButton))
       if(VERSION.SDK_INT >= 16)
         speak(getString((if(e.isChecked) R.string.selected else R.string.notSelected)), false)
       true

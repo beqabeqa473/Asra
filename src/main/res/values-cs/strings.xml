@@ -27,7 +27,7 @@
 <string name="menu">menu</string>
 <string name="notChecked">nezaškrtnuto</string>
 <string name="password">%1$s: heslo</string>
-<string name="radioButton">%1$s: přepínač</string>
+<string name="radioButton">přepínač</string>
 
 <!-- Preferences -->
 <string name="speechTitle">řeč</string>

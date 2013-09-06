@@ -22,7 +22,7 @@
 <string name="menu">dosol</string>
 <string name="notChecked">labaaka</string>
 <string name="password">%1$s: finnde</string>
-<string name="radioButton">%1$s: ñiire labo</string>
+<string name="radioButton">ñiire labo</string>
 
 <!-- Preferences -->
 <string name="speechTitle">Wowlaandu</string>

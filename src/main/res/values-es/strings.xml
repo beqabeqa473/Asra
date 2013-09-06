@@ -25,7 +25,7 @@
 <string name="menu">menú</string>
 <string name="notChecked">no verificado</string>
 <string name="password">%1$s: contraseña</string>
-<string name="radioButton">%1$s: botón radio</string>
+<string name="radioButton">botón radio</string>
 
 <!-- Preferences -->
 <string name="speechTitle">Voz</string>

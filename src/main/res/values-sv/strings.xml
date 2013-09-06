@@ -22,7 +22,7 @@
 <string name="menu">meny</string>
 <string name="notChecked">ej kryssad</string>
 <string name="password">%1$s: lösenord</string>
-<string name="radioButton">%1$s: radioknapp</string>
+<string name="radioButton">radioknapp</string>
 
 <!-- Preferences -->
 <string name="speechTitle">Tal</string>

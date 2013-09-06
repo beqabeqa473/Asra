@@ -39,7 +39,7 @@
   <string name="notChecked">nicht aktiviert</string>
   <string name="notSelected">nicht gewählt</string>
   <string name="password">Passwort</string>
-  <string name="radioButton">%1$s Auswahlschalter</string>
+  <string name="radioButton">Auswahlschalter</string>
   <string name="rating">Wert</string>
   <string name="selected">gewählt</string>
 
