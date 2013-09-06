@@ -18,12 +18,12 @@ html lang = "en"
           li: a href = "/support" Support/Community
           li: a href = "/dev" Develop
       section.row
-        div.col-md-6.col-md-offset-3
+        .col-md-6.col-md-offset-3
           == render "partials/donations"
       section.row
-        div.col-md-6.col-md-offset-3
+        .col-md-6.col-md-offset-3
           h2=item[:title]
           == yield
       footer.row
-        div.col-md-6.col-md-offset-3: Copyright &copy; 2009-2013 Nolan Darilek.
+        .col-md-6.col-md-offset-3: Copyright &copy; 2009-2013 Nolan Darilek.
     == render "partials/analytics"
