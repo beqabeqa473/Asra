@@ -27,7 +27,7 @@ compile "*" do
   else
     case item[:extension]
       when "md"
-        filter :kramdown
+        filter :kramdown, :smart_quotes => ["apos", "apos", "quot", "quot"]
       when "asciidoc"
         filter :asciidoc
       when "slim"
