@@ -17,8 +17,7 @@ html lang = "en"
           li: a href = "/doc" Documentation
           li: a href = "/support" Support/Community
           li: a href = "/dev" Develop
-      section
-        script data-gittip-username = "thewordnerd" src = "https://www.gittip.com/assets/widgets/0002.js"
+      == render "partials/donations"
       section
         h2=item[:title]
         == yield
