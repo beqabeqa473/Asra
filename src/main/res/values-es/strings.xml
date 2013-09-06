@@ -50,13 +50,6 @@
 <string name="voicemailAlertsTitle">Alertas de correo de voz</string>
 <string name="voicemailAlertsSummary">Repetir la disponibilidad de Nuevas llamadas en el buzón</string>
 
-<string name="triggersTitle">Activadores</string>
-<string name="triggersSummary">Configurar acciones en respuesta a eventos físicos</string>
-<string name="onShakeTitle">al agitar</string>
-<string name="onShakeSummary">Configurar una accion a realizar cuando el dispositivo es agitado</string>
-<string name="onProximityNearTitle">Al acercarse</string>
-<string name="onProximityNearSummary">Configurar una acción a realizar cuando el sensor de proximidad determina que algo está cerca</string>
-
 <string name="debuggingTitle">Depuración</string>
 <string name="sendBacktracesTitle">Enviar trazas cuando Spiel falla</string>
 <string name="sendBacktracesSummary">Enviar informe de error automática y anonímamente al desarrollador cada vez que Spiel falle (se necesita reiniciar).</string>

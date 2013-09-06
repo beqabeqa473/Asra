@@ -7,8 +7,6 @@ import android.os.Debug
 import android.preference.PreferenceManager
 import android.util.Log
 
-import triggers._
-
 /**
  * Singleton for convenient access to preference values. Also tracks 
  * preference changes and updates relevant subsystems.
@@ -123,23 +121,6 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
 
   def duckNonSpeechAudio = prefs.getBoolean("duckNonSpeechAudio", true)
 
-  private def triggerPreference(trigger:String, default:String = "") = prefs.getString(trigger, default) match {
-    case "" => None
-    case str => Some(Triggers.actions(str))
-  }
-
-  /**
-   * Indicates <code>Action</code> to run on proximity nearness.
-  */
-
-  def onProximityNear = triggerPreference("onProximityNear", "stopSpeech")
-
-  /**
-   * Indicates <code>Action</code> to run when shaking starts.
-  */
-
-  def onShakingStarted = triggerPreference("onShakingStarted")
-
   /**
    * Indicates whether backtraces are to be sent.
   */
@@ -195,8 +176,6 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
       case "pitchScale" => TTS.pitch = pitchScale
       case "rateScale" => TTS.rate = rateScale
       case "speechEngine" => TTS.init()
-      case "onProximityNear" => ProximityNear(onProximityNear)
-      case "onShakingStarted" => ShakingStarted(onShakingStarted)
       case "profiling" if(profiling) => Debug.startMethodTracing("spiel")
       case "profiling" if(!profiling) => Debug.stopMethodTracing()
       case "voicemailAlerts" =>

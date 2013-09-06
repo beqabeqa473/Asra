@@ -52,13 +52,6 @@
 <string name="voicemailAlertsTitle">Upozornění na hlasovou poštu</string>
 <string name="voicemailAlertsSummary">Opakovaně oznamovat dostupnost nové hlasové pošty</string>
 
-<string name="triggersTitle">Triggers</string>
-<string name="triggersSummary">Nastavení spouštěných akcí v reakci na fyzické události</string>
-<string name="onShakeTitle">Na třesení</string>
-<string name="onShakeSummary">Nastavit provedení akce, když je přístrojem třeseno</string>
-<string name="onProximityNearTitle">Na přiblížení</string>
-<string name="onProximityNearSummary">Nastavit provedení akce, když je něco v blízkosti senzoru přiblížení</string>
-
 <string name="debuggingTitle">Ladění</string>
 <string name="sendBacktracesTitle">Odeslat report, když Spiel havaruje</string>
 <string name="sendBacktracesSummary">Automaticky odesílat anonimní zprávy o chybě vývojáři, kdykoli Spiel havaruje (vyžaduje restart)</string>

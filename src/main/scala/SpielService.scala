@@ -16,7 +16,6 @@ import events._
 import gestures.{Gesture, GestureDispatcher, GesturePayload}
 import routing._
 import scripting._
-import triggers.Triggers
 
 /**
  * <code>AccessibilityService</code> implementation that serves as main entry point.
@@ -39,7 +38,6 @@ class SpielService extends AccessibilityService {
     GestureDispatcher()
     Scripter(this)
     Sensors(this)
-    Triggers(this)
     Device()
     Bluetooth()
     Telephony(this)

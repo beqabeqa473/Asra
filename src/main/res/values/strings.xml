@@ -79,13 +79,6 @@
   <string name="hapticFeedbackTitle">Haptic feedback</string>
   <string name="hapticFeedbackSummary">Emit vibrations whenever widget boundaries are crossed</string>
 
-  <string name="triggersTitle">Triggers</string>
-  <string name="triggersSummary">Set actions to run in response to physical events</string>
-  <string name="onShakeTitle">On shake</string>
-  <string name="onShakeSummary">Set an action to perform when the device is shaken</string>
-  <string name="onProximityNearTitle">On proximity near</string>
-  <string name="onProximityNearSummary">Set an action to perform when the proximity sensor determines that something is near</string>
-
   <string name="notificationFiltersTitle">Notification filters</string>
   <string name="notificationFiltersSummary">Filter presentation of notification changes for noisy apps</string>
 

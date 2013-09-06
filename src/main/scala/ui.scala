@@ -22,7 +22,6 @@ import org.scaloid.common.{Preferences => _, _}
 
 import presenters._
 import scripting._
-import triggers.Triggers
 
 /**
  * Activity that serves as a host for other tabs.
@@ -140,36 +139,6 @@ class AlertsPreferenceFragment extends StockPreferenceFragment {
     val vibrator = getActivity.getSystemService(Context.VIBRATOR_SERVICE).asInstanceOf[android.os.Vibrator]
     if(!vibrator.hasVibrator)
       getPreferenceScreen.removePreference(findPreference("hapticFeedback"))
-  }
-}
-
-class TriggersPreferenceFragment extends PreferenceFragment {
-  override def onCreate(b:Bundle) {
-    super.onCreate(b)
-    val pm = getActivity.getPackageManager
-
-    if(pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER) || pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_PROXIMITY)) {
-
-      val res = getActivity.getResources.getIdentifier(getArguments.getString("resource"), "xml", getActivity.getPackageName)
-      addPreferencesFromResource(res)
-
-      // Set up triggers. First add an action for "None," then concat others.
-      val actions = (getString(R.string.none), "") :: Triggers.actions.map((v) => (v._2.name, v._1)).toList
-
-      if(pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER)) {
-        val onShake = findPreference("onShakingStarted").asInstanceOf[ListPreference]
-        onShake.setEntries(actions.map(_._1).toArray[CharSequence])
-        onShake.setEntryValues(actions.map(_._2).toArray[CharSequence])
-      } else
-        getPreferenceScreen.asInstanceOf[PreferenceGroup].removePreference(findPreference("onShakingStarted"))
-
-      if(pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_PROXIMITY)) {
-        val onProximityNear = findPreference("onProximityNear").asInstanceOf[ListPreference]
-        onProximityNear.setEntries(actions.map(_._1).toArray[CharSequence])
-        onProximityNear.setEntryValues(actions.map(_._2).toArray[CharSequence])
-      } else
-        getPreferenceScreen.asInstanceOf[PreferenceGroup].removePreference(findPreference("onProximityNear"))
-    }
   }
 }
 

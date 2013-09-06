@@ -51,13 +51,6 @@
 <string name="voicemailAlertsTitle">hangposta figyelmeztetések</string>
 <string name="voicemailAlertsSummary">új hangposta ismételt figyelmeztetése</string>
 
-<string name="triggersTitle">triggerek</string>
-<string name="triggersSummary">fizikai eseményekhez intézkedéseket lehet vállalni</string>
-<string name="onShakeTitle">rázáskor</string>
-<string name="onShakeSummary">művelet, mikor az eszköz rázva van</string>
-<string name="onProximityNearTitle">közelségkor</string>
-<string name="onProximityNearSummary">művelet beállítása, mikor a közelségi szenzor érzélkeli, hogy valami közel van</string>
-
 <string name="debuggingTitle">Hibakeresés</string>
 <string name="sendBacktracesTitle">visszajővő adatok elküldése, amikor a spiel lefagy</string>
 <string name="sendBacktracesSummary">Automatikus névtelen hibajelentések elküldése a fejlesztőnek, ha a Spiel lefagy (újraindítást igényel)</string>

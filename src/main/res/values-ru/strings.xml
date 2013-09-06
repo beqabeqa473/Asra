@@ -78,13 +78,6 @@
   <string name="hapticFeedbackTitle">Виброотклик</string>
   <string name="hapticFeedbackSummary">Вибрировать всякий раз, как пересекаются границы виджетов</string>
 
-  <string name="triggersTitle">Датчики</string>
-  <string name="triggersSummary">Настройка действий, выполняемых при физических событиях</string>
-  <string name="onShakeTitle">При потряхивании</string>
-  <string name="onShakeSummary">Назначить действие, выполняемое при потряхивании устройства</string>
-  <string name="onProximityNearTitle">При приближении</string>
-  <string name="onProximityNearSummary">Назначить действие, выполняемое, когда датчик приближения обнаружит что-либо около устройства</string>
-
   <string name="notificationFiltersTitle">Фильтры уведомлений</string>
   <string name="notificationFiltersSummary">Фильтр отображения уведомлений изменения для шумных приложений</string>
 

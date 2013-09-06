@@ -70,12 +70,7 @@
   <string name="voicemailAlertsSummary">Gibt wiederholt die Verfügbarkeit neuer Sprachnachrichten aus</string>
   <string name="hapticFeedbackTitle">Haptisches Feedback</string>
   <string name="hapticFeedbackSummary">Kurze Vibration, wenn die Umrandung eines Bildschirmobjektes berührt wird</string>
-  <string name="triggersTitle">Aktionen</string>
-  <string name="triggersSummary">Aktionen einstellen, die bei bestimmten physikalischen Ereignissen ausgeführt werden</string>
-  <string name="onShakeTitle">Beim Schütteln</string>
-  <string name="onShakeSummary">Aktion festlegen, die ausgeführt wird, sobald das Gerät geschüttelt wird</string>
-  <string name="onProximityNearTitle">Bei Annäherung</string>
-  <string name="onProximityNearSummary">Aktion festlegen, die ausgeführt wird, sobald der Nähe-Ssensor eine Annäherung erkennt</string>
+
   <string name="notificationFiltersTitle">Benachrichtigungsfilter</string>
   <string name="notificationFiltersSummary">Einstellungen zur anwendungsspezifischen Benachrichtigungsausgabe</string>
 

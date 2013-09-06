@@ -78,13 +78,6 @@
   <string name="hapticFeedbackTitle">Haptinen palaute</string>
   <string name="hapticFeedbackSummary">Laite värisee, kun widgetin rajat ylitetään</string>
 
-  <string name="triggersTitle">Toiminnot</string>
-  <string name="triggersSummary">Valitse tietyille fyysisille tapahtumille suoritettavat toiminnot</string>
-  <string name="onShakeTitle">Laitetta ravistettaessa</string>
-  <string name="onShakeSummary">Valitse toiminto, joka suoritetaan, kun laitetta ravistetaan</string>
-  <string name="onProximityNearTitle">Kun jotakin on lähellä</string>
-  <string name="onProximityNearSummary">Valitse toiminto, joka suoritetaan, kun läheisyysanturi havaitsee lähellä jotakin</string>
-
   <string name="notificationFiltersTitle">Ilmoitussuodattimet</string>
   <string name="notificationFiltersSummary">Suodata ilmoitusmuutosten lukemista äänekkäissä sovelluksissa</string>
 
