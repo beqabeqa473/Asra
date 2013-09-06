@@ -849,7 +849,7 @@ object Presenter extends Router[EventPayload](Some(() => Before), Some(() => Aft
 
   private[presenters] def process(e:AccessibilityEvent, eventType:Option[Int] = None):Boolean = {
 
-    Log.d("spiel", "Event "+e.toString+"; Activity: "+currentActivity)
+    Log.d("spiel", "Event "+e.toString+"; Activity: "+currentActivity+"\nSource: "+e.getSource)
 
     if(e == null)
       return true
