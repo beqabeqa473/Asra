@@ -13,7 +13,10 @@ import events._
 class Application extends android.app.Application {
   override def onCreate() {
     ACRA.init(this)
-    UnhandledException += { t:Throwable => ErrorReporter.getInstance.handleException(t, false) }
+    UnhandledException += { t:Throwable =>
+      if(Preferences.sendBacktraces)
+        ErrorReporter.getInstance.handleException(t, false)
+    }
     super.onCreate()
   }
 }
