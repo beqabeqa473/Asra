@@ -4,6 +4,7 @@ package events
 import collection.mutable.Set
 import concurrent._
 import ExecutionContext.Implicits.global
+import duration._
 
 import android.content._
 import android.util.Log
@@ -45,15 +46,15 @@ class Event[T] {
           Log.e("spiel", "Error handling event", t)
           UnhandledException(t)
       }
+      val f = future(h(arg))
       if(asynchronous) {
-        val f = future(h(arg))
         f.onFailure(fail)
       } else {
         try {
-          h(arg)
-          } catch {
-            fail
-          }
+          Await.result(f, 1 second)
+        } catch {
+          fail
+        }
       }
     }
   }
