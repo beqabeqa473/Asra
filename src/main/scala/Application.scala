@@ -3,6 +3,8 @@ package info.spielproject.spiel
 import org.acra._
 import annotation._
 
+import events._
+
 @ReportsCrashes(
   formKey = "",
   mailTo = "spiel@thewordnerd.info",
@@ -11,6 +13,7 @@ import annotation._
 class Application extends android.app.Application {
   override def onCreate() {
     ACRA.init(this)
+    UnhandledException += { t:Throwable => ErrorReporter.getInstance.handleException(t, false) }
     super.onCreate()
   }
 }
