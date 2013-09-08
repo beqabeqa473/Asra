@@ -4,7 +4,6 @@ package events
 import collection.mutable.Set
 import concurrent._
 import ExecutionContext.Implicits.global
-import duration._
 
 import android.content._
 import android.util.Log
@@ -43,15 +42,15 @@ class Event[T] {
     handlers.foreach { h =>
       def fail:PartialFunction[Throwable, Unit] = {
         case t:Throwable =>
-          Log.e("spiel", "Error handling event", t)
+          Log.e("spiel", "Error handling event "+this+", "+arg, t)
           UnhandledException(t)
       }
-      val f = future(h(arg))
       if(asynchronous) {
+        val f = future(h(arg))
         f.onFailure(fail)
       } else {
         try {
-          Await.result(f, 1 second)
+          h(arg)
         } catch {
           fail
         }
