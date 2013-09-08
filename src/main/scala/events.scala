@@ -2,8 +2,6 @@ package info.spielproject.spiel
 package events
 
 import collection.mutable.Set
-import concurrent._
-import ExecutionContext.Implicits.global
 
 import android.content._
 import android.util.Log
@@ -37,7 +35,7 @@ class Event[T] {
   def -=(h: => Unit) =
     remove(h)
 
-  def apply(arg:T, asynchronous:Boolean = true) {
+  def apply(arg:T) {
     Log.d("spiel", "Firing "+this.getClass.getName)
     handlers.foreach { h =>
       def fail:PartialFunction[Throwable, Unit] = {
@@ -45,21 +43,16 @@ class Event[T] {
           Log.e("spiel", "Error handling event "+this+", "+arg, t)
           UnhandledException(t)
       }
-      if(asynchronous) {
-        val f = future(h(arg))
-        f.onFailure(fail)
-      } else {
-        try {
-          h(arg)
-        } catch {
-          fail
-        }
+      try {
+        h(arg)
+      } catch {
+        fail
       }
     }
   }
 
   def apply() {
-    apply(null.asInstanceOf[T], true)
+    apply(null.asInstanceOf[T])
   }
 
   def on(intents:List[String], arg:T, dataScheme:Option[String] = None):Unit = {

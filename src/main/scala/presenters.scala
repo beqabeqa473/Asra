@@ -587,7 +587,7 @@ class Presenters {
           val textCount = source.descendants.map { v =>
             if((v.getText != null && v.getText.length != 0) || (v.getContentDescription != null && v.getContentDescription.length != 0)) 1 else 0
           }.foldLeft(0) { (acc, v) => acc+v }
-          //Log.d("spielcheck", "textCount: "+textCount+": Children: "+source.getChildCount+": Interactables: "+interactables(source))
+          Log.d("spielcheck", "textCount: "+textCount+": Children: "+source.getChildCount+": Interactables: "+interactables(source))
           if(textCount == 0)
             speak(utterances)
           else if(textCount > 1)
