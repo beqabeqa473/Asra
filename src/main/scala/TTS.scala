@@ -184,12 +184,6 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
       audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
     utterances += id
     UtteranceStarted(id)
-    repeatedSpeech.get(id).foreach { v =>
-      future {
-        Thread.sleep(v._1*1000)
-        performRepeatedSpeech(id)
-      }
-    }
   }
 
   def onError(id:String) {
@@ -401,13 +395,13 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
 
   def stopRepeatedSpeech(key:String) = repeatedSpeech -= key
 
-  private def performRepeatedSpeech(key:String):Unit = repeatedSpeech.get(key) match {
-    case Some(v) if(!shouldSpeakNotification(true)) => future {
+  private def performRepeatedSpeech(key:String):Unit = repeatedSpeech.get(key) foreach { v =>
+    if(shouldSpeakNotification(true))
+      speak(v._2, false, Some(key))
+    future {
       Thread.sleep(v._1*1000)
       performRepeatedSpeech(key)
     }
-    case Some(v) => speak(v._2, true, Some(key))
-    case None =>
   }
 
   private def shouldSpeakNotification(skipScreenCheck:Boolean = false):Boolean =
