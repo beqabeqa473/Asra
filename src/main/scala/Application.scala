@@ -17,7 +17,7 @@ class Application extends android.app.Application with Helpers {
     UnhandledException += { t:Throwable =>
       toast(t.getMessage)(this)
       if(Preferences.sendBacktraces)
-        ErrorReporter.getInstance.handleException(t, false)
+        ACRA.getErrorReporter.handleException(t, false)
     }
     super.onCreate()
   }
