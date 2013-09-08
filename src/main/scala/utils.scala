@@ -1,5 +1,9 @@
 package info.spielproject.spiel
 
+import concurrent._
+import ExecutionContext.Implicits.global
+import duration._
+
 import android.content._
 import android.util.Log
 
@@ -34,7 +38,8 @@ package object utils {
       } catch {
         case _ if(pkg != "") => try {
           val pc = context.createPackageContext(pkg, Context.CONTEXT_INCLUDE_CODE|Context.CONTEXT_IGNORE_SECURITY)
-          val rv = Class.forName(cls, true, pc.getClassLoader)
+          val f = future(Class.forName(cls, true, pc.getClassLoader))
+          val rv = Await.result(f, 100 milliseconds)
           classes += (cls, pkg) -> rv
           Some(rv)
         } catch {
