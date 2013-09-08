@@ -10,7 +10,7 @@ versionCode := 13
 
 scalaVersion := "2.10.2"
 
-scalacOptions ++= Seq("-deprecation", "-feature", "-language:implicitConversions", "-target:jvm-1.6")
+scalacOptions ++= Seq("-deprecation", "-feature", "-language:existentials,implicitConversions", "-target:jvm-1.6")
 
 javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
 
