@@ -114,8 +114,9 @@ class SpeechPreferenceFragment extends StockPreferenceFragment {
     super.onCreate(b)
 
     val enginesPreference = findPreference("speechEngine").asInstanceOf[ListPreference]
-    enginesPreference.setEntries((getString(R.string.systemDefault) :: TTS.engines.map(_._1).toList).toArray[CharSequence])
-    enginesPreference.setEntryValues(("" :: TTS.engines.map(_._2).toList).toArray[CharSequence])
+    val engines = TTS.engines(getActivity)
+    enginesPreference.setEntries((getString(R.string.systemDefault) :: engines.map(_._1).toList).toArray[CharSequence])
+    enginesPreference.setEntryValues(("" :: engines.map(_._2).toList).toArray[CharSequence])
 
     Option(BluetoothAdapter.getDefaultAdapter).getOrElse {
       getPreferenceScreen.removePreference(findPreference("useBluetoothSCO"))
