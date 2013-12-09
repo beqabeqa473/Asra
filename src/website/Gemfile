@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 gem "nanoc"
 gem "slim"
-gem "kramdown"
+gem "rdiscount"
 gem "builder"
 gem "systemu"
 
