@@ -3,6 +3,7 @@ article
     h3==link_to(article[:title], article)
   ==yield
   footer
-    | Posted: 
-    time datetime = article[:created_at]
-      =Time.parse(article[:created_at]).strftime("%A %B %e, %Y")
+    i
+      | Posted: 
+      time datetime = article[:created_at]
+        =Time.parse(article[:created_at]).strftime("%A %B %e, %Y")

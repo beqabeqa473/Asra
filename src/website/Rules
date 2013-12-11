@@ -39,6 +39,10 @@ compile "*" do
   end
 end
 
+route "stylesheet" do
+  "/stylesheet.css"
+end
+
 route "feed" do
   "/feed.xml"
 end

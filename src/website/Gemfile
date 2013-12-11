@@ -10,4 +10,6 @@ gem "systemu"
 group :development do
   gem "adsf"
   gem "guard-nanoc"
+  gem "guard-livereload"
+  gem "rack-livereload"
 end
