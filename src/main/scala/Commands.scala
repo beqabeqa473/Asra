@@ -165,4 +165,9 @@ trait Commands {
     continue()
   }
 
+  protected def disableSpiel() {
+    TTS.speak(SpielService.context.getString(R.string.spielOff), true)
+    SpielService.enabled = false
+  }
+
 }

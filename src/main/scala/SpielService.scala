@@ -147,6 +147,8 @@ object SpielService {
     // Should not need this but when using install -r to reinstall, explore by touch may not get enabled otherwise
     if(VERSION.SDK_INT >= 16)
       info.flags = FLAG_REQUEST_TOUCH_EXPLORATION_MODE | DEFAULT
+    if(VERSION.SDK_INT >= 18)
+      info.flags = info.flags|FLAG_REQUEST_ENHANCED_WEB_ACCESSIBILITY|FLAG_REQUEST_FILTER_KEY_EVENTS
     info.eventTypes = TYPES_ALL_MASK
     info
   }

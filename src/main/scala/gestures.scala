@@ -70,10 +70,10 @@ class Listener(directive:Option[Directive] = None) extends Handler[GesturePayloa
   def onLeftDown(c:Callback) = leftDown = Some(c)
 
   private var rightDown:Option[Callback] = None
-  def onRightDown(c:Callback) = Some(c)
+  def onRightDown(c:Callback) = rightDown = Some(c)
 
   private var rightLeft:Option[Callback] = None
-  def onRightLeft(c:Callback) = Some(c)
+  def onRightLeft(c:Callback) = rightLeft = Some(c)
 
   private var leftRight:Option[Callback] = None
   def onLeftRight(c:Callback) = leftRight = Some(c)
@@ -147,7 +147,7 @@ class Gestures {
 
     onLeftRight { source => continuousRead(); true }
 
-    onRightLeft { source => true }
+    onRightLeft { source => disableSpiel(); true }
 
     onUpDown { source => true }
 

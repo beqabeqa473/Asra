@@ -100,6 +100,7 @@ object Device {
 
   ScreenOn += {
     if(!screenOn) {
+      SpielService.enabled = true
       screenOn = true
       val sdf = new SimpleDateFormat(
         if(DateFormat.is24HourFormat(SpielService.context))
