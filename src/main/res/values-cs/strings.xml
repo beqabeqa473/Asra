@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
 <string name="appName">Spiel</string>
 
@@ -108,4 +107,6 @@
 <string name="plus">plus</string>
 <string name="newline">Nový řádek</string>
 
-</resources>
+<string name="landscape">Na šířku</string>
+  <string name="portrait">Na výšku</string>
+  </resources>
