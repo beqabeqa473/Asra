@@ -9,6 +9,6 @@ Spiel is developed in  [this Git repository](https://thewordnerd.info/scm/projec
 
 Please ask on the [mailing list](https://groups.google.com/forum/#!forum/spielproject) if you'd like commit access.
 
-### Translation
+### Translations
 
-A new hosted translation infrastructure is coming soon.
+Translations can now be maintained via [this web interface](https://hosted.weblate.org/projects/spiel/).
