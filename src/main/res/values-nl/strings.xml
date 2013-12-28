@@ -1,2 +1,148 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<?xml version='1.0' encoding='utf-8'?>
+<resources><string name="appName">Spiel</string>
+  <string name="appDescription">Een flexibele, scriptbare screenreader voor Android</string>
+
+  <string name="sendCommandsLabel">Stuur commando\'s naar Spiel</string>
+  <string name="sendCommandsDescription">Stuur commando\'s voor spraak en andere acties naar de Spiel screenreader</string>
+
+  <string name="welcomeMsg">Welkom bij Spiel!</string>
+
+  <string name="spielOn">Spiel aan</string>
+  <string name="spielOff">Spiel uit</string>
+  <string name="screenOff">Scherm uit</string>
+  <string name="landscape">Liggend</string>
+  <string name="portrait">Staand</string>
+  <string name="unlocked">Ontgrendeld</string>
+  <string name="ringerOff">Geluid uit</string>
+  <string name="ringerOn">Beltoon aan</string>
+  <string name="ringerVibrate">Beltoon trilt</string>
+  <string name="newVoicemail">Nieuwe voicemail</string>
+
+  <string name="button">knop</string>
+  <string name="labeledButton">%1$s: knop</string>
+  <string name="checkbox">%1$s: aankruisvakje</string>
+  <string name="checked">Aangekruist</string>
+  <string name="disabled">Niet beschikbaar</string>
+  <string name="editText">tekstvak</string>
+  <string name="emptyList">Lege lijst</string>
+  <string name="item">%1$s: 1 item</string>
+  <string name="items">%1$s: %2$s items</string>
+  <string name="image">afbeelding</string>
+  <string name="labeledImage">%1$s: afbeelding</string>
+  <string name="link">link</string>
+  <string name="listItem">%1$s van %2$s</string>
+  <string name="listWithItem">lijst met 1 item</string>
+  <string name="listWithItems">lijst met %1$s items</string>
+  <string name="menu">menu</string>
+  <string name="menuItem">menu item</string>
+  <string name="notChecked">niet aangekruist</string>
+  <string name="notSelected">niet geselecteerd</string>
+  <string name="password">wachtwoord</string>
+  <string name="radioButton">keuzerondje</string>
+  <string name="rating">Beoordeling</string>
+  <string name="selected">geselecteerd</string>
+  <string name="tabWidget">%1$s: tabblad</string>
+
+  <string name="settings">Instellingen</string>
+
+  <string name="speechTitle">Spraak</string>
+  <string name="speechEngineTitle">Spraaksynthesizer</string>
+  <string name="systemDefault">Standaard van systeem</string>
+  <string name="rateScaleTitle">Snelheidsfactor</string>
+  <string name="rateScaleSummary">Factor waarmee de standaardsnelheid moet worden vermenigvuldigd</string>
+  <string name="pitchScaleTitle">Toonhoogtefactor</string>
+  <string name="pitchScaleSummary">Factor waarmee de standaard toonhoogte moet worden vermenigvuldigd</string>
+  <string name="echoByCharTitle">Getypte tekens voorlezen</string>
+  <string name="echoByWordTitle">Getypte woorden uitspreken</string>
+  <string name="speakNotificationsWhenScreenOffTitle">Notificaties melden als scherm uit is</string>
+  <string name="useBluetoothSCOTitle">Gebruik Bluetooth SCO</string>
+  <string name="useBluetoothSCOSummary">Routeer niet-gespreksaudio naar Bluetooth oortje (experimenteel!)</string>
+  <string name="managePunctuationSpeechTitle">Beheer gesproken interpunctie</string>
+  <string name="managePunctuationSpeechSummary">Laat het uitspreken van enkele niet-ondersteunde leestekens over aan Spiel</string>
+  <string name="duckNonSpeechAudioTitle">Overig geluid verzachten bij spreken</string>
+  <string name="duckNonSpeechAudioSummary">Verlaag volume van muziek, spellen e.d. tijdens het spreken</string>
+  <string name="textToSpeechTitle">Tekst-naar-spraak instellingen</string>
+  <string name="textToSpeechSummary">Verander systeeminstellingen voor tekst-naar-spraak</string>
+
+  <string name="alertsTitle">Meldingen</string>
+  <string name="talkingCallerIDTitle">Naam van beller uitspreken</string>
+  <string name="talkingCallerIDSummary">Herhaal naam van beller bij inkomend gesprek</string>
+  <string name="voicemailAlertsTitle">Voicemail meldingen</string>
+  <string name="voicemailAlertsSummary">Herhaaldelijk melden van nieuwe voicemails</string>
+
+  <string name="hapticFeedbackTitle">Trilfeedback</string>
+  <string name="hapticFeedbackSummary">Trillen wanneer een ander element wordt aangeraakt</string>
+
+  <string name="notificationFiltersTitle">Notificatiefilters</string>
+  <string name="notificationFiltersSummary">Filter het uitspreken van meldingen voor drukke applicaties</string>
+
+  <string name="debuggingTitle">Foutopsporing</string>
+  <string name="sendBacktracesTitle">Foutrapporten verzenden als Spiel vastloopt</string>
+  <string name="sendBacktracesSummary">Automatisch verzenden van anonieme foutrapporten als Spiel vastloopt (herstart vereist)</string>
+  <string name="profilingTitle">Profileren</string>
+  <string name="profilingSummary">Alleen inschakelen voor ontwikkeling, dit heeft invloed op de prestaties!</string>
+
+  <string name="events">Gebeurtenissen</string>
+
+  <string name="createScriptTemplate">Maak scriptsjabloon aan</string>
+
+  <string name="scripts">Scripts</string>
+
+  <string name="delete">Verwijderen</string>
+
+  <string name="confirmDelete">Weet je zeker dat je het script voor %1$s wilt verwijderen?</string>
+
+  <string name="scriptInstalling">%1$s installeren...</string>
+  <string name="scriptUninstalling">De-installeren van %1$s</string>
+  <string name="scriptUpdating">Bijwerken van %1$s</string>
+
+  <string name="refresh">Vernieuwen</string>
+
+  <string name="none">Geen</string>
+  <string name="createScriptTemplateAction">Maak een scriptsjabloon voor de meest recente toegankelijkheidsgebeurtenis</string>
+  <string name="templateCreated">Sjabloon aangemaakt in %1$s.</string>
+  <string name="templateCreationError">Fout bij het maken van scriptsjabloon.</string>
+  <string name="stopSpeech">Spraak stoppen</string>
+  <string name="toggleSpiel">Schakel Spiel aan/uit</string>
+
+  <string name="blank">leeg</string>
+  <string name="cap">hoofdletter %1$s</string>
+  <string name="exclamation">uitroepteken</string>
+  <string name="at">apenstaartje</string>
+  <string name="pound">hekje</string>
+  <string name="dollar">dollar</string>
+  <string name="percent">procent</string>
+  <string name="caret">dakje</string>
+  <string name="ampersand">en</string>
+  <string name="asterisk">sterretje</string>
+  <string name="leftParen">haakje openen</string>
+  <string name="rightParen">haakje sluiten</string>
+  <string name="underscore">onderstreping</string>
+  <string name="space">spatie</string>
+  <string name="period">punt</string>
+  <string name="comma">comma</string>
+  <string name="lessThan">kleiner dan</string>
+  <string name="greaterThan">groter dan</string>
+  <string name="slash">slash</string>
+  <string name="backslash">backslash</string>
+  <string name="questionMark">vraagteken</string>
+  <string name="quote">aanhalingsteken</string>
+  <string name="apostrophe">apostrofe</string>
+  <string name="semiColon">puntcomma</string>
+  <string name="colon">dubbelepunt</string>
+  <string name="dash">streepje</string>
+  <string name="plus">plus</string>
+  <string name="newline">nieuwe regel</string>
+  <string name="tab">tab</string>
+
+  <string name="unknown">Onbekend</string>
+
+  <string name="character">Teken</string>
+  <string name="word">Woord</string>
+  <string name="line">Regel</string>
+  <string name="paragraph">Paragraaf</string>
+  <string name="page">Pagina</string>
+
+  <string name="charging">Opladen</string>
+
+</resources>
