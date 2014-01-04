@@ -3,7 +3,7 @@
   <string name="appDescription">Een flexibele, scriptbare screenreader voor Android</string>
 
   <string name="sendCommandsLabel">Stuur commando\'s naar Spiel</string>
-  <string name="sendCommandsDescription">Stuur commando\'s voor spraak en andere acties naar de Spiel screenreader</string>
+  <string name="sendCommandsDescription">Stuur commando\'s voor het uitvoeren van spraak en andere acties naar de Spiel screenreader</string>
 
   <string name="welcomeMsg">Welkom bij Spiel!</string>
 
@@ -13,9 +13,9 @@
   <string name="landscape">Liggend</string>
   <string name="portrait">Staand</string>
   <string name="unlocked">Ontgrendeld</string>
-  <string name="ringerOff">Geluid uit</string>
-  <string name="ringerOn">Beltoon aan</string>
-  <string name="ringerVibrate">Beltoon trilt</string>
+  <string name="ringerOff">Belsignaal uit</string>
+  <string name="ringerOn">Belsignaal aan</string>
+  <string name="ringerVibrate">Belsignaal trillen</string>
   <string name="newVoicemail">Nieuwe voicemail</string>
 
   <string name="button">knop</string>
@@ -24,7 +24,7 @@
   <string name="checked">Aangekruist</string>
   <string name="disabled">Niet beschikbaar</string>
   <string name="editText">tekstvak</string>
-  <string name="emptyList">Lege lijst</string>
+  <string name="emptyList">blanco lijst</string>
   <string name="item">%1$s: 1 item</string>
   <string name="items">%1$s: %2$s items</string>
   <string name="image">afbeelding</string>
@@ -47,14 +47,14 @@
 
   <string name="speechTitle">Spraak</string>
   <string name="speechEngineTitle">Spraaksynthesizer</string>
-  <string name="systemDefault">Standaard van systeem</string>
+  <string name="systemDefault">Standaardinstelling van systeem</string>
   <string name="rateScaleTitle">Snelheidsfactor</string>
   <string name="rateScaleSummary">Factor waarmee de standaardsnelheid moet worden vermenigvuldigd</string>
   <string name="pitchScaleTitle">Toonhoogtefactor</string>
   <string name="pitchScaleSummary">Factor waarmee de standaard toonhoogte moet worden vermenigvuldigd</string>
-  <string name="echoByCharTitle">Getypte tekens voorlezen</string>
+  <string name="echoByCharTitle">Getypte tekens uitspreken</string>
   <string name="echoByWordTitle">Getypte woorden uitspreken</string>
-  <string name="speakNotificationsWhenScreenOffTitle">Notificaties melden als scherm uit is</string>
+  <string name="speakNotificationsWhenScreenOffTitle">Meldingen voorlezen ook als het scherm uit is</string>
   <string name="useBluetoothSCOTitle">Gebruik Bluetooth SCO</string>
   <string name="useBluetoothSCOSummary">Routeer niet-gespreksaudio naar Bluetooth oortje (experimenteel!)</string>
   <string name="managePunctuationSpeechTitle">Beheer gesproken interpunctie</string>
