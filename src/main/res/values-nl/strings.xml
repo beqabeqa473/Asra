@@ -56,17 +56,17 @@
   <string name="echoByWordTitle">Getypte woorden uitspreken</string>
   <string name="speakNotificationsWhenScreenOffTitle">Meldingen voorlezen ook als het scherm uit is</string>
   <string name="useBluetoothSCOTitle">Gebruik Bluetooth SCO</string>
-  <string name="useBluetoothSCOSummary">Routeer niet-gespreksaudio naar Bluetooth oortje (experimenteel!)</string>
-  <string name="managePunctuationSpeechTitle">Beheer gesproken interpunctie</string>
+  <string name="useBluetoothSCOSummary">Niet-gesprekgebonden geluid naar Bluetooth oortje leiden (experimenteel!)</string>
+  <string name="managePunctuationSpeechTitle">Gesproken interpunctie beheren</string>
   <string name="managePunctuationSpeechSummary">Laat het uitspreken van enkele niet-ondersteunde leestekens over aan Spiel</string>
-  <string name="duckNonSpeechAudioTitle">Overig geluid verzachten bij spreken</string>
-  <string name="duckNonSpeechAudioSummary">Verlaag volume van muziek, spellen e.d. tijdens het spreken</string>
+  <string name="duckNonSpeechAudioTitle">Volume overig geluid aanpassen bij spreken</string>
+  <string name="duckNonSpeechAudioSummary">Verlaag volume van muziek, spelletjes e.d. tijdens het spreken</string>
   <string name="textToSpeechTitle">Tekst-naar-spraak instellingen</string>
   <string name="textToSpeechSummary">Verander systeeminstellingen voor tekst-naar-spraak</string>
 
   <string name="alertsTitle">Meldingen</string>
   <string name="talkingCallerIDTitle">Naam van beller uitspreken</string>
-  <string name="talkingCallerIDSummary">Herhaal naam van beller bij inkomend gesprek</string>
+  <string name="talkingCallerIDSummary">Naam van beller bij inkomend gesprek herhaald melden</string>
   <string name="voicemailAlertsTitle">Voicemail meldingen</string>
   <string name="voicemailAlertsSummary">Herhaaldelijk melden van nieuwe voicemails</string>
 
