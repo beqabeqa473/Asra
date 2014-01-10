@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
   <string name="appName">Spiel</string>
   <string name="appDescription">Ein flexibler, skriptbarer Android screenreader</string>
@@ -13,9 +12,9 @@
   <string name="screenOff">Bildschirm aus.</string>
   <string name="landscape">Querformat</string>
   <string name="portrait">Hochformat</string>
-  <string name="unlocked">entsperrt.</string>
-  <string name="ringerOff">Klingelton aus.</string>
-  <string name="ringerOn">Klingelton ein.</string>
+  <string name="unlocked">Entsperrt</string>
+  <string name="ringerOff">Klingelton aus</string>
+  <string name="ringerOn">Klingelton ein</string>
   <string name="newVoicemail">Neue Sprachnachricht</string>
 
   <!-- View names and actions -->
@@ -144,4 +143,11 @@
   <string name="paragraph">Absatz</string>
   <string name="page">Seite</string>
   <string name="charging">laden</string>
-</resources>
+<string name="sendCommandsLabel">Sende Befehle an Spiel</string>
+  <string name="sendCommandsDescription">Sende Befehle an den Spiel screen reader um Sprache und andere Aktionen durchzuführen</string>
+
+  <string name="tabWidget">%1$s: Reiter</string>
+
+  <string name="settings">Einstellungen</string>
+
+  </resources>
