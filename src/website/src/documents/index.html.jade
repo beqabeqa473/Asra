@@ -1,0 +1,16 @@
+---
+title: Welcome
+type: page
+order: 0
+isPaged: true
+pagedCollection: "articles"
+pageSize: 5
+---
+
+p Spiel is a flexible, scriptable, open source screen reader for the Android platform.
+
+h2 News
+
+each a in getPageCollection("articles").toJSON()
+  !=partial("article", {article: a})
+!=partial("paginate")

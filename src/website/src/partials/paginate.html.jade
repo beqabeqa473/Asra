@@ -1,0 +1,21 @@
+ul.pagination
+  if hasPrevPage()
+    -var href = "/"
+    -var dest = document.page.number-1
+    if dest > 0
+      href = "index."+dest
+    li: a(href = href) &laquo;
+  else
+    li.disabled &laquo;
+  each page, number in document.page.pages
+    if number == document.page.number
+      li.active=number+1
+    else
+      -var href = "/"
+      if number > 0
+        - href = "index."+number
+      li: a(href = href)=number+1
+  if hasNextPage()
+    li: a(href = "index."+(document.page.number+1)) &raquo;
+  else
+    li.disabled &raquo;

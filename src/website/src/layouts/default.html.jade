@@ -1,0 +1,44 @@
+-var meta = getBlock("meta")
+-var scripts = getBlock("scripts")
+-var styles = getBlock("styles")
+
+!!!
+html
+  head
+    title=getPreparedTitle()
+    link(href = "https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css", rel = "stylesheet")
+    link(href = "/stylesheet.css", rel = "stylesheet")
+    !=styles.toHTML()
+    meta(name = "viewport", content = "width=device-width, initial-scale=1.0")
+    !=meta.toHTML()
+    link(rel="alternate", type="application/atom+xml", title=getPreparedTitle(), href="/feed.xml")
+  body
+    #wrap
+      .container
+        .row
+          header.col-md-6.col-md-offset-3
+            h1.text-center=getPreparedTitle()
+        .row
+          nav.col-md-6.col-md-offset-3
+            ul.nav.nav-tabs
+              each doc in getCollection('pages').toJSON()
+                if document.url == doc.url
+                  li.active=doc.title
+                else
+                  li: a(href = doc.url)=doc.title
+        .row
+          section.col-md-3
+            !=partial("donations")
+          section.col-md-6
+            if document.type == "page"
+              h1=document.title
+              !=content
+            else
+              =partial("article", {article: document, standalone: true})
+    #footer
+      .container
+        .row
+          footer.col-md-6.col-md-offset-3.text-center Copyright &copy; 2009-2014 Nolan Darilek.
+    script(src = "https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js")
+    !=scripts.toHTML()
+    !=partial("analytics")

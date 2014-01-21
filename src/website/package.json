@@ -1,0 +1,29 @@
+{
+  "name": "spielproject.info",
+  "version": "0.0.0",
+  "homepage": "http://spielproject.info",
+  "repository": {
+    "type": "git",
+    "url": "https://thewordnerd.info/scm/projects/spiel"
+  },
+  "engines": {
+    "node": "0.8.x",
+    "npm": "1.1.x"
+  },
+  "dependencies": {
+    "docpad": "~6.60.3",
+    "docpad-plugin-cleanurls": "~2.x",
+    "docpad-plugin-marked": "~2.x",
+    "docpad-plugin-partials": "~2.x",
+    "docpad-plugin-jade": "~2.x",
+    "docpad-plugin-sitemap": "~2.x",
+    "docpad-plugin-paged": "~2.x",
+    "docpad-plugin-livescript": "~2.x"
+  },
+  "devDependencies": {
+    "docpad-plugin-livereload": "~2.x"
+  },
+  "scripts": {
+    "start": "node_modules/docpad/bin/docpad-server"
+  }
+}

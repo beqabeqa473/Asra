@@ -1,0 +1,12 @@
+article
+  header
+    h1
+      if standalone
+        =article.title
+      else
+        a(href = article.url)=article.title
+  !=article.contentRenderedWithoutLayouts
+  footer
+    | Posted: 
+    time(datetime = article.date)
+      i=article.date.toLocaleDateString()

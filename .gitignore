@@ -1,6 +1,6 @@
 target
 tmp
-src/website/crash.log
-src/website/Gemfile.lock
-src/website/output
+src/website/.docpad.db
+src/website/node_modules
+src/website/out
 spiel.keystore

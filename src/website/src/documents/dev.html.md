@@ -1,5 +1,7 @@
 ---
 title: Development
+type: page
+order: 4
 ---
 
 ### Code

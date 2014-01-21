@@ -1,5 +1,7 @@
 ---
 title: Download
+type: page
+order: 1
 ---
 
 The Spiel 3.x series represents a dramatic rewrite, with almost every piece of the app modified and refactored. As such, an official release is not available.
