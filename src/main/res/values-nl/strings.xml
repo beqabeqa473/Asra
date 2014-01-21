@@ -3,7 +3,7 @@
   <string name="appDescription">Een flexibele, scriptbare screenreader voor Android</string>
 
   <string name="sendCommandsLabel">Stuur commando\'s naar Spiel</string>
-  <string name="sendCommandsDescription">Stuur commando\'s voor spraak en andere acties naar de Spiel screenreader</string>
+  <string name="sendCommandsDescription">Stuur commando\'s voor het uitvoeren van spraak en andere acties naar de Spiel screenreader</string>
 
   <string name="welcomeMsg">Welkom bij Spiel!</string>
 
@@ -13,9 +13,9 @@
   <string name="landscape">Liggend</string>
   <string name="portrait">Staand</string>
   <string name="unlocked">Ontgrendeld</string>
-  <string name="ringerOff">Geluid uit</string>
-  <string name="ringerOn">Beltoon aan</string>
-  <string name="ringerVibrate">Beltoon trilt</string>
+  <string name="ringerOff">Belsignaal uit</string>
+  <string name="ringerOn">Belsignaal aan</string>
+  <string name="ringerVibrate">Belsignaal trillen</string>
   <string name="newVoicemail">Nieuwe voicemail</string>
 
   <string name="button">knop</string>
@@ -24,7 +24,7 @@
   <string name="checked">Aangekruist</string>
   <string name="disabled">Niet beschikbaar</string>
   <string name="editText">tekstvak</string>
-  <string name="emptyList">Lege lijst</string>
+  <string name="emptyList">blanco lijst</string>
   <string name="item">%1$s: 1 item</string>
   <string name="items">%1$s: %2$s items</string>
   <string name="image">afbeelding</string>
@@ -34,7 +34,7 @@
   <string name="listWithItem">lijst met 1 item</string>
   <string name="listWithItems">lijst met %1$s items</string>
   <string name="menu">menu</string>
-  <string name="menuItem">menu item</string>
+  <string name="menuItem">menu-item</string>
   <string name="notChecked">niet aangekruist</string>
   <string name="notSelected">niet geselecteerd</string>
   <string name="password">wachtwoord</string>
@@ -47,26 +47,26 @@
 
   <string name="speechTitle">Spraak</string>
   <string name="speechEngineTitle">Spraaksynthesizer</string>
-  <string name="systemDefault">Standaard van systeem</string>
+  <string name="systemDefault">Standaardinstelling van systeem</string>
   <string name="rateScaleTitle">Snelheidsfactor</string>
   <string name="rateScaleSummary">Factor waarmee de standaardsnelheid moet worden vermenigvuldigd</string>
   <string name="pitchScaleTitle">Toonhoogtefactor</string>
   <string name="pitchScaleSummary">Factor waarmee de standaard toonhoogte moet worden vermenigvuldigd</string>
-  <string name="echoByCharTitle">Getypte tekens voorlezen</string>
+  <string name="echoByCharTitle">Getypte tekens uitspreken</string>
   <string name="echoByWordTitle">Getypte woorden uitspreken</string>
-  <string name="speakNotificationsWhenScreenOffTitle">Notificaties melden als scherm uit is</string>
+  <string name="speakNotificationsWhenScreenOffTitle">Meldingen voorlezen ook als het scherm uit is</string>
   <string name="useBluetoothSCOTitle">Gebruik Bluetooth SCO</string>
-  <string name="useBluetoothSCOSummary">Routeer niet-gespreksaudio naar Bluetooth oortje (experimenteel!)</string>
-  <string name="managePunctuationSpeechTitle">Beheer gesproken interpunctie</string>
+  <string name="useBluetoothSCOSummary">Niet-gesprekgebonden geluid naar Bluetooth oortje leiden (experimenteel!)</string>
+  <string name="managePunctuationSpeechTitle">Gesproken interpunctie beheren</string>
   <string name="managePunctuationSpeechSummary">Laat het uitspreken van enkele niet-ondersteunde leestekens over aan Spiel</string>
-  <string name="duckNonSpeechAudioTitle">Overig geluid verzachten bij spreken</string>
-  <string name="duckNonSpeechAudioSummary">Verlaag volume van muziek, spellen e.d. tijdens het spreken</string>
+  <string name="duckNonSpeechAudioTitle">Volume overig geluid aanpassen bij spreken</string>
+  <string name="duckNonSpeechAudioSummary">Verlaag volume van muziek, spelletjes e.d. tijdens het spreken</string>
   <string name="textToSpeechTitle">Tekst-naar-spraak instellingen</string>
   <string name="textToSpeechSummary">Verander systeeminstellingen voor tekst-naar-spraak</string>
 
   <string name="alertsTitle">Meldingen</string>
   <string name="talkingCallerIDTitle">Naam van beller uitspreken</string>
-  <string name="talkingCallerIDSummary">Herhaal naam van beller bij inkomend gesprek</string>
+  <string name="talkingCallerIDSummary">Naam van beller bij inkomend gesprek herhaald melden</string>
   <string name="voicemailAlertsTitle">Voicemail meldingen</string>
   <string name="voicemailAlertsSummary">Herhaaldelijk melden van nieuwe voicemails</string>
 
@@ -80,21 +80,21 @@
   <string name="sendBacktracesTitle">Foutrapporten verzenden als Spiel vastloopt</string>
   <string name="sendBacktracesSummary">Automatisch verzenden van anonieme foutrapporten als Spiel vastloopt (herstart vereist)</string>
   <string name="profilingTitle">Profileren</string>
-  <string name="profilingSummary">Alleen inschakelen voor ontwikkeling, dit heeft invloed op de prestaties!</string>
+  <string name="profilingSummary">Alleen inschakelen voor ontwikkeldoeleinden; het beïnvloed de prestaties!</string>
 
   <string name="events">Gebeurtenissen</string>
 
-  <string name="createScriptTemplate">Maak scriptsjabloon aan</string>
+  <string name="createScriptTemplate">Scriptsjabloon aanmaken</string>
 
   <string name="scripts">Scripts</string>
 
   <string name="delete">Verwijderen</string>
 
-  <string name="confirmDelete">Weet je zeker dat je het script voor %1$s wilt verwijderen?</string>
+  <string name="confirmDelete">Weet u zeker dat u het script voor %1$s wilt verwijderen?</string>
 
-  <string name="scriptInstalling">%1$s installeren...</string>
-  <string name="scriptUninstalling">De-installeren van %1$s</string>
-  <string name="scriptUpdating">Bijwerken van %1$s</string>
+  <string name="scriptInstalling">%1$s installeren bezig...</string>
+  <string name="scriptUninstalling">De-installeren bezig van %1$s</string>
+  <string name="scriptUpdating">Bijwerken bezig van %1$s</string>
 
   <string name="refresh">Vernieuwen</string>
 
@@ -103,7 +103,7 @@
   <string name="templateCreated">Sjabloon aangemaakt in %1$s.</string>
   <string name="templateCreationError">Fout bij het maken van scriptsjabloon.</string>
   <string name="stopSpeech">Spraak stoppen</string>
-  <string name="toggleSpiel">Schakel Spiel aan/uit</string>
+  <string name="toggleSpiel">Schakel Spiel in/uit</string>
 
   <string name="blank">leeg</string>
   <string name="cap">hoofdletter %1$s</string>
@@ -120,16 +120,16 @@
   <string name="underscore">onderstreping</string>
   <string name="space">spatie</string>
   <string name="period">punt</string>
-  <string name="comma">comma</string>
+  <string name="comma">komma</string>
   <string name="lessThan">kleiner dan</string>
   <string name="greaterThan">groter dan</string>
   <string name="slash">slash</string>
   <string name="backslash">backslash</string>
   <string name="questionMark">vraagteken</string>
   <string name="quote">aanhalingsteken</string>
-  <string name="apostrophe">apostrofe</string>
-  <string name="semiColon">puntcomma</string>
-  <string name="colon">dubbelepunt</string>
+  <string name="apostrophe">apostrof</string>
+  <string name="semiColon">puntkomma</string>
+  <string name="colon">dubbele punt</string>
   <string name="dash">streepje</string>
   <string name="plus">plus</string>
   <string name="newline">nieuwe regel</string>
@@ -140,9 +140,9 @@
   <string name="character">Teken</string>
   <string name="word">Woord</string>
   <string name="line">Regel</string>
-  <string name="paragraph">Paragraaf</string>
+  <string name="paragraph">Alinea</string>
   <string name="page">Pagina</string>
 
-  <string name="charging">Opladen</string>
+  <string name="charging">Bezig met opladen</string>
 
 </resources>
