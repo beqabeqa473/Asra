@@ -22,10 +22,11 @@ html
           nav.col-md-6.col-md-offset-3
             ul.nav.nav-tabs
               each doc in getCollection('pages').toJSON()
+                -title = (doc.menuTitle) ? doc.menuTitle : doc.title
                 if document.url == doc.url
-                  li.active=doc.title
+                  li.active=title
                 else
-                  li: a(href = doc.url)=doc.title
+                  li: a(href = doc.url)=title
         .row
           section.col-md-3
             !=partial("donations")
