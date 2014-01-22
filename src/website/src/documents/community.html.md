@@ -1,5 +1,5 @@
 ---
-title: Support/community
+title: Community
 type: page
 order: 3
 ---
