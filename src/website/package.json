@@ -11,7 +11,7 @@
     "npm": "1.1.x"
   },
   "dependencies": {
-    "docpad": "~6.60.3",
+    "docpad": "~6.x",
     "docpad-plugin-cleanurls": "~2.x",
     "docpad-plugin-marked": "~2.x",
     "docpad-plugin-partials": "~2.x",
