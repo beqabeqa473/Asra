@@ -1,4 +1,4 @@
-FROM ubuntu:12.10
+FROM ubuntu:13.10
 RUN apt-get update && \
   apt-get upgrade -y && \
   apt-get install -y software-properties-common git && \
