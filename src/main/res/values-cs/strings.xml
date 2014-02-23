@@ -6,12 +6,12 @@
 <string name="welcomeMsg">Vítá vás Spiel!</string>
 
 <!-- On/off and other alerts -->
-<string name="spielOn">Spiel zapnutý.</string>
-<string name="spielOff">Spiel vypnutý.</string>
-<string name="screenOff">Displej vypnutý.</string>
-<string name="unlocked">Odemknuto.</string>
-<string name="ringerOff">Vyzvánění vypnuto.</string>
-<string name="ringerOn">Vyzvánění zapnuto.</string>
+<string name="spielOn">Spiel je zapnutý</string>
+<string name="spielOff">Spiel je vypnutý</string>
+<string name="screenOff">Displej je vypnutý</string>
+<string name="unlocked">Odemknuto</string>
+<string name="ringerOff">Vyzvánění vypnuto</string>
+<string name="ringerOn">Vyzvánění zapnuto</string>
 
 <!-- View names and actions -->
 <string name="button">tlačítko</string>
