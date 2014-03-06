@@ -8,12 +8,14 @@ import android.content.res.Configuration
 import android.os.Debug
 import android.os.Build.VERSION
 import android.util.Log
-import android.view.accessibility.{AccessibilityEvent, AccessibilityNodeInfo}
+import android.view._
+import accessibility.{AccessibilityEvent, AccessibilityNodeInfo}
 import AccessibilityEvent._
 import AccessibilityNodeInfo._
 
 import events._
 import gestures.{Gesture, GestureDispatcher, GesturePayload}
+import keys._
 import routing._
 import scripting._
 
@@ -36,6 +38,7 @@ class SpielService extends AccessibilityService {
     }
     presenters.Presenter()
     GestureDispatcher()
+    KeyDispatcher()
     Scripter(this)
     Sensors(this)
     Device()
@@ -77,6 +80,14 @@ class SpielService extends AccessibilityService {
   override def onAccessibilityEvent(event:AccessibilityEvent) {
     if(!SpielService.enabled) return
     AccessibilityEventReceived(AccessibilityEvent.obtain(event))
+  }
+
+  override protected def onKeyEvent(event:KeyEvent) = {
+    val source = Option(getRootInActiveWindow).flatMap(_.find(Focus.Accessibility))
+    val directive = source.map { s =>
+      new Directive(s.getPackageName.toString, s.getClassName.toString)
+    }.getOrElse(new Directive("", ""))
+    KeyDispatcher.dispatch(KeyPayload(event, source), directive)
   }
 
   override protected def onGesture(id:Int) = {
