@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources><string name="rateScaleTitle">Medida de velocidade</string>
+  <string name="appName">Spiel</string>
+  <string name="appDescription">Leitor de telas flexível e scriptável para Android</string>
+
+  <string name="sendCommandsLabel">Enviar comandos ao Spiel</string>
+  <string name="sendCommandsDescription">Envia comandos de falar e executar outras ações ao leitor de telas Spiel</string>
+
+  <string name="welcomeMsg">Bem-vindo ao Spiel!</string>
+
+  <string name="spielOn">Spiel ligado</string>
+  <string name="spielOff">Spiel desligado</string>
+  <string name="screenOff">Tela desligada</string>
+  <string name="landscape">Paisagem</string>
+  <string name="portrait">Retrato</string>
+  <string name="unlocked">Desbloqueada</string>
+  <string name="ringerOff">Campainha desligada</string>
+  <string name="ringerOn">Campainha ligada</string>
+  <string name="ringerVibrate">Vibratório</string>
+  <string name="newVoicemail">Novo correio de voz</string>
+
+  <string name="button">botão</string>
+  <string name="labeledButton">%1$s: botão</string>
+  <string name="checkbox">%1$s: caixa de seleção</string>
+  <string name="checked">marcado</string>
+  <string name="disabled">desabilitado</string>
+  <string name="editText">texto editável</string>
+  <string name="emptyList">lista vazia</string>
+  <string name="item">%1$s: 1 item</string>
+  <string name="items">%1$s: %2$s itens</string>
+  <string name="image">imagem</string>
+  <string name="labeledImage">%1$s: imagem</string>
+  <string name="link">linque</string>
+  <string name="listItem">%1$s de %2$s</string>
+  <string name="listWithItem">lista com 1 item</string>
+  <string name="listWithItems">lista com %1$s itens</string>
+  <string name="menu">menu</string>
+  <string name="menuItem">item de menu</string>
+  <string name="notChecked">não marcado</string>
+  <string name="notSelected">não selecionado</string>
+  <string name="password">senha</string>
+  <string name="radioButton">botão de opção</string>
+  <string name="rating">Classificação</string>
+  <string name="selected">selecionado</string>
+  <string name="tabWidget">%1$s: guia</string>
+
+  <string name="settings">Ajustes</string>
+
+  <string name="speechTitle">Fala</string>
+  <string name="speechEngineTitle">Mecanismo de fala</string>
+  <string name="systemDefault">Padrão do sistema</string>
+  <string name="rateScaleSummary">Fator pelo qual a velocidade padrão deve ser medida</string>
+  <string name="pitchScaleTitle">Medida de tom</string>
+  <string name="pitchScaleSummary">Fator pelo qual o tom padrão deve ser medido</string>
+  <string name="echoByCharTitle">Falar por caractere</string>
+  <string name="echoByWordTitle">Falar por palavra</string>
+  <string name="speakNotificationsWhenScreenOffTitle">Falar notificações mesmo quando a tela se encontra desligada</string>
+  <string name="useBluetoothSCOTitle">Usar Bluetooth SCO</string>
+  <string name="useBluetoothSCOSummary">Direcionar áudio fora da chamada para os fones de ouvido Bluetooth SCO (experimental!)</string>
+  <string name="managePunctuationSpeechTitle">Gerir fala de pontuação</string>
+  <string name="managePunctuationSpeechSummary">Delega a fala de algumas pontuações não processadas ao Spiel</string>
+  <string name="duckNonSpeechAudioTitle">Decrescer áudio que não a fala</string>
+  <string name="duckNonSpeechAudioSummary">Abaixa volume de música, jogos, etc. enquanto fala</string>
+  <string name="textToSpeechTitle">Ajustes de texto para fala</string>
+  <string name="textToSpeechSummary">Determina propriedades de TTS do sistema como um todo</string>
+
+  <string name="alertsTitle">Alertas</string>
+  <string name="talkingCallerIDTitle">ID de chamadas falado</string>
+  <string name="talkingCallerIDSummary">Repaticamente anuncia detalhes de ID para chamadas recebidas</string>
+  <string name="voicemailAlertsTitle">Alertas de correio de voz</string>
+  <string name="voicemailAlertsSummary">Repadicamente anuncia existência de novo correio de voz</string>
+
+  <string name="hapticFeedbackTitle">Vibração por toque</string>
+  <string name="hapticFeedbackSummary">Emite vibrações ao cruzar as bordas de widgets</string>
+
+  <string name="notificationFiltersTitle">Filtros de notificação</string>
+  <string name="notificationFiltersSummary">Filtra exibição de mudanças em notificações de aplicativos incômodos</string>
+
+  <string name="debuggingTitle">Depuração</string>
+  <string name="sendBacktracesTitle">Enviar backtraces quando o Spiel travar</string>
+  <string name="sendBacktracesSummary">Envia automaticamente ao desenvolvedor relatórios anônimos de erro quando o Spiel trava (requer reinicialização)</string>
+  <string name="profilingTitle">Procura automática de erros</string>
+  <string name="profilingSummary">Abilite somente para desenvolvimento pois tem impacto no desempenho!</string>
+
+  <string name="events">Eventos</string>
+
+  <string name="createScriptTemplate">Criar modelo de script</string>
+
+  <string name="scripts">Scripts</string>
+
+  <string name="delete">Apagar</string>
+
+  <string name="confirmDelete">Tem certeza que deseja apagar o script para o pacote %1$s?</string>
+
+  <string name="scriptInstalling">Instalando %1$s</string>
+  <string name="scriptUninstalling">Desinstalando %1$s</string>
+  <string name="scriptUpdating">Atualizando %1$s</string>
+
+  <string name="refresh">Atualizar</string>
+
+  <string name="none">Nenhum</string>
+  <string name="createScriptTemplateAction">Criar modelo de script para o evento de acessibilidade mais recente</string>
+  <string name="templateCreated">Modelo criado em %1$s.</string>
+  <string name="templateCreationError">Houve um erro ao criar o modelo de script.</string>
+  <string name="stopSpeech">Parar fala</string>
+  <string name="toggleSpiel">Alterna entre deixar e não deixar o Spiel abilitado</string>
+
+  <string name="blank">em branco</string>
+  <string name="cap">cap %1$s</string>
+  <string name="exclamation">exclamação</string>
+  <string name="at">arroba</string>
+  <string name="pound">libra</string>
+  <string name="dollar">cifrão</string>
+  <string name="percent">por cento</string>
+  <string name="caret">circunflexo</string>
+  <string name="ampersand">e comercial</string>
+  <string name="asterisk">asterisco</string>
+  <string name="leftParen">abre parênteses</string>
+  <string name="rightParen">fecha parênteses</string>
+  <string name="underscore">sublinhado</string>
+  <string name="space">espaço</string>
+  <string name="period">ponto</string>
+  <string name="comma">vírgula</string>
+  <string name="lessThan">menor</string>
+  <string name="greaterThan">maior</string>
+  <string name="slash">barra</string>
+  <string name="backslash">barra invertida</string>
+  <string name="questionMark">interrogação</string>
+  <string name="quote">aspas</string>
+  <string name="apostrophe">apóstrofo</string>
+  <string name="semiColon">ponto e vírgula</string>
+  <string name="colon">dois pontos</string>
+  <string name="dash">hífen</string>
+  <string name="plus">mais</string>
+  <string name="newline">Linha nova</string>
+  <string name="tab">tab</string>
+
+  <string name="unknown">Desconhecido</string>
+
+  <string name="character">Caractere</string>
+  <string name="word">Palavra</string>
+  <string name="line">Linha</string>
+  <string name="paragraph">Parágrafo</string>
+  <string name="page">Página</string>
+
+  <string name="charging">Carregando</string>
+
+</resources>
