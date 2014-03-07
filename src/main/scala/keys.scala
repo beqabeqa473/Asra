@@ -66,7 +66,11 @@ class Keys {
             }.getOrElse(true)
           else
             navigate(NavigationDirection.Prev)
-        case KEYCODE_DPAD_UP if spielKeyDown => changeGranularity(GranularityDirection.Decrease)
+        case KEYCODE_DPAD_UP if spielKeyDown =>
+          if(event.isCtrlPressed)
+            SpielService.performGlobalAction(GLOBAL_ACTION_NOTIFICATIONS)
+          else
+            changeGranularity(GranularityDirection.Decrease)
         case KEYCODE_DPAD_DOWN if spielKeyDown =>
           if(event.isCtrlPressed)
             continuousRead()
@@ -80,7 +84,6 @@ class Keys {
         case KEYCODE_B if spielKeyDown =>
           speakBatteryPercentage()
           true
-        case KEYCODE_N if spielKeyDown => SpielService.performGlobalAction(GLOBAL_ACTION_NOTIFICATIONS)
         case KEYCODE_T if spielKeyDown => speakTime()
         case _ =>
           TTS.stop()
