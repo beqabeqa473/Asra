@@ -2,7 +2,8 @@ package info.spielproject.spiel
 
 import android.content._
 import android.os._
-import android.view.accessibility._
+import android.view._
+import accessibility._
 import AccessibilityEvent._
 import AccessibilityNodeInfo._
 import android.util._
@@ -121,7 +122,7 @@ trait Commands {
       }
     }.getOrElse(setInitialFocus())
 
-  protected def continuousRead() {
+  protected def continuousRead() = {
     val oldGranularity = granularity
     val pm = SpielService.context.getSystemService(Context.POWER_SERVICE).asInstanceOf[PowerManager]
     val wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "spiel")
@@ -134,22 +135,29 @@ trait Commands {
         navigate(NavigationDirection.Next, wrap = false)
       }
     }
-    var stop:AccessibilityEvent => Unit = null
+    var stopAccessibilityEvent:AccessibilityEvent => Unit = null
+    var stopKeyEvent:KeyEvent => Unit = null
     def clear() {
       granularity = oldGranularity
       wl.release()
       TTS.noFlush = false
       SpeechQueueEmpty -= continue
-      AccessibilityEventReceived -= stop
+      AccessibilityEventReceived -= stopAccessibilityEvent
+      KeyEventReceived -= stopKeyEvent
     }
-    stop = { e:AccessibilityEvent =>
+    stopAccessibilityEvent = { e:AccessibilityEvent =>
       if(List(TYPE_TOUCH_EXPLORATION_GESTURE_START, TYPE_TOUCH_INTERACTION_START, TYPE_WINDOW_STATE_CHANGED).contains(e.getEventType)) {
         Log.d("spielcheck", "Stopping continuous read due to accessibilityevent trigger: "+this)
         clear()
       }
     }
+    stopKeyEvent = { e:KeyEvent =>
+      if(e.getAction == KeyEvent.ACTION_DOWN)
+        clear()
+    }
     SpeechQueueEmpty += continue
-    AccessibilityEventReceived += stop
+    AccessibilityEventReceived += stopAccessibilityEvent
+    KeyEventReceived += stopKeyEvent
     var callAnswered:(Unit) => Unit = null
     callAnswered = { (Unit) =>
       clear()
@@ -163,6 +171,7 @@ trait Commands {
     }
     CallRinging += callRinging
     continue()
+    true
   }
 
   protected def disableSpiel() {

@@ -87,6 +87,7 @@ class SpielService extends AccessibilityService {
     val directive = source.map { s =>
       new Directive(s.getPackageName.toString, s.getClassName.toString)
     }.getOrElse(new Directive("", ""))
+    KeyEventReceived(event)
     KeyDispatcher.dispatch(KeyPayload(event, source), directive)
   }
 

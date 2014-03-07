@@ -145,7 +145,7 @@ class Gestures {
 
     onRightDown { source => true }
 
-    onLeftRight { source => continuousRead(); true }
+    onLeftRight { source => continuousRead() }
 
     onRightLeft { source => disableSpiel(); true }
 

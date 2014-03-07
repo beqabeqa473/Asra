@@ -5,7 +5,8 @@ import collection.mutable.Set
 
 import android.content._
 import android.util.Log
-import android.view.accessibility._
+import android.view._
+import accessibility._
 
 class Event[T] {
 
@@ -104,6 +105,8 @@ object CallRinging extends Event[String]
 object Destroyed extends Event[Context]
 
 object Initialized extends Event[Context]
+
+object KeyEventReceived extends Event[KeyEvent]
 
 object MessageNoLongerWaiting extends Event[Unit]
 

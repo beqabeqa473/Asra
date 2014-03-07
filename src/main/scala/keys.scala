@@ -53,7 +53,11 @@ class Keys {
         case KEYCODE_DPAD_RIGHT if spielKeyDown => navigate(NavigationDirection.Next)
         case KEYCODE_DPAD_LEFT if spielKeyDown => navigate(NavigationDirection.Prev)
         case KEYCODE_DPAD_UP if spielKeyDown => changeGranularity(GranularityDirection.Decrease)
-        case KEYCODE_DPAD_DOWN if spielKeyDown => changeGranularity(GranularityDirection.Increase)
+        case KEYCODE_DPAD_DOWN if spielKeyDown =>
+          if(payload.event.isCtrlPressed)
+            continuousRead()
+          else
+            changeGranularity(GranularityDirection.Increase)
         case KEYCODE_ESCAPE if spielKeyDown => SpielService.performGlobalAction(GLOBAL_ACTION_HOME)
         case KEYCODE_N if spielKeyDown => SpielService.performGlobalAction(GLOBAL_ACTION_NOTIFICATIONS)
         case _ =>
