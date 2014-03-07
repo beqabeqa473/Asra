@@ -14,7 +14,7 @@ case class KeyPayload(event:KeyEvent, source:Option[AccessibilityNodeInfo])
 
 class Listener(directive:Option[Directive] = None) extends Handler[KeyPayload](KeyDispatcher, directive) {
 
-  private type Callback = (KeyPayload) => Boolean
+  private type Callback = (KeyEvent, Option[AccessibilityNodeInfo]) => Boolean
 
   private var down:Option[Callback] = None
   def onDown(c:Callback) = down = Some(c)
@@ -25,8 +25,8 @@ class Listener(directive:Option[Directive] = None) extends Handler[KeyPayload](K
   KeyDispatcher.register(this)
 
   def apply(payload:KeyPayload) = payload.event.getAction match {
-    case ACTION_DOWN => down.exists(_(payload))
-    case ACTION_UP => up.exists(_(payload))
+    case ACTION_DOWN => down.exists(_(payload.event, payload.source))
+    case ACTION_UP => up.exists(_(payload.event, payload.source))
   }
 
 }
@@ -45,24 +45,24 @@ class Keys {
 
     private var spielKeyDown = false
 
-    onDown { payload =>
-      payload.event.getKeyCode match {
+    onDown { (event, source) =>
+      event.getKeyCode match {
         case KEYCODE_CAPS_LOCK =>
           spielKeyDown = true
           true
         case KEYCODE_DPAD_RIGHT if spielKeyDown =>
-          if(payload.event.isCtrlPressed)
-            payload.source.map(_.perform(Action.ScrollBackward)).getOrElse(true)
+          if(event.isCtrlPressed)
+            source.map(_.perform(Action.ScrollBackward)).getOrElse(true)
           else
             navigate(NavigationDirection.Next)
         case KEYCODE_DPAD_LEFT if spielKeyDown => 
-          if(payload.event.isCtrlPressed)
-            payload.source.map(_.perform(Action.ScrollForward)).getOrElse(true)
+          if(event.isCtrlPressed)
+            source.map(_.perform(Action.ScrollForward)).getOrElse(true)
           else
             navigate(NavigationDirection.Prev)
         case KEYCODE_DPAD_UP if spielKeyDown => changeGranularity(GranularityDirection.Decrease)
         case KEYCODE_DPAD_DOWN if spielKeyDown =>
-          if(payload.event.isCtrlPressed)
+          if(event.isCtrlPressed)
             continuousRead()
           else
             changeGranularity(GranularityDirection.Increase)
@@ -75,8 +75,8 @@ class Keys {
       }
     }
 
-    onUp { payload =>
-      payload.event.getKeyCode match {
+    onUp { (event, source) =>
+      event.getKeyCode match {
         case KEYCODE_CAPS_LOCK =>
           spielKeyDown = false
           true
