@@ -88,6 +88,8 @@ class SpielService extends AccessibilityService {
       new Directive(s.getPackageName.toString, s.getClassName.toString)
     }.getOrElse(new Directive("", ""))
     KeyEventReceived(event)
+    if(event.getAction == KeyEvent.ACTION_DOWN)
+      TTS.stop()
     KeyDispatcher.dispatch(KeyPayload(event, source), directive)
   }
 
