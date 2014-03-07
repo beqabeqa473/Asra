@@ -50,8 +50,16 @@ class Keys {
         case KEYCODE_CAPS_LOCK =>
           spielKeyDown = true
           true
-        case KEYCODE_DPAD_RIGHT if spielKeyDown => navigate(NavigationDirection.Next)
-        case KEYCODE_DPAD_LEFT if spielKeyDown => navigate(NavigationDirection.Prev)
+        case KEYCODE_DPAD_RIGHT if spielKeyDown =>
+          if(payload.event.isCtrlPressed)
+            payload.source.map(_.perform(Action.ScrollBackward)).getOrElse(true)
+          else
+            navigate(NavigationDirection.Next)
+        case KEYCODE_DPAD_LEFT if spielKeyDown => 
+          if(payload.event.isCtrlPressed)
+            payload.source.map(_.perform(Action.ScrollForward)).getOrElse(true)
+          else
+            navigate(NavigationDirection.Prev)
         case KEYCODE_DPAD_UP if spielKeyDown => changeGranularity(GranularityDirection.Decrease)
         case KEYCODE_DPAD_DOWN if spielKeyDown =>
           if(payload.event.isCtrlPressed)
