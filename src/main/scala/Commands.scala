@@ -1,7 +1,11 @@
 package info.spielproject.spiel
 
+import java.text.SimpleDateFormat
+import java.util.Date
+
 import android.content._
 import android.os._
+import android.text.format.DateFormat
 import android.view._
 import accessibility._
 import AccessibilityEvent._
@@ -177,6 +181,17 @@ trait Commands {
   protected def disableSpiel() {
     TTS.speak(SpielService.context.getString(R.string.spielOff), true)
     SpielService.enabled = false
+  }
+
+  protected def speakTime() = {
+    val sdf = new SimpleDateFormat(
+      if(DateFormat.is24HourFormat(SpielService.context))
+        "H:mm"
+      else
+        "h:mm a"
+    )
+    TTS.speak(sdf.format(new Date(System.currentTimeMillis)), false)
+    true
   }
 
 }

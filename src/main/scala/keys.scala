@@ -68,6 +68,7 @@ class Keys {
             changeGranularity(GranularityDirection.Increase)
         case KEYCODE_ESCAPE if spielKeyDown => SpielService.performGlobalAction(GLOBAL_ACTION_HOME)
         case KEYCODE_N if spielKeyDown => SpielService.performGlobalAction(GLOBAL_ACTION_NOTIFICATIONS)
+        case KEYCODE_T if spielKeyDown => speakTime()
         case _ =>
           TTS.stop()
           false

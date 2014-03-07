@@ -1,17 +1,12 @@
 package info.spielproject.spiel
 
-import java.text.SimpleDateFormat
-import java.util.Date
-
 import android.content._
 import android.media._
 import android.os._
 import Build.VERSION
-import android.text.format.DateFormat
-
 import events._
 
-object Device {
+object Device extends Commands {
 
   def apply() {
     ApplicationAdded on(Intent.ACTION_PACKAGE_ADDED, dataScheme = Some("package"))
@@ -101,14 +96,8 @@ object Device {
   ScreenOn += {
     if(!screenOn) {
       SpielService.enabled = true
+      speakTime()
       screenOn = true
-      val sdf = new SimpleDateFormat(
-        if(DateFormat.is24HourFormat(SpielService.context))
-          "H:mm"
-        else
-          "h:mm a"
-      )
-      TTS.speak(sdf.format(new Date(System.currentTimeMillis)), false)
     }
   }
 
