@@ -27,16 +27,6 @@ object Device extends Commands {
       BatteryLevelChanged(level*100/scale)
   }
 
-  private var _batteryLevel = 0
-
-  def batteryLevel = _batteryLevel
-
-  BatteryLevelChanged += { level:Int => _batteryLevel = level }
-
-  private def speakBatteryPercentage(ps:Option[String] = None) {
-    TTS.speak(batteryLevel+"%" :: ps.map(_ :: Nil).getOrElse(Nil), false)
-  }
-
   PowerConnected += speakBatteryPercentage(Some(SpielService.context.getString(R.string.charging)))
 
   PowerDisconnected += speakBatteryPercentage()

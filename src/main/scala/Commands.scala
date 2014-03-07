@@ -194,4 +194,14 @@ trait Commands {
     true
   }
 
+  private var _batteryLevel = 0
+
+  def batteryLevel = _batteryLevel
+
+  BatteryLevelChanged += { level:Int => _batteryLevel = level }
+
+  protected def speakBatteryPercentage(ps:Option[String] = None) {
+    TTS.speak(batteryLevel+"%" :: ps.map(_ :: Nil).getOrElse(Nil), false)
+  }
+
 }

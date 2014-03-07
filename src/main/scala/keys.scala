@@ -77,6 +77,9 @@ class Keys {
             SpielService.performGlobalAction(GLOBAL_ACTION_HOME)
           else
             SpielService.performGlobalAction(GLOBAL_ACTION_BACK)
+        case KEYCODE_B if spielKeyDown =>
+          speakBatteryPercentage()
+          true
         case KEYCODE_N if spielKeyDown => SpielService.performGlobalAction(GLOBAL_ACTION_NOTIFICATIONS)
         case KEYCODE_T if spielKeyDown => speakTime()
         case _ =>
