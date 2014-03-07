@@ -7,6 +7,7 @@ import android.content._
 import android.os._
 import android.text.format.DateFormat
 import android.view._
+import KeyEvent._
 import accessibility._
 import AccessibilityEvent._
 import AccessibilityNodeInfo._
@@ -156,7 +157,7 @@ trait Commands {
       }
     }
     stopKeyEvent = { e:KeyEvent =>
-      if(e.getAction == KeyEvent.ACTION_DOWN)
+      if(e.getAction == ACTION_DOWN && e.getKeyCode != KEYCODE_VOLUME_DOWN && e.getKeyCode != KEYCODE_VOLUME_UP)
         clear()
     }
     SpeechQueueEmpty += continue
