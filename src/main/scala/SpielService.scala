@@ -85,7 +85,7 @@ class SpielService extends AccessibilityService {
 
   override protected def onKeyEvent(event:KeyEvent) = {
     val root = Option(getRootInActiveWindow)
-    val source = root.flatMap(_.find(Focus.Input)).orElse(root.flatMap(_.find(Focus.Accessibility)))
+    val source = root.flatMap(_.find(Focus.Accessibility)).orElse(root.flatMap(_.find(Focus.Input)))
     val directive = source.map { s =>
       new Directive(s.getPackageName.toString, s.getClassName.toString)
     }.getOrElse(new Directive("", ""))

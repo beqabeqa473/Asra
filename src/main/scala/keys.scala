@@ -53,16 +53,16 @@ class Keys {
         case KEYCODE_DPAD_RIGHT if spielKeyDown =>
           if(event.isCtrlPressed)
             source.flatMap { s =>
-              s.ancestors.find(_.supports_?(Action.ScrollBackward))
-              .map(_.perform(Action.ScrollBackward))
+              (s :: s.ancestors).find(_.supports_?(Action.ScrollForward))
+              .map(_.perform(Action.ScrollForward))
             }.getOrElse(true)
           else
             navigate(NavigationDirection.Next)
         case KEYCODE_DPAD_LEFT if spielKeyDown => 
           if(event.isCtrlPressed)
             source.flatMap { s =>
-              s.ancestors.find(_.supports_?(Action.ScrollForward))
-              .map(_.perform(Action.ScrollForward))
+              (s :: s.ancestors).find(_.supports_?(Action.ScrollBackward))
+              .map(_.perform(Action.ScrollBackward))
             }.getOrElse(true)
           else
             navigate(NavigationDirection.Prev)
