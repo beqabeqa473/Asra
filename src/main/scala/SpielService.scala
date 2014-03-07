@@ -9,6 +9,7 @@ import android.os.Debug
 import android.os.Build.VERSION
 import android.util.Log
 import android.view._
+import KeyEvent._
 import accessibility.{AccessibilityEvent, AccessibilityNodeInfo}
 import AccessibilityEvent._
 import AccessibilityNodeInfo._
@@ -88,7 +89,7 @@ class SpielService extends AccessibilityService {
       new Directive(s.getPackageName.toString, s.getClassName.toString)
     }.getOrElse(new Directive("", ""))
     KeyEventReceived(event)
-    if(event.getAction == KeyEvent.ACTION_DOWN)
+    if(event.getAction == ACTION_DOWN && event.getKeyCode != KEYCODE_VOLUME_DOWN && event.getKeyCode != KEYCODE_VOLUME_UP)
       TTS.stop()
     KeyDispatcher.dispatch(KeyPayload(event, source), directive)
   }
