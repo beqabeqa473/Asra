@@ -275,12 +275,12 @@ class Scripts extends ListFragment with Refreshable {
         startActivity(intent)
       case R.id.delete =>
         new AlertDialogBuilder("", getString(R.string.confirmDelete, script.pkg))(getActivity) {
-          positiveButton(android.R.string.yes, {
+          positiveButton(getString(android.R.string.yes), {
             script.delete()
             script.uninstall()
             refresh()
           })
-          negativeButton(android.R.string.no)
+          negativeButton(getString(android.R.string.no))
         }.show()
     }
     true
