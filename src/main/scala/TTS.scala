@@ -400,7 +400,7 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
   private def performRepeatedSpeech(key:String):Unit = repeatedSpeech.get(key) foreach { v =>
     if(shouldSpeakNotification(true))
       speak(v._2, false, Some(key))
-    future {
+    Future {
       Thread.sleep(v._1*1000)
       performRepeatedSpeech(key)
     }

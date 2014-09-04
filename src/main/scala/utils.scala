@@ -38,7 +38,7 @@ package object utils {
       } catch {
         case _ if(pkg != "") => try {
           val pc = context.createPackageContext(pkg, Context.CONTEXT_INCLUDE_CODE|Context.CONTEXT_IGNORE_SECURITY)
-          val f = future(Class.forName(cls, true, pc.getClassLoader))
+          val f = Future(Class.forName(cls, true, pc.getClassLoader))
           val rv = Await.result(f, 100 milliseconds)
           classes += (cls, pkg) -> rv
           Some(rv)

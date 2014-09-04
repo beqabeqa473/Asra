@@ -147,7 +147,7 @@ class NotificationFiltersPreferenceFragment extends StockPreferenceFragment {
   override def onCreate(b:Bundle) {
     super.onCreate(b)
     val pm = getActivity.getPackageManager
-    future {
+    Future {
       val notificationFilters = findPreference("notificationFilters").asInstanceOf[MultiSelectListPreference]
       notificationFilters.setShouldDisableView(true)
       notificationFilters.setEnabled(false)

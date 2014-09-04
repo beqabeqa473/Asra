@@ -43,7 +43,7 @@ object Sensors extends SensorEventListener {
         ProximityNear()
       else
         ProximityFar()
-      
+    case _ =>
   }
 
   def onAccuracyChanged(sensor:Sensor, accuracy:Int) { }
