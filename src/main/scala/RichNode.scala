@@ -178,7 +178,7 @@ case class RichNode(node:AccessibilityNodeInfo) {
   def find(focus:Focus.Value) = Option(node.findFocus(focus.id))
 
   def nextAccessibilityFocus(wrap:Boolean = true):Option[AccessibilityNodeInfo] =
-    nextVisibleSibling.map(_.firstVisibleLeaf)
+    nextVisibleSibling.map(_.firstVisibleLeaf).filter(label != Some(_))
     .orElse(parent.flatMap(_.nextAccessibilityFocus(wrap)))
     .orElse {
       if(wrap)
@@ -190,7 +190,7 @@ case class RichNode(node:AccessibilityNodeInfo) {
   def nextAccessibilityFocus:Option[AccessibilityNodeInfo] = nextAccessibilityFocus()
 
   def prevAccessibilityFocus(wrap:Boolean = true):Option[AccessibilityNodeInfo] =
-    prevVisibleSibling.map(_.lastVisibleLeaf)
+    prevVisibleSibling.map(_.lastVisibleLeaf).filter(label != Some(_))
     .orElse(parent.flatMap(_.prevAccessibilityFocus(wrap)))
     .orElse {
       if(wrap)
