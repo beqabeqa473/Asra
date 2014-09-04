@@ -82,6 +82,8 @@
   <string name="notificationFiltersTitle">Notification filters</string>
   <string name="notificationFiltersSummary">Filter presentation of notification changes for noisy apps</string>
 
+  <string name="enabledPlugins">Enabled plugins</string>
+
   <string name="debuggingTitle">Debugging</string>
   <string name="sendBacktracesTitle">Send backtraces when Spiel crashes</string>
   <string name="sendBacktracesSummary">Automatically send anonymous error reports to the developer whenever Spiel crashes (requires restart)</string>

@@ -1,6 +1,8 @@
 package info.spielproject.spiel
 package ui
 
+import java.util.HashSet
+
 import collection.JavaConversions._
 import concurrent._
 import ExecutionContext.Implicits.global
@@ -21,6 +23,7 @@ import macroid._
 import macroid.FullDsl._
 import org.scaloid.common.{Preferences => _, _}
 
+import plugins._
 import presenters._
 
 /**
@@ -90,6 +93,37 @@ class NotificationFiltersPreferenceFragment extends PreferenceFragment {
     getActivity.runOnUiThread {
       filters.setEntryValues(packages.map(_._1.asInstanceOf[CharSequence]).toArray)
       filters.setEntries(packages.map(_._2.asInstanceOf[CharSequence]).toArray)
+      val set = new HashSet[String]()
+      set.addAll(Preferences.notificationFilters)
+      filters.setValues(set)
+    }
+  }
+
+  override def onStart() {
+    super.onStart()
+    getPreferenceScreen.onItemClick(null, null, 0, 0)
+  }
+
+}
+
+class EnabledPluginsPreferenceFragment extends PreferenceFragment {
+
+  var plugins:MultiSelectListPreference = _
+
+  override def onCreate(b:Bundle) {
+    super.onCreate(b)
+    plugins = new MultiSelectListPreference(getActivity)
+    val preferenceScreen = getPreferenceManager.createPreferenceScreen(getActivity)
+    setPreferenceScreen(preferenceScreen)
+    preferenceScreen.addPreference(plugins)
+    getActivity.runOnUiThread {
+      val installedPlugins = PluginManager.plugins.map(p => (p._1, p._2.name+": "+p._2.description))
+      plugins.setEntryValues(installedPlugins.map(_._1.asInstanceOf[CharSequence]).toArray)
+      plugins.setEntries(installedPlugins.map(_._2.asInstanceOf[CharSequence]).toArray)
+      val set = new HashSet[String]()
+      set.addAll(Preferences.enabledPlugins)
+      Log.d("spielcheck", "Enabled: "+set)
+      plugins.setValues(set)
     }
   }
 
