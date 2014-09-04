@@ -18,7 +18,6 @@ import events._
 import gestures.{Gesture, GestureDispatcher, GesturePayload}
 import keys._
 import routing._
-import scripting._
 
 /**
  * <code>AccessibilityService</code> implementation that serves as main entry point.
@@ -40,22 +39,11 @@ class SpielService extends AccessibilityService {
     presenters.Presenter()
     GestureDispatcher()
     KeyDispatcher()
-    Scripter(this)
-    Sensors(this)
     Device()
     Bluetooth()
     Telephony(this)
     plugins.PluginManager(this)
     Initialized(this)
-    val nb = new Notification.Builder(this)
-    .setSmallIcon(R.drawable.empty)
-    .setTicker(getString(R.string.appName))
-    .setContentTitle(getString(R.string.appName))
-    .setOngoing(true)
-    .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this, classOf[ui.Spiel]), 0))
-    if(VERSION.SDK_INT >= 17)
-      nb.setShowWhen(false)
-    startForeground(1, nb.getNotification)
     SpielService.initialized = true
     SpielService.enabled = true
   }
@@ -63,7 +51,6 @@ class SpielService extends AccessibilityService {
   override def onDestroy() {
     super.onDestroy
     TTS.shutdown
-    Scripter.shutdown()
     if(Preferences.profiling)
       Debug.stopMethodTracing()
     Option(getSystemService(Context.NOTIFICATION_SERVICE).asInstanceOf[NotificationManager]).foreach(_.cancelAll())

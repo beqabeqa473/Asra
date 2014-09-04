@@ -53,17 +53,6 @@
     </service>
 
     <activity
-      android:name=".ui.Spiel"
-      android:configChanges="orientation|keyboardHidden|screenSize">
-      <intent-filter>
-        <action android:name="android.intent.action.VIEW"/>
-        <category android:name="android.intent.category.DEFAULT"/>
-        <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="spiel"/>
-      </intent-filter>
-    </activity>
-
-    <activity
       android:name=".ui.Settings"
       android:label="@string/settings"
       android:configChanges="orientation|keyboardHidden|screenSize">
