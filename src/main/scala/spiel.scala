@@ -24,4 +24,8 @@ package object spiel {
       }
     }
 
+  implicit def fToRunnable(f: => Unit) = new Runnable {
+    def run() { f }
+  }
+
 }
