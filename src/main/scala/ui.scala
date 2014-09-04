@@ -19,7 +19,6 @@ import android.view.accessibility._
 import android.widget._
 import macroid._
 import macroid.FullDsl._
-import org.droidparts.preference.MultiSelectListPreference
 import org.scaloid.common.{Preferences => _, _}
 
 import presenters._
@@ -107,5 +106,7 @@ class Settings extends PreferenceActivity {
     setIntent(intent)
     loadHeadersFromResource(R.xml.preference_headers, target)
   }
+
+  override def isValidFragment(fragment:String) = true
 
 }

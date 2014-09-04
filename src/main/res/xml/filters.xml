@@ -3,7 +3,7 @@
   android:title="@string/notificationFiltersTitle"
   android:summary="@string/notificationFiltersSummary">
 
-  <org.droidparts.preference.MultiSelectListPreference
+  <MultiSelectListPreference
     android:title="@string/notificationFiltersTitle"
     android:summary="@string/notificationFiltersSummary"
     android:key="notificationFilters"/>
