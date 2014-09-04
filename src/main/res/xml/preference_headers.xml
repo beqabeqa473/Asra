@@ -22,14 +22,6 @@
     android:title="@string/notificationFiltersTitle"
     android:summary="@string/notificationFiltersSummary"
     android:fragment="info.spielproject.spiel.ui.NotificationFiltersPreferenceFragment">
-    <extra
-      android:name="resource"
-      android:value="filters"/>
-  </header>
-
-  <header
-    android:title="@string/scripts"
-    android:fragment="info.spielproject.spiel.ui.ScriptsPreferenceFragment">
   </header>
 
   <header

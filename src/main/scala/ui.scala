@@ -69,28 +69,35 @@ class AlertsPreferenceFragment extends StockPreferenceFragment {
   }
 }
 
-class NotificationFiltersPreferenceFragment extends StockPreferenceFragment {
+class NotificationFiltersPreferenceFragment extends PreferenceFragment {
+
+  var filters:MultiSelectListPreference = _
+
   override def onCreate(b:Bundle) {
     super.onCreate(b)
+    filters = new MultiSelectListPreference(getActivity)
+    val preferenceScreen = getPreferenceManager.createPreferenceScreen(getActivity)
+    setPreferenceScreen(preferenceScreen)
+    preferenceScreen.addPreference(filters)
     val pm = getActivity.getPackageManager
-    Future {
-      val notificationFilters = findPreference("notificationFilters").asInstanceOf[MultiSelectListPreference]
-      notificationFilters.setShouldDisableView(true)
-      notificationFilters.setEnabled(false)
-      val packages = utils.installedPackages.map { pkg =>
-        (pkg.packageName, try {
-          pm.getApplicationInfo(pkg.packageName, 0).loadLabel(pm).toString
-        } catch {
-          case _:Throwable => pkg.packageName
-        })
-      }.sortWith((v1, v2) => v1._2 < v2._2)
-      getActivity.runOnUiThread(new Runnable { def run() {
-        notificationFilters.setEntryValues(packages.map(_._1.asInstanceOf[CharSequence]).toArray)
-        notificationFilters.setEntries(packages.map(_._2.asInstanceOf[CharSequence]).toArray)
-        notificationFilters.setEnabled(true)
-      }})
+    val packages = utils.installedPackages.map { pkg =>
+      (pkg.packageName, try {
+        pm.getApplicationInfo(pkg.packageName, 0).loadLabel(pm).toString
+      } catch {
+        case _:Throwable => pkg.packageName
+      })
+    }.sortWith((v1, v2) => v1._2 < v2._2)
+    getActivity.runOnUiThread {
+      filters.setEntryValues(packages.map(_._1.asInstanceOf[CharSequence]).toArray)
+      filters.setEntries(packages.map(_._2.asInstanceOf[CharSequence]).toArray)
     }
   }
+
+  override def onStart() {
+    super.onStart()
+    getPreferenceScreen.onItemClick(null, null, 0, 0)
+  }
+
 }
 
 /**
@@ -99,11 +106,7 @@ class NotificationFiltersPreferenceFragment extends StockPreferenceFragment {
 
 class Settings extends PreferenceActivity {
 
-  protected val context = this
-
   override def onBuildHeaders(target:java.util.List[PreferenceActivity.Header]) {
-    val intent = getIntent
-    setIntent(intent)
     loadHeadersFromResource(R.xml.preference_headers, target)
   }
 
