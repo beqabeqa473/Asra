@@ -17,6 +17,8 @@ import android.util._
 import android.view._
 import android.view.accessibility._
 import android.widget._
+import macroid._
+import macroid.FullDsl._
 import org.droidparts.preference.MultiSelectListPreference
 import org.scaloid.common.{Preferences => _, _}
 
