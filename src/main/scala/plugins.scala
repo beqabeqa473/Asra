@@ -14,7 +14,13 @@ import reflect._
 import android.content.Context
 import android.util.Log
 
-class Plugin
+trait Plugin {
+
+  def start()
+
+  def stop()
+
+}
 
 object PluginManager {
 
@@ -41,6 +47,7 @@ object PluginManager {
         Nil
     }
     plugins ++= foundPlugins.map(_.newInstance().asInstanceOf[Plugin])
+    plugins.foreach(_.start())
   }
 
   def plugin[T <: Plugin:ClassTag]:List[T] =

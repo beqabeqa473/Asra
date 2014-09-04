@@ -11,11 +11,10 @@ class SingleTap extends Plugin {
 
   private var lastTouchStart = 0l
 
-  AccessibilityEventReceived += { e:AccessibilityEvent =>
+  val accessibilityEventHandler = { e:AccessibilityEvent =>
     if(e.getEventType == TYPE_TOUCH_EXPLORATION_GESTURE_START)
       lastTouchStart = System.currentTimeMillis
     else if(e.getEventType == TYPE_TOUCH_EXPLORATION_GESTURE_END) {
-      Log.d("spielcheck", "Interval: "+(System.currentTimeMillis-lastTouchStart))
       if(System.currentTimeMillis-lastTouchStart <= 150)
         for(
           r <- SpielService.rootInActiveWindow;
@@ -25,5 +24,12 @@ class SingleTap extends Plugin {
     }
   }
 
+  def start() {
+    AccessibilityEventReceived += accessibilityEventHandler
+  }
+
+  def stop() {
+    AccessibilityEventReceived -= accessibilityEventHandler
+  }
 
 }
