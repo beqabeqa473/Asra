@@ -133,7 +133,7 @@ case class RichNode(node:AccessibilityNodeInfo) {
     nodeClass.map(utils.ancestors(_).map(_.getName)).getOrElse(Nil)
   }
 
-  protected def isA_?(cls:String) =
+  def isA_?(cls:String) =
     node.getClassName == cls || classAncestors.contains(cls)
 
   def label = {
@@ -178,7 +178,9 @@ case class RichNode(node:AccessibilityNodeInfo) {
   def find(focus:Focus.Value) = Option(node.findFocus(focus.id))
 
   def nextAccessibilityFocus(wrap:Boolean = true):Option[AccessibilityNodeInfo] =
-    nextVisibleSibling.map(_.firstVisibleLeaf).filter(label != Some(_))
+    nextVisibleSibling.filter { s =>
+      s.text == None && !s.children.exists(_.getClassName != "android.widget.TextView")
+    }.orElse(nextVisibleSibling.map(_.firstVisibleLeaf).filter(label != Some(_)))
     .orElse(parent.flatMap(_.nextAccessibilityFocus(wrap)))
     .orElse {
       if(wrap)
@@ -190,7 +192,9 @@ case class RichNode(node:AccessibilityNodeInfo) {
   def nextAccessibilityFocus:Option[AccessibilityNodeInfo] = nextAccessibilityFocus()
 
   def prevAccessibilityFocus(wrap:Boolean = true):Option[AccessibilityNodeInfo] =
-    prevVisibleSibling.map(_.lastVisibleLeaf).filter(label != Some(_))
+    prevVisibleSibling.filter { s =>
+      s.text == None && !s.children.exists(_.getClassName != "android.widget.TextView")
+    }.orElse(prevVisibleSibling.map(_.lastVisibleLeaf).filter(label != Some(_)))
     .orElse(parent.flatMap(_.prevAccessibilityFocus(wrap)))
     .orElse {
       if(wrap)

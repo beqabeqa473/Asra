@@ -575,6 +575,8 @@ class Presenters {
         e.source.map { source =>
           if(source.interactive_?)
             speak(utterances)
+          else if(!source.children.exists(_.getClassName != "android.widget.TextView"))
+            speak(source.children.map(_.text).flatten.filterNot(_ == ""))
           else
             true
         }.getOrElse(speak(e.utterances(stripBlanks = true)))
