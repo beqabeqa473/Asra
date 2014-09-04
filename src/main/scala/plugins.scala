@@ -16,6 +16,12 @@ import android.util.Log
 
 trait Plugin {
 
+  val name:String
+
+  val description:String
+
+  val key:String
+
   def start()
 
   def stop()

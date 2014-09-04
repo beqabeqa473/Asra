@@ -9,6 +9,12 @@ import events._
 
 class SingleTap extends Plugin {
 
+  val name = "Single-tap"
+
+  val description = "Activate items with a single tap"
+
+  val key = "singleTap"
+
   private var lastTouchStart = 0l
 
   val accessibilityEventHandler = { e:AccessibilityEvent =>
