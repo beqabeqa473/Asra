@@ -568,18 +568,25 @@ class Presenters {
   class ViewGroup extends Presenter("android.view.ViewGroup") {
 
     onViewFocused { e:AccessibilityEvent => 
-      val utterances = e.utterances(stripBlanks = true, addBlank=false)
-      if(utterances != Nil)
-        speak(utterances)
-      else
-        e.source.map { source =>
-          if(source.interactive_?)
-            speak(utterances)
-          else if(!source.children.exists(_.getClassName != "android.widget.TextView"))
-            speak(source.children.map(_.text).flatten.filterNot(_ == ""))
-          else
-            true
-        }.getOrElse(speak(e.utterances(stripBlanks = true)))
+      val utterances = e.utterances(stripBlanks=true, addBlank=false)
+      e.source.map { source =>
+        if(source.children.forall(_.getClassName == "android.widget.TextView"))
+          speak(source.children.flatMap(_.text).filterNot(_ == ""))
+        else if(source.children.forall(c => c.getClassName == "android.widget.TextView" || c.isCheckable)) {
+          val utterances = source.children.flatMap(_.text)
+          speak(getString(R.string.checkbox, utterances.mkString(": ")))
+          source.children.find(_.isCheckable).foreach { c =>
+            if(c.isChecked)
+              speak(getString(R.string.checked), false)
+            else
+              speak(getString(R.string.notChecked), false)
+          }
+          true
+        } else if(source.interactive_?)
+          speak(utterances)
+        else
+          true
+      }.getOrElse(speak(e.utterances(stripBlanks = true)))
     }
 
     onViewHoverEnter { e:AccessibilityEvent =>

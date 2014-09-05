@@ -177,9 +177,10 @@ case class RichNode(node:AccessibilityNodeInfo) {
 
   def find(focus:Focus.Value) = Option(node.findFocus(focus.id))
 
-  def nextAccessibilityFocus(wrap:Boolean = true):Option[AccessibilityNodeInfo] =
+  def nextAccessibilityFocus(wrap:Boolean = true):Option[AccessibilityNodeInfo] = {
     nextVisibleSibling.filter { s =>
-      s.text == None && !s.children.exists(_.getClassName != "android.widget.TextView")
+      (s.text == None && s.children.forall(_.getClassName == "android.widget.TextView")) ||
+      s.children.forall(c => c.getClassName == "android.widget.TextView" || c.isCheckable)
     }.orElse(nextVisibleSibling.map(_.firstVisibleLeaf).filter(label != Some(_)))
     .orElse(parent.flatMap(_.nextAccessibilityFocus(wrap)))
     .orElse {
@@ -188,12 +189,14 @@ case class RichNode(node:AccessibilityNodeInfo) {
       else
         None
     }
+  }
 
   def nextAccessibilityFocus:Option[AccessibilityNodeInfo] = nextAccessibilityFocus()
 
   def prevAccessibilityFocus(wrap:Boolean = true):Option[AccessibilityNodeInfo] =
     prevVisibleSibling.filter { s =>
-      s.text == None && !s.children.exists(_.getClassName != "android.widget.TextView")
+      (s.text == None && s.children.forall(_.getClassName == "android.widget.TextView")) ||
+      s.children.forall(c => c.getClassName == "android.widget.TextView" || c.isCheckable)
     }.orElse(prevVisibleSibling.map(_.lastVisibleLeaf).filter(label != Some(_)))
     .orElse(parent.flatMap(_.prevAccessibilityFocus(wrap)))
     .orElse {
