@@ -244,7 +244,9 @@ object After extends Presenter {
         if(childWidgetIndex != -1) {
           val positionOffset = absListView.children.indexOf(all(childWidgetIndex))+1
           val position = absListViews.get(absListView).map(_._1+positionOffset).getOrElse(positionOffset)
-          val total = absListViews.get(absListView).map(_._2).getOrElse(absListView.children.length)
+          val total = e.records.headOption.filter(_.getItemCount != -1).map(_.getItemCount)
+          .orElse(absListViews.get(absListView).map(_._2))
+          .getOrElse(absListView.children.length)
           speak(getString(R.string.listItem, position.toString, total.toString), false)
         }
       }
