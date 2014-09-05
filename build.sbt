@@ -25,8 +25,7 @@ resolvers ++= Seq(
 )
 
 libraryDependencies := Seq(
-  "rhino" % "js" % "1.7R2" from "https://github.com/damonkohler/sl4a/raw/master/rhino/rhino1_7R2.jar",
-  //"net.databinder.dispatch" %% "dispatch-json4s-native" % "0.10.0",
+  "org.scala-lang.modules" %% "scala-xml" % "1.0.2",
   "org.scaloid" %% "scaloid" % "3.4-10",
   "org.macroid" %% "macroid" % "2.0.0-M3",
   "com.android.support" % "support-v4" % "20.0.0",
@@ -38,10 +37,4 @@ proguardOptions in Android += """
   -ignorewarnings
   -keep class scala.collection.SeqLike { public protected *; }
   -keep class info.spielproject.spiel.** { *; }
-  -keep class org.mozilla.javascript.* { *; }
-  -keep class org.mozilla.javascript.ast.* { *; }
-  -keep class org.mozilla.javascript.json.* { *; }
-  -keep class org.mozilla.javascript.jdk15.* { *; }
-  -keep class org.mozilla.javascript.regexp.* { *; }
-  -keep class org.mozilla.javascript.resources.* { *; }
 """

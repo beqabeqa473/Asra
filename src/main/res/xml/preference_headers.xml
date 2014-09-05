@@ -21,16 +21,11 @@
   <header
     android:title="@string/notificationFiltersTitle"
     android:summary="@string/notificationFiltersSummary"
-    android:fragment="info.spielproject.spiel.ui.NotificationFiltersPreferenceFragment">
-    <extra
-      android:name="resource"
-      android:value="filters"/>
-  </header>
+    android:fragment="info.spielproject.spiel.ui.NotificationFiltersPreferenceFragment"/>
 
   <header
-    android:title="@string/scripts"
-    android:fragment="info.spielproject.spiel.ui.ScriptsPreferenceFragment">
-  </header>
+    android:title="@string/enabledPlugins"
+    android:fragment="info.spielproject.spiel.ui.EnabledPluginsPreferenceFragment"/>
 
   <header
     android:title="@string/debuggingTitle"

@@ -7,6 +7,8 @@ import android.os.Debug
 import android.preference.PreferenceManager
 import android.util.Log
 
+import plugins._
+
 /**
  * Singleton for convenient access to preference values. Also tracks 
  * preference changes and updates relevant subsystems.
@@ -167,7 +169,9 @@ object Preferences extends SharedPreferences.OnSharedPreferenceChangeListener {
     editor.commit()
   }
 
-  def notificationFilters = prefs.getString("notificationFilters", "").split("\\|")
+  def notificationFilters = prefs.getString("notificationFilters", "").split("\\|").toList
+
+  def enabledPlugins = prefs.getString("enabledPlugins", PluginManager.plugins.map(_._1).mkString("\\|")).split("\\|").toList
 
   def hapticFeedback_? = prefs.getBoolean("hapticFeedback", true)
 

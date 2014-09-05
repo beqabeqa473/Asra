@@ -82,37 +82,17 @@
   <string name="notificationFiltersTitle">Notification filters</string>
   <string name="notificationFiltersSummary">Filter presentation of notification changes for noisy apps</string>
 
+  <string name="enabledPlugins">Enabled plugins</string>
+
   <string name="debuggingTitle">Debugging</string>
   <string name="sendBacktracesTitle">Send backtraces when Spiel crashes</string>
   <string name="sendBacktracesSummary">Automatically send anonymous error reports to the developer whenever Spiel crashes (requires restart)</string>
   <string name="profilingTitle">Profiling</string>
   <string name="profilingSummary">Only enable for development as this impacts performance!</string>
 
-  <string name="events">Events</string>
-
-  <string name="createScriptTemplate">Create script template</string>
-
-  <string name="scripts">Scripts</string>
-
-  <!-- Script context menu -->
-  <string name="delete">Delete</string>
-
-  <string name="confirmDelete">Are you sure you wish to delete the script for package %1$s?</string>
-
-  <!-- Spoken when script changes are detected -->
-  <string name="scriptInstalling">Installing %1$s</string>
-  <string name="scriptUninstalling">Uninstalling %1$s</string>
-  <string name="scriptUpdating">Updating %1$s</string>
-
-  <!-- Menu items -->
-  <string name="refresh">Refresh</string>
-
   <!-- Action names and related -->
 
   <string name="none">None</string>
-  <string name="createScriptTemplateAction">Create a script template for the most recent accessibility event</string>
-  <string name="templateCreated">Template created in %1$s.</string>
-  <string name="templateCreationError">There was an error creating the script template.</string>
   <string name="stopSpeech">Stop speech</string>
   <string name="toggleSpiel">Toggle whether or not Spiel is enabled</string>
 

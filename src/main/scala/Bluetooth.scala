@@ -25,7 +25,7 @@ object Bluetooth extends BluetoothProfile.ServiceListener {
   BluetoothConnected += { i:Intent =>
     val device = i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE).asInstanceOf[BluetoothDevice]
     device.getBluetoothClass.getDeviceClass match {
-      case BluetoothClass.Device.AUDIO_VIDEO_WEARABLE_HEADSET => future {
+      case BluetoothClass.Device.AUDIO_VIDEO_WEARABLE_HEADSET => Future {
         Thread.sleep(3000)
         val isSCO = a2dp.map(!_.getConnectedDevices.contains(device)).getOrElse(true)
         if(isSCO)
@@ -146,7 +146,7 @@ object Bluetooth extends BluetoothProfile.ServiceListener {
 
   def reconnectSCOIfNecessary() {
     if(usingSco) {
-      future {
+      Future {
         // Wait until dialer sets audio mode so we can alter it for SCO reconnection.
         Thread.sleep(1000)
         btReceiver.foreach(_.connect())

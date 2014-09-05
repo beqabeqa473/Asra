@@ -14,14 +14,26 @@ import reflect._
 import android.content.Context
 import android.util.Log
 
-class Plugin
+trait Plugin {
+
+  val name:String
+
+  val description:String
+
+  val key:String
+
+  def start()
+
+  def stop()
+
+}
 
 object PluginManager {
 
-  private val plugins = ListBuffer[Plugin]()
+  var plugins = Map[String, Plugin]()
 
   def apply(context:Context) {
-    val foundPlugins:List[Class[_]] = try {
+    val foundPlugins = (try {
       val classLoader = context.getClassLoader
       val findResources = classOf[BaseDexClassLoader].getDeclaredMethod("findResources", classOf[String])
       findResources.setAccessible(true)
@@ -39,8 +51,10 @@ object PluginManager {
       case e:Throwable =>
         Log.d("spielcheck", "Automatic plugin loading failed", e)
         Nil
-    }
-    plugins ++= foundPlugins.map(_.newInstance().asInstanceOf[Plugin])
+    }).map(_.newInstance().asInstanceOf[Plugin])
+    plugins = foundPlugins.map(p => (p.key, p)).toMap
+    plugins.filter(p => Preferences.enabledPlugins.contains(p._1))
+    .foreach(_._2.start())
   }
 
   def plugin[T <: Plugin:ClassTag]:List[T] =
