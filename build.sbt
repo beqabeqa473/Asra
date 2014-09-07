@@ -21,6 +21,7 @@ javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
 //cachePasswords := true
 
 resolvers ++= Seq(
+  "jcenter" at "http://jcenter.bintray.com",
   "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
 )
 

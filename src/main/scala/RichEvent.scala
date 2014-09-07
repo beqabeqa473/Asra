@@ -5,6 +5,14 @@ import collection.JavaConversions._
 import android.os.Build.VERSION
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
+import AccessibilityEvent._
+
+object ContentChangeType extends Enumeration {
+  val ContentDescription = Value(CONTENT_CHANGE_TYPE_CONTENT_DESCRIPTION)
+  val Subtree = Value(CONTENT_CHANGE_TYPE_SUBTREE)
+  val Text = Value(CONTENT_CHANGE_TYPE_TEXT)
+  val Undefined = Value(CONTENT_CHANGE_TYPE_UNDEFINED)
+}
 
 class RichEvent(e:AccessibilityEvent) {
 
@@ -65,5 +73,10 @@ class RichEvent(e:AccessibilityEvent) {
   }
 
   def utterances:List[String] = utterances()
+
+  def contentChangeTypes =
+    ContentChangeType.values.map(_.id)
+    .filter(v => (e.getContentChangeTypes & v) != 0)
+    .map(ContentChangeType(_))
 
 }
