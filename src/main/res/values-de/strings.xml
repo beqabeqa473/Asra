@@ -150,4 +150,7 @@
 
   <string name="settings">Einstellungen</string>
 
+  <string name="ringerVibrate">Klingelton Vibration</string>
+  <string name="enabledPlugins">aktivierte Plugins</string>
+
   </resources>
