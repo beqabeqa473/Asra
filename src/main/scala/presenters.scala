@@ -576,12 +576,16 @@ class Presenters {
           speak(source.children.flatMap(_.text).filterNot(_ == ""))
         else if(source.children.forall(c => c.getClassName == "android.widget.TextView" || c.isCheckable)) {
           val utterances = source.children.flatMap(_.text)
-          speak(getString(R.string.checkbox, utterances.mkString(": ")))
           source.children.find(_.isCheckable).foreach { c =>
-            if(c.isChecked)
-              speak(getString(R.string.checked), false)
-            else
-              speak(getString(R.string.notChecked), false)
+            if(c.text != None)
+              speak(utterances.mkString(": "))
+            else {
+              speak(getString(R.string.checkbox, utterances.mkString(": ")))
+              if(c.isChecked)
+                speak(getString(R.string.checked), false)
+              else
+                speak(getString(R.string.notChecked), false)
+            }
           }
           true
         } else if(source.interactive_?)
