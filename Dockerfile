@@ -1,5 +1,5 @@
 FROM nolan/android
-RUN curl http://dl.bintray.com/sbt/debian/sbt-0.13.5.deb -o /tmp/sbt.deb && \
+RUN curl -L http://dl.bintray.com/sbt/debian/sbt-0.13.5.deb -o /tmp/sbt.deb && \
   dpkg -i /tmp/sbt.deb && \
   rm /tmp/sbt.deb && \
   adduser --system --group build --shell /bin/sh
