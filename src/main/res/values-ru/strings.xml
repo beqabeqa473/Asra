@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
   <string name="appName">Spiel</string>
   <string name="appDescription">Гибкая программа экранного доступа для операционной системы Android с возможностью скриптования</string>
@@ -11,14 +10,14 @@
   <string name="welcomeMsg">Добро пожаловать в Spiel!</string>
 
   <!-- On/off and other alerts -->
-  <string name="spielOn">Spiel включён.</string>
-  <string name="spielOff">Spiel выключен.</string>
-  <string name="screenOff">Экран выключен.</string>
+  <string name="spielOn">Spiel включён</string>
+  <string name="spielOff">Spiel выключен</string>
+  <string name="screenOff">Экран выключен</string>
   <string name="landscape">Альбомная</string>
   <string name="portrait">Портретная</string>
-  <string name="unlocked">Разблокировано.</string>
-  <string name="ringerOff">Звонок выключен.</string>
-  <string name="ringerOn">Звонок включён.</string>
+  <string name="unlocked">Разблокировано</string>
+  <string name="ringerOff">Звонок выключен</string>
+  <string name="ringerOn">Звонок включён</string>
   <string name="ringerVibrate">Виброзвонок</string>
   <string name="newVoicemail">Новая голосовая почта</string>
 
@@ -159,4 +158,8 @@
 
   <string name="charging">зарядка</string>
 
-</resources>
+<string name="tabWidget">%1$s: вкладка</string>
+
+  <string name="enabledPlugins">Включенные плагины</string>
+
+  </resources>
