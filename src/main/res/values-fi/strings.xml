@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
   <string name="appName">Spiel</string>
   <string name="appDescription">Joustava ja skriptattava Android-ruudunlukuohjelma</string>
@@ -44,7 +43,7 @@
   <string name="notSelected">ei valittu</string>
   <string name="password">salasana</string>
   <string name="radioButton">valintapainike</string>
-  <string name="rating">Arviointi</string>
+  <string name="rating">Arvio</string>
   <string name="selected">valittu</string>
 
   <!-- Preferences -->
@@ -159,4 +158,8 @@
 
     <string name="charging">akkua ladataan</string>
 
-</resources>
+<string name="tabWidget">%1$s: välilehti</string>
+
+  <string name="enabledPlugins">Käyttöönotetut lisäosat</string>
+
+  </resources>
