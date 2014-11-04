@@ -4,7 +4,7 @@
   <string name="appDescription">Joustava ja skriptattava Android-ruudunlukuohjelma</string>
 
   <string name="sendCommandsLabel">Lähetä komentoja Spielille</string>
-  <string name="sendCommandsDescription">Lähetä puhetta ja muita toimintoja suorittavia komentoja Spiel-ruudunlukuohjelmalle</string>
+  <string name="sendCommandsDescription">Lähetä puhetta tuottavia ja muita toimintoja suorittavia komentoja Spiel-ruudunlukuohjelmalle</string>
 
   <!-- Initial welcome message-->
   <string name="welcomeMsg">Tervetuloa Spieliin!</string>
@@ -81,7 +81,7 @@
   <string name="notificationFiltersSummary">Suodata ilmoitusmuutosten lukemista äänekkäissä sovelluksissa</string>
 
   <string name="debuggingTitle">Virheenkorjaus</string>
-  <string name="sendBacktracesTitle">Lähetä virheenjäljitystietoja Spielin kaatuessa</string>
+  <string name="sendBacktracesTitle">Lähetä virheenkorjaustietoja Spielin kaatuessa</string>
   <string name="sendBacktracesSummary">Lähetä kehittäjälle nimettömiä kaatumisilmoituksia automaattisesti Spielin kaatuessa (edellyttää uudelleenkäynnistystä)</string>
   <string name="profilingTitle">Profilointi</string>
   <string name="profilingSummary">Ota käyttöön vain kehitystarkoituksessa, sillä tämä vaikuttaa suorituskykyyn!</string>
