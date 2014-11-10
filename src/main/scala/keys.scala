@@ -85,9 +85,7 @@ class Keys {
           speakBatteryPercentage()
           true
         case KEYCODE_T if spielKeyDown => speakTime()
-        case _ =>
-          TTS.stop()
-          false
+        case _ => false
       }
     }
 
