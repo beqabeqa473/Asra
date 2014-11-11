@@ -446,23 +446,4 @@ object TTS extends UtteranceProgressListener with TextToSpeech.OnInitListener wi
       TTS.init() 
   }
 
-  private var mutedForSpeech = false
-
-  UtteranceStarted += { text:String =>
-    if(!audioManager.isMicrophoneMute && (!Telephony.inCall_? || !audioManager.isSpeakerphoneOn)) {
-      audioManager.setMicrophoneMute(true)
-      mutedForSpeech = true
-    }
-  }
-
-  private def unmuteIfNecessary() {
-    if(mutedForSpeech)
-      audioManager.setMicrophoneMute(false)
-    mutedForSpeech = false
-  }
-
-  UtteranceEnded += { text:String => unmuteIfNecessary() }
-
-  UtteranceError += { text:String => unmuteIfNecessary() }
-
 }
