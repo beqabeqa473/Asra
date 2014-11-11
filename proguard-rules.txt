@@ -1,0 +1,3 @@
+-ignorewarnings
+-keep class scala.collection.SeqLike { public protected *; }
+-keep class info.spielproject.spiel.** { *; }

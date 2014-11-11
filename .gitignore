@@ -4,3 +4,5 @@ src/website/.docpad.db
 src/website/node_modules
 src/website/out
 spiel.keystore
+.gradle
+build

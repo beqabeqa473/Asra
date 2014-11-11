@@ -1,0 +1,77 @@
+buildscript {
+
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath([
+      "com.android.tools.build:gradle:0.12.2",
+      "jp.leafytree.gradle:gradle-android-scala-plugin:1.0"
+    ])
+  }
+
+}
+
+repositories {
+  mavenCentral()
+  mavenLocal()
+  maven { url "http://jcenter.bintray.com/" }
+}
+
+apply plugin: "com.android.application"
+apply plugin: "android-scala"
+
+android {
+
+  compileSdkVersion "android-20"
+
+  buildToolsVersion "20.0.0"
+
+  defaultConfig {
+    minSdkVersion 14
+    targetSdkVersion 20
+    versionCode 13
+    versionName "3.0.0-SNAPSHOT"
+  }
+
+  buildTypes {
+
+    debug {
+      runProguard true
+      proguardFile file("proguard-rules.txt")
+    }
+
+    release {
+      runProguard true
+      proguardFile file("proguard-rules.txt")
+    }
+
+  }
+
+  packagingOptions {
+    exclude "rootdoc.txt"
+  }
+
+}
+
+project.ext.scalaVersion = "2.11.2"
+
+project.ext.scalaMajor = project.ext.scalaVersion.split("\\.")[0]+"."+project.ext.scalaVersion.split("\\.")[1]
+
+dependencies {
+
+  compile([
+    "org.scala-lang:scala-library:$scalaVersion",
+    "org.scala-lang.modules:scala-xml_$scalaMajor:1.0.2",
+    "org.macroid:macroid_$scalaMajor:2.0.0-M3",
+    "com.android.support:support-v4:20.0.0",
+    "ch.acra:acra:4.5.0",
+    "org.scaloid:scaloid_$scalaMajor:3.4-10",
+    "org.ccil.cowan.tagsoup:tagsoup:1.2.1",
+    fileTree(dir: "libs", include: ["*.jar"])
+  ])
+
+}
+
+task wrapper(type: Wrapper)
