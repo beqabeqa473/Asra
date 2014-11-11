@@ -25,7 +25,7 @@
   <string name="disabled">Niet beschikbaar</string>
   <string name="editText">tekstvak</string>
   <string name="emptyList">blanco lijst</string>
-  <string name="item">%1$s: 1 item</string>
+  <string name="item">%1$s: 1 onderdeel</string>
   <string name="items">%1$s: %2$s items</string>
   <string name="image">afbeelding</string>
   <string name="labeledImage">%1$s: afbeelding</string>
@@ -124,7 +124,7 @@
   <string name="lessThan">kleiner dan</string>
   <string name="greaterThan">groter dan</string>
   <string name="slash">slash</string>
-  <string name="backslash">backslash</string>
+  <string name="backslash">schuine streep naar achter</string>
   <string name="questionMark">vraagteken</string>
   <string name="quote">aanhalingsteken</string>
   <string name="apostrophe">apostrof</string>
