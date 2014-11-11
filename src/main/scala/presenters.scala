@@ -572,9 +572,9 @@ class Presenters {
     onViewFocused { e:AccessibilityEvent => 
       val utterances = e.utterances(stripBlanks=true, addBlank=false)
       e.source.map { source =>
-        if(source.children.forall(_.getClassName == "android.widget.TextView"))
+        if(source.children != Nil && source.children.forall(_.getClassName == "android.widget.TextView"))
           speak(source.children.flatMap(_.text).filterNot(_ == ""))
-        else if(source.children.forall(c => c.getClassName == "android.widget.TextView" || c.isCheckable)) {
+        else if(source.children != Nil && source.children.forall(c => c.getClassName == "android.widget.TextView" || c.isCheckable)) {
           val utterances = source.children.flatMap(_.text)
           source.children.find(_.isCheckable).foreach { c =>
             if(c.text != None)
@@ -588,7 +588,7 @@ class Presenters {
             }
           }
           true
-        } else if(source.interactive_?)
+        } else if(utterances != Nil)
           speak(utterances)
         else
           true
