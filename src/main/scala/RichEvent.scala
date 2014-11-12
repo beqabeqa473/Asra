@@ -21,12 +21,17 @@ class RichEvent(e:AccessibilityEvent) {
       yield(e.getRecord(r))
     ).toList
 
-  lazy val text =
-    Option(e.getText).map(_.toList).getOrElse(Nil) 
+  lazy val text = {
+    val txt = Option(e.getText).map(_.toList).getOrElse(Nil)
     .filterNot(_ == null).map(_.toString)
+    txt match {
+      case Nil => source.flatMap(_.text).map(List(_)).getOrElse(Nil)
+      case v => v
+    }
+  }
 
   lazy val contentDescription =
-    Option(e.getContentDescription).map(_.toString)
+    Option(e.getContentDescription).map(_.toString).orElse(source.flatMap(_.contentDescription))
 
   lazy val source = Option(e.getSource)
 
