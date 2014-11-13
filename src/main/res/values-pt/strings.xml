@@ -145,4 +145,6 @@
 
   <string name="charging">Carregando</string>
 
-</resources>
+<string name="enabledPlugins">Plug-ins abilitados</string>
+
+  </resources>
