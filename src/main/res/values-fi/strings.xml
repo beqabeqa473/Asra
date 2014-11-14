@@ -61,8 +61,8 @@
   <string name="speakNotificationsWhenScreenOffTitle">Lue ilmoitukset, vaikka näyttö on pois käytöstä</string>
   <string name="useBluetoothSCOTitle">Käytä Bluetooth SCO:ta</string>
   <string name="useBluetoothSCOSummary">Reititä muut kuin puheluiden äänet  Bluetooth SCO -kuulokkeisiin (kokeellinen!)</string>
-  <string name="managePunctuationSpeechTitle">Luettavien välimerkkien hallinta</string>
-  <string name="managePunctuationSpeechSummary">Siirtää joidenkin käsittelemättömien välimerkkien lukemisen Spielille</string>
+  <string name="managePunctuationSpeechTitle">Hallitse välimerkkien puhumista</string>
+  <string name="managePunctuationSpeechSummary">Siirtää joidenkin käsittelemättömien välimerkkien puhumisen Spielille</string>
   <string name="duckNonSpeechAudioTitle">Alenna muun kuin puheen äänenvoimakkuutta</string>
   <string name="duckNonSpeechAudioSummary">Alentaa puhuttaessa musiikin, pelien ym. äänenvoimakkuutta</string>
   <string name="textToSpeechTitle">Tekstistä puheeksi</string>
@@ -160,6 +160,6 @@
 
 <string name="tabWidget">%1$s: välilehti</string>
 
-  <string name="enabledPlugins">Käyttöönotetut lisäosat</string>
+  <string name="enabledPlugins">Käytettävät lisäosat</string>
 
   </resources>
