@@ -1,2 +1,131 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<?xml version='1.0' encoding='utf-8'?>
+<resources><string name="appName">Spiel</string>
+  <string name="appDescription">Fleksibilan, skriptabilan čitač zaslona za Android</string>
+
+  <string name="sendCommandsLabel">Šalji naredbe Spiel-u</string>
+  <string name="sendCommandsDescription">Šalji naredbe za izvršavanje govora i drugih radnji Spiel čitaču zaslona</string>
+
+  <string name="welcomeMsg">Dobrodošli u Spiel!</string>
+
+  <string name="spielOn">Spiel je uključen</string>
+  <string name="spielOff">Spiel je isključen</string>
+  <string name="screenOff">Zaslon je isključen</string>
+  <string name="landscape">Vodoravno</string>
+  <string name="portrait">Okomito</string>
+  <string name="unlocked">Otključano</string>
+  <string name="ringerOff">Zvonjenje je isključeno</string>
+  <string name="ringerOn">Zvonjenje je uključeno</string>
+  <string name="ringerVibrate">Zvonjenje je na vibraciji</string>
+  <string name="newVoicemail">Nova glasovna pošta</string>
+
+  <string name="button">gumb</string>
+  <string name="labeledButton">%1$s: gumb</string>
+  <string name="checkbox">%1$s: potvrdni okvir</string>
+  <string name="checked">označeno</string>
+  <string name="disabled">onemogućeno</string>
+  <string name="editText">uređivanje teksta</string>
+  <string name="emptyList">prazan popis</string>
+  <string name="item">%1$s: 1 stavka</string>
+  <string name="items">%1$s: %2$s stavki</string>
+  <string name="image">slika</string>
+  <string name="labeledImage">%1$s: slika</string>
+  <string name="link">veza</string>
+  <string name="listItem">%1$s od %2$s</string>
+  <string name="listWithItem">popis sadrži jednu stavku</string>
+  <string name="listWithItems">popis sadrži %1$s stavki</string>
+  <string name="menu">izbornik</string>
+  <string name="menuItem">stavka izbornika</string>
+  <string name="notChecked">nije označeno</string>
+  <string name="notSelected">nije odabrano</string>
+  <string name="password">zaporka</string>
+  <string name="radioButton">izborni gumb</string>
+  <string name="rating">Ocjena</string>
+  <string name="selected">odabrano</string>
+  <string name="tabWidget">%1$s: kartica</string>
+
+  <string name="settings">Postavke</string>
+
+  <string name="speechTitle">Govor</string>
+  <string name="speechEngineTitle">Govorna jedinica</string>
+  <string name="systemDefault">Zadano sustavom</string>
+  <string name="rateScaleTitle">Ljestvica brzine</string>
+  <string name="rateScaleSummary">Faktor po kojem bi se zadana brzina govora trebala skalirati</string>
+  <string name="pitchScaleTitle">Ljestvica visine</string>
+  <string name="pitchScaleSummary">Faktor po kojem bi se zadana visina trebala skalirati</string>
+  <string name="echoByCharTitle">Odjek znakova</string>
+  <string name="echoByWordTitle">Odjek riječi</string>
+  <string name="speakNotificationsWhenScreenOffTitle">Govori obavijesti čak i kada je zaslon isključen</string>
+  <string name="useBluetoothSCOTitle">Koristi Bluetooth SCO</string>
+  <string name="useBluetoothSCOSummary">Preusmjeri audio izvan poziva na Bluetooth SCO slušalice (eksperimentalno!)</string>
+  <string name="managePunctuationSpeechTitle">Upravljanje izgovaranjem interpunkcije</string>
+  <string name="managePunctuationSpeechSummary">Povjeri izgovaranje nekih od interpunkcijskih znakova Spiel-u</string>
+  <string name="duckNonSpeechAudioTitle">Smanji zvuk tijekom izgovora</string>
+  <string name="duckNonSpeechAudioSummary">Smanji glasnoću glazbe, igrica itd. za vrijeme izgovaranja</string>
+  <string name="textToSpeechTitle">Postavke za tekst u govor</string>
+  <string name="textToSpeechSummary">Postaviti svojstva za TTS širom sustava</string>
+
+  <string name="alertsTitle">Upozorenja</string>
+  <string name="talkingCallerIDTitle">Izgovori ID pozivatelja</string>
+  <string name="talkingCallerIDSummary">Ponavljaj najavu pojedinosti za ID pozivatelja kod dolaznih poziva</string>
+  <string name="voicemailAlertsTitle">Upozorenja o glasovnoj pošti</string>
+  <string name="voicemailAlertsSummary">Ponavljaj najavu o dostupnosti nove glasovne pošte</string>
+
+  <string name="hapticFeedbackTitle">Odziv vibracijom</string>
+  <string name="hapticFeedbackSummary">Šalji vibracije kad god se prijeđu granice widgeta</string>
+
+  <string name="notificationFiltersTitle">Filtriranje obavijesti</string>
+  <string name="notificationFiltersSummary">Filtriraj predstavljanje promjena obavijesti za bučne aplikacije</string>
+
+  <string name="enabledPlugins">Omogućeni priključci</string>
+
+  <string name="debuggingTitle">Uklanjanje grešaka</string>
+  <string name="sendBacktracesTitle">Šalji povratno praćenje kada se Spiel sruši</string>
+  <string name="sendBacktracesSummary">Automatsko slanje anonimnih izvješća o pogreškama razvojnom programeru svaki put kada se Spiel sruši (zahtijeva ponovno pokretanje)</string>
+  <string name="profilingTitle">Profiliranje</string>
+  <string name="profilingSummary">Omogućujte samo za razvoj jer ovo utjeće na performanse!</string>
+
+  <string name="none">Ništa</string>
+  <string name="stopSpeech">Zaustavi govor</string>
+  <string name="toggleSpiel">Naizmjence uključi ili isključi rad Spiel čitača zaslona</string>
+
+  <string name="blank">prazno</string>
+  <string name="cap">veliko %1$s</string>
+  <string name="exclamation">uskličnik</string>
+  <string name="at">manki</string>
+  <string name="pound">ljestve</string>
+  <string name="dollar">dolar</string>
+  <string name="percent">posto</string>
+  <string name="caret">znak za umetanje</string>
+  <string name="ampersand">end</string>
+  <string name="asterisk">zvjezdica</string>
+  <string name="leftParen">lijeva zagrada</string>
+  <string name="rightParen">desna zagrada</string>
+  <string name="underscore">podcrtano</string>
+  <string name="space">razmak</string>
+  <string name="period">točka</string>
+  <string name="comma">zarez</string>
+  <string name="lessThan">manje od</string>
+  <string name="greaterThan">veće od</string>
+  <string name="slash">kroz</string>
+  <string name="backslash">obrnuto kroz</string>
+  <string name="questionMark">upitnik</string>
+  <string name="quote">navodnik</string>
+  <string name="apostrophe">apostrof</string>
+  <string name="semiColon">točka zarez</string>
+  <string name="colon">dvotočka</string>
+  <string name="dash">povlaka</string>
+  <string name="plus">plus</string>
+  <string name="newline">Novi red</string>
+  <string name="tab">tabulator</string>
+
+  <string name="unknown">Nepoznato</string>
+
+  <string name="character">Znak</string>
+  <string name="word">Riječ</string>
+  <string name="line">Redak</string>
+  <string name="paragraph">Odlomak</string>
+  <string name="page">Stranica</string>
+
+  <string name="charging">puni se</string>
+
+</resources>
