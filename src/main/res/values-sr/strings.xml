@@ -1,2 +1,131 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<?xml version='1.0' encoding='utf-8'?>
+<resources><string name="appName">spiel</string>
+  <string name="appDescription">флексибилан , скриптабилан андроид читач екрана</string>
+
+  <string name="sendCommandsLabel">пошаљи команде у спиел</string>
+  <string name="sendCommandsDescription">шаљи команде за говор и друге акције у спиел читач екрана</string>
+
+  <string name="welcomeMsg">добродошли у спиел</string>
+
+  <string name="spielOn">спиел укључен</string>
+  <string name="spielOff">спиел искључен</string>
+  <string name="screenOff">екран је искључен</string>
+  <string name="landscape">хоризонтално</string>
+  <string name="portrait">вертикално</string>
+  <string name="unlocked">откључан</string>
+  <string name="ringerOff">звоно искључено</string>
+  <string name="ringerOn">звоно укључено</string>
+  <string name="ringerVibrate">вибрација</string>
+  <string name="newVoicemail">нова гласовна порука</string>
+
+  <string name="button">дугме</string>
+  <string name="labeledButton">%1$s: дугме</string>
+  <string name="checkbox">%1$s: изборни оквир</string>
+  <string name="checked">изабрано</string>
+  <string name="disabled">онемогућено</string>
+  <string name="editText">уреди текст</string>
+  <string name="emptyList">празна листа</string>
+  <string name="item">%1$s: 1 ставка</string>
+  <string name="items">%1$s: %2$s ставке</string>
+  <string name="image">слика</string>
+  <string name="labeledImage">%1$s: слика</string>
+  <string name="link">link</string>
+  <string name="listItem">%1$s of %2$s</string>
+  <string name="listWithItem">листа са једном ставком</string>
+  <string name="listWithItems">листа %1$s ставки</string>
+  <string name="menu">мени</string>
+  <string name="menuItem">ставка мениа</string>
+  <string name="notChecked">није изабрано</string>
+  <string name="notSelected">није изабрано</string>
+  <string name="password">шифра</string>
+  <string name="radioButton">радио дугме</string>
+  <string name="rating">оцена</string>
+  <string name="selected">изабрано</string>
+  <string name="tabWidget">%1$s: картица</string>
+
+  <string name="settings">подешавања</string>
+
+  <string name="speechTitle">говор</string>
+  <string name="speechEngineTitle">говорна синтеза</string>
+  <string name="systemDefault">користи системску</string>
+  <string name="rateScaleTitle">брзина</string>
+  <string name="rateScaleSummary">фактор који одређује како би брзина требала бити скалирана</string>
+  <string name="pitchScaleTitle">висина</string>
+  <string name="pitchScaleSummary">фактор који одређује како би висина требало да буде скалирана</string>
+  <string name="echoByCharTitle">изговарај слова</string>
+  <string name="echoByWordTitle">изговарај речи</string>
+  <string name="speakNotificationsWhenScreenOffTitle">изговарај обавештења чак и када је екран искључен</string>
+  <string name="useBluetoothSCOTitle">користи блутут слушалице</string>
+  <string name="useBluetoothSCOSummary">преусмери позиве на блутут слушалице (експериментално)</string>
+  <string name="managePunctuationSpeechTitle">управљај изговору интерпункције</string>
+  <string name="managePunctuationSpeechSummary">додели изговор неких знакова интерпункције непознатих за спиел</string>
+  <string name="duckNonSpeechAudioTitle">стишавај позадинске звуке</string>
+  <string name="duckNonSpeechAudioSummary">смањује јачину музике, игрица итд. у току говора</string>
+  <string name="textToSpeechTitle">подешавања за претварање текста у говор</string>
+  <string name="textToSpeechSummary">подеси системску говорну синтезу</string>
+
+  <string name="alertsTitle">упозорења</string>
+  <string name="talkingCallerIDTitle">изговарај ид позиваоца</string>
+  <string name="talkingCallerIDSummary">понавља изговор позиваоца за долазне позиве</string>
+  <string name="voicemailAlertsTitle">упозорења за гласовне поруке</string>
+  <string name="voicemailAlertsSummary">понавља изговор о доступности нових гласовних порука</string>
+
+  <string name="hapticFeedbackTitle">повратне информације вибрацијом</string>
+  <string name="hapticFeedbackSummary">пружа вибрација као додатне повратне информације</string>
+
+  <string name="notificationFiltersTitle">филтери за обавештења</string>
+  <string name="notificationFiltersSummary">филтрирај изговарање обавештења за досадне апликације</string>
+
+  <string name="enabledPlugins">омогућени додаци</string>
+
+  <string name="debuggingTitle">откривање грешака</string>
+  <string name="sendBacktracesTitle">пошаљи информације када се спиел сруши</string>
+  <string name="sendBacktracesSummary">анонимно слање информација када се спиел сруши (захтева поновно покретање)</string>
+  <string name="profilingTitle">профили</string>
+  <string name="profilingSummary">укључите само у случају програмирања озбиљно утиче на перформансе</string>
+
+  <string name="none">ништа</string>
+  <string name="stopSpeech">заустави говор</string>
+  <string name="toggleSpiel">укључите или искључите спиел</string>
+
+  <string name="blank">празно</string>
+  <string name="cap">велико</string>
+  <string name="exclamation">exclaim</string>
+  <string name="at">ет</string>
+  <string name="pound">фунта</string>
+  <string name="dollar">долар</string>
+  <string name="percent">проценат</string>
+  <string name="caret">карет</string>
+  <string name="ampersand">крај</string>
+  <string name="asterisk">звездица</string>
+  <string name="leftParen">лева заграда</string>
+  <string name="rightParen">десна загреда</string>
+  <string name="underscore">коса црта</string>
+  <string name="space">размак</string>
+  <string name="period">тачка</string>
+  <string name="comma">зарез</string>
+  <string name="lessThan">мање од</string>
+  <string name="greaterThan">веће од</string>
+  <string name="slash">цртица</string>
+  <string name="backslash">коса црта</string>
+  <string name="questionMark">упитник</string>
+  <string name="quote">наводник</string>
+  <string name="apostrophe">апостроф</string>
+  <string name="semiColon">усправна црта</string>
+  <string name="colon">двотачка</string>
+  <string name="dash">црта</string>
+  <string name="plus">плус</string>
+  <string name="newline">нови ред</string>
+  <string name="tab">аб</string>
+
+  <string name="unknown">непознато</string>
+
+  <string name="character">слово</string>
+  <string name="word">реч</string>
+  <string name="line">ред</string>
+  <string name="paragraph">пасус</string>
+  <string name="page">страна</string>
+
+  <string name="charging">пуњење</string>
+
+</resources>
