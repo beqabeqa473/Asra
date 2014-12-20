@@ -1,37 +1,36 @@
-<?xml version="1.0" encoding="utf-8"?>
-
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
 
 <!-- Initial welcome message-->
-<string name="welcomeMsg">üdvözli a Spiel!</string>
+<string name="welcomeMsg">Üdvözli a Spiel!</string>
 
 <!-- On/off and other alerts -->
-<string name="spielOn">Spiel Bekapcsolva</string>
+<string name="spielOn">Spiel bekapcsolva</string>
 <string name="spielOff">Spiel kikapcsolva</string>
-<string name="screenOff">kijelző zárolva</string>
-<string name="unlocked">feloldva</string>
-<string name="ringerOff">csengő kikapcsolva</string>
-<string name="ringerOn">csengő bekapcsolva</string>
+<string name="screenOff">Kijelző kikapcsolva</string>
+<string name="unlocked">Feloldva</string>
+<string name="ringerOff">Csengő kikapcsolva</string>
+<string name="ringerOn">Csengő bekapcsolva</string>
 
 <!-- View names and actions -->
 <string name="button">gomb</string>
-<string name="labeledButton">gomb</string>
+<string name="labeledButton">%1$s: gomb</string>
 <string name="checkbox">%1$s: jelölőnégyzet</string>
 <string name="checked">bejelölve</string>
-<string name="editText">szerkeszthető mező</string>
+<string name="editText">szöveg szerkesztése</string>
 <string name="emptyList">üres lista</string>
 <string name="image">kép</string>
-<string name="labeledImage">Kép</string>
-<string name="listItem">%1$s per %2$s</string>
+<string name="labeledImage">%1$s: kép</string>
+<string name="listItem">%1$s / %2$s</string>
 <string name="menu">menü</string>
-<string name="notChecked">kijelölve</string>
-<string name="password">%1$s: Jelszó</string>
-<string name="radioButton">választó gomb</string>
+<string name="notChecked">nincs bejelölve</string>
+<string name="password">jelszó</string>
+<string name="radioButton">rádiógomb</string>
 
 <!-- Preferences -->
-<string name="speechTitle">beszéd</string>
-<string name="speechEngineTitle">beszéd szintetizátor</string>
-<string name="rateScaleTitle">sebesség arány</string>
+<string name="speechTitle">Beszéd</string>
+<string name="speechEngineTitle">Beszédmotor</string>
+<string name="rateScaleTitle"></string>
 <string name="rateScaleSummary">a sebesség arányát szabályozza</string>
 <string name="pitchScaleTitle">hangmagasság arány</string>
 <string name="pitchScaleSummary">a beszéd magasság arányát szabályozza</string>
@@ -107,4 +106,28 @@
 <string name="plus">plusz</string>
 <string name="newline">újsor</string>
 
-</resources>
+<string name="appName">Spiel</string>
+  <string name="appDescription">Egy rugalmas, programozható Android képernyő-olvasó</string>
+
+  <string name="sendCommandsLabel">Parancsok küldése a Spielnek</string>
+  <string name="landscape">Fekvő</string>
+  <string name="portrait">Álló</string>
+  <string name="ringerVibrate">Csengő rezgés</string>
+  <string name="newVoicemail">Új hangüzenet</string>
+
+  <string name="disabled">letiltva</string>
+  <string name="item">%1$s: 1 elem</string>
+  <string name="items">%1$s: %2$s elem</string>
+  <string name="link">hivatkozás</string>
+  <string name="listWithItem">1 elemű lista</string>
+  <string name="listWithItems">%1$s elemű lista</string>
+  <string name="menuItem">menüpont</string>
+  <string name="notSelected">nincs kiválasztva</string>
+  <string name="rating">Értékelés</string>
+  <string name="selected">kiválasztva</string>
+  <string name="tabWidget">%1$s: lap</string>
+
+  <string name="settings">Beállítások</string>
+
+  <string name="systemDefault">Rendszer alapértelmezett</string>
+  </resources>
