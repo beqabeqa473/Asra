@@ -1,2 +1,108 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<?xml version='1.0' encoding='utf-8'?>
+<resources><string name="sendCommandsLabel">Sendet Befehle an Spiel</string>
+  <string name="sendCommandsDescription">Sendet Befehle an den Spiel Vorleser um Sprache auszugeben und andere Aktionen auszuführen</string>
+
+  <string name="welcomeMsg">Wilkommen bei Spiel!</string>
+
+  <string name="spielOn">Spiel ein</string>
+  <string name="spielOff">Spiel aus</string>
+  <string name="screenOff">Bildschirm aus</string>
+  <string name="landscape">Querformat</string>
+  <string name="portrait">Hochformat</string>
+  <string name="unlocked">Entsperrt</string>
+  <string name="ringerOn">Benachrichtigung ein</string>
+  <string name="ringerVibrate">Benachrichtigung vibrieren</string>
+  <string name="newVoicemail">Neue Sprachnachricht</string>
+
+  <string name="ringerOff">Benachrichtigung aus</string>
+  <string name="button">Schaltfläche</string>
+  <string name="labeledButton">%1$s: Schaltfläche</string>
+  <string name="checkbox">%1$s: Auswahlkästchen</string>
+  <string name="checked">ausgewählt</string>
+  <string name="disabled">deaktiviert</string>
+  <string name="editText">Text bearbeiten</string>
+  <string name="emptyList">Liste leeren</string>
+  <string name="item">%1$s: 1 Element</string>
+  <string name="items">%1$s: %2$s Elemente</string>
+  <string name="image">Bild</string>
+  <string name="labeledImage">%1$s: Bild</string>
+  <string name="link">Verknüpfung</string>
+  <string name="listItem">%1$s von %2$s</string>
+  <string name="listWithItem">Liste mit 1 Element</string>
+  <string name="listWithItems">List mit %1$s Elementen</string>
+  <string name="menu">Menü</string>
+  <string name="menuItem">Menüelement</string>
+  <string name="notChecked">nicht ausgewählt</string>
+  <string name="notSelected">nicht ausgewählt</string>
+  <string name="password">Kennwort</string>
+  <string name="radioButton">Optionsfeld</string>
+  <string name="rating">Bewertung</string>
+  <string name="selected">ausgewählt</string>
+  <string name="tabWidget">%1$s: Reiter</string>
+
+  <string name="settings">Einstellungen</string>
+
+  <string name="speechTitle">Sprache</string>
+  <string name="speechEngineTitle">Spracherzeuger</string>
+  <string name="systemDefault">Systemeinstellung</string>
+  <string name="rateScaleTitle">Geschwindigkeitsskala</string>
+  <string name="rateScaleSummary">Faktor mit dem die Voreinstellung angepasst wird</string>
+  <string name="useBluetoothSCOTitle">Bluetooth SCO benutzen</string>
+  <string name="textToSpeechTitle">Text-in-Sprache Einstellungen</string>
+  <string name="textToSpeechSummary">Systemweite Text-in-Sprache Einstellungen anpassen</string>
+
+  <string name="alertsTitle">Meldungen</string>
+  <string name="talkingCallerIDTitle">Anruferidentifikation</string>
+  <string name="voicemailAlertsTitle">Meldungen zu Spachnachrichten</string>
+  <string name="notificationFiltersTitle">Filter für Benachrichtigungen</string>
+  <string name="debuggingTitle">Fehlerbehebung</string>
+  <string name="sendBacktracesTitle">Ablaufverfolgung senden, falls Spiel abstürzt</string>
+  <string name="sendBacktracesSummary">Automatisch anonyme Fehlerberichte an den Entwickler senden wann immer Spiel abstürzt (erfordert Neustart)</string>
+  <string name="enabledPlugins">Aktivierte Erweiterungen</string>
+
+  <string name="hapticFeedbackTitle">Vibrationsrückmeldung</string>
+  <string name="none">Keine</string>
+  <string name="stopSpeech">Sprache anhalten</string>
+  <string name="toggleSpiel">Umschalten ob Spiel aktiviert ist oder nicht</string>
+
+  <string name="blank">leer</string>
+  <string name="pound">Pfund</string>
+  <string name="dollar">Dollar</string>
+  <string name="percent">Prozent</string>
+  <string name="caret">Zirkumflex</string>
+  <string name="ampersand">und</string>
+  <string name="asterisk">Asterisk</string>
+  <string name="leftParen">linke Klammer</string>
+  <string name="rightParen">rechte Klammer</string>
+  <string name="underscore">Unterstrich</string>
+  <string name="space">Leerzeichen</string>
+  <string name="period">Punkt</string>
+  <string name="comma">Komma</string>
+  <string name="lessThan">kleiner als</string>
+  <string name="greaterThan">größer als</string>
+  <string name="slash">Schrägstrich</string>
+  <string name="backslash">Rückschrägstrich</string>
+  <string name="questionMark">Fragezeichen</string>
+  <string name="quote">Anführungszeichen</string>
+  <string name="apostrophe">Apostroph</string>
+  <string name="semiColon">Semikolon</string>
+  <string name="colon">Doppelpunkt</string>
+  <string name="dash">Bindestrich</string>
+  <string name="plus">Plus</string>
+  <string name="newline">Neue Zeile</string>
+  <string name="tab">Tabulator</string>
+
+  <string name="unknown">Unbekannt</string>
+
+  <string name="character">Zeichen</string>
+  <string name="word">Wort</string>
+  <string name="line">Zeile</string>
+  <string name="paragraph">Paragraph</string>
+  <string name="page">Seite</string>
+
+  <string name="charging">lädt</string>
+
+<string name="appName">Spiel</string>
+  <string name="appDescription">Ein flexibler und programmierbarer Vorleser für Android</string>
+
+  </resources>
